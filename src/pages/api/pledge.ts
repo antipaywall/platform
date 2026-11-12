@@ -13,17 +13,18 @@ export const POST: APIRoute = async (context) => {
   const form = await request.formData();
   const parsed = parsePledge({
     amount: form.get('amount'), displayName: form.get('display_name'), kind: form.get('kind'),
-    companyUrl: form.get('company_url'), xHandle: form.get('x_handle'), githubHandle: person.handle,
+    companyUrl: form.get('company_url'), xHandle: form.get('x_handle'), email: form.get('email'), anonymous: form.get('anonymous'),
+    githubHandle: person.handle,
   });
   const here = form.get('kind') === 'company' ? '/fund?as=company' : '/fund';
   if (!parsed.ok) return back(here, parsed.error);
 
-  const { error } = await db.rpc('replace_pledge', {
+  const { data: id, error } = await db.rpc('replace_pledge', {
     p_person: person.id, p_name: parsed.displayName, p_cents: parsed.amountCents, p_status: parsed.status,
     p_kind: parsed.kind, p_company_url: parsed.companyUrl, p_x_handle: parsed.xHandle,
+    p_email: parsed.email, p_anonymous: parsed.anonymous,
   });
   if (error) return back('/fund', 'save_failed');
-  const latest = await db.from('pledges').select('id').eq('person_id', person.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
-  await recordEvent(db, context, { kind: 'pledged', personId: person.id, subject: latest.data?.id });
+  await recordEvent(db, context, { kind: 'pledged', personId: person.id, subject: typeof id === 'string' ? id : null });
   return back('/fund', parsed.status === 'held' ? 'pledge_held' : 'pledge_listed');
 };
