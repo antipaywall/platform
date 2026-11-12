@@ -10,16 +10,16 @@ export type ListStatus = 'new' | 'existing' | 'unsubscribed' | 'failed';
  * An address that unsubscribed stays unsubscribed. Never throws. `id` is the new list entry's
  * id, and is only given when the address was new.
  *
- * `personId` links the address to an account. Only the GitHub sign-in may pass it, with the
- * address GitHub itself gave: an address typed into a form is never tied to whoever typed it.
+ * `personId` links the address to an account. Only a GitHub or GitLab sign-in may pass it, with the
+ * address that provider itself gave: an address typed into a form is never tied to whoever typed it.
  * Rate limiting is the caller's job and happens before this is called.
  */
 export async function addToList(
   db: SupabaseClient,
-  input: { email: string; country: string | null } & ({ source: 'form' } | { source: 'github'; personId: string }),
+  input: { email: string; country: string | null } & ({ source: 'form' } | { source: 'github' | 'gitlab'; personId: string }),
 ): Promise<{ status: ListStatus; id: string | null }> {
   const { data, error } = await db.rpc('subscribe', {
-    p_email: input.email, p_source: input.source, p_person: input.source === 'github' ? input.personId : null,
+    p_email: input.email, p_source: input.source, p_person: input.source === 'form' ? null : input.personId,
     p_country: input.country, p_sender: null, p_max_per_hour: 1_000_000,
   });
   if (error || !data) return { status: 'failed', id: null };

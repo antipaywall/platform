@@ -13,9 +13,9 @@ export function parseAdminIds(raw: unknown): number[] {
     .map(Number);
 }
 
-/** True only for a signed-in person whose GitHub id is on the list. */
-export function isAdminIn(ids: readonly number[], person: { github_id: number | string } | null | undefined): boolean {
-  if (!person) return false;
+/** True only for a signed-in person whose GitHub id is on the list. A GitLab account has no GitHub id, so it never is. */
+export function isAdminIn(ids: readonly number[], person: { github_id: number | string | null } | null | undefined): boolean {
+  if (!person || person.github_id === null || person.github_id === undefined) return false;
   const id = Number(person.github_id);
   return Number.isSafeInteger(id) && id > 0 && ids.includes(id);
 }

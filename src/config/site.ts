@@ -7,7 +7,7 @@ export const site = {
   repo: 'https://github.com/antipaywall/platform',
   // The length of the event is fixed. Its dates are announced later.
   shape: { buildDays: 7, votingDays: 3 },
-  // Two checks, both read from the GitHub profile at sign-in. They make throwaway accounts
+  // Two checks, both read from the GitHub or GitLab profile at sign-in. They make throwaway accounts
   // more expensive to create. They are not proof of identity and do not claim to be.
   eligibility: { minAccountAgeDays: 30, minContributions12mo: 10 },
   // The dates are announced once at least this many builders have joined and the pool holder
@@ -68,7 +68,7 @@ export const insiderRules = [
   `Their entries are shown with everyone else's and count toward the builders the dates are waiting on.`,
   'Their entries cannot win a prize or a bounty, and are not on the main ballot.',
   'They do not vote on the main prizes.',
-  'Like anyone whose GitHub account passes the two checks, they can vote for Community Choice.',
+  'Like anyone whose GitHub or GitLab account passes the two checks, they can vote for Community Choice.',
 ];
 
 const host = site.collective.host;

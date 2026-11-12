@@ -162,9 +162,9 @@ describe('parsePledge: reaching the pledger, and staying anonymous', () => {
 });
 
 describe('publicPledge', () => {
-  const row = { id: '1', display_name: 'Anonymous', handle: 'ada', amount_cents: 500, status: 'listed', created_at: '', kind: 'company' as const, company_url: 'https://acme.example/', x_handle: 'ada', anonymous: true, email: 'ada@example.com' };
+  const row = { id: '1', display_name: 'Anonymous', handle: 'ada', provider: 'github' as const, amount_cents: 500, status: 'listed', created_at: '', kind: 'company' as const, company_url: 'https://acme.example/', x_handle: 'ada', anonymous: true, email: 'ada@example.com' };
   it('blanks everything that identifies an anonymous pledger and never passes an email on', () => {
-    expect(publicPledge(row)).toEqual({ id: '1', display_name: 'Anonymous', handle: '', amount_cents: 500, status: 'listed', created_at: '', kind: 'company', company_url: null, x_handle: null, anonymous: true });
+    expect(publicPledge(row)).toEqual({ id: '1', display_name: 'Anonymous', handle: '', provider: 'github', amount_cents: 500, status: 'listed', created_at: '', kind: 'company', company_url: null, x_handle: null, anonymous: true });
     expect(publicPledge({ ...row, anonymous: false })).not.toHaveProperty('email');
     expect(publicPledge({ ...row, anonymous: false })).toMatchObject({ handle: 'ada', x_handle: 'ada' });
   });

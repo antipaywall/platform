@@ -915,6 +915,12 @@ details.card summary {
   justify-items: start;
   max-width: 46ch;
 }
+.signin-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
 
 /* The join page: five ways in */
 .hub {

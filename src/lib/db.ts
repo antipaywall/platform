@@ -1,10 +1,15 @@
+import { providerOf, type Provider } from './accounts';
 import { isAdminIn, parseAdminIds } from './admin';
 import type { RawPeople, Report, VisitorDay } from './report';
 import { adminClient } from './supabase';
 
 export type Person = {
   id: string;
-  github_id: number;
+  /** Which sign-in this account came from. */
+  provider: Provider;
+  /** Null for a GitLab account. */
+  github_id: number | null;
+  gitlab_id: number | null;
   handle: string;
   avatar_url: string | null;
   verified: boolean;
@@ -42,6 +47,8 @@ export type Pledge = {
   id: string;
   display_name: string;
   handle: string;
+  /** Where `handle` is a username. */
+  provider: Provider;
   amount_cents: number;
   status: string;
   created_at: string;
@@ -112,14 +119,14 @@ export function publicPledge(p: Pledge): Pledge {
 export async function listPledges(opts: { statuses?: string[]; limit?: number; contact?: boolean } = {}): Promise<Pledge[]> {
   const q = db()
     .from('pledges')
-    .select(`id, display_name, amount_cents, status, created_at, kind, company_url, x_handle, anonymous${opts.contact ? ', email' : ''}, people:person_id(handle)`)
+    .select(`id, display_name, amount_cents, status, created_at, kind, company_url, x_handle, anonymous${opts.contact ? ', email' : ''}, people:person_id(handle, provider)`)
     .in('status', opts.statuses ?? ['listed'])
     .order('created_at', { ascending: false })
     .limit(opts.limit ?? 100);
   const { data, error } = await q;
   if (error) throw new DataUnavailableError(error.message);
   const rows: Pledge[] = (data ?? []).map((r: any) => ({
-    id: r.id, display_name: r.display_name, handle: r.people?.handle ?? 'unknown',
+    id: r.id, display_name: r.display_name, handle: r.people?.handle ?? 'unknown', provider: providerOf(r.people),
     amount_cents: r.amount_cents, status: r.status, created_at: r.created_at,
     kind: r.kind === 'company' ? 'company' : 'individual', company_url: r.company_url ?? null, x_handle: r.x_handle ?? null,
     anonymous: r.anonymous === true, ...(opts.contact ? { email: r.email ?? null } : {}),
@@ -140,10 +147,10 @@ export async function getStats(): Promise<Stats> {
   };
 }
 
-export async function listBuilders(): Promise<{ handle: string; avatar_url: string | null; x_handle: string | null; site_url: string | null }[]> {
-  const { data, error } = await db().from('people').select('handle, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(1000);
+export async function listBuilders(): Promise<{ handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null }[]> {
+  const { data, error } = await db().from('people').select('handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(1000);
   if (error) throw new DataUnavailableError(error.message);
-  return data ?? [];
+  return (data ?? []).map((b: any) => ({ ...b, provider: providerOf(b) }));
 }
 
 export type Sponsor = {
@@ -207,8 +214,8 @@ export async function listSubscribers(limit = 50_000): Promise<SubscriberRow[]> 
   return data ?? [];
 }
 
-export type PanelApplication = { person_id: string; handle: string; why: string; ties: string; country: string | null; handled: boolean; updated_at: string };
-export type OrganizeOffer = { person_id: string; handle: string; note: string; country: string | null; handled: boolean; updated_at: string };
+export type PanelApplication = { person_id: string; handle: string; provider: Provider; why: string; ties: string; country: string | null; handled: boolean; updated_at: string };
+export type OrganizeOffer = { person_id: string; handle: string; provider: Provider; note: string; country: string | null; handled: boolean; updated_at: string };
 export type SponsorInquiryRow = {
   id: string; company: string; contact_name: string; email: string; amount_usd: number | null; kind: string;
   message: string; country: string | null; handled: boolean; created_at: string;
@@ -217,13 +224,13 @@ export type SponsorInquiryRow = {
 /** Everything people have sent the organizer, newest first, unhandled before handled. Organizer's page only. */
 export async function listIntake(): Promise<{ panel: PanelApplication[]; organize: OrganizeOffer[]; inquiries: SponsorInquiryRow[] }> {
   const [panel, organize, inquiries] = await Promise.all([
-    db().from('panel_applications').select('person_id, why, ties, country, handled, updated_at, people:person_id(handle)').order('handled').order('updated_at', { ascending: false }).limit(500),
-    db().from('organize_offers').select('person_id, note, country, handled, updated_at, people:person_id(handle)').order('handled').order('updated_at', { ascending: false }).limit(500),
+    db().from('panel_applications').select('person_id, why, ties, country, handled, updated_at, people:person_id(handle, provider)').order('handled').order('updated_at', { ascending: false }).limit(500),
+    db().from('organize_offers').select('person_id, note, country, handled, updated_at, people:person_id(handle, provider)').order('handled').order('updated_at', { ascending: false }).limit(500),
     db().from('sponsor_inquiries').select('id, company, contact_name, email, amount_usd, kind, message, country, handled, created_at').order('handled').order('created_at', { ascending: false }).limit(500),
   ]);
   const failed = panel.error ?? organize.error ?? inquiries.error;
   if (failed) throw new DataUnavailableError(failed.message);
-  const withHandle = (r: any) => ({ ...r, handle: r.people?.handle ?? 'unknown', people: undefined });
+  const withHandle = (r: any) => ({ ...r, handle: r.people?.handle ?? 'unknown', provider: providerOf(r.people), people: undefined });
   return {
     panel: (panel.data ?? []).map(withHandle) as PanelApplication[],
     organize: (organize.data ?? []).map(withHandle) as OrganizeOffer[],

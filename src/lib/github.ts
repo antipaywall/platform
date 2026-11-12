@@ -1,4 +1,4 @@
-import type { GithubFacts } from './eligibility';
+import type { AccountFacts } from './eligibility';
 
 export class GithubUnavailableError extends Error {}
 
@@ -10,7 +10,7 @@ const QUERY = `query {
 }`;
 
 /** Reads the facts the eligibility rules need, as the signed-in user. Throws GithubUnavailableError on any failure. */
-export async function fetchGithubFacts(token: string, fetchImpl: typeof fetch = fetch): Promise<GithubFacts> {
+export async function fetchGithubFacts(token: string, fetchImpl: typeof fetch = fetch): Promise<AccountFacts> {
   let res: Response;
   try {
     res = await fetchImpl('https://api.github.com/graphql', {
@@ -26,7 +26,8 @@ export async function fetchGithubFacts(token: string, fetchImpl: typeof fetch = 
   const v = body?.data?.viewer;
   if (!v?.databaseId) throw new GithubUnavailableError('no viewer');
   return {
-    githubId: v.databaseId,
+    provider: 'github',
+    accountId: v.databaseId,
     handle: v.login,
     avatarUrl: v.avatarUrl,
     accountCreatedAt: v.createdAt,

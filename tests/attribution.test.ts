@@ -207,7 +207,7 @@ describe('timeline', () => {
     { at: '2026-11-12T10:03:00Z', kind: 'hearted' as const, subject: 'brand-kit' },
   ];
   it('puts pages and actions in the order they happened', () => {
-    expect(timeline(pages, events).map((s) => s.text)).toEqual(['/', '/join', 'Signed in with GitHub', '/join/build', 'Hearted an idea: brand-kit']);
+    expect(timeline(pages, events).map((s) => s.text)).toEqual(['/', '/join', 'Signed in', '/join/build', 'Hearted an idea: brand-kit']);
     expect(timeline(pages, events).map((s) => s.type)).toEqual(['page', 'page', 'did', 'page', 'did']);
   });
   it('puts the page first when a page and an action share a moment', () => {
@@ -272,7 +272,7 @@ const raw: RawPeople = {
       ],
     },
     {
-      id: 'p2', handle: 'old-timer', github_id: 2, verified: false, failed_rules: ['account_age'], is_builder: false, country: null,
+      id: 'p2', handle: 'old-timer', provider: 'gitlab', github_id: null, verified: false, failed_rules: ['account_age'], is_builder: false, country: null,
       created_at: '2026-11-11T09:00:00Z', joined_at: null, last_at: '2026-11-11T09:00:00Z',
       emails: [{ email: 'old@example.com', source: 'github', subscribed_at: '2026-11-11T09:00:00Z', unsubscribed_at: '2026-11-11T12:00:00Z' }],
       pledges: [], ideas: [{ slug: 'a', title: 'A', at: '2026-11-11T09:30:00Z' }], panel: true, organize: false,
@@ -308,8 +308,14 @@ describe('the people table', () => {
     expect(ada.signedUpFor).toEqual(['Signed in with GitHub', 'Builder', 'Email list', 'Pledged $50 (listed)', 'Offered to help organize']);
     expect(ada.checks).toBe('Passed the builder checks');
     const old = entries.find((e) => e.key === 'p2')!;
-    expect(old.signedUpFor).toEqual(['Signed in with GitHub', 'Email list (unsubscribed)', 'Posted an idea', 'Applied to the review panel']);
+    expect(old.signedUpFor).toEqual(['Signed in with GitLab', 'Email list (unsubscribed)', 'Posted an idea', 'Applied to the review panel']);
     expect(old.checks).toBe('Did not pass: account_age');
+  });
+  it('links each account to its own provider in the export', () => {
+    const rows = peopleCsvRows(entries);
+    expect(rows.find((r) => r[0] === 'ada')!.slice(1, 3)).toEqual(['GitHub account', 'https://github.com/ada']);
+    expect(rows.find((r) => r[0] === 'old-timer')!.slice(1, 3)).toEqual(['GitLab account', 'https://gitlab.com/old-timer']);
+    expect(rows.find((r) => r[0] === '=cmd@example.com')!.slice(1, 3)).toEqual(['address only', '']);
   });
   it('joins an address with no account to its own list entry and sponsor inquiry', () => {
     const c = entries[0];
