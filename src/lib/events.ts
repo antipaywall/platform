@@ -23,7 +23,7 @@ export type EventKind = (typeof EVENT_KINDS)[number];
 export const SIGNUP_KINDS: readonly EventKind[] = ['signed_in', 'joined_builder', 'list_joined', 'pledged', 'panel_applied', 'organize_offered', 'sponsor_inquiry'];
 
 export const EVENT_LABELS: Record<EventKind, string> = {
-  signed_in: 'Signed in with GitHub',
+  signed_in: 'Signed in',
   checks_passed: 'Passed the builder checks',
   checks_failed: 'Did not pass the builder checks',
   joined_builder: 'Joined as a builder',

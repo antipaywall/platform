@@ -1,4 +1,5 @@
 import { EVENT_LABELS, type EventKind } from './events';
+import { profileUrl, providerName, providerOf, type Provider } from './accounts';
 import { sourceName } from './sources';
 
 // Shapes and small sums for the organizer's pages. The numbers themselves are computed in the
@@ -84,7 +85,7 @@ export type ActionEvent = { at: string; kind: EventKind; subject: string | null;
 export type Journey = Pick<VisitorDay, 'day' | 'visitor' | 'first_at' | 'landing' | 'source' | 'referrer_host' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'device' | 'country' | 'views' | 'pages'>;
 export type RawPeople = {
   people: {
-    id: string; handle: string; github_id: number; verified: boolean; failed_rules: string[]; is_builder: boolean;
+    id: string; handle: string; provider?: string | null; github_id: number | null; verified: boolean; failed_rules: string[]; is_builder: boolean;
     country: string | null; created_at: string; joined_at: string | null; last_at: string;
     emails: { email: string; source: string; subscribed_at: string; unsubscribed_at: string | null }[];
     pledges: { amount_cents: number; status: string; name: string; at: string }[];
@@ -108,9 +109,11 @@ export type PeopleFilter = (typeof PEOPLE_FILTERS)[number][0];
 
 export type Entry = {
   key: string;
-  /** A GitHub account, or an address with no account. */
+  /** A GitHub or GitLab account, or an address with no account. */
   type: 'account' | 'contact';
   handle: string | null;
+  /** Where `handle` is a username. Null for an address with no account. */
+  provider: Provider | null;
   emails: { email: string; subscribed: boolean; source: string }[];
   country: string | null;
   firstAt: string;
@@ -138,7 +141,8 @@ export function buildEntries(raw: RawPeople): Entry[] {
     const onList = p.emails.some((e) => !e.unsubscribed_at);
     const live = p.pledges.filter((g) => g.status !== 'hidden');
     const is: PeopleFilter[] = ['all', 'account'];
-    const for_: string[] = ['Signed in with GitHub'];
+    const provider = providerOf(p);
+    const for_: string[] = [`Signed in with ${providerName(provider)}`];
     if (p.is_builder) { is.push('builder'); for_.push('Builder'); }
     if (p.emails.length) { is.push('list'); for_.push(onList ? 'Email list' : 'Email list (unsubscribed)'); }
     if (live.length) { is.push('pledge'); for_.push(`Pledged ${money(live[0].amount_cents)} (${live[0].status})`); }
@@ -146,7 +150,7 @@ export function buildEntries(raw: RawPeople): Entry[] {
     if (p.panel) { is.push('panel'); for_.push('Applied to the review panel'); }
     if (p.organize) { is.push('organize'); for_.push('Offered to help organize'); }
     return {
-      key: p.id, type: 'account', handle: p.handle,
+      key: p.id, type: 'account', handle: p.handle, provider,
       emails: p.emails.map((e) => ({ email: e.email, subscribed: !e.unsubscribed_at, source: e.source })),
       country: p.country, firstAt: p.created_at, lastAt: p.last_at, signedUpFor: for_, is,
       checks: p.verified ? 'Passed the builder checks' : `Did not pass: ${p.failed_rules.join(', ') || 'not checked'}`,
@@ -161,7 +165,7 @@ export function buildEntries(raw: RawPeople): Entry[] {
     if (c.inquiries.length) is.push('sponsor');
     const times = [c.list?.subscribed_at, ...c.inquiries.map((q) => q.at)].filter((t): t is string => Boolean(t)).sort();
     return {
-      key: c.email, type: 'contact', handle: null,
+      key: c.email, type: 'contact', handle: null, provider: null,
       emails: [{ email: c.email, subscribed: Boolean(c.list && !c.list.unsubscribed_at), source: c.list?.source ?? 'sponsor form' }],
       country: c.list?.country ?? c.inquiries[0]?.country ?? null, firstAt: times[0] ?? c.last_at, lastAt: c.last_at,
       signedUpFor: for_, is, checks: null, events: c.events, journeys: journeysOf(c.events),
@@ -177,15 +181,15 @@ export function filterEntries(entries: Entry[], opts: { kind?: string | null; q?
   return entries.filter((e) => e.is.includes(kind) && (!q || (e.handle ?? '').toLowerCase().includes(q) || e.emails.some((m) => m.email.includes(q))));
 }
 
-export const PEOPLE_CSV_HEADER = ['who', 'type', 'github', 'emails', 'on_email_list', 'signed_up_for', 'builder_checks', 'country', 'first_seen', 'last_activity', 'source', 'landing_page', 'device', 'pages_viewed'];
+export const PEOPLE_CSV_HEADER = ['who', 'type', 'profile', 'emails', 'on_email_list', 'signed_up_for', 'builder_checks', 'country', 'first_seen', 'last_activity', 'source', 'landing_page', 'device', 'pages_viewed'];
 
 /** One row per entry, for the export. Attribution comes from the earliest visitor-day there is for them. */
 export function peopleCsvRows(entries: Entry[]): string[][] {
   return entries.map((e) => {
     const j = e.journeys[0];
     return [
-      e.handle ?? e.emails[0]?.email ?? '', e.type === 'account' ? 'GitHub account' : 'address only',
-      e.handle ? `https://github.com/${e.handle}` : '', e.emails.map((m) => m.email).join('; '),
+      e.handle ?? e.emails[0]?.email ?? '', e.provider ? `${providerName(e.provider)} account` : 'address only',
+      e.handle && e.provider ? profileUrl(e.provider, e.handle) : '', e.emails.map((m) => m.email).join('; '),
       e.emails.some((m) => m.subscribed) ? 'yes' : 'no', e.signedUpFor.join('; '), e.checks ?? '', e.country ?? '',
       e.firstAt, e.lastAt, j ? sourceText(j) : '', j?.landing ?? '', j?.device ?? '', j ? j.pages.map((p) => p.path).join(' > ') : '',
     ];

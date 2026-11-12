@@ -26,11 +26,11 @@ const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
   <div class="field" data-named-only>
     <label for="display_name" data-name-label>Name to show</label>
     <input class="input" id="display_name" name="display_name" required maxlength="60" value={company ? '' : handle} data-handle={handle} aria-describedby="display_name_help" />
-    <span class="help" id="display_name_help" data-name-help>Your GitHub handle is shown beside it. A name other than your GitHub handle is checked by a person before the pledge is listed.</span>
+    <span class="help" id="display_name_help" data-name-help>Your username is shown beside it. A name other than your username is checked by a person before the pledge is listed.</span>
   </div>
   <div class="field">
     <label class="tick"><input type="checkbox" name="anonymous" aria-describedby="anonymous_help" /> <span>Keep me anonymous</span></label>
-    <span class="help" id="anonymous_help">The public list shows "Anonymous" and the amount, and nothing else: no name, GitHub handle, X account or website. The organizer still sees who pledged.</span>
+    <span class="help" id="anonymous_help">The public list shows "Anonymous" and the amount, and nothing else: no name, username, X account or website. The organizer still sees who pledged.</span>
   </div>
   <div class="field" data-company-only>
     <label for="company_url">Company website <span class="muted">(optional)</span></label>
@@ -50,14 +50,14 @@ const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
     person ? (
       <button class="key key-big" type="submit">Make this pledge</button>
     ) : (
-      <SignIn next="/fund" label="Sign in with GitHub to pledge" />
+      <SignIn next="/fund" label="Sign in with GitHub to pledge" gitlab />
     )
   }
   <p class="muted small">
     A pledge is a public promise, not a payment. It is listed, never counted as money in the pool,
     and you pay when the pool opens. A new pledge replaces your earlier one. It is listed
     straight away only if it is from an individual, is {hold} or less, and is either anonymous
-    or shows your GitHub handle as the name with no X username. Any other pledge is checked
+    or shows your username as the name with no X username. Any other pledge is checked
     by a person first.
     {money.short}{' '}
     <a class="link" href="/terms">Terms</a>
@@ -81,7 +81,7 @@ const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
       form.querySelectorAll<HTMLElement>('[data-company-only]').forEach((el) => (el.hidden = !company));
       form.querySelectorAll<HTMLElement>('[data-named-only]').forEach((el) => (el.hidden = anonymous));
       if (label) label.textContent = company ? 'Company or brand name to show' : 'Name to show';
-      if (help) help.textContent = company ? 'Company pledges are checked by a person before they are listed. Your GitHub handle is shown beside the name.' : personal;
+      if (help) help.textContent = company ? 'Company pledges are checked by a person before they are listed. Your username is shown beside the name.' : personal;
       if (name) {
         name.required = !anonymous;
         // Switching kind swaps the prefilled handle out or back in, but never overwrites something typed.

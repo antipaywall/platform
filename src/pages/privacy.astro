@@ -128,21 +128,21 @@ import { site } from '../config/site';
 
     <h2>If you apply to the review panel or offer to help organize</h2>
     <p>
-      Both need a GitHub sign-in. We store what you wrote, your country as two letters, and the
+      Both need a GitHub or GitLab sign-in. We store what you wrote, your country as two letters, and the
       date, linked to your account. It is emailed to the organizer and shown on his private
-      page. What you wrote is not published. When a review panel is proposed, the GitHub
+      page. What you wrote is not published. When a review panel is proposed, the
       usernames of everyone who applied to it will be listed publicly.
     </p>
 
-    <h2>If you sign in with GitHub</h2>
+    <h2>If you sign in with GitHub or GitLab</h2>
     <ul>
-      <li>GitHub tells us your user id, username, avatar and email address. We store the id, username and avatar. The email address is added to the email list described above; the sign-in button says so before you click. It is never shown on the site.</li>
-      <li>Our sign-in provider, Supabase, keeps its own record of your sign-in: the profile GitHub returned (including your name and email address), and for each session your IP address and your browser's name, with the times you signed in.</li>
-      <li>To run the builder checks we read when your account was created and how many contributions your profile shows for the last year. We store those two facts, whether each check passed, and when it was run. The checks run again every time you sign in.</li>
+      <li>GitHub or GitLab tells us your user id, username, avatar and email address. We store the id, username and avatar. The email address is added to the email list described above; the sign-in button says so before you click. It is never shown on the site.</li>
+      <li>Our sign-in provider, Supabase, keeps its own record of your sign-in: the profile GitHub or GitLab returned (including your name and email address), and for each session your IP address and your browser's name, with the times you signed in.</li>
+      <li>To run the builder checks we read when your account was created and how many contributions your profile shows for the last year. For GitLab, the count comes from the activity calendar on your public profile page. We store those two facts, whether each check passed, and when it was run. The checks run again every time you sign in.</li>
       <li>We store your country, as two letters, from the moment you signed in.</li>
       <li>If you join as a builder we store which version of the rules you accepted, and when.</li>
       <li>Signing in sets cookies that keep you signed in. Scripts on the page cannot read them, and they are sent over a secure connection only. Signing out removes them.</li>
-      <li>We never see your private repositories. We use the access GitHub gives us during sign-in, to run the checks, and do not save it in our database.</li>
+      <li>We never see your private repositories. We use the access GitHub or GitLab gives us during sign-in, to run the checks, and do not save it in our database.</li>
     </ul>
 
     <h2>What you choose to make public</h2>
@@ -199,7 +199,7 @@ import { site } from '../config/site';
 
     <h2>Removing your data</h2>
     <p>
-      Email privacy@antipaywall.org from the address on your GitHub account, or tell us your
+      Email privacy@antipaywall.org from the address on your GitHub or GitLab account, or tell us your
       username, and we will delete your account, ideas, pledges, panel application and offer to
       help, along with the record of what you did. To leave the email list, use the link in any
       of our emails. To have an address or a sponsor inquiry erased entirely, email from that

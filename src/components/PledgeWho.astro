@@ -1,11 +1,12 @@
 ---
-// Who made a pledge. The GitHub handle is verified by sign-in and is always shown.
+// Who made a pledge. The GitHub or GitLab username is verified by sign-in and is always shown.
 // The X account and the company website are whatever the pledger typed, so the links
 // say so and carry rel="ugc nofollow".
+import { providerName } from '../lib/accounts';
 import type { Pledge } from '../lib/db';
 
 interface Props {
-  pledge: Pick<Pledge, 'display_name' | 'handle' | 'kind' | 'company_url' | 'x_handle' | 'anonymous'>;
+  pledge: Pick<Pledge, 'display_name' | 'handle' | 'provider' | 'kind' | 'company_url' | 'x_handle' | 'anonymous'>;
   /** The organizer's page: an anonymous pledge still shows who made it, marked as hidden in public. */
   organizer?: boolean;
 }
@@ -45,7 +46,7 @@ const note = 'X account given by the pledger. Not verified.';
           )
         }
         <small>
-          {p.anonymous ? 'Shown in public as Anonymous. ' : ''}{p.kind === 'company' ? 'Company, pledged by ' : ''}<span title="GitHub account, verified by sign-in">@{p.handle} on GitHub</span>
+          {p.anonymous ? 'Shown in public as Anonymous. ' : ''}{p.kind === 'company' ? 'Company, pledged by ' : ''}<span title={`${providerName(p.provider)} account, verified by sign-in`}>@{p.handle} on {providerName(p.provider)}</span>
           {p.kind === 'company' && p.company_url && <>{' '}<a href={p.company_url} rel="noopener nofollow ugc" title="Website given by the pledger. Not verified.">website</a></>}
         </small>
       </span>

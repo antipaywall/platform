@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import SignIn from '../../components/SignIn.astro';
 import { shape, site } from '../../config/site';
+import { providerName, providerOf } from '../../lib/accounts';
 import { checkEligibility } from '../../lib/eligibility';
 
 const person = Astro.locals.person;
@@ -9,7 +10,7 @@ const checked = person?.checked_at && person.account_created_at;
 const results = checked
   ? checkEligibility(
       {
-        githubId: person!.github_id, handle: person!.handle, avatarUrl: '',
+        provider: providerOf(person), accountId: Number(person!.github_id ?? person!.gitlab_id), handle: person!.handle, avatarUrl: '',
         accountCreatedAt: person!.account_created_at!,
         contributions12mo: person!.contributions_12mo ?? 0,
       },
@@ -18,19 +19,19 @@ const results = checked
   : [];
 ---
 
-<Base title="Build" description="Create your builder account with GitHub and hold your place. Free, no essay, nothing to buy.">
+<Base title="Build" description="Create your builder account with GitHub or GitLab and hold your place. Free, no essay, nothing to buy.">
   <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
   {
     !person && (
       <>
         <h1 class="page-title" style="margin-top:12px">Hold your place as a builder.</h1>
         <p class="lede">
-          Sign in with GitHub and two checks run automatically. If you pass, you count toward the
+          Sign in with GitHub or GitLab and two checks run automatically. If you pass, you count toward the
           {' '}{site.launch.buildersNeeded} or more builders the dates are waiting on. No essay, no pitch,
           no fee, and nothing to buy afterwards.
         </p>
         <div class="cols">
-          <SignIn next="/join/build" label="Join with GitHub" />
+          <SignIn next="/join/build" label="Join with GitHub" gitlab />
           <div class="card stack">
             <p class="h2">What we check</p>
             <ul class="rows">
@@ -77,7 +78,7 @@ const results = checked
                   ))}
                 </ul>
               ) : (
-                <p class="lede">GitHub did not answer when you signed in. <a class="link" href="/auth/signin?next=/join/build">Sign in again</a> to run the check.</p>
+                <p class="lede">{providerName(providerOf(person))} did not answer when you signed in. <a class="link" href={`/auth/signin?provider=${providerOf(person)}&next=/join/build`}>Sign in again</a> to run the check.</p>
               )
             }
             {

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { profileUrl } from '../lib/accounts';
 import { attempt, listBuilders } from '../lib/db';
 const builders = await attempt(listBuilders);
 const count = builders?.length ?? 0;
@@ -7,7 +8,7 @@ const count = builders?.length ?? 0;
 
 <Base title="Builders" description="Everyone who has joined as a verified builder.">
   <h1 class="page-title">{!builders ? 'Builders.' : count === 0 ? 'Be the first builder.' : count === 1 ? '1 builder so far.' : `${count} builders so far.`}</h1>
-  <p class="lede">Everyone listed here signed in with GitHub and passed the two automatic checks.</p>
+  <p class="lede">Everyone listed here signed in with GitHub or GitLab and passed the two automatic checks.</p>
   {
     !builders ? (
       <p class="empty">The list is unavailable right now.</p>
@@ -15,7 +16,7 @@ const count = builders?.length ?? 0;
       <ul class="faces">
         {builders.map((b) => (
           <li>
-            <a href={`https://github.com/${b.handle}`} rel="noopener">
+            <a href={profileUrl(b.provider, b.handle)} rel="noopener">
               {b.avatar_url && <img src={b.avatar_url} alt="" width="36" height="36" loading="lazy" />}
               <span>{b.handle}</span>
             </a>
@@ -29,7 +30,7 @@ const count = builders?.length ?? 0;
         ))}
       </ul>
     ) : (
-      <p class="empty">Nobody has joined yet. <a class="link" href="/join/build">Join with GitHub.</a></p>
+      <p class="empty">Nobody has joined yet. <a class="link" href="/join/build">Join as a builder.</a></p>
     )
   }
 </Base>

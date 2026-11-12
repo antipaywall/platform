@@ -1,5 +1,6 @@
 ---
 import AdminNav from '../../components/AdminNav.astro';
+import { profileUrl } from '../../lib/accounts';
 import Base from '../../layouts/Base.astro';
 import PledgeWho from '../../components/PledgeWho.astro';
 import SponsorForm from '../../components/SponsorForm.astro';
@@ -45,7 +46,7 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
                 <p class="h3">How they joined</p>
                 {list.sources.length ? (
                   <table class="data"><tbody>
-                    {list.sources.map((r) => <tr><th scope="row">{r.label === 'github' ? 'Signed in with GitHub' : 'Typed into the site'}</th><td class="num">{n(r.people)}</td></tr>)}
+                    {list.sources.map((r) => <tr><th scope="row">{r.label === 'github' ? 'Signed in with GitHub' : r.label === 'gitlab' ? 'Signed in with GitLab' : 'Typed into the site'}</th><td class="num">{n(r.people)}</td></tr>)}
                   </tbody></table>
                 ) : <p class="empty">Nobody yet.</p>}
               </div>
@@ -69,7 +70,7 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
       <ul class="inbox">
         {intake?.panel.map((r) => (
           <li class:list={[r.handled && 'handled']}>
-            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
+            <p class="inbox-who"><a class="link" href={profileUrl(r.provider, r.handle)} rel="noopener">@{r.handle}</a>{r.provider === 'gitlab' && <span class="muted"> on GitLab</span>} <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
             <p><strong>Why:</strong> {r.why}</p>
             <p><strong>Ties:</strong> {r.ties || 'None given'}</p>
             <form method="post" action="/api/admin/intake">
@@ -87,7 +88,7 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
       <ul class="inbox">
         {intake?.organize.map((r) => (
           <li class:list={[r.handled && 'handled']}>
-            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
+            <p class="inbox-who"><a class="link" href={profileUrl(r.provider, r.handle)} rel="noopener">@{r.handle}</a>{r.provider === 'gitlab' && <span class="muted"> on GitLab</span>} <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
             <p>{r.note}</p>
             <form method="post" action="/api/admin/intake">
               <input type="hidden" name="kind" value="organize" /><input type="hidden" name="id" value={r.person_id} />

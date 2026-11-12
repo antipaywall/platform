@@ -3,8 +3,11 @@ import { countryCode } from '../../lib/analytics';
 import { isAdmin, type Person } from '../../lib/db';
 import { checkEligibility } from '../../lib/eligibility';
 import { recordEvent } from '../../lib/events';
+import { parseProvider, providerOf } from '../../lib/accounts';
+import type { AccountFacts } from '../../lib/eligibility';
 import { fetchGithubFacts, GithubUnavailableError } from '../../lib/github';
-import { githubIdentity } from '../../lib/identity';
+import { fetchGitlabFacts, GitlabUnavailableError } from '../../lib/gitlab';
+import { accountIdentity } from '../../lib/identity';
 import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
@@ -23,37 +26,50 @@ export const GET: APIRoute = async (context) => {
   const { user, provider_token } = data.session;
 
   // Any way out that does not end in a saved person also ends the session, so nobody is
-  // left signed in without a row we wrote from GitHub's own answer.
+  // left signed in without a row we wrote from the provider's own answer.
   const giveUp = async (why: MessageCode = 'signin_failed') => {
     await supabase.auth.signOut();
     return back(next, why);
   };
 
-  // Only a GitHub sign-in counts, and the account id comes from the sign-in provider's
-  // record of what GitHub said, never from profile fields the user can edit.
-  const identity = githubIdentity(user);
+  // Which provider this sign-in went through. Our own sign-in link says; a link from before
+  // GitLab existed says nothing and was GitHub.
+  const rawProvider = url.searchParams.get('provider');
+  const provider = rawProvider === null ? 'github' : parseProvider(rawProvider);
+  if (!provider) return giveUp();
+
+  // The account id comes from the sign-in provider's record of what GitHub or GitLab said,
+  // never from profile fields the user can edit.
+  const identity = accountIdentity(user, provider);
   if (!identity) return giveUp();
-  // Without GitHub's token we cannot ask GitHub who this is, so no person is created.
+  // Without the provider's token we cannot ask who this is, so no person is created.
   if (!provider_token) return giveUp();
 
-  let facts;
+  let facts: AccountFacts;
   try {
-    facts = await fetchGithubFacts(provider_token);
+    facts = provider === 'gitlab' ? await fetchGitlabFacts(provider_token, new Date()) : await fetchGithubFacts(provider_token);
   } catch (e) {
-    if (!(e instanceof GithubUnavailableError)) throw e;
-    return giveUp('github_unavailable');
+    if (e instanceof GithubUnavailableError) return giveUp('github_unavailable');
+    if (e instanceof GitlabUnavailableError) return giveUp('gitlab_unavailable');
+    throw e;
   }
-  // GitHub's own answer must be about the same account the session says it is.
-  if (facts.githubId !== identity.githubId) return giveUp();
+  // The provider's own answer must be about the same account the session says it is.
+  if (facts.accountId !== identity.accountId) return giveUp();
+
+  // Whether this account has been here before, so a first sign-in can be told from a return.
+  const before = await db.from('people').select('verified, provider').eq('id', user.id).maybeSingle();
+  if (before.error) return giveUp();
+  // One account per person: someone who joined with one provider keeps signing in with it.
+  if (before.data && providerOf(before.data) !== provider) return giveUp(provider === 'gitlab' ? 'signin_use_github' : 'signin_use_gitlab');
 
   // Two letters from the hosting provider. Nothing finer than a country is kept.
   const country = countryCode(request.headers.get('x-vercel-ip-country'));
   const { verified, results } = checkEligibility(facts, new Date());
-  // Whether this account has been here before, so a first sign-in can be told from a return.
-  const before = await db.from('people').select('verified').eq('id', user.id).maybeSingle();
   const saved = await db.from('people').upsert({
     id: user.id,
-    github_id: facts.githubId,
+    provider,
+    github_id: provider === 'github' ? facts.accountId : null,
+    gitlab_id: provider === 'gitlab' ? facts.accountId : null,
     handle: facts.handle,
     avatar_url: facts.avatarUrl,
     country,
@@ -65,15 +81,15 @@ export const GET: APIRoute = async (context) => {
   });
   if (saved.error) return giveUp();
 
-  // Signing in joins the email list, as the sign-in button says, using the address GitHub gave.
+  // Signing in joins the email list, as the sign-in button says, using the address the provider gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.
   const email = parseEmail(identity.email);
-  const listed = email ? await addToList(db, { email, source: 'github', personId: user.id, country }) : null;
+  const listed = email ? await addToList(db, { email, source: provider, personId: user.id, country }) : null;
 
   // What happened, for the organizer's page. The organizer's own sign-ins are not tied to page views.
-  const who = { personId: user.id, organizer: isAdmin({ github_id: facts.githubId } as Person) };
-  if (!before.error && !before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
-  if (!before.error && before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
+  const who = { personId: user.id, organizer: provider === 'github' && isAdmin({ github_id: facts.accountId } as Person) };
+  if (!before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
+  if (before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
   if (listed?.status === 'new') await recordEvent(db, context, { ...who, kind: 'list_joined', subject: listed.id });
   return redirect(next);
 };

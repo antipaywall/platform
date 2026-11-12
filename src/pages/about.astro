@@ -10,9 +10,9 @@ const dollars = (n: number) => '$' + n.toLocaleString('en-US');
 const pledged = await attempt(getOrganizerPledge);
 // Built as whole strings so no number ends up glued to the word before it.
 const mine = pledged ? `I've pledged ${dollars(pledged / 100)} to the pool, from my own money.` : '';
-const checks = `You sign in with GitHub. The site reads two things from your profile and shows you each result: your account is at least ${e.minAccountAgeDays} days old, and your profile shows at least ${e.minContributions12mo} contributions in the last 12 months.`;
+const checks = `You sign in with GitHub or GitLab. The site reads two things from your profile and shows you each result: your account is at least ${e.minAccountAgeDays} days old, and your profile shows at least ${e.minContributions12mo} contributions in the last 12 months.`;
 const ideas = `Anyone signed in can post an idea for something that should be free, up to ${site.ideas.maxPerPerson} each.`;
-const held = `A pledge is listed straight away only when it is from an individual, is ${dollars(site.pledgeHold.aboveUsd)} or less, and shows the pledger's own GitHub handle. Anything else (a company, a larger amount, a different display name, an X account) is checked by a person first.`;
+const held = `A pledge is listed straight away only when it is from an individual, is ${dollars(site.pledgeHold.aboveUsd)} or less, and shows the pledger's own username. Anything else (a company, a larger amount, a different display name, an X account) is checked by a person first.`;
 ---
 
 <Base title="About" description="What Antipaywall is, who is behind it, what he is putting in, and exactly how it works.">
@@ -114,7 +114,7 @@ const held = `A pledge is listed straight away only when it is from an individua
     <h3>Pledges are not payments</h3>
     <p>
       Until the pool opens, the only thing anyone can do is pledge: a public promise of an amount.
-      Pledges are listed with the pledger's GitHub username and are never counted as money in the
+      Pledges are listed with the pledger's GitHub or GitLab username and are never counted as money in the
       pool. {held} When the pool opens, people who pledged come back and pay.
     </p>
 
@@ -129,7 +129,7 @@ const held = `A pledge is listed straight away only when it is from an individua
       Winners will be chosen by the builders. Everyone who submits an eligible entry will get
       three votes, for three different projects, none of them their own. Every ballot will be
       published, so anyone can see who voted for what. Community Choice will be the one prize
-      decided by a wider vote, open to any GitHub account that passes the same two checks.
+      decided by a wider vote, open to any GitHub or GitLab account that passes the same two checks.
       Sponsors will get no vote on any prize. I will get no vote on the main prizes, and neither
       will the review panel.
     </p>
