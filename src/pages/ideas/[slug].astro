@@ -16,6 +16,16 @@ try {
   return new Response('Ideas are unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
 }
 if (!idea) return new Response(null, { status: 404 });
+const paras = (t: string) => t.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+const writeup: [string, string][] = [
+  ['The problem', idea.problem],
+  ['What to build', idea.build],
+  ['A strong entry', idea.strong],
+];
+let sourceHost = '';
+try {
+  if (idea.sourceUrl) sourceHost = new URL(idea.sourceUrl).hostname.replace(/^www\./, '');
+} catch {}
 const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n));
 ---
 
@@ -32,6 +42,22 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
 
   <div class="cols">
     <div class="stack" style="gap:28px">
+      {
+        writeup.filter(([, text]) => text).map(([heading, text]) => (
+          <div class="stack" style="gap:8px">
+            <p class="h2">{heading}</p>
+            {paras(text).map((p) => <p>{p}</p>)}
+          </div>
+        ))
+      }
+      {
+        idea.sourceUrl && sourceHost && (
+          <p class="muted small">
+            Source for the claims above:{' '}
+            <a class="link" href={idea.sourceUrl} rel="noopener nofollow">{sourceHost}</a>
+          </p>
+        )
+      }
       {
         idea.missing && (
           <div class="stack" style="gap:8px">
@@ -52,7 +78,7 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
                 </li>
               ))}
             </ul>
-            <p class="muted small">Found by a GitHub search for this idea's name when it was posted. Builders may fork one of these or start fresh.</p>
+            <p class="muted small">Found by a GitHub search when this idea was posted. We have not reviewed them. Builders may fork one of these or start fresh.</p>
           </div>
         )
       }

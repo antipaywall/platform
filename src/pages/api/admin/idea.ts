@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { isAdmin } from '../../../lib/db';
-import { parseIdea } from '../../../lib/forms';
+import { parseIdea, parseWriteup } from '../../../lib/forms';
 import { storeIdea } from '../../../lib/postIdea';
 import { back } from '../../../lib/respond';
 import { adminClient } from '../../../lib/supabase';
@@ -13,6 +13,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
   const parsed = parseIdea({ title: form.get('title'), pitch: form.get('pitch'), missing: form.get('missing') });
   if (!parsed.ok) return back('/admin#ideas', parsed.error);
-  const { slug, code } = await storeIdea(db, parsed, null);
+  const writeup = parseWriteup({ problem: form.get('problem'), build: form.get('build'), strong: form.get('strong'), sourceUrl: form.get('source_url'), search: form.get('search') });
+  if (!writeup.ok) return back('/admin#ideas', writeup.error);
+  const { slug, code } = await storeIdea(db, parsed, null, writeup);
   return back(slug ? `/ideas/${slug}` : '/admin#ideas', code);
 };

@@ -17,6 +17,7 @@ export const MESSAGES = {
   pledge_held: { kind: 'ok', text: 'Thank you. Your pledge is saved. Because it is from a company, is a larger amount, names an X account, or shows a name other than your GitHub handle, a person checks it before it is listed.' },
   bad_title: { kind: 'error', text: 'Give the idea a name between 3 and 80 characters, with some letters or numbers.' },
   bad_pitch: { kind: 'error', text: 'Keep the description under 280 characters.' },
+  bad_writeup: { kind: 'error', text: 'Keep each part of the write-up under 1,200 characters, and the search phrase under 120.' },
   bad_missing: { kind: 'error', text: 'Keep "what is missing" under 600 characters.' },
   need_missing: { kind: 'error', text: 'Similar projects already exist. Say what they are missing, in a sentence or two.' },
   too_many_ideas: { kind: 'error', text: 'You have posted the most ideas one person can.' },

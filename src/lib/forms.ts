@@ -92,6 +92,30 @@ export function parseIdea(input: { title?: unknown; pitch?: unknown; missing?: u
   return { ok: true, title, pitch, missing, slug };
 }
 
+export type Writeup = { problem: string; build: string; strong: string; sourceUrl: string | null; search: string };
+
+/** Keeps paragraph breaks but trims each line and collapses runs of blank lines. */
+const prose = (v: unknown) =>
+  typeof v === 'string'
+    ? v.replace(/\r/g, '').split('\n').map((l) => l.trim().replace(/[ \t]+/g, ' ')).join('\n').replace(/\n{3,}/g, '\n\n').trim()
+    : '';
+
+/**
+ * Validates the longer write-up the organizer can give a platform idea: the problem, what to
+ * build, and what a strong entry does. Any claim about another product should carry a source
+ * link, which must be https. `search` is the phrase to search GitHub with, when the idea's
+ * name alone would not find the existing projects.
+ */
+export function parseWriteup(input: { problem?: unknown; build?: unknown; strong?: unknown; sourceUrl?: unknown; search?: unknown }): Ok<Writeup> | Bad {
+  const problem = prose(input.problem), build = prose(input.build), strong = prose(input.strong);
+  if (problem.length > 1200 || build.length > 1200 || strong.length > 1200) return { ok: false, error: 'bad_writeup' };
+  const link = httpsLink(input.sourceUrl);
+  if (link === false) return { ok: false, error: 'bad_site' };
+  const search = clean(input.search);
+  if (search.length > 120) return { ok: false, error: 'bad_writeup' };
+  return { ok: true, problem, build, strong, sourceUrl: link, search };
+}
+
 /** Validates the optional profile fields on the join form. Both are shown publicly, so the site link must be https and short. */
 export function parseProfile(input: { xHandle?: unknown; siteUrl?: unknown }): Ok<{ xHandle: string | null; siteUrl: string | null }> | Bad {
   const x = parseXHandle(input.xHandle);

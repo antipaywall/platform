@@ -285,6 +285,28 @@ const tables: [string, Row[] | undefined, string][] = [
           <label for="pi_missing">What is missing today <span class="muted">(optional)</span></label>
           <textarea class="input" id="pi_missing" name="missing" maxlength="600" rows="3"></textarea>
         </div>
+        <div class="field">
+          <label for="pi_problem">The problem <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_problem" name="problem" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_build">What to build <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_build" name="build" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_strong">A strong entry <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_strong" name="strong" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_source">Source link <span class="muted">(optional, https)</span></label>
+          <input class="input" id="pi_source" name="source_url" type="url" maxlength="300" autocomplete="off" />
+          <span class="help">Needed if the write-up says anything about another product's prices or terms.</span>
+        </div>
+        <div class="field">
+          <label for="pi_search">Search GitHub for <span class="muted">(optional)</span></label>
+          <input class="input" id="pi_search" name="search" maxlength="120" autocomplete="off" />
+          <span class="help">The phrase used to find existing projects. Left blank, the idea's name is used.</span>
+        </div>
         <button class="key" type="submit" style="justify-self:start">Post as Antipaywall</button>
       </form>
     </section>
