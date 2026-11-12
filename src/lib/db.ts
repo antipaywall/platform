@@ -29,6 +29,12 @@ export type Idea = {
   /** Posted by the platform itself, with no personal author. */
   byPlatform: boolean;
   hearts: number;
+  /** The longer write-up, each part optional. */
+  problem: string;
+  build: string;
+  strong: string;
+  /** A source for any claim the write-up makes about another product. Always https. */
+  sourceUrl: string | null;
 };
 
 export type Pledge = {
@@ -66,6 +72,8 @@ const toIdea = (i: any): Idea => ({
   id: i.id, slug: i.slug, title: i.title, pitch: i.pitch, missing: i.missing,
   existing_repos: i.existing_repos ?? [], created_at: i.created_at, author: i.author,
   byPlatform: i.by_platform === true, hearts: i.hearts,
+  problem: i.problem ?? '', build: i.build ?? '', strong: i.strong ?? '',
+  sourceUrl: typeof i.source_url === 'string' && i.source_url.startsWith('https://') ? i.source_url : null,
 });
 
 /** Listed ideas, most-hearted first, then newest. Heart counts are computed in the database. */
