@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { httpsLink, parseIdea, parsePledge, parseProfile, parseXHandle, slugify } from '../src/lib/forms';
+import { publicPledge } from '../src/lib/db';
 
 describe('parsePledge', () => {
-  const p = (amount: string, displayName = 'Ada') => parsePledge({ amount, displayName, githubHandle: 'ada' });
+  const p = (amount: string, displayName = 'Ada') => parsePledge({ email: 'ada@example.com', amount, displayName, githubHandle: 'ada' });
   it.each(['abc', '0', '-5', '10.999', '1e9', '', '0.50', '99999999'])('rejects %s', (a) => {
     expect(p(a).ok).toBe(false);
   });
@@ -84,26 +85,26 @@ describe('parseXHandle', () => {
 
 describe('parsePledge: who is pledging', () => {
   it('defaults to an individual and ignores a website from one', () => {
-    expect(parsePledge({ amount: '25', displayName: 'Ada', companyUrl: 'https://example.com', githubHandle: 'ada' })).toMatchObject({ kind: 'individual', companyUrl: null, xHandle: null, status: 'listed' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '25', displayName: 'Ada', companyUrl: 'https://example.com', githubHandle: 'ada' })).toMatchObject({ kind: 'individual', companyUrl: null, xHandle: null, status: 'listed' });
   });
   it('holds every company pledge for a manual check, whatever the amount', () => {
-    expect(parsePledge({ amount: '5', displayName: 'Acme', kind: 'company', githubHandle: 'ada' })).toMatchObject({ kind: 'company', status: 'held' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '5', displayName: 'Acme', kind: 'company', githubHandle: 'ada' })).toMatchObject({ kind: 'company', status: 'held' });
   });
   it('keeps the X username and an https website for a company', () => {
-    expect(parsePledge({ amount: '500', displayName: 'Acme', kind: 'company', companyUrl: 'https://acme.example/', xHandle: '@acme', githubHandle: 'ada' })).toMatchObject({ companyUrl: 'https://acme.example/', xHandle: 'acme' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '500', displayName: 'Acme', kind: 'company', companyUrl: 'https://acme.example/', xHandle: '@acme', githubHandle: 'ada' })).toMatchObject({ companyUrl: 'https://acme.example/', xHandle: 'acme' });
   });
   it('refuses a website that is not https, and a bad X username', () => {
-    expect(parsePledge({ amount: '5', displayName: 'Acme', kind: 'company', companyUrl: 'http://acme.example', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_site' });
-    expect(parsePledge({ amount: '5', displayName: 'Acme', kind: 'company', companyUrl: 'javascript:alert(1)', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_site' });
-    expect(parsePledge({ amount: '5', displayName: 'Ada', xHandle: 'not a name', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_x' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '5', displayName: 'Acme', kind: 'company', companyUrl: 'http://acme.example', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_site' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '5', displayName: 'Acme', kind: 'company', companyUrl: 'javascript:alert(1)', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_site' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '5', displayName: 'Ada', xHandle: 'not a name', githubHandle: 'ada' })).toEqual({ ok: false, error: 'bad_x' });
   });
   it('treats any unknown kind as an individual', () => {
-    expect(parsePledge({ amount: '5', displayName: 'Ada', kind: 'admin', githubHandle: 'ada' })).toMatchObject({ kind: 'individual' });
+    expect(parsePledge({ email: 'ada@example.com', amount: '5', displayName: 'Ada', kind: 'admin', githubHandle: 'ada' })).toMatchObject({ kind: 'individual' });
   });
 });
 
 describe('parsePledge: what waits for a person to check it', () => {
-  const base = { amount: '25', displayName: 'ada', githubHandle: 'ada' };
+  const base = { amount: '25', displayName: 'ada', githubHandle: 'ada', email: 'ada@example.com' };
   it('lists a small pledge from an individual under their own GitHub handle straight away', () => {
     expect(parsePledge(base)).toMatchObject({ status: 'listed', holdReasons: [] });
   });
@@ -119,7 +120,7 @@ describe('parsePledge: what waits for a person to check it', () => {
     expect(parsePledge({ ...base, xHandle: '@elonmusk' })).toMatchObject({ status: 'held', holdReasons: ['x_account'] });
   });
   it('gives every reason that applies', () => {
-    expect(parsePledge({ amount: '5000', displayName: 'Acme', kind: 'company', xHandle: 'acme', githubHandle: 'ada' })).toMatchObject({
+    expect(parsePledge({ email: 'ada@example.com', amount: '5000', displayName: 'Acme', kind: 'company', xHandle: 'acme', githubHandle: 'ada' })).toMatchObject({
       status: 'held', holdReasons: ['company', 'amount', 'x_account', 'name'],
     });
   });
@@ -135,5 +136,36 @@ describe('httpsLink', () => {
   });
   it('accepts an https address with a real host', () => {
     expect(httpsLink(' https://example.com/logo.png ')).toBe('https://example.com/logo.png');
+  });
+});
+
+describe('parsePledge: reaching the pledger, and staying anonymous', () => {
+  const base = { amount: '25', displayName: 'ada', githubHandle: 'ada', email: 'Ada@Example.com' };
+  it('requires an email address and stores it lowercased', () => {
+    expect(parsePledge(base)).toMatchObject({ email: 'ada@example.com', anonymous: false });
+    expect(parsePledge({ ...base, email: '' })).toEqual({ ok: false, error: 'need_email' });
+    expect(parsePledge({ ...base, email: undefined })).toEqual({ ok: false, error: 'need_email' });
+    expect(parsePledge({ ...base, email: 'not an address' })).toEqual({ ok: false, error: 'need_email' });
+  });
+  it('shows an anonymous pledge as "Anonymous" whatever name was typed, and needs no name', () => {
+    expect(parsePledge({ ...base, anonymous: 'on', displayName: 'Stripe' })).toMatchObject({ displayName: 'Anonymous', anonymous: true, status: 'listed', holdReasons: [] });
+    expect(parsePledge({ ...base, anonymous: 'on', displayName: '' })).toMatchObject({ displayName: 'Anonymous', anonymous: true });
+  });
+  it('does not hold an anonymous pledge for an X account nobody will see, but still holds a company or a large amount', () => {
+    expect(parsePledge({ ...base, anonymous: 'on', xHandle: '@ada' })).toMatchObject({ status: 'listed', xHandle: 'ada' });
+    expect(parsePledge({ ...base, anonymous: 'on', kind: 'company' })).toMatchObject({ status: 'held', holdReasons: ['company'] });
+    expect(parsePledge({ ...base, anonymous: 'on', amount: '100000' })).toMatchObject({ status: 'held' });
+  });
+  it('treats an unticked box as not anonymous', () => {
+    expect(parsePledge({ ...base, anonymous: null })).toMatchObject({ anonymous: false });
+  });
+});
+
+describe('publicPledge', () => {
+  const row = { id: '1', display_name: 'Anonymous', handle: 'ada', amount_cents: 500, status: 'listed', created_at: '', kind: 'company' as const, company_url: 'https://acme.example/', x_handle: 'ada', anonymous: true, email: 'ada@example.com' };
+  it('blanks everything that identifies an anonymous pledger and never passes an email on', () => {
+    expect(publicPledge(row)).toEqual({ id: '1', display_name: 'Anonymous', handle: '', amount_cents: 500, status: 'listed', created_at: '', kind: 'company', company_url: null, x_handle: null, anonymous: true });
+    expect(publicPledge({ ...row, anonymous: false })).not.toHaveProperty('email');
+    expect(publicPledge({ ...row, anonymous: false })).toMatchObject({ handle: 'ada', x_handle: 'ada' });
   });
 });

@@ -239,6 +239,22 @@
   display: grid;
   gap: 6px;
 }
+/* `display: grid` would otherwise beat the hidden attribute and leave the field on screen. */
+.field[hidden] {
+  display: none;
+}
+.field .tick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.field .tick input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--ink);
+  flex: none;
+}
 .field label,
 .field .label {
   font-weight: 700;

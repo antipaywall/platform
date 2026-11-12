@@ -1,4 +1,5 @@
 import { site } from '../config/site';
+import { parseEmail } from './intake';
 
 type Ok<T> = { ok: true } & T;
 type Bad = { ok: false; error: import('./respond').MessageCode };
@@ -46,13 +47,24 @@ export type HoldReason = 'company' | 'amount' | 'x_account' | 'name';
  * shown is the pledger's own GitHub handle. A company name, an X account or any other display
  * name can be typed by anyone, so each of those waits for a person to check it.
  */
-export function parsePledge(input: { amount?: unknown; displayName?: unknown; kind?: unknown; companyUrl?: unknown; xHandle?: unknown; githubHandle: string }): Ok<{ amountCents: number; displayName: string; status: 'listed' | 'held'; holdReasons: HoldReason[]; kind: PledgeKind; companyUrl: string | null; xHandle: string | null }> | Bad {
+/** What the public list shows in place of a name when a pledger asks not to be named. */
+export const ANONYMOUS_NAME = 'Anonymous';
+
+/**
+ * Validates a pledge. An email address is required so the organizer can reach the pledger
+ * when the pool opens; it is never shown. An anonymous pledge shows no name, handle, X
+ * account or website in public, so none of those is a reason to hold it.
+ */
+export function parsePledge(input: { amount?: unknown; displayName?: unknown; kind?: unknown; companyUrl?: unknown; xHandle?: unknown; email?: unknown; anonymous?: unknown; githubHandle: string }): Ok<{ amountCents: number; displayName: string; status: 'listed' | 'held'; holdReasons: HoldReason[]; kind: PledgeKind; companyUrl: string | null; xHandle: string | null; email: string; anonymous: boolean }> | Bad {
   const raw = clean(input.amount).replace(/^\$/, '').replace(/,/g, '');
   if (!/^\d{1,7}(\.\d{1,2})?$/.test(raw)) return { ok: false, error: 'bad_amount' };
   const amountCents = Math.round(parseFloat(raw) * 100);
   if (amountCents < 100) return { ok: false, error: 'bad_amount' };
-  const displayName = clean(input.displayName);
+  const anonymous = input.anonymous === true || input.anonymous === 'on' || input.anonymous === 'true';
+  const displayName = anonymous ? ANONYMOUS_NAME : clean(input.displayName);
   if (displayName.length < 1 || displayName.length > 60) return { ok: false, error: 'bad_name' };
+  const email = parseEmail(input.email);
+  if (!email) return { ok: false, error: 'need_email' };
   const kind: PledgeKind = input.kind === 'company' ? 'company' : 'individual';
 
   const link = kind === 'company' ? httpsLink(input.companyUrl) : null;
@@ -64,10 +76,10 @@ export function parsePledge(input: { amount?: unknown; displayName?: unknown; ki
   const holdReasons: HoldReason[] = [
     ...(kind === 'company' ? (['company'] as const) : []),
     ...(amountCents > site.pledgeHold.aboveUsd * 100 ? (['amount'] as const) : []),
-    ...(x.handle ? (['x_account'] as const) : []),
-    ...(sameName ? [] : (['name'] as const)),
+    ...(x.handle && !anonymous ? (['x_account'] as const) : []),
+    ...(sameName || anonymous ? [] : (['name'] as const)),
   ];
-  return { ok: true, amountCents, displayName, status: holdReasons.length ? 'held' : 'listed', holdReasons, kind, companyUrl: link, xHandle: x.handle };
+  return { ok: true, amountCents, displayName, status: holdReasons.length ? 'held' : 'listed', holdReasons, kind, companyUrl: link, xHandle: x.handle, email, anonymous };
 }
 
 export function slugify(title: string): string {

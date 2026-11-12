@@ -10,8 +10,8 @@ import { attempt, getListSummary, isAdmin, listIdeas, listIntake, listPledges, l
 if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
 
 const [held, listed, ideas, sponsors, list, intake] = await Promise.all([
-  listPledges({ statuses: ['held'], limit: 200 }),
-  listPledges({ limit: 200 }),
+  listPledges({ statuses: ['held'], limit: 200, contact: true }),
+  listPledges({ limit: 200, contact: true }),
   listIdeas(500),
   listSponsors(true),
   attempt(getListSummary),
@@ -122,7 +122,10 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
       <ul class="rows">
         {held.map((p) => (
           <li>
-            <PledgeWho pledge={p} />
+            <span class="stack" style="gap:4px">
+              <PledgeWho pledge={p} organizer />
+              <small class="muted">{p.email ? <a class="link" href={`mailto:${p.email}`}>{p.email}</a> : 'No email: pledged before one was asked for'}</small>
+            </span>
             <form method="post" action="/api/admin/moderate" class="row-actions">
               <span class="amt num">{usd(p.amount_cents)}</span>
               <input type="hidden" name="id" value={p.id} />
@@ -136,7 +139,10 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
       <ul class="rows">
         {listed.map((p) => (
           <li>
-            <PledgeWho pledge={p} />
+            <span class="stack" style="gap:4px">
+              <PledgeWho pledge={p} organizer />
+              <small class="muted">{p.email ? <a class="link" href={`mailto:${p.email}`}>{p.email}</a> : 'No email: pledged before one was asked for'}</small>
+            </span>
             <form method="post" action="/api/admin/moderate" class="row-actions">
               <span class="amt num">{usd(p.amount_cents)}</span>
               <input type="hidden" name="id" value={p.id} />

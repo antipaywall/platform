@@ -50,6 +50,10 @@ export type Pledge = {
   company_url: string | null;
   /** Typed in by the pledger. Never verified. */
   x_handle: string | null;
+  /** The pledger asked not to be named. In public lists the name, handle, X account and website are blanked. */
+  anonymous: boolean;
+  /** Only present when read for the organizer. Never sent to a public page. */
+  email?: string | null;
 };
 
 export type Stats = { balanceCents: number; syncedAt: string | null; builders: number; pledgedCents: number; ideas: number };
@@ -94,21 +98,33 @@ export async function getIdea(slug: string): Promise<Idea | null> {
   return data ? toIdea(data) : null;
 }
 
-/** Pledges to the pool, newest first. Listed ones unless other statuses are asked for. */
-export async function listPledges(opts: { statuses?: string[]; limit?: number } = {}): Promise<Pledge[]> {
+/** What a public page may know about a pledge: an anonymous one keeps only its amount, kind and date. */
+export function publicPledge(p: Pledge): Pledge {
+  const { email: _email, ...rest } = p;
+  return p.anonymous ? { ...rest, display_name: 'Anonymous', handle: '', x_handle: null, company_url: null } : rest;
+}
+
+/**
+ * Pledges to the pool, newest first. Listed ones unless other statuses are asked for.
+ * Public pages get anonymous pledges with every identifying field blanked and never get an
+ * email address. `contact: true` is for the organizer's page only.
+ */
+export async function listPledges(opts: { statuses?: string[]; limit?: number; contact?: boolean } = {}): Promise<Pledge[]> {
   const q = db()
     .from('pledges')
-    .select('id, display_name, amount_cents, status, created_at, kind, company_url, x_handle, people:person_id(handle)')
+    .select(`id, display_name, amount_cents, status, created_at, kind, company_url, x_handle, anonymous${opts.contact ? ', email' : ''}, people:person_id(handle)`)
     .in('status', opts.statuses ?? ['listed'])
     .order('created_at', { ascending: false })
     .limit(opts.limit ?? 100);
   const { data, error } = await q;
   if (error) throw new DataUnavailableError(error.message);
-  return (data ?? []).map((r: any) => ({
+  const rows: Pledge[] = (data ?? []).map((r: any) => ({
     id: r.id, display_name: r.display_name, handle: r.people?.handle ?? 'unknown',
     amount_cents: r.amount_cents, status: r.status, created_at: r.created_at,
     kind: r.kind === 'company' ? 'company' : 'individual', company_url: r.company_url ?? null, x_handle: r.x_handle ?? null,
+    anonymous: r.anonymous === true, ...(opts.contact ? { email: r.email ?? null } : {}),
   }));
+  return opts.contact ? rows : rows.map(publicPledge);
 }
 
 /** The headline numbers, counted in the database. Throws rather than report a zero it could not verify. */
