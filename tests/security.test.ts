@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { visitorHash } from '../src/lib/analytics';
-import { githubIdentity } from '../src/lib/identity';
+import { accountIdentity } from '../src/lib/identity';
 import { allowedRequest, ONE_CLICK_PATH } from '../src/lib/origin';
 import { rateKey, takeSlot } from '../src/lib/ratelimit';
 import { needsSecure } from '../src/lib/supabase';
@@ -64,25 +64,38 @@ describe('allowedRequest', () => {
   });
 });
 
-describe('githubIdentity', () => {
+describe('accountIdentity', () => {
   const github = { provider: 'github', id: 'x', identity_data: { provider_id: '583231', sub: '583231', email: 'octo@example.com' } };
+  const gitlab = { provider: 'gitlab', id: 'y', identity_data: { provider_id: '1234', sub: '1234', email: 'tanuki@example.com' } };
   it('reads the id and email from the GitHub identity record', () => {
-    expect(githubIdentity({ app_metadata: { provider: 'github' }, identities: [github] })).toEqual({ githubId: 583231, email: 'octo@example.com' });
+    expect(accountIdentity({ app_metadata: { provider: 'github' }, identities: [github] }, 'github')).toEqual({ provider: 'github', accountId: 583231, email: 'octo@example.com' });
   });
-  it('refuses a session that came from any other kind of sign-in', () => {
-    expect(githubIdentity({ app_metadata: { provider: 'email' }, identities: [github] })).toBeNull();
-    expect(githubIdentity({ app_metadata: {}, identities: [github] })).toBeNull();
-    expect(githubIdentity({ app_metadata: { provider: 'github' }, identities: [{ provider: 'email', id: '1' }] })).toBeNull();
-    expect(githubIdentity({ app_metadata: { provider: 'github' }, identities: [] })).toBeNull();
-    expect(githubIdentity({ app_metadata: { provider: 'github' }, identities: null })).toBeNull();
+  it('reads the id and email from the GitLab identity record', () => {
+    expect(accountIdentity({ app_metadata: { provider: 'gitlab', providers: ['gitlab'] }, identities: [gitlab] }, 'gitlab')).toEqual({ provider: 'gitlab', accountId: 1234, email: 'tanuki@example.com' });
+  });
+  it('reads the identity of the provider the sign-in used, not another one linked to the same session', () => {
+    const user = { app_metadata: { provider: 'github', providers: ['github', 'gitlab'] }, identities: [github, gitlab] };
+    expect(accountIdentity(user, 'gitlab')?.accountId).toBe(1234);
+    expect(accountIdentity(user, 'github')?.accountId).toBe(583231);
+  });
+  it('refuses a session with no identity record from that provider', () => {
+    expect(accountIdentity({ app_metadata: { provider: 'email' }, identities: [github] }, 'github')).toBeNull();
+    expect(accountIdentity({ app_metadata: {}, identities: [github] }, 'github')).toBeNull();
+    expect(accountIdentity({ app_metadata: { provider: 'github' }, identities: [{ provider: 'email', id: '1' }] }, 'github')).toBeNull();
+    expect(accountIdentity({ app_metadata: { provider: 'github' }, identities: [] }, 'github')).toBeNull();
+    expect(accountIdentity({ app_metadata: { provider: 'github' }, identities: null }, 'github')).toBeNull();
+    expect(accountIdentity({ app_metadata: { provider: 'github', providers: ['github'] }, identities: [github, gitlab] }, 'gitlab')).toBeNull();
+    expect(accountIdentity({ app_metadata: { provider: 'gitlab', providers: ['gitlab'] }, identities: [github] }, 'github')).toBeNull();
   });
   it('never reads profile data the signed-in user can edit', () => {
     const user = { app_metadata: { provider: 'email' }, user_metadata: { provider_id: '1', user_name: 'torvalds' }, identities: [] } as any;
-    expect(githubIdentity(user)).toBeNull();
+    expect(accountIdentity(user, 'github')).toBeNull();
+    expect(accountIdentity(user, 'gitlab')).toBeNull();
   });
   it('refuses an id that is not a positive whole number', () => {
     for (const provider_id of ['abc', '-1', '0', '1.5', '', '1e9']) {
-      expect(githubIdentity({ app_metadata: { provider: 'github' }, identities: [{ provider: 'github', id: 'abc', identity_data: { provider_id } }] })).toBeNull();
+      expect(accountIdentity({ app_metadata: { provider: 'github' }, identities: [{ provider: 'github', id: 'abc', identity_data: { provider_id } }] }, 'github')).toBeNull();
+      expect(accountIdentity({ app_metadata: { providers: ['gitlab'] }, identities: [{ provider: 'gitlab', id: 'abc', identity_data: { provider_id } }] }, 'gitlab')).toBeNull();
     }
   });
 });

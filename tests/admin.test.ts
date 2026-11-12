@@ -24,6 +24,8 @@ describe('isAdmin', () => {
   it('is false when nobody is signed in', () => {
     expect(isAdminIn(ids, null)).toBe(false);
     expect(isAdminIn(ids, undefined)).toBe(false);
+    // A GitLab account has no GitHub id, so it can never be the organizer, whatever its GitLab id is.
+    expect(isAdminIn(ids, { github_id: null })).toBe(false);
   });
   it('is false for a signed-in person who is not listed', () => {
     expect(isAdminIn(ids, person(583232))).toBe(false);
@@ -176,7 +178,7 @@ describe('the people export', () => {
     expect(res.headers.get('cache-control')).toBe('private, no-store');
     expect(res.headers.get('content-type')).toContain('text/csv');
     const csv = await res.text();
-    expect(csv.split('\r\n')[0]).toContain('"who","type","github","emails"');
+    expect(csv.split('\r\n')[0]).toContain('"who","type","profile","emails"');
     expect(csv).toContain('"ada@example.com"');
     vi.doUnmock('../src/lib/db');
   });

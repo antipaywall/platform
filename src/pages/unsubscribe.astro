@@ -34,7 +34,7 @@ if (UUID.test(token)) {
         <h1 class="page-title">Leave the email list?</h1>
         <p class="lede">
           <strong>{who}</strong> is on the Antipaywall email list. Press the button and we won't
-          email it again. Signing in with GitHub won't add it back either.
+          email it again. Signing in with GitHub or GitLab won't add it back either.
         </p>
         <form method="post" action="/api/unsubscribe" style="margin-top:28px">
           <input type="hidden" name="t" value={token} />
@@ -47,7 +47,7 @@ if (UUID.test(token)) {
     state === 'off' && (
       <>
         <h1 class="page-title">You're off the list.</h1>
-        <p class="lede">We won't email <strong>{who}</strong> again. Signing in with GitHub won't add it back either.</p>
+        <p class="lede">We won't email <strong>{who}</strong> again. Signing in with GitHub or GitLab won't add it back either.</p>
         <form method="post" action="/api/resubscribe" style="margin-top:28px">
           <input type="hidden" name="t" value={token} />
           <button class="key key-big key-milk" type="submit">That was a mistake. Put me back</button>
