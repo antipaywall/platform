@@ -43,7 +43,7 @@ const money = [
   ['Every dollar will be listed here', 'Each contribution and each payout, in public, with a link to its record.'],
 ];
 const builders = [
-  ['Join free with GitHub or GitLab', 'One click. No essay, no pitch, no fee, no upsell.'],
+  ['Join free with GitHub', 'One click. No essay, no pitch, no fee, no upsell.'],
   [`Build in public for ${site.shape.buildDays} days`, 'In a public repo under an open-source licence, so anyone can see when the work was done.'],
   ['Builders will pick the winners', 'Everyone who submits will get three votes, and every ballot will be published.'],
 ];
@@ -87,6 +87,8 @@ const compare = [
   ['Cheating review', 'Organizers may disqualify entries at their discretion, and their decisions are final', 'A named volunteer panel will review entries, publish its reasoning, and hear appeals in public'],
 ];
 
+const gh =
+  'M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z';
 ---
 
 <html lang="en">
@@ -113,7 +115,10 @@ const compare = [
             take nothing.
           </p>
           <div class="actions">
-            <a class="key key-big" href="/join/build">Join as a builder</a>
+            <a class="key key-big" href="/join/build">
+              <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d={gh}></path></svg>
+              Join with GitHub
+            </a>
             <a class="key key-big key-milk" href="/join">Other ways to join</a>
           </div>
           <div class="goal">
@@ -425,7 +430,7 @@ const compare = [
         <div class="wrap">
           <h2 class="display closer-title">Pick a paywall. Take a brick out.</h2>
           <div class="actions">
-            <a class="key key-big key-marigold" href="/join/build">Join as a builder</a>
+            <a class="key key-big key-marigold" href="/join/build">Join with GitHub</a>
             <a class="key key-big key-milk" href="/fund">Back the pool</a>
           </div>
         </div>

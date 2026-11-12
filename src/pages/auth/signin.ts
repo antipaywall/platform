@@ -13,10 +13,7 @@ export const GET: APIRoute = async ({ request, cookies, url, redirect }) => {
   if (!supabase) return back(next, 'signin_unavailable');
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: {
-      redirectTo: `${url.origin}/auth/callback?provider=${provider}&next=${encodeURIComponent(next)}`,
-      ...(provider === 'gitlab' ? { scopes: 'read_user' } : {}),
-    },
+    options: { redirectTo: `${url.origin}/auth/callback?provider=${provider}&next=${encodeURIComponent(next)}` },
   });
   if (error || !data.url) return back(next, 'signin_failed');
   return redirect(data.url);

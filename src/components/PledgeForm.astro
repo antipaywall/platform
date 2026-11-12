@@ -50,7 +50,7 @@ const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
     person ? (
       <button class="key key-big" type="submit">Make this pledge</button>
     ) : (
-      <SignIn next="/fund" label="Sign in with GitHub to pledge" />
+      <SignIn next="/fund" label="Sign in with GitHub to pledge" gitlab />
     )
   }
   <p class="muted small">
