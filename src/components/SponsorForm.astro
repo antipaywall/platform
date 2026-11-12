@@ -1,0 +1,34 @@
+---
+// The organizer's form for adding or editing one sponsor.
+import type { Sponsor } from '../lib/db';
+interface Props {
+  sponsor?: Sponsor;
+}
+const { sponsor: s } = Astro.props;
+const k = s?.id ?? 'new';
+---
+
+<form class="sponsor-form" method="post" action="/api/admin/sponsor">
+  {s && <input type="hidden" name="id" value={s.id} />}
+  <div class="field"><label for={`n-${k}`}>Name</label><input class="input" id={`n-${k}`} name="name" required maxlength="80" value={s?.name ?? ''} /></div>
+  <div class="field"><label for={`a-${k}`}>Amount (USD)</label><input class="input" id={`a-${k}`} name="amount" required inputmode="decimal" value={s ? String(s.amount_cents / 100) : ''} /></div>
+  <div class="field"><label for={`u-${k}`}>Link (https)</label><input class="input" id={`u-${k}`} name="url" type="url" value={s?.url ?? ''} /></div>
+  <div class="field"><label for={`l-${k}`}>Logo address (https)</label><input class="input" id={`l-${k}`} name="logo_url" type="url" value={s?.logo_url ?? ''} /></div>
+  <div class="field">
+    <label for={`k-${k}`}>For</label>
+    <select class="input" id={`k-${k}`} name="kind">
+      <option value="pool" selected={s?.kind !== 'bounty'}>The pool</option>
+      <option value="bounty" selected={s?.kind === 'bounty'}>A bounty</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for={`s-${k}`}>Money</label>
+    <select class="input" id={`s-${k}`} name="status">
+      <option value="pledged" selected={s?.status !== 'paid'}>Pledged, not yet paid</option>
+      <option value="paid" selected={s?.status === 'paid'}>Paid</option>
+    </select>
+  </div>
+  <div class="field wide"><label for={`o-${k}`}>Note shown under the name (optional)</label><input class="input" id={`o-${k}`} name="note" maxlength="200" value={s?.note ?? ''} /></div>
+  <label class="check wide"><input type="checkbox" name="listed" checked={s?.listed ?? false} /><span>Show on the site</span></label>
+  <button class="key wide" type="submit" name="action" value="save">{s ? 'Save changes' : 'Add sponsor'}</button>
+</form>

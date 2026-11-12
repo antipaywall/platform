@@ -1,0 +1,462 @@
+---
+import '../styles/global.css';
+import '../styles/page.css';
+import '../styles/home.css';
+import Head from '../components/Head.astro';
+import PledgeWho from '../components/PledgeWho.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Sponsors from '../components/Sponsors.astro';
+import Wall from '../components/Wall.astro';
+import { money as fee, organizerPledge, shape, site } from '../config/site';
+import { WAYS } from '../lib/ways';
+import { attempt, getOrganizerPledge, getStats, listIdeas, listPledges, listSponsors, usd as usdCents } from '../lib/db';
+
+// If the database can't be read, the page says so. It never shows a zero it could not verify.
+const [stats, recent, sponsors, organizer] = await Promise.all([
+  attempt(getStats),
+  attempt(() => listPledges({ limit: 5 })),
+  attempt(() => listSponsors()),
+  attempt(getOrganizerPledge),
+]);
+const show = (n: number | undefined, f: (n: number) => string) => (n === undefined ? 'unavailable' : f(n));
+// The headline figure: what is pledged while the pool is closed, what is held once it opens.
+const headline = stats ? usdCents(site.collective.pending ? stats.pledgedCents : stats.balanceCents) : '';
+// Real ideas for the wall. If they can't be read, the wall just shows generic kinds of tools.
+const wallIdeas = ((await attempt(() => listIdeas(12))) ?? []).map((i) => ({ slug: i.slug, title: i.title, hearts: i.hearts }));
+
+const need = site.launch.buildersNeeded;
+
+const pending = site.collective.pending;
+
+// The shape of the event. The dates are announced once the two conditions below are met.
+const timeline = [
+  { when: 'Now', what: 'Join, post and heart ideas, pledge to the pool', paint: 'p5' },
+  { when: `${site.shape.buildDays} days`, what: 'Build week, in public repos', paint: 'p3' },
+  { when: `${site.shape.votingDays} days`, what: 'Builders vote, every ballot published', paint: 'p2' },
+  { when: 'Day after', what: 'Winners announced, then paid in public', paint: 'p1' },
+];
+
+const money = [
+  ['Anyone can fund it', pending ? 'Any amount. Today that means a public pledge; payments open once the holder is confirmed.' : `Any amount, on Open Collective. ${fee.short}`],
+  [pending ? 'An independent nonprofit will hold it' : 'An independent nonprofit holds it', pending ? fee.holder : `${site.collective.host} holds the pool. Antipaywall never touches it and never takes a cut.`],
+  ['Every dollar will be listed here', 'Each contribution and each payout, in public, with a link to its record.'],
+];
+const builders = [
+  ['Join free with GitHub', 'One click. No essay, no pitch, no fee, no upsell.'],
+  [`Build in public for ${site.shape.buildDays} days`, 'In a public repo under an open-source licence, so anyone can see when the work was done.'],
+  ['Builders will pick the winners', 'Everyone who submits will get three votes, and every ballot will be published.'],
+];
+
+// What we believe. These are opinions, and the copy says so: each one starts from "we think".
+const beliefs = [
+  ['We think software is heading toward open source.', 'AI is making software much cheaper to build, and we think that pushes most of it toward being open. That does not stop anyone building a paid layer on top.'],
+  ['We think you should give people the thing itself.', 'If you believe something is valuable, hand the community the real thing. If it really is valuable, the demand will show, and a business can still grow from it.'],
+  ['So this is not a race to ship something to sell.', 'It is a week to make something people can use, read, fork and keep.'],
+];
+
+const ideaSteps = [
+  ['Post it', 'Name the thing you wish was free. We show you what already exists, so you can say what is missing.'],
+  ['Heart it', 'One tap, no account. The most-wanted ideas rise to the top.'],
+  ['Build it', 'Builders see what people are asking for before they choose what to make.'],
+];
+
+const split = [
+  { label: '1st', pct: 30, paint: 'p1' },
+  { label: '2nd', pct: 18, paint: 'p2' },
+  { label: '3rd', pct: 12, paint: 'p3' },
+  { label: '4th', pct: 6, paint: 'p4' },
+  { label: '5th', pct: 6, paint: 'p4' },
+  { label: '6th', pct: 6, paint: 'p4' },
+  { label: '7th', pct: 6, paint: 'p4' },
+  { label: '8th', pct: 6, paint: 'p4' },
+  { label: 'Community Choice', pct: 10, paint: 'p6' },
+];
+
+// The other hackathon is named only in this table.
+const other = 'Ship or Die $100K Hackathon';
+const compare = [
+  ['Goal', 'Most profit in 30 days', 'Build a free, open-source version of something people overpay for'],
+  ['Length', '30 days', '7 days to build, 3 days to vote'],
+  ['Entry', 'Free', 'Free, always'],
+  ['Prize money', 'Provided and paid by the sponsor, directly to the winners', 'Funded by the community and sponsors. An independent nonprofit will hold it; the organizer never will, and takes nothing'],
+  ['Who picks winners', 'Most verified profit wins. The organizers verify it, and their decisions are final', 'The builders who submit will vote in public, and every ballot will be published'],
+  ['Checking when the work was done', "Reviewed by hand, including the domain's history on the Wayback Machine", 'Work will happen in a public repo, so the commit history shows when it was done'],
+  ['Rules', 'Can be updated to fix mistakes or close loopholes; changes are announced', 'Published on this site, with every change listed and dated'],
+  ['Prizes', '$100,000 for 1st, a phone for 2nd, a laptop for 3rd', 'The pool will be split across 9 winners'],
+  ['Cheating review', 'Organizers may disqualify entries at their discretion, and their decisions are final', 'A named volunteer panel will review entries, publish its reasoning, and hear appeals in public'],
+];
+
+const gh =
+  'M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z';
+---
+
+<html lang="en">
+  <head>
+    <Head
+      title={`${site.name}: the open-source hackathon owned by its builders`}
+      description="A free, one-week open-source hackathon owned by its builders. The community funds the prize pool and the builders pick the winners in public."
+    />
+    {/* A tiny file of our own, loaded before the page is drawn. See public/wall-boot.js. */}
+    <script is:inline src="/wall-boot.js"></script>
+  </head>
+  <body>
+    <SiteHeader />
+    <section class="hero">
+      <Wall ideas={wallIdeas} />
+
+      <div class="wrap hero-body">
+        <div class="hero-content" data-clear>
+          <p class="chip"><span class="pulse"></span>Free to enter. Dates announced once {need}+ builders are in.</p>
+          <h1 class="display hero-title">The open-source hackathon owned by its builders.</h1>
+          <p class="lede hero-lede">
+            Free to enter, one week to build. The community funds the prize pool, an independent
+            nonprofit will hold it, and the builders will pick the winners by public vote. We
+            take nothing.
+          </p>
+          <div class="actions">
+            <a class="key key-big" href="/join/build">
+              <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d={gh}></path></svg>
+              Join with GitHub
+            </a>
+            <a class="key key-big key-milk" href="/join">Other ways to join</a>
+          </div>
+          <div class="goal">
+            {
+              stats ? (
+                <>
+                  <p class="goal-n num"><strong>{stats.builders}</strong> of {need}+ builders joined</p>
+                  <div class="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(stats.builders, need)} aria-label="Builders joined">
+                    <span style={`width:${Math.min(100, (stats.builders / need) * 100)}%`}></span>
+                  </div>
+                </>
+              ) : (
+                <p class="goal-n">The builder count is unavailable right now.</p>
+              )
+            }
+            <p class="goal-note">
+              {shape.when}
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="hint chip" aria-hidden="true">Each brick is something people pay monthly for. Knock one out.{wallIdeas.length > 0 && ' The bold ones are real ideas.'}</p>
+    </section>
+
+    <main>
+      <section class="when" aria-label="How it runs">
+        <ol class="wrap when-row">
+          {
+            timeline.map((t) => (
+              <li class={t.paint}>
+                <span class="when-date">{t.when}</span>
+                <span class="when-what">{t.what}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="wrap conds">
+          <p class="conds-t">The dates are announced once both are true:</p>
+          <ul>
+            <li class:list={[stats && stats.builders >= need && 'met']}>
+              <span class="box" aria-hidden="true"></span>
+              {need}+ builders have joined{stats ? ` (${stats.builders} so far)` : ''}
+            </li>
+            <li class:list={[!pending && 'met']}>
+              <span class="box" aria-hidden="true"></span>
+              An independent third party is holding the pool ({pending ? 'not yet' : 'done'})
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="ask" aria-labelledby="ask-h">
+        <div class="wrap">
+          <div class="split-head">
+            <h2 id="ask-h" class="section-title">It needs people. Here is how to help.</h2>
+            <p class="lede">
+              This is happening, and the dates are announced as soon as enough builders are in.
+              It needs builders, a few people to help run it fairly, and sponsors. Pick whatever
+              fits. Following along counts.
+            </p>
+          </div>
+          <ul class="ask-row">
+            {
+              WAYS.map((w) => (
+                <li>
+                  <a class={`ask-key ${w.paint}`} href={w.href}>
+                    <strong>{w.label}</strong>
+                    <span>{w.blurb}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section class="pool" aria-labelledby="pool-h">
+        <div class="wrap pool-grid">
+          <div class="pool-left">
+            <h2 id="pool-h" class="section-title">Every dollar, out in the open.</h2>
+            <p class="lede">
+              The prize pool is whatever the community puts in. These figures are counted from
+              what people enter on this site, each time the page loads. Once the pool opens, its
+              total will be read from the holder's public ledger. A pledge is a public promise,
+              not a payment.
+            </p>
+            {stats && <div class="figure-box total"><p class="figure num" style={`--chars:${headline.length}`}>{headline}</p></div>}
+            <p class:list={["total-l", !stats && "total-off"]}>{stats ? (pending ? "pledged so far" : "in the pool right now") : "The numbers are unavailable right now. Nothing has been lost."}</p>
+            <dl class="mini">
+              <div><dt>Builders joined</dt><dd class="num">{show(stats?.builders, String)}</dd></div>
+              {
+                pending ? (
+                  <div><dt>Paid in so far</dt><dd class="num">$0. The pool is not open for payments yet</dd></div>
+                ) : (
+                  <div><dt>Pledged, not yet paid</dt><dd class="num">{show(stats?.pledgedCents, usdCents)}</dd></div>
+                )
+              }
+              {
+                organizer ? (
+                  <div>
+                    <dt>Organizer's pledge</dt>
+                    <dd class="num">{organizerPledge(organizer)}</dd>
+                  </div>
+                ) : null
+              }
+            </dl>
+          </div>
+
+          <div class="ledger" role="region" aria-label="Pledges">
+            <div class="ledger-head">
+              <p>Pledges</p>
+              <p class="ledger-live"><span class="pulse"></span>Promises, not payments</p>
+            </div>
+            <div class="ledger-cols" aria-hidden="true">
+              <span>From</span><span></span><span>Amount</span>
+            </div>
+            {
+              recent && recent.length ? (
+                <ul class="ledger-list">
+                  {recent.map((p) => (
+                    <li>
+                      <PledgeWho pledge={p} />
+                      <span class="tag-pledge">pledged</span>
+                      <span class="amt num">{usdCents(p.amount_cents)}</span>
+                    </li>
+                  ))}
+                  <li class="ledger-more"><a href="/pool">See everything</a><a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a></li>
+                </ul>
+              ) : (
+                <>
+                  <ul class="ledger-rows" aria-hidden="true">
+                    {[1, 2, 3, 4, 5].map((i) => <li><span class={`dot p${i}`}></span><span></span><span></span><span></span></li>)}
+                  </ul>
+                  <div class="ledger-empty">
+                    <p class="ledger-empty-t">The first line is open.</p>
+                    <p>
+                      {pending
+                        ? 'The pool is not open for payments yet. Until it is, you can pledge. Pledges are listed publicly and never counted as money in the pool.'
+                        : 'Pledges are public promises. They are listed here and never counted as money in the pool.'}
+                    </p>
+                    <a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a>
+                  </div>
+                </>
+              )
+            }
+            <p class="ledger-foot">
+              {fee.none} <a href="/pool">Who will hold the money</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="why" aria-labelledby="why-h">
+        <div class="wrap why-grid">
+          <div class="why-brief">
+            <h2 id="why-h" class="section-title">Build the free version of something people overpay for.</h2>
+            <p class="lede">
+              That is the whole brief. Pick something people would otherwise pay for and build the
+              free, open-source version. You get {shape.build}, and one feature of a bigger product
+              is a fair scope.
+            </p>
+            <div class="actions">
+              <a class="key key-big" href="/rules">Read the rules</a>
+              <a class="key key-big key-milk" href="/ideas">See what people want built</a>
+            </div>
+          </div>
+          <div class="why-beliefs">
+            <h3>Why we are doing it this way</h3>
+            <ul>
+              {
+                beliefs.map(([t, d], i) => (
+                  <li class={`p${[4, 3, 2][i]}`}>
+                    <strong>{t}</strong>
+                    <span>{d}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="sponsors" aria-labelledby="sponsors-h">
+        <div class="wrap">
+          <h2 id="sponsors-h" class="section-title">{sponsors && sponsors.length ? 'Sponsors.' : 'Sponsor spots are open.'}</h2>
+          <p class="lede">
+            Sponsors put money into the same public pool as everyone else, or put up a bounty for
+            one thing they want built. They get their name here. They get no say in the main prizes.
+          </p>
+          <Sponsors sponsors={sponsors} />
+        </div>
+      </section>
+
+      <section class="ideas" aria-labelledby="ideas-h">
+        <div class="wrap ideas-grid">
+          <div>
+            <h2 id="ideas-h" class="section-title">Wish something was free? Say so.</h2>
+            <p class="lede">
+              Ideas tell builders what people actually want. Post one, or heart the ones you would
+              use. They carry no money and no prize of their own.
+            </p>
+            <div class="actions">
+              <a class="key key-big key-tomato" href="/ideas">Post an idea</a>
+              <a class="key key-big key-milk" href="/ideas">See what people want</a>
+            </div>
+          </div>
+          <ol class="idea-steps">
+            {
+              ideaSteps.map(([t, d], i) => (
+                <li class={`p${[5, 3, 2][i]}`}>
+                  <strong>{t}</strong>
+                  <span>{d}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </section>
+
+      <section class="how" aria-labelledby="how-h">
+        <div class="wrap">
+          <h2 id="how-h" class="section-title">Two lanes. They only meet at the payout.</h2>
+          <div class="lanes">
+            <div class="lane p3">
+              <h3>The money</h3>
+              <ol>
+                {money.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
+              </ol>
+            </div>
+            <div class="lane p6">
+              <h3>The builders</h3>
+              <ol>
+                {builders.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
+              </ol>
+            </div>
+          </div>
+          <svg class="join" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path class="j1" d="M25 0 C25 12, 50 8, 50 20"></path>
+            <path class="j2" d="M75 0 C75 12, 50 8, 50 20"></path>
+          </svg>
+          <div class="meet">
+            <div class="meet-step">
+              <strong>A named panel will check for cheating</strong>
+              <span>Volunteers will review the top entries and anything flagged. They won't rank anyone, and their reasoning will be published.</span>
+            </div>
+            <div class="meet-step meet-pay">
+              <strong>Winners will be paid</strong>
+              <span>Straight from the pool by its holder, with every payout public.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="split" aria-labelledby="split-h">
+        <div class="wrap">
+          <div class="split-head">
+            <h2 id="split-h" class="section-title">Nine winners, not one.</h2>
+            <p class="lede">
+              Prizes are shares of whatever the pool reaches, as set out in the rules.
+            </p>
+          </div>
+          <ul class="bar" aria-label="Prize split" data-grow>
+            {
+              split.map((s, i) => (
+                <li style={`--p-pct:${s.pct};--i:${i}`} class={s.paint}>
+                  <span class="bar-pct num">{s.pct}<i>%</i></span>
+                  <span class="bar-label">{s.label}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section class="compare" aria-labelledby="cmp-h">
+        <div class="wrap">
+          <h2 id="cmp-h" class="section-title">Side by side.</h2>
+          <p class="lede">
+            Another hackathon is running this month. Here is how the two are set up. Its column
+            is taken from <a class="link" href="https://www.ship-or-die.com/100k-hackathon/rules" rel="noopener">its published rules</a>{' '}
+            as we read them on November 11, 2026; ours describes how this one will run. Pick the
+            one that suits you, or enter both. If we got something wrong, tell us and we will
+            fix it.
+          </p>
+          <table role="table">
+            <thead role="rowgroup">
+              <tr role="row">
+                <td role="cell"></td>
+                <th role="columnheader" scope="col">{other}</th>
+                <th role="columnheader" scope="col" class="ours">{site.name}</th>
+              </tr>
+            </thead>
+            <tbody role="rowgroup">
+              {
+                compare.map(([k, a, b]) => (
+                  <tr role="row">
+                    <th role="rowheader" scope="row">{k}</th>
+                    <td role="cell"><span class="cell-label" aria-hidden="true">{other}</span>{a}</td>
+                    <td role="cell" class="ours"><span class="cell-label" aria-hidden="true">{site.name}</span>{b}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="closer">
+        <div class="wrap">
+          <h2 class="display closer-title">Pick a paywall. Take a brick out.</h2>
+          <div class="actions">
+            <a class="key key-big key-marigold" href="/join/build">Join with GitHub</a>
+            <a class="key key-big key-milk" href="/fund">Back the pool</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <SiteFooter />
+      <p class="foot-mark" aria-hidden="true"><span>anti</span>paywall</p>
+    </footer>
+
+    <script>
+      // The prize bars rise once, when they scroll into view.
+      const bar = document.querySelector('[data-grow]');
+      if (bar && 'IntersectionObserver' in window) {
+        bar.classList.add('wait');
+        new IntersectionObserver(
+          (entries, io) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              bar.classList.remove('wait');
+              io.disconnect();
+            }
+          },
+          { threshold: 0.35 },
+        ).observe(bar);
+      }
+    </script>
+  </body>
+</html>

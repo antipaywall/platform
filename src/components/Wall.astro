@@ -1,0 +1,398 @@
+---
+// The paywall, as a wall. It covers the hero on load, then the bricks in front
+// of the content fall away. The rest can be knocked out by hand; each leaves
+// an open, free slot behind. No brands and no prices: only kinds of tools.
+// Without JavaScript the wall is simply not drawn.
+//
+// Real ideas people have posted take the slots nearest the headline: their bricks
+// always come loose, and the slot behind links to the idea and shows its hearts.
+// The rest of the wall is filled with generic kinds of tools.
+interface Props {
+  ideas?: { slug: string; title: string; hearts: number }[];
+}
+const { ideas = [] } = Astro.props;
+---
+
+<div class="wall" data-wall data-ideas={JSON.stringify(ideas)} aria-hidden="true"></div>
+
+<script>
+  const NAMES = [
+    'Screen recorder', 'Form builder', 'PDF editor', 'Scheduling links', 'Background remover',
+    'Uptime monitor', 'Invoice maker', 'Link in bio', 'Transcription', 'Social scheduler',
+    'Survey tool', 'Diagram maker', 'Status page', 'Resume builder', 'Mockup tool',
+    'Web analytics', 'Email signatures', 'Video trimmer', 'Changelog page', 'Waitlist page',
+    'QR codes', 'Feedback board', 'Time tracker', 'Colour palettes', 'Subtitle maker',
+    'Font pairing', 'Meeting notes', 'Image upscaler', 'Habit tracker', 'Contract signing',
+    'Newsletter tool', 'Screenshot editor', 'Kanban board', 'Podcast editor', 'API tester',
+    'Cron monitor', 'Password vault', 'Logo maker', 'Heatmaps', 'Help centre',
+  ];
+
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const wall = document.querySelector<HTMLElement>('[data-wall]');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (lo: number, v: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  // A small deterministic generator so the wall looks the same on every load.
+  const rng = (seed: number) => () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+
+  type RealIdea = { slug: string; title: string; hearts: number };
+  let ideas: RealIdea[] = [];
+  try {
+    ideas = JSON.parse(wall?.dataset.ideas ?? '[]');
+  } catch {
+    ideas = [];
+  }
+
+  let timers: number[] = [];
+  // The painted, free brick waiting behind each dark one.
+  const slots = new WeakMap<HTMLElement, HTMLElement>();
+
+  function fall(brick: HTMLElement, delay = 0) {
+    if (brick.dataset.gone) return;
+    brick.dataset.gone = '1';
+    const H = hero!.offsetHeight;
+    const top = parseFloat(brick.style.top);
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    const anim = brick.animate(
+      [
+        { transform: 'translate(0,0) rotate(0deg)', offset: 0 },
+        { transform: `translate(${dir * 3}px,-5px) rotate(${dir * 1.5}deg)`, offset: 0.12, easing: 'cubic-bezier(.5,0,.9,.5)' },
+        { transform: `translate(${dir * (20 + Math.random() * 60)}px,${H - top + 80}px) rotate(${dir * (12 + Math.random() * 28)}deg)`, offset: 1 },
+      ],
+      { duration: 760 + Math.random() * 380, delay, fill: 'forwards' },
+    );
+    brick.style.zIndex = '5';
+    anim.onfinish = () => brick.remove();
+    const slot = slots.get(brick);
+    if (slot) window.setTimeout(() => slot.classList.add('on'), delay + 90);
+  }
+
+  function build(intro: boolean) {
+    if (!hero || !wall) return;
+    timers.forEach(clearTimeout);
+    timers = [];
+    wall.replaceChildren();
+    const W = hero.offsetWidth;
+    const H = hero.offsetHeight;
+    const bw = clamp(124, W * 0.122, 196);
+    const bh = clamp(46, W * 0.045, 66);
+    const gap = W < 700 ? 5 : 7;
+    const pad = W < 700 ? 10 : 26;
+    const box = hero.getBoundingClientRect();
+    const zones = [...hero.querySelectorAll<HTMLElement>('[data-clear]')].map((el) => {
+      const r = el.getBoundingClientRect();
+      const full = el.dataset.clear === 'row';
+      return {
+        l: full ? -1e4 : r.left - box.left - pad,
+        r: full ? 1e4 : r.right - box.left + pad,
+        t: r.top - box.top - pad,
+        b: r.bottom - box.top + pad,
+      };
+    });
+    const main = zones[zones.length - 1];
+    const rand = rng(7);
+    const rows = Math.ceil(H / (bh + gap)) + 1;
+    const cols = Math.ceil(W / (bw + gap)) + 2;
+    const frag = document.createDocumentFragment();
+    const standing: HTMLElement[] = [];
+    let yoursPlaced = false;
+    let lastSlot: HTMLElement | null = null;
+    const open: { slot: HTMLElement; brick: HTMLElement; x: number; y: number }[] = [];
+    let n = 0;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * (bw + gap) - (r % 2 ? bw / 2 : 0) - gap;
+        const y = r * (bh + gap);
+        const hit = zones.some((z) => x < z.r && x + bw > z.l && y < z.b && y + bh > z.t);
+        const name = NAMES[(n++ * 17 + r * 5) % NAMES.length];
+        const tone = rand();
+        if (hit && !intro) continue;
+
+        const pos = `left:${x}px;top:${y}px;width:${bw}px;height:${bh}px;`;
+        if (!hit) {
+          // The slot left behind when this brick goes.
+          const yours = !yoursPlaced && main && x > main.r && y > main.t + (main.b - main.t) * 0.45;
+          const slot = document.createElement(yours ? 'a' : 'div');
+          slot.className = yours ? 'slot yours' : `slot p${1 + Math.floor(rand() * 6)}`;
+          slot.style.cssText = pos;
+          if (yours) {
+            (slot as HTMLAnchorElement).href = '/join';
+            slot.tabIndex = -1;
+            slot.innerHTML = '<span class="name">Your idea here</span><span class="tag">+</span>';
+            yoursPlaced = true;
+          } else {
+            slot.innerHTML = `<span class="name">${name}</span><span class="tag">free</span>`;
+          }
+          frag.append(slot);
+          if (yours) continue;
+          lastSlot = slot;
+        }
+
+        const brick = document.createElement('div');
+        brick.className = 'brick';
+        brick.style.cssText = pos + `--t:${tone.toFixed(2)};`;
+        brick.innerHTML = `<span class="name">${name}</span><span class="tag">$/mo</span>`;
+        frag.append(brick);
+        if (!hit && lastSlot) slots.set(brick, lastSlot);
+
+        if (hit) {
+          brick.dataset.intro = '1';
+          const d = Math.hypot(x - (main?.l ?? 0), y - (main?.t ?? 0));
+          fall(brick, 520 + d * 0.55 + rand() * 160);
+        } else {
+          standing.push(brick);
+          if (lastSlot) open.push({ slot: lastSlot, brick, x, y });
+        }
+      }
+    }
+
+    if (intro) {
+      const gate = document.createElement('div');
+      gate.className = 'gate';
+      gate.innerHTML = '<span class="lock"></span><span>Subscribe to keep reading</span><span class="up">Upgrade</span>';
+      frag.append(gate);
+      const g = gate.animate(
+        [
+          { transform: 'translate(-50%,-50%) rotate(0deg)' },
+          { transform: 'translate(-50%,-56%) rotate(-3deg)', offset: 0.15, easing: 'cubic-bezier(.5,0,.9,.5)' },
+          { transform: `translate(-42%,${H}px) rotate(18deg)` },
+        ],
+        { duration: 900, delay: 430, fill: 'forwards' },
+      );
+      g.onfinish = () => gate.remove();
+    }
+
+    // Real ideas take the fully visible slots nearest the headline.
+    const real = new Set<HTMLElement>();
+    if (ideas.length && main) {
+      const cx = Math.min(main.r, W - bw);
+      const cy = (main.t + main.b) / 2;
+      const near = open
+        .filter((o) => o.x >= 0 && o.x + bw <= W && o.y + bh <= H)
+        .sort((a, b) => Math.hypot(a.x - cx, a.y - cy) - Math.hypot(b.x - cx, b.y - cy));
+      ideas.slice(0, near.length).forEach((idea, i) => {
+        const { slot, brick } = near[i];
+        const link = document.createElement('a');
+        link.className = slot.className + ' real';
+        link.style.cssText = slot.style.cssText;
+        link.href = `/ideas/${encodeURIComponent(idea.slug)}`;
+        link.tabIndex = -1;
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = idea.title;
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.textContent = `♥ ${idea.hearts}`;
+        link.append(name, tag);
+        slot.replaceWith(link);
+        slots.set(brick, link);
+        brick.querySelector('.name')!.textContent = idea.title;
+        real.add(brick);
+      });
+    }
+
+    wall.append(frag);
+
+    // Safety net: if animation frames are not ticking (a background tab, a
+    // throttled webview), never leave bricks sitting on top of the content.
+    if (intro) {
+      timers.push(
+        window.setTimeout(() => {
+          wall.querySelectorAll('.gate, .brick[data-intro]').forEach((el) => el.remove());
+        }, 3200),
+      );
+    }
+
+    // A handful come loose on their own, then it is up to the visitor.
+    const loose = [...standing.filter((b) => real.has(b)), ...standing.filter((b) => !real.has(b) && rand() < 0.22)];
+    if (still) {
+      loose.forEach((b) => {
+        slots.get(b)?.classList.add('on');
+        b.remove();
+      });
+    } else {
+      loose.forEach((b, i) => {
+        timers.push(window.setTimeout(() => fall(b), (intro ? 1700 : 300) + i * 260 + rand() * 200));
+      });
+    }
+  }
+
+  if (hero && wall) {
+    wall.addEventListener('pointerover', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('.brick');
+      if (b && e.pointerType === 'mouse' && !still) fall(b);
+    });
+    wall.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('.brick');
+      if (!b) return;
+      if (still) {
+        slots.get(b)?.classList.add('on');
+        b.remove();
+      } else fall(b);
+    });
+
+    document.fonts.ready.then(() => {
+      build(!still);
+      document.documentElement.classList.add('wall-ready');
+    });
+    let w = innerWidth;
+    let t = 0;
+    addEventListener('resize', () => {
+      if (innerWidth === w) return;
+      w = innerWidth;
+      clearTimeout(t);
+      t = window.setTimeout(() => build(false), 180);
+    });
+  }
+</script>
+
+<style is:global>
+  .wall {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+    font-family: var(--text);
+    font-size: clamp(0.75rem, 0.92vw, 0.9375rem);
+    font-weight: 700;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .wall .brick,
+  .wall .slot {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 clamp(10px, 1vw, 16px) 5px;
+    border-radius: 12px;
+  }
+  .wall .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .wall .tag {
+    flex: none;
+    font-size: 0.82em;
+    padding: 3px 7px;
+    border-radius: 999px;
+  }
+
+  /* Paywalled: dark, heavy, all the same. */
+  .wall .brick {
+    pointer-events: auto;
+    cursor: pointer;
+    color: var(--wall-ink);
+    background: oklch(calc(0.25 + var(--t) * 0.045) 0.045 310);
+    box-shadow:
+      inset 0 -5px 0 var(--wall-edge),
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      0 2px 3px rgb(20 10 30 / 0.25);
+    will-change: transform;
+  }
+  .wall .brick .tag {
+    background: rgb(255 255 255 / 0.07);
+    color: oklch(0.6 0.03 310);
+  }
+
+  /* Free: painted. Hidden until its dark brick is knocked away. */
+  .wall .slot {
+    color: var(--ink);
+    background: var(--p);
+    box-shadow:
+      inset 0 -5px 0 var(--pe),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+    text-decoration: none;
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  .wall .slot.on {
+    opacity: 1;
+    transform: none;
+    transition:
+      transform 620ms var(--spring),
+      opacity 160ms linear;
+  }
+  .wall .slot .tag {
+    background: rgb(255 255 255 / 0.55);
+  }
+  .wall .slot.real {
+    font-weight: 800;
+  }
+  .wall .slot.real.on {
+    pointer-events: auto;
+  }
+  .wall .slot.real:hover {
+    filter: brightness(1.06);
+  }
+  .wall .slot.yours {
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+    background: var(--card);
+    box-shadow:
+      inset 0 0 0 2px var(--ink),
+      inset 0 -5px 0 var(--ink);
+  }
+  .wall .slot.yours .tag {
+    background: var(--ink);
+    color: #fff;
+    font-size: 1em;
+    line-height: 1;
+    padding: 3px 8px 4px;
+  }
+  .wall .slot.yours:hover {
+    background: var(--marigold);
+  }
+
+  /* The joke the wall opens with: the thing everyone has seen too often. */
+  .wall .gate {
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 14px 14px 22px;
+    border-radius: 18px;
+    background: #fff;
+    color: var(--ink);
+    font-size: clamp(0.9375rem, 1.3vw, 1.1875rem);
+    box-shadow:
+      0 30px 70px rgb(20 10 30 / 0.55),
+      0 2px 6px rgb(20 10 30 / 0.3);
+  }
+  .wall .gate .lock {
+    width: 14px;
+    height: 11px;
+    border-radius: 3px;
+    background: var(--ink);
+    position: relative;
+  }
+  .wall .gate .lock::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    bottom: 9px;
+    width: 10px;
+    height: 9px;
+    border: 2.5px solid var(--ink);
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    box-sizing: border-box;
+  }
+  .wall .gate .up {
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.875em;
+  }
+</style>

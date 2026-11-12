@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import SignIn from '../../components/SignIn.astro';
+import { shape, site } from '../../config/site';
+import { checkEligibility } from '../../lib/eligibility';
+
+const person = Astro.locals.person;
+const checked = person?.checked_at && person.account_created_at;
+const results = checked
+  ? checkEligibility(
+      {
+        githubId: person!.github_id, handle: person!.handle, avatarUrl: '',
+        accountCreatedAt: person!.account_created_at!,
+        contributions12mo: person!.contributions_12mo ?? 0,
+      },
+      new Date(person!.checked_at!),
+    ).results
+  : [];
+---
+
+<Base title="Build" description="Create your builder account with GitHub and hold your place. Free, no essay, nothing to buy.">
+  <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
+  {
+    !person && (
+      <>
+        <h1 class="page-title" style="margin-top:12px">Hold your place as a builder.</h1>
+        <p class="lede">
+          Sign in with GitHub and two checks run automatically. If you pass, you count toward the
+          {' '}{site.launch.buildersNeeded} or more builders the dates are waiting on. No essay, no pitch,
+          no fee, and nothing to buy afterwards.
+        </p>
+        <div class="cols">
+          <SignIn next="/join/build" label="Join with GitHub" />
+          <div class="card stack">
+            <p class="h2">What we check</p>
+            <ul class="rows">
+              <li><span>Your account is at least {site.eligibility.minAccountAgeDays} days old</span></li>
+              <li><span>Your profile shows {site.eligibility.minContributions12mo}+ contributions in the last year</span></li>
+            </ul>
+            <p class="muted small">These make throwaway accounts more expensive to create, for the builder count and the vote. They are not proof of who anyone is. Hearting ideas needs no account, and anyone signed in can post one or pledge.</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  {
+    person && person.is_builder && (
+      <>
+        <h1 class="page-title" style="margin-top:12px">You're in, {person.handle}.</h1>
+        <p class="lede">
+          {shape.when}
+          Until then, the most useful thing you can do is say what you want to exist.
+        </p>
+        <div class="actions" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px">
+          <a class="key key-big key-tomato" href="/ideas/new">Post an idea</a>
+          <a class="key key-big key-milk" href="/ideas">See what people want</a>
+        </div>
+      </>
+    )
+  }
+
+  {
+    person && !person.is_builder && (
+      <>
+        <h1 class="page-title" style="margin-top:12px">{person.verified ? 'You pass. One more step.' : checked ? "You can't enter as a builder yet." : 'We could not check your account.'}</h1>
+        <div class="cols">
+          <div class="stack">
+            {
+              checked ? (
+                <ul class="rules">
+                  {results.map((r) => (
+                    <li class={r.pass ? 'pass' : 'fail'}>
+                      <span class="mark" aria-hidden="true">{r.pass ? '✓' : '×'}</span>
+                      <span><strong>{r.pass ? 'Pass. ' : 'Not yet. '}</strong>{r.detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="lede">GitHub did not answer when you signed in. <a class="link" href="/auth/signin?next=/join/build">Sign in again</a> to run the check.</p>
+              )
+            }
+            {
+              checked && !person.verified && (
+                <p class="muted">
+                  You can still <a class="link" href="/ideas">post and heart ideas</a>, pledge to the pool,
+                  and <a class="link" href="/join">join in other ways</a>.
+                  {' '}Manual reviews open once the review panel is named.
+                </p>
+              )
+            }
+          </div>
+          {
+            person.verified && (
+              <form class="card stack" method="post" action="/api/join">
+                <p class="h2">Finish joining</p>
+                <div class="field">
+                  <label for="x">X handle <span class="muted">(optional)</span></label>
+                  <input class="input" id="x" name="x_handle" autocomplete="off" maxlength="16" />
+                </div>
+                <div class="field">
+                  <label for="site">Your site <span class="muted">(optional)</span></label>
+                  <input class="input" id="site" name="site_url" type="url" inputmode="url" maxlength="200" placeholder="https://" />
+                  <span class="help">Both are shown next to your name on the public builders list.</span>
+                </div>
+                <label class="check">
+                  <input type="checkbox" name="rules" required />
+                  <span>I accept the <a class="link" href="/rules">rules</a>, version {site.rules.version}, and the <a class="link" href="/terms">terms</a>.</span>
+                </label>
+                <button class="key key-big" type="submit">Join as a builder</button>
+              </form>
+            )
+          }
+        </div>
+      </>
+    )
+  }
+</Base>

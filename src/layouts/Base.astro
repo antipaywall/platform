@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+import '../styles/page.css';
+import Head from '../components/Head.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { site } from '../config/site';
+import { MESSAGES, type MessageCode } from '../lib/respond';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Keep this page out of search results. */
+  noindex?: boolean;
+}
+const { title, description = 'A free, one-week open-source hackathon. Community-funded prize pool, builders vote.', noindex = false } = Astro.props;
+// Messages arrive as a code and are looked up here, so a link can't make the site say something.
+const code = Astro.url.searchParams.get('m') ?? '';
+const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
+---
+
+<html lang="en">
+  <head>
+    <Head title={`${title} | ${site.name}`} description={description} noindex={noindex} />
+  </head>
+  <body>
+    <SiteHeader />
+
+    <main class="wrap page">
+      {flash && <p class={`flash flash-${flash.kind}`} role={flash.kind === 'error' ? 'alert' : 'status'}>{flash.text}</p>}
+      <slot />
+    </main>
+
+    <footer class="foot">
+      <SiteFooter />
+    </footer>
+  </body>
+</html>

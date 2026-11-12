@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import SignIn from '../../components/SignIn.astro';
+import { adminClient } from '../../lib/supabase';
+
+const person = Astro.locals.person;
+let mine: { why: string; ties: string } | null = null;
+if (person) {
+  const { data } = (await adminClient()?.from('panel_applications').select('why, ties').eq('person_id', person.id).maybeSingle()) ?? { data: null };
+  mine = data;
+}
+---
+
+<Base title="Review panel" description="Apply to sit on the review panel. It checks entries for cheating and nothing else.">
+  <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
+  <h1 class="page-title" style="margin-top:12px">Sit on the review panel.</h1>
+  <p class="lede">
+    The panel will be five to seven named volunteers. It will review flagged entries and the
+    top ten, and can disqualify only for breaking a written rule. It never ranks anyone, and
+    its reasoning will be published.
+  </p>
+  <div class="cols">
+    <div class="stack">
+      <p class="h2">How the panel is chosen</p>
+      <ul class="plain">
+        <li>The organizer chooses the panel from the people who apply here. Applications are open now.</li>
+        <li>When a panel is proposed, the GitHub handles of everyone who applied are listed publicly, so anyone can see who was passed over.</li>
+        <li>Panel members may build an entry. It is shown with everyone else's but cannot win a prize or a bounty, is not on the main ballot, and gives them no vote on the main prizes.</li>
+        <li>What you write below is read by the organizer. It is not published.</li>
+      </ul>
+    </div>
+    {
+      person ? (
+        <form class="card stack" method="post" action="/api/panel">
+          <p class="h2">{mine ? 'Your application' : 'Apply'}</p>
+          <p class="muted small">Applying as <strong>@{person.handle}</strong>.</p>
+          <div class="field">
+            <label for="why">Why you'd be good at this</label>
+            <textarea class="input" id="why" name="why" required maxlength="500">{mine?.why ?? ''}</textarea>
+            <span class="help">What you have built or reviewed, and why people would trust your call. Up to 500 characters.</span>
+          </div>
+          <div class="field">
+            <label for="ties">Any ties to builders or sponsors <span class="muted">(leave blank if none)</span></label>
+            <textarea class="input" id="ties" name="ties" maxlength="500">{mine?.ties ?? ''}</textarea>
+            <span class="help">Employers, clients, friends who may enter, companies that may sponsor. Up to 500 characters.</span>
+          </div>
+          <button class="key key-big" type="submit">{mine ? 'Update my application' : 'Send my application'}</button>
+          <p class="muted small">By sending this you agree to the <a class="link" href="/terms">terms</a>.</p>
+        </form>
+      ) : (
+        <div class="card stack">
+          <p class="h2">Apply</p>
+          <p>Applying needs a GitHub sign-in, so the organizer and, later, everyone else can see who applied.</p>
+          <SignIn next="/join/panel" label="Sign in to apply" />
+        </div>
+      )
+    }
+  </div>
+</Base>

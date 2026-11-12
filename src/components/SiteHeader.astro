@@ -1,0 +1,82 @@
+---
+// The site header: wordmark, page links, and the way in. It stays at the top of the
+// screen on every page. On a phone the page links move into a menu that works with or
+// without scripts (it is a <details> element).
+import { site } from '../config/site';
+import { isAdmin } from '../lib/db';
+
+const person = Astro.locals.person;
+const here = Astro.url.pathname;
+const cur = (on: boolean) => (on ? 'page' : undefined);
+const links = [
+  { href: '/about', label: 'About', on: here === '/about' },
+  { href: '/ideas', label: 'Ideas', on: here.startsWith('/ideas') },
+  { href: '/pool', label: 'Pool', on: here === '/pool' },
+  { href: '/rules', label: 'Rules', on: here === '/rules' },
+  { href: '/sponsor', label: 'Sponsor', on: here === '/sponsor' },
+];
+const more = [
+  { href: '/join', label: 'Join', on: here.startsWith('/join') },
+  { href: '/faq', label: 'Questions', on: here === '/faq' },
+];
+const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
+---
+
+<header class="site-head" data-site-head>
+  <div class="wrap bar-top">
+    <a class="brand" href="/" aria-label={`${site.name} home`}><span class="brand-anti">anti</span>paywall</a>
+    <nav class="bar-links" aria-label="Main">
+      {[...links, ...admin].map((l) => <a href={l.href} aria-current={cur(l.on)}>{l.label}</a>)}
+    </nav>
+    {
+      person ? (
+        <form class="who" method="post" action="/auth/signout">
+          {person.avatar_url && <img src={person.avatar_url} alt="" width="32" height="32" />}
+          <span>{person.handle}</span>
+          <button type="submit">Sign out</button>
+        </form>
+      ) : (
+        <a class="key top-join" href="/join">Join</a>
+      )
+    }
+    <details class="menu" data-menu>
+      <summary aria-label="Menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+      </summary>
+      <nav class="menu-panel" aria-label="All pages">
+        {[...links, ...more, ...admin].map((l) => <a href={l.href} aria-current={cur(l.on)}>{l.label}</a>)}
+        {
+          person && (
+            <form class="menu-who" method="post" action="/auth/signout">
+              <span>Signed in as {person.handle}</span>
+              <button type="submit">Sign out</button>
+            </form>
+          )
+        }
+      </nav>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Extras only: the header and the menu work without any of this.
+  const head = document.querySelector<HTMLElement>('[data-site-head]');
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+  if (head) {
+    const mark = () => head.classList.toggle('is-scrolled', window.scrollY > 4);
+    mark();
+    addEventListener('scroll', mark, { passive: true });
+  }
+  if (menu) {
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      const t = e.target as Node;
+      if (menu.open && (!menu.contains(t) || (t as HTMLElement).closest?.('.menu-panel a'))) menu.open = false;
+    });
+  }
+</script>
