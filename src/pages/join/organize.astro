@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import SignIn from '../../components/SignIn.astro';
+import { adminClient } from '../../lib/supabase';
+
+const person = Astro.locals.person;
+let mine: { note: string } | null = null;
+if (person) {
+  const { data } = (await adminClient()?.from('organize_offers').select('note').eq('person_id', person.id).maybeSingle()) ?? { data: null };
+  mine = data;
+}
+---
+
+<Base title="Help organize" description="Offer to help run Antipaywall: rules, outreach, moderation and more.">
+  <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
+  <h1 class="page-title" style="margin-top:12px">Help run it.</h1>
+  <p class="lede">
+    Right now one person is organizing this. It needs more: people to tighten the rules, find
+    sponsors, moderate ideas, and point out what has been missed.
+  </p>
+  <div class="cols">
+    <div class="stack">
+      <p class="h2">What to expect</p>
+      <ul class="plain">
+        <li>It is unpaid. Nobody involved takes money out, the organizer included.</li>
+        <li>The organizer reads every offer and replies himself. There is no team inbox yet.</li>
+        <li>People who help organize may build an entry. It is shown with everyone else's but cannot win a prize or a bounty, is not on the main ballot, and gives them no vote on the main prizes.</li>
+        <li>What you write below is read by the organizer. It is not published.</li>
+      </ul>
+    </div>
+    {
+      person ? (
+        <form class="card stack" method="post" action="/api/organize">
+          <p class="h2">{mine ? 'Your offer' : 'Offer to help'}</p>
+          <p class="muted small">Offering as <strong>@{person.handle}</strong>.</p>
+          <div class="field">
+            <label for="note">What you can help with</label>
+            <textarea class="input" id="note" name="note" required maxlength="500">{mine?.note ?? ''}</textarea>
+            <span class="help">Be specific about what you'd do and roughly how much time you have. Up to 500 characters.</span>
+          </div>
+          <button class="key key-big" type="submit">{mine ? 'Update my offer' : 'Send my offer'}</button>
+          <p class="muted small">By sending this you agree to the <a class="link" href="/terms">terms</a>.</p>
+        </form>
+      ) : (
+        <div class="card stack">
+          <p class="h2">Offer to help</p>
+          <p>Offering needs a GitHub sign-in, so the organizer knows who he is talking to.</p>
+          <SignIn next="/join/organize" label="Sign in to offer" />
+        </div>
+      )
+    }
+  </div>
+</Base>

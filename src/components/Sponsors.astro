@@ -1,0 +1,57 @@
+---
+// The sponsors, or the open slots where they will go. A sponsor's status is shown
+// exactly as stored: "pledged" until the money has actually arrived. Sponsors are the one
+// thing on the site the organizer enters himself, and the list says so.
+import { site } from '../config/site';
+import { usd, type Sponsor } from '../lib/db';
+
+interface Props {
+  sponsors: Sponsor[] | null;
+}
+const { sponsors } = Astro.props;
+const [t1, t2, t3] = site.sponsorTiersUsd;
+// Logo size steps up with the amount. Dimensions are fixed so a logo can't reshape the page.
+const size = (cents: number) => {
+  const d = cents / 100;
+  return d >= t3 ? { w: 220, h: 72 } : d >= t2 ? { w: 180, h: 56 } : d >= t1 ? { w: 150, h: 44 } : { w: 120, h: 36 };
+};
+---
+
+{
+  sponsors === null ? (
+    <p class="empty">The sponsor list is unavailable right now.</p>
+  ) : sponsors.length ? (
+    <ul class="sponsor-list">
+      {sponsors.map((s) => {
+        const d = size(s.amount_cents);
+        const mark = s.logo_url ? (
+          <img src={s.logo_url} alt={s.name} width={d.w} height={d.h} loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+        ) : (
+          <span class="sponsor-name">{s.name}</span>
+        );
+        return (
+          <li>
+            {s.url ? <a href={s.url} rel="noopener nofollow">{mark}</a> : mark}
+            <p class="sponsor-meta">
+              <span class="num">{usd(s.amount_cents)}</span>
+              <span>{s.status}</span>
+              <span>{s.kind === 'bounty' ? 'bounty' : 'to the pool'}</span>
+            </p>
+            {s.note && <p class="sponsor-note">{s.note}</p>}
+          </li>
+        );
+      })}
+    </ul>
+    <p class="muted small">Each sponsor's amount, and whether it is pledged or paid, is entered by the organizer from what that sponsor has committed or paid.</p>
+  ) : (
+    <ul class="sponsor-slots">
+      {['p4', 'p5', 'p6'].map((paint, i) => (
+        <li class={paint}>
+          <p class="slot-t">This spot is open.</p>
+          <p>{['Your logo here, with the amount you put in shown next to it.', 'A thank-you post and a mention in the final results.', 'Or a bounty in your name for one thing you want built.'][i]}</p>
+          <a href="/sponsor">How sponsoring works</a>
+        </li>
+      ))}
+    </ul>
+  )
+}

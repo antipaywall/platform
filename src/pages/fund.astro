@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import PledgeForm from '../components/PledgeForm.astro';
+import PledgeWho from '../components/PledgeWho.astro';
+import { site } from '../config/site';
+import { attempt, listPledges, usd } from '../lib/db';
+
+const pledges = await attempt(() => listPledges());
+// With no collective configured there is nowhere to send anyone, so the page falls back to pledging.
+const slug = site.collective.slug;
+const pending = site.collective.pending || !slug;
+const donate = `https://opencollective.com/${encodeURIComponent(slug)}/donate`;
+---
+
+<Base title="Back the pool" description="Fund the prize pool. Every contribution is public, and a nonprofit holds the money.">
+  <h1 class="page-title">Back the pool.</h1>
+  <p class="lede">
+    The prize pool is whatever the community puts in, split across nine winners.
+    {pending
+      ? ' It is not open for payments yet. Until it is, you can pledge.'
+      : ` It is held by ${site.collective.host}, an independent nonprofit, and every contribution is public.`}
+  </p>
+  <div class="cols">
+    <div class="stack">
+      {pending ? <PledgeForm company={Astro.url.searchParams.get('as') === 'company'} /> : <a class="key key-big key-tomato" href={donate} style="justify-self:start">Pay by card on Open Collective</a>}
+      <p class="muted">
+        Need an invoice, a bounty, or a conversation first?{' '}
+        <a class="link" href="/sponsor#inquiry">Ask about sponsoring</a> and a person replies.
+      </p>
+    </div>
+    <div class="stack">
+      <p class="h2">Pledged so far</p>
+      {
+        !pledges ? (
+          <p class="empty">The list is unavailable right now.</p>
+        ) : pledges.length ? (
+          <ul class="rows">
+            {pledges.map((p) => <li><PledgeWho pledge={p} /><span class="amt num">{usd(p.amount_cents)}</span></li>)}
+          </ul>
+        ) : (
+          <p class="empty">No pledges yet. Yours would be the first line.</p>
+        )
+      }
+    </div>
+  </div>
+</Base>

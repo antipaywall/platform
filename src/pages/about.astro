@@ -1,0 +1,191 @@
+---
+import Base from '../layouts/Base.astro';
+import { bountyRules, insiderRules, money, rulesVersion, shape, site } from '../config/site';
+import { attempt, getOrganizerPledge } from '../lib/db';
+import { WAYS } from '../lib/ways';
+
+const e = site.eligibility;
+const dollars = (n: number) => '$' + n.toLocaleString('en-US');
+// My own pledge, read from the database like anyone else's. If it can't be read, the page says nothing about it.
+const pledged = await attempt(getOrganizerPledge);
+// Built as whole strings so no number ends up glued to the word before it.
+const mine = pledged ? `I've pledged ${dollars(pledged / 100)} to the pool, from my own money.` : '';
+const checks = `You sign in with GitHub. The site reads two things from your profile and shows you each result: your account is at least ${e.minAccountAgeDays} days old, and your profile shows at least ${e.minContributions12mo} contributions in the last 12 months.`;
+const ideas = `Anyone signed in can post an idea for something that should be free, up to ${site.ideas.maxPerPerson} each.`;
+const held = `A pledge is listed straight away only when it is from an individual, is ${dollars(site.pledgeHold.aboveUsd)} or less, and shows the pledger's own GitHub handle. Anything else (a company, a larger amount, a different display name, an X account) is checked by a person first.`;
+---
+
+<Base title="About" description="What Antipaywall is, who is behind it, what he is putting in, and exactly how it works.">
+  <h1 class="page-title">What this is, and how it works.</h1>
+  <p class="lede">
+    Antipaywall is happening. This page lays out exactly how it works, who is behind it, and the
+    few things still being finalised before the dates are announced.
+  </p>
+
+  <div class="prose">
+    <h2>What this is</h2>
+    <p>
+      A free, one-week hackathon for people who build software. The brief is one line: build the
+      free, open-source version of something people would otherwise pay for. One feature of a big
+      product is a fair scope. Every entry has to be open source, in a public repository.
+    </p>
+    <p>{shape.summary} {shape.when}</p>
+
+    <h2>Who I am</h2>
+    <p>
+      I'm Ethan Rogers. I've been an entrepreneur for ten years, mostly running marketing and
+      web development agencies, and I was writing code for a living before AI could write it
+      for you. These days I build software that runs on AI agents, and several of my projects
+      are open source.
+    </p>
+    <p>
+      I'm one of the builders this is for. You can see what I make at{' '}
+      <a class="link" href="https://ethanplus.ai" rel="noopener">ethanplus.ai</a>, on{' '}
+      <a class="link" href="https://github.com/ethanplusai" rel="noopener">GitHub</a> and on{' '}
+      <a class="link" href="https://x.com/ethanplusai" rel="noopener">X</a>.
+    </p>
+
+    <h2>Why I'm doing it</h2>
+    <p>
+      I think AI is making software cheap to build, and that most of it is heading toward open
+      source. If you believe something is valuable, give people the thing itself. If it really
+      is valuable, the demand will show, and a business can still grow from it.
+    </p>
+    <p>
+      I wanted a hackathon built around that, and run the way I'd want one run as a builder. I'm
+      doing it either way. How big it gets depends on who joins. A hackathon owes its builders a
+      few plain things:</p>
+    <ul>
+      <li>It should be free to enter, with nothing sold to you once you are in.</li>
+      <li>The prize money should be held by someone other than the person running it.</li>
+      <li>The rules should be public and fixed before anyone starts building.</li>
+      <li>The people who built should be the ones who decide who won, in the open.</li>
+      <li>Being disqualified should take a written rule, a published reason and a chance to appeal.</li>
+    </ul>
+    <p>Antipaywall is my attempt to run one that way, and to make each of those things something you can check rather than something you have to take my word for.</p>
+
+    <h2>What I'm putting in</h2>
+    <p>
+      {mine} I'm doing the work of bringing in sponsors, and I'm asking them to cover the pool
+      holder's fee, so what people give reaches the pool whole. I take nothing out: no cut, no
+      fee, no salary, no profit.
+    </p>
+    {
+      mine && (
+        <p>
+          That money is a pledge today, like anyone else's, because there is nowhere to pay it
+          yet. I pay it when the pool opens.
+        </p>
+      )
+    }
+
+    <h2>What I'm asking for</h2>
+    <p>Help. One person can't run this fairly alone, and it isn't worth running without builders. There are five ways in, and the first one costs nothing:</p>
+    <ul>
+      {WAYS.map((w) => <li><strong>{w.label}.</strong> {w.blurb}</li>)}
+    </ul>
+    <p><a class="link" href="/join">Pick one on the join page.</a></p>
+
+    <h2>How it works</h2>
+
+    <h3>Joining</h3>
+    <p>
+      {checks} Pass both and you can join as a builder. The checks make throwaway accounts
+      more expensive to create. They are not proof of who anyone is, and they run again each
+      time you sign in.
+    </p>
+
+    <h3>Ideas and hearts</h3>
+    <p>
+      {ideas} When you post one, the site searches GitHub for open-source
+      projects that already do it and asks what they are missing. Anyone can heart an idea, with
+      no account. Hearts show builders what people want. They carry no money and no weight in who
+      wins, and a determined person could inflate them.
+    </p>
+
+    <h3>The pool, and who holds it</h3>
+    <p>{money.full}</p>
+    <p>
+      The prize pool is whatever the community and sponsors put in. It is split across nine
+      winners: 30%, 18% and 12% for the top three, 6% each for the next five, and 10% for
+      Community Choice.
+    </p>
+
+    <h3>Pledges are not payments</h3>
+    <p>
+      Until the pool opens, the only thing anyone can do is pledge: a public promise of an amount.
+      Pledges are listed with the pledger's GitHub username and are never counted as money in the
+      pool. {held} When the pool opens, people who pledged come back and pay.
+    </p>
+
+    <h3>Sponsor bounties</h3>
+    <p>A sponsor can put up money for the best entry that does one specific thing. The first ones will be listed as sponsors commit. This is how they will be decided:</p>
+    <ul>
+      {bountyRules.map((r) => <li>{r}</li>)}
+    </ul>
+
+    <h3>The vote</h3>
+    <p>
+      Winners will be chosen by the builders. Everyone who submits an eligible entry will get
+      three votes, for three different projects, none of them their own. Every ballot will be
+      published, so anyone can see who voted for what. Community Choice will be the one prize
+      decided by a wider vote, open to any GitHub account that passes the same two checks.
+      Sponsors will get no vote on any prize. I will get no vote on the main prizes, and neither
+      will the review panel.
+    </p>
+
+    <h3>The review panel and appeals</h3>
+    <p>
+      A panel of named volunteers will check flagged entries and the top ten. It will be able to
+      disqualify an entry only for breaking a written rule, it will have to publish its
+      reasoning, and it will not rank anyone. A disqualified builder will have 72 hours to
+      appeal in public. Applications for the panel are open now, and its members are listed
+      here once they are chosen.
+    </p>
+
+    <h3>Those of us running it</h3>
+    <p>
+      I plan to build an entry myself, and I'd like the review panel to as well. So the rule is:
+    </p>
+    <ul>
+      {insiderRules.map((r) => <li>{r}</li>)}
+    </ul>
+
+    <h3>Getting paid</h3>
+    <p>
+      Once the panel has cleared the winners, they will be paid from the pool by its holder,
+      and each payout will be public. If a winner can't be paid, their share goes to the next
+      place.
+    </p>
+
+    <h2>How you can check it</h2>
+    <ul>
+      <li><strong>The numbers on this site</strong> (builders, pledges, hearts, ideas) are counted from its database when the page loads. If they can't be read, the page says so instead of showing a zero. The one exception is sponsors: each sponsor's amount, and whether it is pledged or paid, is entered by me from what that sponsor has committed or paid.</li>
+      <li><strong>The rules</strong> are <a class="link" href="/rules">published on this site</a>, version {rulesVersion}. Every change is listed there with its date, and because this site's code is public, the full history of the page is too.</li>
+      <li><strong>The money</strong> will sit on a public ledger kept by the holder, showing every contribution and every payout.</li>
+      <li><strong>The ballots</strong> will be published in full.</li>
+      <li><strong>What the site records about you</strong> is listed on the <a class="link" href="/privacy">privacy page</a>.</li>
+      <li><strong>The code that runs this site</strong> is public. Read it at <a class="link" href={site.repo} rel="noopener">github.com/antipaywall/platform</a>.</li>
+    </ul>
+
+    <h2>What's being finalised</h2>
+    <ul>
+      <li><strong>The dates.</strong> {shape.when}</li>
+      <li><strong>The pool holder.</strong> {money.holder}</li>
+      <li><strong>The review panel.</strong> Applications are open. If you'd do it, <a class="link" href="/join/panel">apply</a>.</li>
+      <li><strong>The rest of the site.</strong> Submitting an entry, the checks on entries, voting and payouts get built before build week starts.</li>
+    </ul>
+
+    <h2>What I'm committing to</h2>
+    <ul>
+      <li>It is free to enter, and nothing will be sold to you for entering.</li>
+      <li>I take nothing out of it.</li>
+      <li>I never hold the pool.</li>
+      <li>Nobody is asked to pay anything before the holder, and the fee it charges, is confirmed on this site.</li>
+      <li>The rules are public, and every change to them is listed with its date.</li>
+      <li>The builders will pick the winners, and every ballot will be published.</li>
+      <li>Nobody will be disqualified without a written rule, a published reason and an appeal.</li>
+      <li>When something here isn't true yet, the site says so.</li>
+    </ul>
+  </div>
+</Base>

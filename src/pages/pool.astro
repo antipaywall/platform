@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import PledgeWho from '../components/PledgeWho.astro';
+import { money, organizerPledge, site } from '../config/site';
+import { attempt, getOrganizerPledge, getStats, listPledges, usd } from '../lib/db';
+
+const [stats, pledges, organizer] = await Promise.all([
+  attempt(getStats),
+  attempt(() => listPledges({ limit: 500 })),
+  attempt(getOrganizerPledge),
+]);
+const show = (n: number | undefined, f: (n: number) => string) => (n === undefined ? 'unavailable' : f(n));
+const headline = stats ? usd(site.collective.pending ? stats.pledgedCents : stats.balanceCents) : '';
+const pending = site.collective.pending;
+---
+
+<Base title="The pool" description="The prize pool, every contribution and every pledge, in public.">
+  <h1 class="page-title">The pool, in public.</h1>
+  <p class="lede">
+    Every figure on this page is counted from what people entered on this site, when the page
+    loads. Once the pool opens, its total will be read from the holder's public ledger. A
+    pledge is a public promise, not a payment.
+  </p>
+
+  <div class="cols">
+    <div class="stack">
+      <div class="card card-paint p2 stack" style="gap:4px">
+        {stats && <div class="figure-box"><p class="figure num" style={`--chars:${headline.length};--figure-max:9rem`}>{headline}</p></div>}
+        <p style="font-weight:700">{stats ? (pending ? "pledged so far" : "in the pool right now") : "The numbers are unavailable right now."}</p>
+      </div>
+      <ul class="rows">
+        {
+          pending ? (
+            <li><span>Paid in so far</span><span class="pledge-text">$0. The pool is not open for payments yet</span></li>
+          ) : (
+            <li><span>Pledged, not yet paid</span><span class="amt num">{show(stats?.pledgedCents, usd)}</span></li>
+          )
+        }
+        <li><span>Builders joined</span><span class="amt num">{show(stats?.builders, String)}</span></li>
+        <li><span>Ideas posted</span><span class="amt num">{show(stats?.ideas, String)}</span></li>
+        {organizer ? <li><span>Organizer's pledge</span><span class="pledge-text">{organizerPledge(organizer)}</span></li> : null}
+      </ul>
+      <a class="key key-big key-tomato" href="/fund" style="justify-self:start">{pending ? 'Make a pledge' : 'Back the pool'}</a>
+    </div>
+
+    <div class="stack">
+      <p class="h2">Who holds the money</p>
+      <p>{money.full}</p>
+      {
+        pending && (
+          <p class="flash flash-ok" style="margin:0">
+            Until the pool opens, nobody can pay in. The figure on this page is what has been
+            pledged, not money anyone is holding.
+          </p>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="stack" style="margin-top:clamp(40px,6vw,80px)">
+    <p class="h2">Contributions</p>
+    <p class="empty">
+      {pending
+        ? 'There are none: the pool is not open yet, so nobody can pay in. When it opens, each contribution will be listed here with a link to its public record.'
+        : 'Every contribution is recorded on the public ledger on Open Collective.'}
+    </p>
+    <p class="h2" style="margin-top:20px">Pledges</p>
+    {
+      !pledges ? (
+        <p class="empty">The list is unavailable right now.</p>
+      ) : pledges.length ? (
+        <ul class="rows">
+          {pledges.map((p) => (
+            <li>
+              <PledgeWho pledge={p} />
+              <span class="amt num">{usd(p.amount_cents)}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="empty">No pledges yet. <a class="link" href="/fund">Make the first one.</a></p>
+      )
+    }
+  </div>
+</Base>

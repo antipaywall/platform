@@ -1,0 +1,26 @@
+---
+// A heart button for an idea. A plain form post, so it works without JavaScript.
+interface Props {
+  slug: string;
+  hearts: number;
+  hearted: boolean;
+  from?: 'list' | 'page';
+  big?: boolean;
+}
+const { slug, hearts, hearted, from = 'page', big = false } = Astro.props;
+---
+
+<form class="heart-form" method="post" action="/api/heart">
+  <input type="hidden" name="idea" value={slug} />
+  <input type="hidden" name="from" value={from} />
+  <button
+    class:list={['heart', hearted && 'on', big && 'heart-big']}
+    name="action"
+    value={hearted ? 'unheart' : 'heart'}
+    aria-pressed={hearted ? 'true' : 'false'}
+    aria-label={hearted ? `Take back your heart. ${hearts} so far` : `I want this. ${hearts} so far`}
+  >
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.400 2.800 4.500 6.500 4.500c2.100 0 3.700 1.100 5.500 3.200 1.800-2.100 3.400-3.200 5.500-3.200 3.700 0 5.600 3.900 4.100 7.300C19.500 16.400 12 21 12 21z"></path></svg>
+    <span class="num">{hearts}</span>
+  </button>
+</form>

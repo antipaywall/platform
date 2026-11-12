@@ -1,0 +1,166 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config/site';
+---
+
+<Base title="Privacy" description="Exactly what this site records about you, and what it does not.">
+  <h1 class="page-title">What we record, and what we don't.</h1>
+  <p class="lede">
+    This page describes what the site's code does today. The code is public, so you can check
+    it against{' '}
+    <a class="link" href={site.repo} rel="noopener">the source</a>. If the code changes, this page changes with it.
+  </p>
+  <div class="prose">
+    <h2>If you only visit</h2>
+    <p>We count page views ourselves. No cookie is set for this, and no outside analytics service is used. For each counted view of a public page we keep:</p>
+    <ul>
+      <li>the date, and the address of the page (without anything after a "?");</li>
+      <li>your country, as two letters, as reported by our hosting provider;</li>
+      <li>the site that linked you here, as a host name only (for example "reddit.com");</li>
+      <li>a campaign tag, if the link you followed carried one (<code>utm_source</code>);</li>
+      <li>a visitor code that is good for that day only.</li>
+    </ul>
+    <p>
+      The visitor code is a scrambled value made from the date, your IP address and your browser's
+      name, using a key only our server has, and then cut short. It lets us count how many
+      different people came on a given day. Because the date is part of it, your code tomorrow is
+      unrelated to today's, so we cannot follow you from one day to the next. Your IP address and
+      browser name are not stored.
+    </p>
+    <p>A view is counted only when all of these are true:</p>
+    <ul>
+      <li>it reached the live site, and our hosting provider reported a country for it. Local and preview copies of the site count nothing;</li>
+      <li>it is a browser opening one of the public pages: a request for a web page that says which languages you read. Requests for anything else, such as images, form posts and private pages, are not counted;</li>
+      <li>it is not a crawler, a script, a headless browser, a link preview or an uptime check, as far as the request shows;</li>
+      <li>it is not a page your browser fetched ahead of time without you opening it;</li>
+      <li>it is not from a signed-in organizer.</li>
+    </ul>
+
+    <h2>If you heart an idea</h2>
+    <p>
+      We set one cookie, <code>apw_visitor</code>, holding a random id, so that a browser can heart
+      each idea once. It lasts a year, cannot be read by scripts on the page, and is not linked to
+      a name or an account. We store that id next to the idea you hearted.
+    </p>
+
+    <h2>If you join the email list</h2>
+    <p>
+      The email list is how we tell people when something real happens. You are on it if you
+      typed your address into the join page, or if you signed in with GitHub (see below). We
+      store the address, how it got there, your country as two letters, and the date. The
+      address is seen by the organizer and never shown on the site.
+    </p>
+    <p>
+      An address typed into the join page is never linked to an account, even if you are signed
+      in when you type it. The form gives the same answer whether or not the address was
+      already on the list, so it cannot be used to find out who is on it. We do not ask you to
+      confirm a typed address, so someone could type yours; the first email says how it got
+      there and how to leave.
+    </p>
+    <p>
+      Leaving takes two steps so that a mail scanner opening the link cannot do it for you: the
+      link in an email opens a page that shows which address it is for, and a button there
+      takes it off the list. Mail apps that show their own "unsubscribe" button can do it in one
+      press. We keep the address, marked as unsubscribed, so that it is never emailed again
+      and never added back: not by someone typing it into the form, and not by signing in with
+      GitHub. Only the link in one of our own emails can put it back.
+    </p>
+
+    <h2>Limits on how often a form can be sent</h2>
+    <p>
+      To stop one connection flooding the email list or the sponsor form, each attempt is
+      recorded as three things: which form it was, a code, and the time. The code is a
+      scrambled value made from the date and your IP address only, with a key only our server
+      has. It is made differently from the visitor code above, so the two cannot be matched to
+      each other, and it is not stored with the address or the message you sent. For the panel
+      and organize forms, which need a sign-in, the record holds your account id instead. These
+      records are deleted once they are a day old. The same table counts how many emails the
+      site has sent in the last hour, without recording who they went to.
+    </p>
+
+    <h2>If you ask about sponsoring</h2>
+    <p>
+      The inquiry form needs no account. We store the company, your name, your email address, the
+      rough amount and what it is for if you said, your message, and your country as two
+      letters. It is emailed to the organizer and shown on his private page. It is not
+      published, and the address is not added to the email list.
+    </p>
+
+    <h2>If you apply to the review panel or offer to help organize</h2>
+    <p>
+      Both need a GitHub sign-in. We store what you wrote, your country as two letters, and the
+      date, linked to your account. It is emailed to the organizer and shown on his private
+      page. What you wrote is not published. When a review panel is proposed, the GitHub
+      usernames of everyone who applied to it will be listed publicly.
+    </p>
+
+    <h2>If you sign in with GitHub</h2>
+    <ul>
+      <li>GitHub tells us your user id, username, avatar and email address. We store the id, username and avatar. The email address is added to the email list described above; the sign-in button says so before you click. It is never shown on the site.</li>
+      <li>Our sign-in provider, Supabase, keeps its own record of your sign-in: the profile GitHub returned (including your name and email address), and for each session your IP address and your browser's name, with the times you signed in.</li>
+      <li>To run the builder checks we read when your account was created and how many contributions your profile shows for the last year. We store those two facts, whether each check passed, and when it was run. The checks run again every time you sign in.</li>
+      <li>We store your country, as two letters, from the moment you signed in.</li>
+      <li>If you join as a builder we store which version of the rules you accepted, and when.</li>
+      <li>Signing in sets cookies that keep you signed in. Scripts on the page cannot read them, and they are sent over a secure connection only. Signing out removes them.</li>
+      <li>We never see your private repositories. We use the access GitHub gives us during sign-in, to run the checks, and do not save it in our database.</li>
+    </ul>
+
+    <h2>What you choose to make public</h2>
+    <ul>
+      <li>If you join as a builder: your username and avatar on the builders list, plus an X handle and a site address if you give them.</li>
+      <li>If you post an idea: the idea, with your username. While you type the idea's name, and again when you post it, our server sends that name to GitHub's search to find existing projects. GitHub sees the words and our server, not you.</li>
+      <li>If you pledge: the name you choose, the amount, whether it is from you or a company, and your GitHub username. If you choose to add them: an X username and, for a company, its website. All of this is shown publicly once the pledge is listed.</li>
+    </ul>
+
+    <h2>Emails we send</h2>
+    <ul>
+      <li>One welcome email when an address first joins the list, saying what the list is for and how to leave it.</li>
+      <li>After that, only news about this hackathon: the dates being set, the pool opening, the results.</li>
+      <li>A notice to the organizer each time someone sends a sponsor inquiry, a panel application or an offer to help. It contains what was sent.</li>
+    </ul>
+    <p>
+      Every email this site sends to the list carries that address's own unsubscribe link. The
+      list is only ever emailed in a way that honours it: when the organizer exports the list,
+      each row includes that link and marks the addresses that have unsubscribed.
+    </p>
+    <p>
+      Email is sent through Resend, which receives the address and the message in order to
+      deliver it. The site sends at most a fixed number of emails an hour; past that, what you
+      submitted is still saved and the organizer reads it on his private page.
+    </p>
+
+    <h2>Who else is involved</h2>
+    <ul>
+      <li>The site runs on Vercel, and its database and sign-in run on Supabase. Both process requests on our behalf, and both keep their own request logs, which include IP addresses and browser names, for as long as their own policies say. We do not copy those logs anywhere.</li>
+      <li>Email is delivered by Resend, as described above.</li>
+      <li>Fonts are loaded from Fontshare, and avatars from GitHub, so your browser contacts those services when a page shows them.</li>
+      <li>If a pledger added an X username, that account's picture is loaded from unavatar.io by the browser of everyone who views the pledge. The page you came from is not passed along.</li>
+      <li>A sponsor's logo, when there is one, is loaded from the address the sponsor gave.</li>
+    </ul>
+
+    <h2>How long things are kept</h2>
+    <ul>
+      <li>Records used to limit form sending: one day.</li>
+      <li>Page-view rows: kept so that totals can be compared over time. They hold nothing that identifies you.</li>
+      <li>A pledge you replaced, or one that was hidden: kept in the database and not shown, so the organizer can see what was changed. It is deleted with the rest of your data if you ask.</li>
+      <li>Your account, ideas, pledge, applications and email address: until you ask us to delete them.</li>
+      <li>Hosting and sign-in logs: set by Vercel and Supabase, as above.</li>
+    </ul>
+
+    <h2>What we don't do</h2>
+    <ul>
+      <li>No advertising or tracking scripts, and no outside analytics.</li>
+      <li>No selling or sharing of anything above. Sponsors see totals, such as visitors and builders by country, never a list of people.</li>
+      <li>No email about anything other than this hackathon.</li>
+    </ul>
+
+    <h2>Removing your data</h2>
+    <p>
+      Email privacy@antipaywall.org from the address on your GitHub account, or tell us your
+      username, and we will delete your account, ideas, pledges, panel application and offer to
+      help. To leave the email list, use the link in any of our emails. To have an address or a
+      sponsor inquiry erased entirely, email from that address and we will delete it. Page-view
+      counts hold nothing that identifies you, so there is nothing of yours in them to remove.
+    </p>
+  </div>
+</Base>

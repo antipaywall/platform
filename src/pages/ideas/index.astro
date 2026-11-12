@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import Heart from '../../components/Heart.astro';
+import { attempt, heartedBy, listIdeas } from '../../lib/db';
+import { postedBy } from '../../lib/ideas';
+import { visitorId } from '../../lib/visitor';
+
+const ideas = await attempt(listIdeas);
+const mine = ideas ? ((await attempt(() => heartedBy(visitorId(Astro.cookies), ideas.map((i) => i.id)))) ?? new Set<string>()) : new Set<string>();
+---
+
+<Base title="Ideas" description="Things people wish were free. Heart the ones you want, so builders know what to make.">
+  <h1 class="page-title">What should be free?</h1>
+  <p class="lede">
+    Post the thing you are tired of paying for, and heart the ones you want. Builders see what
+    people are asking for before they pick what to make. Hearts need no account.
+  </p>
+  <div style="margin-top:28px"><a class="key key-big key-tomato" href="/ideas/new">Post an idea</a></div>
+  {
+    !ideas ? (
+      <p class="empty">Ideas are unavailable right now.</p>
+    ) : ideas.length ? (
+      <>
+      {ideas.some((i) => i.byPlatform) && (
+        <p class="muted" style="margin-top:28px">
+          The first ideas were posted by Antipaywall to get things started. Anyone signed in can add their own.
+        </p>
+      )}
+      <ul class="idea-grid">
+        {ideas.map((i, n) => (
+          <li class={`idea p${(n % 6) + 1}`}>
+            <a class="idea-link" href={`/ideas/${i.slug}`}>
+              <h2>{i.title}</h2>
+              {i.pitch && <p>{i.pitch}</p>}
+              <p class="muted small">Posted by {postedBy(i)}</p>
+            </a>
+            <Heart slug={i.slug} hearts={i.hearts} hearted={mine.has(i.id)} from="list" />
+          </li>
+        ))}
+      </ul>
+      </>
+    ) : (
+      <p class="empty">Nothing posted yet. <a class="link" href="/ideas/new">Post the first idea.</a></p>
+    )
+  }
+</Base>

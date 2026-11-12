@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { adminClient } from '../lib/supabase';
+
+// Opening this page changes nothing. It shows where the address stands and offers one button;
+// only pressing it (a POST) takes the address off the list or puts it back. A mail scanner
+// that merely opens links therefore cannot unsubscribe anyone.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const token = Astro.url.searchParams.get('t') ?? '';
+const db = adminClient();
+
+// Enough of the address to recognise it, without printing it in full on a page.
+const mask = (email: string) => {
+  const [name, domain] = email.split('@');
+  return `${name.slice(0, 1)}${'•'.repeat(Math.min(6, Math.max(2, name.length - 1)))}@${domain}`;
+};
+
+let state: 'no_link' | 'unknown' | 'error' | 'off' | 'on' = 'no_link';
+let who = '';
+if (UUID.test(token)) {
+  if (!db) state = 'error';
+  else {
+    const { data, error } = await db.from('subscribers').select('email, unsubscribed_at').eq('token', token).maybeSingle();
+    state = error ? 'error' : !data ? 'unknown' : data.unsubscribed_at ? 'off' : 'on';
+    if (data) who = mask(data.email);
+  }
+}
+---
+
+<Base title="Email list" description="Leave or rejoin the Antipaywall email list." noindex>
+  {
+    state === 'on' && (
+      <>
+        <h1 class="page-title">Leave the email list?</h1>
+        <p class="lede">
+          <strong>{who}</strong> is on the Antipaywall email list. Press the button and we won't
+          email it again. Signing in with GitHub won't add it back either.
+        </p>
+        <form method="post" action="/api/unsubscribe" style="margin-top:28px">
+          <input type="hidden" name="t" value={token} />
+          <button class="key key-big" type="submit">Take me off the list</button>
+        </form>
+      </>
+    )
+  }
+  {
+    state === 'off' && (
+      <>
+        <h1 class="page-title">You're off the list.</h1>
+        <p class="lede">We won't email <strong>{who}</strong> again. Signing in with GitHub won't add it back either.</p>
+        <form method="post" action="/api/resubscribe" style="margin-top:28px">
+          <input type="hidden" name="t" value={token} />
+          <button class="key key-big key-milk" type="submit">That was a mistake. Put me back</button>
+        </form>
+      </>
+    )
+  }
+  {
+    (state === 'no_link' || state === 'unknown') && (
+      <>
+        <h1 class="page-title">That link didn't match anyone.</h1>
+        <p class="lede">
+          Use the unsubscribe link from one of our emails exactly as it arrived. If it still doesn't
+          work, write to <a class="link" href="mailto:privacy@antipaywall.org">privacy@antipaywall.org</a> and we'll remove you by hand.
+        </p>
+      </>
+    )
+  }
+  {
+    state === 'error' && (
+      <>
+        <h1 class="page-title">That didn't go through.</h1>
+        <p class="lede">
+          Nothing was changed. Try the link again in a minute, or write to{' '}
+          <a class="link" href="mailto:privacy@antipaywall.org">privacy@antipaywall.org</a> and we'll remove you by hand.
+        </p>
+      </>
+    )
+  }
+</Base>

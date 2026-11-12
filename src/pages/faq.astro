@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { bountyRules, insiderRules, money, organizerPledgeFull, shape, site } from '../config/site';
+import { attempt, getOrganizerPledge } from '../lib/db';
+const pending = site.collective.pending;
+// The organizer's pledge is read from the database. If it can't be, the question is left out.
+const pledged = await attempt(getOrganizerPledge);
+const qa: [string, string][] = [
+  ['Who holds the money?', pending ? money.holder : `${money.holder} Every contribution and payout is on a public ledger on Open Collective.`],
+  ...(pending ? [] : ([['Why Open Collective?', 'People can pay with an ordinary card, the money sits with a nonprofit instead of the organizer, and the ledger is public and readable by this site.']] as [string, string][])),
+  ['Does Antipaywall make money from this?', 'No. Not from entries, not from the pool, not from sponsors. It is free to enter, nothing is sold, and the organizer puts money in rather than taking any out.'],
+  [pending ? 'Are there fees?' : `Then where does the ${site.fees.hostPercent}% go?`, money.full],
+  ['What is a pledge?', 'A public promise, not a payment. Pledges are listed separately and never counted as money in the pool. When the pool opens, you come back and pay.'],
+  ['How will winners be picked?', 'By the builders. Everyone who submits an eligible entry will get three votes for three different projects, and every ballot will be published. A volunteer review panel will check only for cheating.'],
+  ['Can the organizer and the review panel enter?', `Yes, but they cannot win. ${insiderRules.join(' ')}`],
+  ...(pledged ? ([['What is the organizer putting in?', `${organizerPledgeFull(pledged)} It is a pledge like any other: it is paid when the pool opens.`]] as [string, string][]) : []),
+  ['How do sponsor bounties work?', `A sponsor can put up money for the best entry that does one specific thing. The first will be listed as sponsors commit. ${bountyRules.join(' ')}`],
+  ['What are ideas for?', 'To show builders what people want. Anyone can heart an idea without an account, and anyone signed in can post one. Ideas carry no money and no prize of their own, and hearts do not affect who wins.'],
+  ['Can I fork an existing project?', 'Yes, if it is open source. Say what you added. Only work done during the build week counts.'],
+  ['When does it start?', `${shape.when} ${shape.summary}`],
+  ['Is this against the other hackathon?', 'No. Enter both if you like. We think a hackathon should be free, public and run by its builders, so we are running one that way.'],
+  ['Can I read the code?', `Yes. This site's code is public at ${site.repo.replace('https://', '')}.`],
+];
+---
+
+<Base title="Questions" description="Who holds the money, how winners are picked, and how pledges work.">
+  <h1 class="page-title">Questions.</h1>
+  <div class="prose">
+    {qa.map(([q, a]) => (<><h2>{q}</h2><p>{a}</p></>))}
+  </div>
+</Base>

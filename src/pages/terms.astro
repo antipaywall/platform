@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import { money, shape, site } from '../config/site';
+
+const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
+---
+
+<Base title="Terms" description="The terms for using this site and taking part, in plain words.">
+  <h1 class="page-title">The terms, in plain words.</h1>
+  <p class="lede">
+    These terms are written in plain language. They have not yet been reviewed by a lawyer, and
+    they will be before any money is collected.
+  </p>
+  <div class="prose">
+    <h2>Who runs this</h2>
+    <p>
+      {site.name} is run by Ethan Rogers, an individual. It is not a company and it is not a
+      registered nonprofit or charity. Where this page says "we", it means Ethan and the people
+      helping him. You can reach us at <a class="link" href="mailto:hello@antipaywall.org">hello@antipaywall.org</a>.
+    </p>
+
+    <h2>What it costs</h2>
+    <p>
+      Nothing. Joining, posting an idea, following along and entering are free. Nothing is sold
+      on this site, and no purchase or payment is needed to enter or to win.
+      {' '}{money.none}
+    </p>
+
+    <h2>Where things stand</h2>
+    <p>
+      The hackathon is happening, and its dates are not set yet. {shape.when} Until money is
+      actually held for prizes, nothing on this site is an offer of a prize.
+    </p>
+
+    <h2>Pledges</h2>
+    <ul>
+      <li>A pledge is a public statement that you intend to contribute once the pool opens. It is not a payment and it is not a contract.</li>
+      <li>No money moves when you pledge, so there is nothing to refund. You can replace your pledge with a new one, or ask us to remove it.</li>
+      <li>Pledges are listed with the name you choose and your GitHub username. A pledge from a company, over {hold}, with an X username, or under a name other than your GitHub handle is checked by a person before it is listed. We may decline to list a pledge or remove one.</li>
+      <li>If you add an X username or a company website to a pledge, you are saying you have the right to. We cannot verify them automatically, which is why a person looks at those pledges first.</li>
+      <li>The pledged total is a sum of promises. It is not a prize pool, and nobody should rely on it as one.</li>
+    </ul>
+
+    <h2>Money, when the pool opens</h2>
+    <ul>
+      <li>No money is collected through this site today.</li>
+      <li>{money.holder}</li>
+      <li>We are asking sponsors to cover the holder's fee, so what people give reaches the pool whole.</li>
+      <li>Contributions are not tax-deductible unless the holder states otherwise at the time you give.</li>
+      <li>The terms that apply to a contribution will be the holder's terms and the published rules, shown before you pay.</li>
+    </ul>
+
+    <h2>Prizes</h2>
+    <p>
+      There are no prizes yet. Prizes exist only once money is actually held by the pool's
+      holder. Who can enter, how winners are chosen, and how prizes are paid are decided by
+      the published <a class="link" href="/rules">rules</a>, not by this page.
+    </p>
+
+    <h2>Your work</h2>
+    <ul>
+      <li>What you build is yours. Entries must be released under an open-source licence that you choose; that licence, not this site, sets what others may do with your work.</li>
+      <li>You are responsible for your entry. It must be your own work, or work you have the right to use and submit, and it must not break anyone else's rights or the law.</li>
+      <li>We do not endorse entries, and we are not responsible for them or for any product an entry is compared to.</li>
+    </ul>
+
+    <h2>What you post here</h2>
+    <ul>
+      <li>Ideas, pledges, applications and notes you submit are yours. By posting an idea or a pledge you agree that we can show it publicly on this site.</li>
+      <li>Don't post anything unlawful, abusive, misleading or that belongs to someone else. Don't pretend to be another person or company. Don't try to break the site or inflate its numbers.</li>
+      <li>We can hide or remove content and close accounts that break these terms.</li>
+    </ul>
+
+    <h2>The email list</h2>
+    <p>
+      If you join the list, or sign in with GitHub, we email you about this hackathon only.
+      Every email this site sends has a link that takes you off the list, and the list is only
+      ever emailed in a way that honours it. What we store is described on the{' '}
+      <a class="link" href="/privacy">privacy page</a>.
+    </p>
+
+    <h2>Changes</h2>
+    <p>
+      Dates, rules and these terms can change before the hackathon starts. When they do, the
+      page changes, the rules page shows a new version with the date, and we will email the
+      people on the list about anything that affects taking part.
+    </p>
+
+    <h2>No promises we can't keep</h2>
+    <p>
+      The site is provided as it is. We try to keep it accurate and working, but we don't
+      guarantee that it always will be, that the hackathon will take place on any particular
+      date, or that any amount will be raised. To the extent the law allows, we are not liable
+      for losses that come from using the site or taking part. Nothing here takes away rights
+      the law gives you that can't be waived.
+    </p>
+
+    <h2>Questions</h2>
+    <p>Write to <a class="link" href="mailto:hello@antipaywall.org">hello@antipaywall.org</a>.</p>
+  </div>
+</Base>

@@ -1,0 +1,331 @@
+/* Antipaywall design system.
+   Idea: a paywalled thing is a dark brick. A free thing is a painted one.
+   Six paints share one lightness and one strength, so any mix of them sits together. */
+
+:root {
+  color-scheme: light;
+
+  --milk: oklch(0.972 0.01 310);
+  --milk-2: oklch(0.94 0.016 310);
+  --card: #fff;
+  --ink: oklch(0.23 0.045 310);
+  --ink-2: oklch(0.47 0.035 310);
+  --ink-3: oklch(0.66 0.025 310);
+  --line: oklch(0.23 0.045 310 / 0.12);
+
+  --tomato: oklch(0.72 0.175 32);
+  --marigold: oklch(0.86 0.14 84);
+  --mint: oklch(0.86 0.105 165);
+  --sky: oklch(0.82 0.09 238);
+  --lilac: oklch(0.8 0.105 300);
+  --pink: oklch(0.82 0.11 352);
+
+  --wall: oklch(0.27 0.045 310);
+  --wall-edge: oklch(0.17 0.04 310);
+  --wall-ink: oklch(0.7 0.035 310);
+
+  --display: 'Cabinet Grotesk', system-ui, sans-serif;
+  --text: 'Satoshi', system-ui, sans-serif;
+
+  --spring: linear(0, 0.36 8%, 0.82 18%, 1.08 28%, 1.16 36%, 1.1 46%, 1.02 58%, 0.985 70%, 1 100%);
+  --out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --gutter: clamp(16px, 4vw, 56px);
+  --measure: 60ch;
+  --r: 14px;
+  /* Height of the sticky header. Anchors and the hero leave this much room. */
+  --head-h: 74px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* In-page links stop below the sticky header, not under it. */
+  scroll-padding-top: calc(var(--head-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--milk);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--tomato);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--marigold);
+  color: var(--ink);
+}
+
+.wrap {
+  padding-inline: var(--gutter);
+  max-width: 1360px;
+  margin-inline: auto;
+}
+
+.display {
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 5.6vw, 4.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.lede {
+  font-size: clamp(1.125rem, 1.45vw, 1.3125rem);
+  line-height: 1.45;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A key: every button and block on the site is a brick you can press.
+   --k is its face, --ke its edge. */
+.key {
+  --k: var(--ink);
+  --ke: oklch(0.12 0.03 310);
+  --kt: #fff;
+  --depth: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-height: 54px;
+  padding: 0 1.35em var(--depth);
+  border: 0;
+  border-radius: var(--r);
+  background: var(--k);
+  color: var(--kt);
+  font: 700 1.0625rem/1 var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow:
+    inset 0 calc(var(--depth) * -1) 0 var(--ke),
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    0 10px 24px -12px color-mix(in oklab, var(--ke) 70%, transparent);
+  transition:
+    transform 220ms var(--spring),
+    box-shadow 160ms var(--out),
+    padding 160ms var(--out);
+}
+.key:hover {
+  transform: translateY(-2px);
+}
+.key:active {
+  --depth: 2px;
+  transform: translateY(3px);
+  transition-duration: 60ms;
+}
+.key-big {
+  min-height: 64px;
+  padding-inline: 1.5em;
+  font-size: 1.1875rem;
+  --depth: 6px;
+}
+.key-milk {
+  --k: #fff;
+  --ke: oklch(0.86 0.03 310);
+  --kt: var(--ink);
+}
+.key-tomato {
+  --k: var(--tomato);
+  --ke: oklch(0.56 0.17 30);
+  /* Ink, not white: white on this colour is too faint to read comfortably. */
+  --kt: var(--ink);
+}
+.key-marigold {
+  --k: var(--marigold);
+  --ke: oklch(0.72 0.14 78);
+  --kt: var(--ink);
+}
+
+/* Paints, for anything that is free or open. */
+.p1 { --p: var(--tomato); --pe: oklch(0.56 0.17 30); }
+.p2 { --p: var(--marigold); --pe: oklch(0.72 0.14 78); }
+.p3 { --p: var(--mint); --pe: oklch(0.7 0.1 165); }
+.p4 { --p: var(--sky); --pe: oklch(0.66 0.09 240); }
+.p5 { --p: var(--lilac); --pe: oklch(0.63 0.11 300); }
+.p6 { --p: var(--pink); --pe: oklch(0.66 0.12 352); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--line);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tomato);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--tomato) 60%, transparent);
+  animation: pulse 2.2s var(--out) infinite;
+}
+@keyframes pulse {
+  70%,
+  100% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* A headline money figure that always fits the box it is in. The box is the container;
+   the type is sized from the box's width and the number of characters in the figure
+   (set as --chars), so "$2,500" and "$125,000" both fill the line without spilling. */
+.figure-box {
+  container-type: inline-size;
+  min-width: 0;
+}
+.figure {
+  font-family: var(--display);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  font-size: 3rem; /* for browsers without container units */
+  font-size: clamp(2.5rem, calc(100cqi / (var(--chars, 6) * 0.64)), var(--figure-max, 11rem));
+}
+
+/* Who made a pledge: a picture (or an initial), the name, and the verified GitHub handle. */
+.pwho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.pwho-pic {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--milk-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+.pwho-pic img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pwho-text {
+  display: grid;
+  min-width: 0;
+  line-height: 1.25;
+}
+.pwho-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+a.pwho-name {
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+.pwho small {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+/* A pair of choices, such as "pledging as". */
+.choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.choice legend {
+  padding: 0 0 6px;
+  font-weight: 700;
+}
+.choice label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 16px 3px;
+  border-radius: var(--r);
+  background: var(--milk);
+  box-shadow: inset 0 0 0 1.5px oklch(0.23 0.045 310 / 0.22);
+  font-weight: 700;
+  cursor: pointer;
+}
+.choice input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+.choice label:has(input:checked) {
+  background: var(--marigold);
+  box-shadow: inset 0 -3px 0 oklch(0.72 0.14 78);
+}
+.choice label:has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}

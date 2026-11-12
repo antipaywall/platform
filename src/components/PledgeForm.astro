@@ -1,0 +1,68 @@
+---
+import SignIn from './SignIn.astro';
+import { money, site } from '../config/site';
+
+interface Props {
+  /** Preselect "company", for people arriving from the sponsor page. */
+  company?: boolean;
+}
+const { company = false } = Astro.props;
+const person = Astro.locals.person;
+const hold = '$' + site.pledgeHold.aboveUsd.toLocaleString('en-US');
+---
+
+<form class="card stack" method="post" action="/api/pledge" data-pledge-form>
+  <p class="h2">Pledge to the pool</p>
+  <fieldset class="choice">
+    <legend>Pledging as</legend>
+    <label><input type="radio" name="kind" value="individual" checked={!company} /> <span>An individual</span></label>
+    <label><input type="radio" name="kind" value="company" checked={company} /> <span>A company or brand</span></label>
+  </fieldset>
+  <div class="field">
+    <label for="amount">Amount</label>
+    <div class="money"><input class="input" id="amount" name="amount" inputmode="decimal" required placeholder="50" autocomplete="off" /></div>
+  </div>
+  <div class="field">
+    <label for="display_name">Name to show</label>
+    <input class="input" id="display_name" name="display_name" required maxlength="60" value={company ? '' : (person?.handle ?? '')} aria-describedby="display_name_help" />
+    <span class="help" id="display_name_help">Your name, or the company's if you are pledging as one. Your GitHub handle is always shown beside it. A name other than your GitHub handle is checked by a person before the pledge is listed.</span>
+  </div>
+  <div class="field" data-company-only>
+    <label for="company_url">Company website <span class="muted">(optional, companies only)</span></label>
+    <input class="input" id="company_url" name="company_url" type="url" inputmode="url" maxlength="200" placeholder="https://" />
+  </div>
+  <div class="field">
+    <label for="x_handle">X username <span class="muted">(optional)</span></label>
+    <input class="input" id="x_handle" name="x_handle" maxlength="80" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@name" aria-describedby="x_handle_help" />
+    <span class="help" id="x_handle_help">If you add one, your pledge shows that account's picture and links to it. We can't confirm the account is yours automatically, so a pledge with an X username is checked by a person before it is listed.</span>
+  </div>
+  {
+    person ? (
+      <button class="key key-big" type="submit">Make this pledge</button>
+    ) : (
+      <SignIn next="/fund" label="Sign in with GitHub to pledge" />
+    )
+  }
+  <p class="muted small">
+    A pledge is a public promise, not a payment. It is listed, never counted as money in the pool,
+    and you pay when the pool opens. A new pledge replaces your earlier one. It is listed
+    straight away only if it is from an individual, is {hold} or less, has no X username, and
+    shows your GitHub handle as the name. Any other pledge is checked by a person first.
+    {money.short}{' '}
+    <a class="link" href="/terms">Terms</a>
+  </p>
+</form>
+
+<script>
+  // Hides the company-only field until "company" is chosen. Without scripts it simply stays visible.
+  const form = document.querySelector<HTMLFormElement>('[data-pledge-form]');
+  const only = form?.querySelector<HTMLElement>('[data-company-only]');
+  if (form && only) {
+    const sync = () => {
+      const kind = new FormData(form).get('kind');
+      only.hidden = kind !== 'company';
+    };
+    form.addEventListener('change', sync);
+    sync();
+  }
+</script>

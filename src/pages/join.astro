@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import { shape, site } from '../config/site';
+import { attempt, getInvolvement } from '../lib/db';
+import { WAYS } from '../lib/ways';
+
+const person = Astro.locals.person;
+const mine = person ? await attempt(() => getInvolvement(person.id)) : null;
+
+// What a signed-in person has already done, per card. Null means nothing to show.
+const done: Record<string, string | null> = {
+  follow: mine?.onList ? 'You are on the list' : mine?.unsubscribed ? 'You unsubscribed' : null,
+  build: person?.is_builder ? 'You have joined as a builder' : null,
+  panel: mine?.appliedToPanel ? 'You have applied' : null,
+  organize: mine?.offeredToOrganize ? 'You have offered' : null,
+  sponsor: null,
+};
+const cta: Record<string, string> = {
+  build: person?.is_builder ? 'See your builder page' : 'Create your builder account',
+  panel: mine?.appliedToPanel ? 'Change your application' : 'Apply to the panel',
+  organize: mine?.offeredToOrganize ? 'Change your offer' : 'Offer to help',
+  sponsor: 'Ask about sponsoring',
+};
+---
+
+<Base title="Join" description="Antipaywall needs people behind it. Follow along, build, sit on the review panel, help organize or sponsor.">
+  <h1 class="page-title">Join the mission.</h1>
+  <p class="lede">
+    Antipaywall is a free, open-source hackathon, and it is going ahead. What it needs now is
+    people behind it. {shape.when}{' '}
+    Joining now means you are one of the people who makes it happen: you hold your place, and
+    you hear the moment the dates are set. It costs nothing, and there is nothing to buy later.
+  </p>
+
+  <ul class="hub">
+    {
+      WAYS.map((w) => (
+        <li class={w.paint} id={w.id}>
+          <div class="hub-head">
+            <h2>{w.label}</h2>
+            {done[w.id] && <span class="hub-done">{done[w.id]}</span>}
+          </div>
+          <p>{w.blurb}</p>
+          <p class="hub-asks"><strong>What it asks of you:</strong> {w.asks}</p>
+          {
+            w.id === 'follow' ? (
+              mine?.onList ? (
+                <p class="hub-note">The link in any of our emails takes you off the list.</p>
+              ) : (
+                <form class="hub-form" method="post" action="/api/subscribe">
+                  <label for="follow-email">Your email</label>
+                  <div class="hub-row">
+                    <input class="input" id="follow-email" name="email" type="email" required autocomplete="email" maxlength="254" />
+                    <button class="key" type="submit">Join the list</button>
+                  </div>
+                  {/* Not for people. A script that fills in every field gives itself away here. */}
+                  <div class="trap" aria-hidden="true">
+                    <label for="follow-website">Leave this empty</label>
+                    <input id="follow-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                  </div>
+                  <p class="hub-note">
+                    We email only about this hackathon, and every email has a link to leave.{' '}
+                    <a class="link" href="/terms">Terms</a>.
+                    Check the address is typed correctly: we don't ask you to confirm it.
+                  </p>
+                </form>
+              )
+            ) : (
+              <a class="key" href={w.href}>{cta[w.id]}</a>
+            )
+          }
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="muted" style="margin-top:28px;max-width:70ch">
+    Building, applying to the review panel and helping organize use GitHub sign-in, so everyone can see who is
+    involved. At least {site.launch.buildersNeeded} builders is what the dates are waiting on, and there is no cap.{' '}
+    <a class="link" href="/about">How the whole thing works</a>
+  </p>
+</Base>

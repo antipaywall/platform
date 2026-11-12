@@ -1,0 +1,107 @@
+---
+import SignIn from '../../components/SignIn.astro';
+import Base from '../../layouts/Base.astro';
+
+const person = Astro.locals.person;
+---
+
+<Base title="Post an idea" description="Name something that should be free. We show you what already exists so you can say what is missing.">
+  <h1 class="page-title">Name something that should be free.</h1>
+  <p class="lede">
+    As you type, we look for open-source projects that already do it. If one of them solves your
+    problem, great. If not, say what is missing: that gap is the opportunity.
+  </p>
+  <div class="cols">
+    <form class="card stack" method="post" action="/api/ideas" data-idea-form data-signed-in={person ? "1" : undefined}>
+      <div class="field">
+        <label for="title">The idea</label>
+        <input class="input" id="title" name="title" required minlength="3" maxlength="80" placeholder="A brand design skill that makes good logos" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="pitch">What it should do <span class="muted">(optional)</span></label>
+        <textarea class="input" id="pitch" name="pitch" maxlength="280"></textarea>
+      </div>
+      <div class="field">
+        <label for="missing">What the existing options are missing</label>
+        <textarea class="input" id="missing" name="missing" maxlength="600"></textarea>
+        <span class="help">Needed if similar projects exist. We search again when you post, and that list is what gets saved. Be specific: too hard to set up, missing a feature, abandoned.</span>
+      </div>
+      {
+        person ? (
+          <button class="key key-big key-tomato" type="submit">Post this idea</button>
+          <p class="muted small">By sending this you agree to the <a class="link" href="/terms">terms</a>.</p>
+        ) : (
+          <SignIn next="/ideas/new" label="Sign in with GitHub to post" />
+        )
+      }
+    </form>
+
+    <div class="stack" aria-live="polite">
+      <p class="h2" data-found-title>Already out there</p>
+      <p class="muted" data-found-note>{person ? 'Start typing the idea and we will search GitHub.' : 'Sign in and we will search GitHub as you type.'}</p>
+      <ul class="repos" data-found></ul>
+    </div>
+  </div>
+</Base>
+
+<script>
+  type Hit = { fullName: string; url: string; description: string; stars: number; license: string | null };
+  const form = document.querySelector<HTMLFormElement>('[data-idea-form]');
+  if (form && form.dataset.signedIn) {
+    const title = form.querySelector<HTMLInputElement>('#title')!;
+    const list = document.querySelector<HTMLElement>('[data-found]')!;
+    const note = document.querySelector<HTMLElement>('[data-found-note]')!;
+    const head = document.querySelector<HTMLElement>('[data-found-title]')!;
+    const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n));
+    let timer = 0;
+    let latest = '';
+
+    const render = (hits: Hit[], unavailable: boolean) => {
+      list.replaceChildren();
+      if (unavailable) {
+        note.textContent = 'GitHub search is busy right now. You can still post the idea.';
+        return;
+      }
+      if (!hits.length) {
+        head.textContent = 'Nothing like it yet';
+        note.textContent = 'We found no open-source project matching that. Wide open.';
+        return;
+      }
+      head.textContent = "Are you sure these don't solve it?";
+      note.textContent = 'These are the most-starred open-source matches. If none fits, say what is missing. Builders can also fork one of these.';
+      for (const h of hits) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = h.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = h.fullName;
+        const s = document.createElement('span');
+        s.className = 'stars';
+        s.textContent = `★ ${stars(h.stars)}`;
+        const d = document.createElement('span');
+        d.className = 'desc';
+        d.textContent = [h.description, h.license].filter(Boolean).join(' (') + (h.description && h.license ? ')' : '') || 'No description';
+        li.append(a, s, d);
+        list.append(li);
+      }
+    };
+
+    title.addEventListener('input', () => {
+      clearTimeout(timer);
+      const q = title.value.trim();
+      if (q.length < 3) return;
+      timer = window.setTimeout(async () => {
+        latest = q;
+        note.textContent = 'Searching GitHub…';
+        try {
+          const res = await fetch(`/api/repo-search?q=${encodeURIComponent(q)}`);
+          const body = await res.json();
+          if (latest === q) render(body.hits ?? [], Boolean(body.unavailable));
+        } catch {
+          if (latest === q) render([], true);
+        }
+      }, 500);
+    });
+  }
+</script>
