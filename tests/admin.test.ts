@@ -68,6 +68,8 @@ describe('organizer pages are private', () => {
     const middleware = readFileSync('src/middleware.ts', 'utf8');
     expect(middleware).toMatch(/if \(isAdminPath\(context\.url\.pathname\)\) \{\s*for \(const \[name, value\] of Object\.entries\(ADMIN_HEADERS\)\) response\.headers\.set\(name, value\);/);
     expect(readFileSync('src/pages/admin.astro', 'utf8')).toMatch(/<Base title="Admin" noindex>/);
+    for (const page of ['visitors', 'people', 'manage']) expect(readFileSync(`src/pages/admin/${page}.astro`, 'utf8')).toMatch(/<Base title="Admin: [a-z ]+" noindex>/);
+    for (const p of ['/admin/visitors', '/admin/people', '/admin/manage', '/api/admin/people.csv']) expect(isAdminPath(p)).toBe(true);
   });
 });
 
@@ -90,7 +92,9 @@ const code = (source: string) => source.split('\n').map((l) => l.trim()).filter(
 describe('every organizer page and route checks isAdmin first', () => {
   it('finds the files it is meant to guard', () => {
     expect(adminPages).toContain('src/pages/admin.astro');
-    expect(adminRoutes.length).toBeGreaterThanOrEqual(5);
+    for (const page of ['visitors', 'people', 'manage']) expect(adminPages).toContain(`src/pages/admin/${page}.astro`);
+    expect(adminRoutes).toContain('src/pages/api/admin/people.csv.ts');
+    expect(adminRoutes.length).toBeGreaterThanOrEqual(6);
   });
   it.each(adminPages)('%s', (file) => {
     const source = readFileSync(file, 'utf8');
@@ -119,6 +123,11 @@ describe('the admin link', () => {
     expect(header).toContain('{[...links, ...admin].map(');
     expect(header).toContain('{[...links, ...more, ...admin].map(');
   });
+  it('is drawn between the organizer\'s pages by a component only those pages use', () => {
+    const users = [...filesUnder('src/components'), ...filesUnder('src/layouts'), ...filesUnder('src/pages')]
+      .filter((f) => f.endsWith('.astro') && /AdminNav|adminNav/.test(readFileSync(f, 'utf8')) && f !== 'src/components/AdminNav.astro');
+    expect(users.sort()).toEqual([...adminPages].sort());
+  });
   it('appears in no other component, layout or public page', () => {
     const others = [...filesUnder('src/components'), ...filesUnder('src/layouts'), ...filesUnder('src/pages')]
       .filter((f) => f.endsWith('.astro') && f !== 'src/components/SiteHeader.astro' && !adminPages.includes(f));
@@ -146,6 +155,29 @@ describe('the email list export', () => {
     const csv = await res.text();
     expect(csv.split('\r\n')[0]).toBe('"email","status","joined_by","country","subscribed_at","unsubscribed_at","unsubscribe_link"');
     expect(csv).toContain('"https://www.antipaywall.org/unsubscribe?t=3f1c2b9a-0d4e-4c1a-9b7e-2a6d5e4f3c21"');
+    vi.doUnmock('../src/lib/db');
+  });
+});
+
+describe('the people export', () => {
+  it('is refused for everyone but the organizer, and is never cached', async () => {
+    vi.resetModules();
+    const allowed = { value: false };
+    const getPeople = vi.fn(async () => ({ people: [], contacts: [{ email: 'ada@example.com', last_at: '2026-11-12T10:00:00Z', list: { source: 'form', country: 'GB', subscribed_at: '2026-11-12T10:00:00Z', unsubscribed_at: null }, inquiries: [], events: [] }], journeys: [] }));
+    vi.doMock('../src/lib/db', () => ({ isAdmin: () => allowed.value, getPeople }));
+    const { GET } = await import('../src/pages/api/admin/people.csv');
+    const url = new URL('https://www.antipaywall.org/api/admin/people.csv');
+    const refused = await GET({ locals: { person: null }, url } as any);
+    expect(refused.status).toBe(404);
+    expect(await refused.text()).toBe('');
+    expect(getPeople).not.toHaveBeenCalled();
+    allowed.value = true;
+    const res = await GET({ locals: { person: {} }, url } as any);
+    expect(res.headers.get('cache-control')).toBe('private, no-store');
+    expect(res.headers.get('content-type')).toContain('text/csv');
+    const csv = await res.text();
+    expect(csv.split('\r\n')[0]).toContain('"who","type","github","emails"');
+    expect(csv).toContain('"ada@example.com"');
     vi.doUnmock('../src/lib/db');
   });
 });

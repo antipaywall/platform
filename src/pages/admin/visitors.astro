@@ -1,0 +1,76 @@
+---
+import AdminNav from '../../components/AdminNav.astro';
+import Base from '../../layouts/Base.astro';
+import { clock, when } from '../../lib/adminNav';
+import { attempt, getRecentVisitors, isAdmin } from '../../lib/db';
+import { AUTOMATED_NOTES, sourceText, timeline } from '../../lib/report';
+
+// Organizer only. Everyone else, signed in or not, gets a plain 404.
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+
+const PER_PAGE = 50;
+const humans = Astro.url.searchParams.get('humans') === '1';
+const asked = Number(Astro.url.searchParams.get('page') ?? '1');
+const page = Number.isInteger(asked) && asked >= 1 && asked <= 10_000 ? asked : 1;
+const data = await attempt(() => getRecentVisitors({ limit: PER_PAGE, offset: (page - 1) * PER_PAGE, humans }));
+const pages = data ? Math.max(1, Math.ceil(data.total / PER_PAGE)) : 1;
+const n = (v: number) => v.toLocaleString('en-US');
+const to = (p: number, h = humans) => `/admin/visitors?${new URLSearchParams({ ...(h ? { humans: '1' } : {}), ...(p > 1 ? { page: String(p) } : {}) })}`.replace(/\?$/, '');
+---
+
+<Base title="Admin: visitors" noindex>
+  <h1 class="page-title">Visitors</h1>
+  <AdminNav humans={humans} />
+
+  <div class="stack" style="margin-top:28px;gap:20px">
+    <p class="admin-note">
+      One row per visitor per day, newest first, for the last 30 days: when they arrived, from where, on what, the pages they
+      opened in order, and anything they did. A visitor is one browser on one network on one day; the same person tomorrow is a
+      new row, and nothing links the two. Times are UTC.
+    </p>
+    <p class="toggle">
+      {humans ? <><strong>Leaving out visits that look automated.</strong> <a class="link" href={to(1, false)}>Show everyone</a></> : <><strong>Showing everyone.</strong> <a class="link" href={to(1, true)}>Leave out the ones that look automated</a></>}
+    </p>
+    <details class="card">
+      <summary><strong>What "possibly automated" means</strong></summary>
+      <ul class="stack" style="margin-top:12px;padding-left:1.2em">
+        <li><strong>Too fast:</strong> {AUTOMATED_NOTES.fast}</li>
+        <li><strong>One inner page:</strong> {AUTOMATED_NOTES.inner}</li>
+        <li><strong>Same-minute burst:</strong> {AUTOMATED_NOTES.burst}</li>
+      </ul>
+      <p class="muted small" style="margin-top:10px">A visit that did anything (a heart, a sign-in, a form) is never marked. The mark is a guess from what is already recorded. Nothing is hidden or deleted because of it.</p>
+    </details>
+
+    {!data && <p class="empty">Unavailable right now.</p>}
+    {data && data.rows.length === 0 && <p class="empty">No visits yet.</p>}
+    {
+      data && data.rows.length > 0 && (
+        <>
+          <p class="muted">{n(data.total)} visits in the last 30 days. Page {page} of {n(pages)}.</p>
+          <ol class="visits">
+            {data.rows.map((v) => (
+              <li class:list={['visit', v.automated && 'is-auto']}>
+                <p class="visit-head">
+                  <span class="at num">{when(v.first_at)}</span>
+                  <span class="src">{sourceText(v)}</span>
+                  <span class="muted">{v.country ?? 'unknown country'}, {v.device ?? 'device not recorded'}, {v.views === 1 ? '1 page' : `${v.views} pages`}</span>
+                  {v.automated && <span class="badge auto" title={AUTOMATED_NOTES[v.automated]}>possibly automated</span>}
+                  {v.signups > 0 && <span class="badge did">signed up</span>}
+                </p>
+                <ol class="trail">
+                  {timeline(v.pages, v.events).map((s) => (
+                    <li><span class:list={['step', s.type === 'did' && 'did']}>{s.text}</span><time datetime={s.at}>{clock(s.at)}</time></li>
+                  ))}
+                </ol>
+              </li>
+            ))}
+          </ol>
+          <p class="pager">
+            {page > 1 && <a class="key key-milk" href={to(page - 1)}>Newer</a>}
+            {page < pages && <a class="key key-milk" href={to(page + 1)}>Older</a>}
+          </p>
+        </>
+      )
+    }
+  </div>
+</Base>

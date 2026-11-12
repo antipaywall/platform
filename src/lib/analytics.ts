@@ -1,10 +1,16 @@
 import { createHmac } from 'node:crypto';
 
-// First-party page-view counting with no cookies and no personal data.
+// First-party page-view counting with no cookies.
 // What is kept per view: the day, the page path, a two-letter country, the site
-// that linked here (host only), a campaign tag if the link carried one, and a
-// daily visitor hash. The IP address and the browser name are used to compute
-// that hash and are then discarded.
+// that linked here (host only), the tags the link carried if any (`ref` or
+// `utm_source`, and `utm_medium`, `utm_campaign`, `utm_content`), the kind of
+// device (phone, tablet or computer), and a daily visitor hash. The IP address
+// and the browser name are used to compute that hash and the device kind, and
+// are then discarded.
+//
+// Actions (signing in, joining the list and so on) are recorded with the same
+// daily hash, in src/lib/events.ts, so the organizer can read an action next to
+// the pages viewed that day from the same browser and network.
 //
 // A view is recorded only when all of these hold:
 //   - the request reached the live site (not a local or preview copy) and the
@@ -65,10 +71,28 @@ export function referrerHost(referer: string | null | undefined, ownHost: string
   return host;
 }
 
-/** A campaign tag from the link (`utm_source`), limited to simple characters. Null if absent or odd. */
+/** A tag from the link (`utm_source` and the like), limited to simple characters. Null if absent or odd. */
 export function utmSource(v: string | null | undefined): string | null {
   const s = (v ?? '').trim().toLowerCase();
   return /^[a-z0-9][a-z0-9_.-]{0,39}$/.test(s) ? s : null;
+}
+
+/**
+ * Where the link says it came from: `utm_source`, or the shorter `ref` (so a link can end in
+ * `?ref=x`). `utm_source` wins when both are present and valid.
+ */
+export function sourceTag(params: URLSearchParams): string | null {
+  return utmSource(params.get('utm_source')) ?? utmSource(params.get('ref'));
+}
+
+export type Device = 'mobile' | 'tablet' | 'desktop';
+
+/** Phone, tablet or computer, judged from the browser name. Only this word is kept. */
+export function deviceClass(userAgent: string | null | undefined): Device {
+  const ua = userAgent ?? '';
+  if (/ipad|tablet|playbook|silk|kindle/i.test(ua) || (/android/i.test(ua) && !/mobile/i.test(ua))) return 'tablet';
+  if (/mobi|iphone|ipod|android|windows phone/i.test(ua)) return 'mobile';
+  return 'desktop';
 }
 
 /** A two-letter country code from the hosting provider, or null. */
@@ -109,6 +133,10 @@ export type PageView = {
   country: string | null;
   referrer_host: string | null;
   utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  device: Device;
   visitor: string;
 };
 
@@ -139,30 +167,11 @@ export function pageViewFor(input: {
     path,
     country,
     referrer_host: referrerHost(input.headers.get('referer'), input.url.hostname),
-    utm_source: utmSource(input.url.searchParams.get('utm_source')),
+    utm_source: sourceTag(input.url.searchParams),
+    utm_medium: utmSource(input.url.searchParams.get('utm_medium')),
+    utm_campaign: utmSource(input.url.searchParams.get('utm_campaign')),
+    utm_content: utmSource(input.url.searchParams.get('utm_content')),
+    device: deviceClass(ua),
     visitor: visitorHash(input.key, day, input.ip, ua!),
   };
-}
-
-export type FunnelCounts = { visitors: number; signed_in: number; passed: number; joined: number; posted: number; pledged: number; on_list?: number };
-export type FunnelStep = { label: string; count: number; of: string | null; percent: number | null };
-
-/**
- * The funnel, each step with its share of the step it follows from. The first
- * four steps follow one another. Posting an idea and pledging only need a
- * sign-in, so both are measured against "signed in". Joining the email list
- * needs no account, so it is measured against visitors; it is left out when
- * the list count is not known.
- */
-export function funnelSteps(c: FunnelCounts): FunnelStep[] {
-  const pct = (n: number, base: number) => (base > 0 ? Math.round((n / base) * 1000) / 10 : null);
-  return [
-    { label: 'Visitors', count: c.visitors, of: null, percent: null },
-    ...(c.on_list === undefined ? [] : [{ label: 'Joined the email list', count: c.on_list, of: 'visitors', percent: pct(c.on_list, c.visitors) }]),
-    { label: 'Signed in', count: c.signed_in, of: 'visitors', percent: pct(c.signed_in, c.visitors) },
-    { label: 'Passed the builder checks', count: c.passed, of: 'signed in', percent: pct(c.passed, c.signed_in) },
-    { label: 'Joined as a builder', count: c.joined, of: 'passed the checks', percent: pct(c.joined, c.passed) },
-    { label: 'Posted an idea', count: c.posted, of: 'signed in', percent: pct(c.posted, c.signed_in) },
-    { label: 'Pledged', count: c.pledged, of: 'signed in', percent: pct(c.pledged, c.signed_in) },
-  ];
 }

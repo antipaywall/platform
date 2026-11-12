@@ -42,23 +42,52 @@ what the site does today and what it does not do yet.
   (`getOrganizerPledge` in `src/lib/db.ts`). If there is none, the site says nothing
   about it.
 - **Page-view counts.** First-party, with no cookie and no outside service. Per view:
-  the day, the page path, a two-letter country, the referring host, a campaign tag,
-  and a visitor hash that is only good for that day. The IP address is used to
-  compute the hash and is not stored (`src/lib/analytics.ts`, `src/middleware.ts`).
+  the day and time, the page path, a two-letter country, the referring host, the tags
+  on the link (`ref` or `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`), the
+  kind of device (phone, tablet or computer) and a visitor hash that is only good for
+  that day. The IP address and browser name are used to compute the hash and the
+  device kind and are not stored (`src/lib/analytics.ts`, `src/middleware.ts`).
   A view is recorded only on the production deployment, with a country reported by
   the host, for a browser navigating to a public page (a GET asking for HTML with an
   `Accept-Language` header and, where sent, `Sec-Fetch-Dest: document` and
   `Sec-Fetch-Mode: navigate`). Crawlers, scripts, headless browsers, link previews,
   uptime checks, prefetches and signed-in organizers are not counted. Local and
   preview deployments record nothing.
-- **Organizer dashboard** at `/admin`, for the GitHub ids in `ADMIN_GITHUB_IDS` only.
-  Everyone else gets a 404 from the page and from every route under `/api/admin/`,
-  each of which checks before doing anything else; the link to it is not rendered
+- **Actions, and how they are linked to a visit.** Signing in, the builder checks,
+  joining as a builder, joining or leaving the email list, pledging, posting or
+  hearting an idea, applying to the panel, offering to organize and sending a sponsor
+  inquiry are each recorded as a row in `events`: the time, the kind, a reference (an
+  account id, an idea's slug, or a row id; never an email address or free text, which
+  a database check enforces), a country, and the same one-day visitor hash a page view
+  gets (`src/lib/events.ts`). Rows with the same day and hash came from the same
+  browser on the same network on the same day, which is how the organizer sees where
+  a sign-up came from and which pages it viewed. No cookie or browser storage is
+  involved, and nothing can be followed across days. A failed write never fails the
+  action. The organizer's own actions and a mail app's one-click unsubscribe carry no
+  hash. The form rate limiter still uses its own, unrelated key (`src/lib/ratelimit.ts`).
+- **Organizer pages** under `/admin`, for the GitHub ids in `ADMIN_GITHUB_IDS` only.
+  Everyone else gets a 404 from every page and from every route under `/api/admin/`,
+  each of which checks before doing anything else; the links to them are not rendered
   for anyone else; and responses are sent `private, no-store` and `noindex`
-  (`src/lib/admin.ts`, `tests/admin.test.ts`). It shows: traffic, countries, the sign-up funnel, the email list, panel applications,
-  offers to help, sponsor inquiries, moderation and sponsors.
-  Its numbers are aggregated in the database
-  (`supabase/migrations/0005_analytics.sql`).
+  (`src/lib/admin.ts`, `tests/admin.test.ts`).
+  - `/admin`: visitors, views and sign-ups for today, yesterday, 7 and 30 days; what
+    people did; hourly and daily charts; sources with conversion; landing pages,
+    pages, countries and devices.
+  - `/admin/visitors`: each visitor-day with its source, landing page, pages in order
+    and actions.
+  - `/admin/people`: everyone who signed up for anything, once each, with what they
+    signed up for and the visit behind it; filter, search and CSV export.
+  - `/admin/manage`: the email list, panel applications, offers to help, sponsor
+    inquiries, moderation and sponsors.
+
+  The numbers are computed in the database
+  (`supabase/migrations/0013_attribution.sql`). A source is the tag on the link
+  (`?ref=x`) if there is one, otherwise the referring site, otherwise "direct";
+  well-known tags and sites are grouped (`src/lib/sources.ts`). Visitor-days that look
+  like a program (three or more pages under a second apart; a single view straight
+  onto an inner page with no referrer and no tag; a same-minute burst of single
+  homepage views from one country) are marked "possibly automated". They are shown,
+  never deleted, and are only left out of the numbers when the organizer asks.
 - **Privacy page** at `/privacy` lists what is recorded. It is written from the code
   and should be changed in the same commit as any change to what is collected.
 - **Totals** are computed in the database (`supabase/migrations/0002_totals_and_safety.sql`).

@@ -15,12 +15,12 @@ const KINDS = {
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!isAdmin(locals.person)) return new Response(null, { status: 404 });
   const db = adminClient();
-  if (!db) return back('/admin', 'save_failed');
+  if (!db) return back('/admin/manage', 'save_failed');
   const form = await request.formData();
   const kind = String(form.get('kind') ?? '');
   const id = String(form.get('id') ?? '');
-  if (!Object.hasOwn(KINDS, kind) || !UUID.test(id)) return back('/admin', 'save_failed');
+  if (!Object.hasOwn(KINDS, kind) || !UUID.test(id)) return back('/admin/manage', 'save_failed');
   const [table, column, anchor] = KINDS[kind as keyof typeof KINDS];
   const { error } = await db.from(table).update({ handled: form.get('handled') === '1' }).eq(column, id);
-  return back(`/admin${anchor}`, error ? 'save_failed' : 'done');
+  return back(`/admin/manage${anchor}`, error ? 'save_failed' : 'done');
 };

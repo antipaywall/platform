@@ -1,4 +1,5 @@
 import { isAdminIn, parseAdminIds } from './admin';
+import type { RawPeople, Report, VisitorDay } from './report';
 import { adminClient } from './supabase';
 
 export type Person = {
@@ -151,23 +152,25 @@ export async function listSponsors(all = false): Promise<Sponsor[]> {
   return (data ?? []) as Sponsor[];
 }
 
-export type Row = { label: string; visitors: number; views: number };
-export type Analytics = {
-  totals: Record<'today' | 'd7' | 'd30', { visitors: number; views: number }>;
-  daily: { day: string; visitors: number; views: number }[];
-  pages: Row[];
-  referrers: Row[];
-  sources: Row[];
-  countries: Row[];
-  signup_countries: { label: string; people: number; builders: number }[];
-  funnel: import('./analytics').FunnelCounts;
-};
+/** The overview and sources numbers, computed in the database. With `humans`, visitor-days marked as possibly automated are left out. */
+export async function getReport(humans = false, days = 30): Promise<Report> {
+  const { data, error } = await db().rpc('admin_report', { p_days: days, p_humans: humans });
+  if (error || !data) throw new DataUnavailableError(error?.message ?? 'no report');
+  return data as Report;
+}
 
-/** Everything the organizer's dashboard shows, computed in the database. */
-export async function getAnalytics(days = 30): Promise<Analytics> {
-  const { data, error } = await db().rpc('analytics_summary', { p_days: days });
-  if (error || !data) throw new DataUnavailableError(error?.message ?? 'no analytics');
-  return data as Analytics;
+/** The most recent visitor-days, newest first, each with its pages and what the visitor did. */
+export async function getRecentVisitors(opts: { limit?: number; offset?: number; humans?: boolean } = {}): Promise<{ total: number; rows: VisitorDay[] }> {
+  const { data, error } = await db().rpc('recent_visitors', { p_limit: opts.limit ?? 100, p_offset: opts.offset ?? 0, p_humans: opts.humans ?? false });
+  if (error || !data) throw new DataUnavailableError(error?.message ?? 'no visitors');
+  return data as { total: number; rows: VisitorDay[] };
+}
+
+/** Every person and contact with everything they did. Includes email addresses: organizer's pages only. */
+export async function getPeople(): Promise<RawPeople> {
+  const { data, error } = await db().rpc('admin_people');
+  if (error || !data) throw new DataUnavailableError(error?.message ?? 'no people');
+  return data as RawPeople;
 }
 
 export type ListSummary = { active: number; unsubscribed: number; sources: { label: string; people: number }[]; countries: { label: string; people: number }[] };

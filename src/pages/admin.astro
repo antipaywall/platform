@@ -1,95 +1,212 @@
 ---
+import AdminNav from '../components/AdminNav.astro';
 import Base from '../layouts/Base.astro';
-import PledgeWho from '../components/PledgeWho.astro';
-import SponsorForm from '../components/SponsorForm.astro';
-import { funnelSteps } from '../lib/analytics';
-import { postedBy } from '../lib/ideas';
-import { attempt, getAnalytics, getListSummary, isAdmin, listIdeas, listIntake, listPledges, listSponsors, usd, type Row } from '../lib/db';
+import { site } from '../config/site';
+import { when } from '../lib/adminNav';
+import { attempt, getReport, isAdmin } from '../lib/db';
+import { EVENT_KINDS, EVENT_LABELS } from '../lib/events';
+import { bars, change, percent, type Counted } from '../lib/report';
+import { sourceName, taggedLinks } from '../lib/sources';
 
 // Organizer only. Everyone else, signed in or not, gets a plain 404.
 if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
 
-const [a, held, listed, ideas, sponsors, list, intake] = await Promise.all([
-  attempt(() => getAnalytics(30)),
-  listPledges({ statuses: ['held'], limit: 200 }),
-  listPledges({ limit: 200 }),
-  listIdeas(500),
-  listSponsors(true),
-  attempt(getListSummary),
-  attempt(listIntake),
-]);
+const humans = Astro.url.searchParams.get('humans') === '1';
+// The toggle needs to say how many it would leave out, which only the full count knows.
+const [a, everyone] = await Promise.all([attempt(() => getReport(humans)), humans ? attempt(() => getReport(false)) : null]);
+const marked = (everyone ?? a)?.totals.d30.automated ?? 0;
 
 const n = (v: number) => v.toLocaleString('en-US');
-// The email list needs no account, so its count comes from the list itself, not from the people table.
-const steps = a ? funnelSteps({ ...a.funnel, on_list: list?.active }) : [];
-const waiting = (rows: { handled: boolean }[]) => rows.filter((r) => !r.handled).length;
-const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty', unsure: 'Not sure yet' };
-const peak = a ? Math.max(1, ...a.daily.map((d) => d.visitors)) : 1;
+const periods = [['today', 'Today'], ['yesterday', 'Yesterday'], ['d7', 'Last 7 days'], ['d30', 'Last 30 days']] as const;
+const delta = a ? change(a.totals.today.visitors, a.totals.yesterday.visitors) : null;
 const W = 600;
-const H = 140;
-const bw = a ? W / a.daily.length : 0;
-const tables: [string, Row[] | undefined, string][] = [
-  ['Top pages', a?.pages, 'No page views yet.'],
-  ['Where visitors came from', a?.referrers, 'No visits from other sites yet.'],
-  ['Campaign tags (utm_source)', a?.sources, 'No tagged links used yet.'],
-  ['Countries, visitors', a?.countries, 'No visitors yet.'],
+const H = 150;
+const hourBars = a ? bars(a.hourly.map((h) => h.visitors), W, H) : [];
+const dayBars = a ? bars(a.daily.map((d) => d.visitors), W, H) : [];
+const hourPeak = a ? Math.max(0, ...a.hourly.map((h) => h.visitors)) : 0;
+const dayPeak = a ? Math.max(0, ...a.daily.map((d) => d.visitors)) : 0;
+const did = (e: Partial<Record<string, number>>, ...kinds: string[]) => kinds.reduce((sum, k) => sum + (e[k] ?? 0), 0);
+const tables: [string, string, Counted[] | undefined, string][] = [
+  ['Landing pages', 'The first page of each visit.', a?.landings, 'No visits yet.'],
+  ['All pages', 'Every page view, wherever in the visit it came.', a?.pages, 'No page views yet.'],
+  ['Countries', 'From the hosting provider. Two letters, nothing finer.', a?.countries, 'No visitors yet.'],
+  ['Devices', 'Phone, tablet or computer. Recorded from November 12, 2026.', a?.devices, 'No visitors yet.'],
 ];
+const links = taggedLinks(site.origin);
 ---
 
 <Base title="Admin" noindex>
   <h1 class="page-title">Admin</h1>
-  <p class="lede">
-    Page views are counted without cookies, on the live site only: never on local or preview
-    copies, and never while an organizer is signed in. Only a browser opening a public page is
-    counted; crawlers, scripts, link previews, uptime checks and pages fetched ahead of time
-    are not. A visitor is recognised within one day only, so "visitors" over several days is
-    each day's visitors added up.
-  </p>
-  <nav class="admin-nav" aria-label="Sections">
-    <a href="#traffic">Traffic</a><a href="#funnel">Funnel</a><a href="#countries">Sign-up countries</a>
-    <a href="#list">Email list</a><a href="#panel">Panel</a><a href="#organize">Organize</a><a href="#inquiries">Sponsor inquiries</a><a href="#pledges">Pledges</a><a href="#ideas">Ideas</a><a href="#sponsors">Sponsors</a>
-  </nav>
+  <AdminNav humans={humans} />
 
-  <div class="stack" style="margin-top:32px;gap:48px">
-    <section class="stack" id="traffic">
-      <p class="h2">Traffic</p>
-      {
-        !a ? (
-          <p class="empty">Traffic numbers are unavailable right now.</p>
-        ) : (
-          <>
+  <div class="stack" style="margin-top:28px;gap:44px">
+    {
+      !a ? (
+        <p class="empty">The numbers are unavailable right now.</p>
+      ) : (
+        <>
+          <section class="stack" id="overview">
+            <p class="toggle">
+              {humans ? (
+                <>
+                  <strong>Leaving out {n(marked)} possibly automated visits.</strong>
+                  <a class="link" href="/admin">Count everyone</a>
+                </>
+              ) : (
+                <>
+                  <strong>Counting everyone.</strong>
+                  {marked > 0 && <a class="link" href="/admin?humans=1">Leave out the {n(marked)} that look automated</a>}
+                </>
+              )}
+            </p>
             <dl class="tiles">
-              {([['Today', a.totals.today], ['Last 7 days', a.totals.d7], ['Last 30 days', a.totals.d30]] as const).map(([label, t]) => (
-                <div class="card">
-                  <dt>{label}</dt>
-                  <dd class="num">{n(t.visitors)} <small>visitors</small></dd>
-                  <dd class="num sub">{n(t.views)} page views</dd>
-                </div>
-              ))}
+              {periods.map(([key, label]) => {
+                const t = a.totals[key];
+                return (
+                  <div class="card">
+                    <dt>{label}</dt>
+                    <dd class="num">{n(t.visitors)} <small>visitors</small></dd>
+                    {key === 'today' && delta && <dd class:list={['delta', delta.up ? 'up' : 'down']}>{delta.text}</dd>}
+                    <dd class="num sub">{n(t.views)} page views</dd>
+                    <dd class="num sub">{n(t.converted)} signed up for something ({percent(t.converted, t.visitors)})</dd>
+                    {!humans && t.automated > 0 && <dd class="num sub">{n(t.automated)} look automated</dd>}
+                  </div>
+                );
+              })}
             </dl>
-            <figure class="card chart">
-              <figcaption>Visitors per day, last 30 days (most in a day: {n(peak)})</figcaption>
-              <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Visitors per day for the last 30 days. The busiest day had ${n(peak)}.`} preserveAspectRatio="none">
-                {a.daily.map((d, i) => {
-                  const h = Math.max(d.visitors ? 2 : 0, (d.visitors / peak) * (H - 8));
-                  return (
-                    <rect x={i * bw + 1} y={H - h} width={Math.max(1, bw - 2)} height={h} rx="2">
-                      <title>{d.day}: {n(d.visitors)} visitors, {n(d.views)} views</title>
-                    </rect>
-                  );
-                })}
-              </svg>
-              <p class="chart-x"><span>{a.daily[0]?.day}</span><span>{a.daily[a.daily.length - 1]?.day}</span></p>
-            </figure>
+            <p class="admin-note">
+              <strong>How these are counted.</strong> A visitor is one browser on one network on one day, so over several days the
+              same person counts once per day. Only a real browser opening a public page on the live site is counted: crawlers,
+              scripts, link previews, uptime checks, pages fetched ahead of time and your own visits while signed in are not. That
+              makes these numbers lower than the raw request count your host shows, not higher: in one 53-minute window on November
+              12 the host logged 40 page requests and 29 were counted here. Some programs pretend to be browsers and get through;
+              those are marked "possibly automated" on the{' '}
+              <a class="link" href="/admin/visitors">visitors page</a>, shown and never deleted, and the link above leaves them
+              out of every number here. "Signed up for something" is a visit that signed in, joined the list, joined as a builder,
+              pledged, applied to the panel, offered to organize or sent a sponsor inquiry. Days and times are UTC.
+            </p>
+
             <div class="tables">
-              {tables.map(([title, rows, empty]) => (
+              <figure class="card chart">
+                <figcaption>Visitors per hour, last 48 hours (busiest hour: {n(hourPeak)})</figcaption>
+                <svg class="tall" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Visitors per hour for the last 48 hours. The busiest hour had ${n(hourPeak)}.`} preserveAspectRatio="none">
+                  {hourBars.map((b, i) => (
+                    <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="1.5">
+                      <title>{when(a.hourly[i].at)} UTC: {n(a.hourly[i].visitors)} visitors, {n(a.hourly[i].views)} views</title>
+                    </rect>
+                  ))}
+                </svg>
+                <p class="chart-x"><span>{when(a.hourly[0]?.at ?? '')}</span><span>{when(a.hourly[a.hourly.length - 1]?.at ?? '')} UTC</span></p>
+              </figure>
+              <figure class="card chart">
+                <figcaption>Visitors per day, last 30 days (busiest day: {n(dayPeak)})</figcaption>
+                <svg class="tall" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Visitors per day for the last 30 days. The busiest day had ${n(dayPeak)}.`} preserveAspectRatio="none">
+                  {dayBars.map((b, i) => (
+                    <rect class="alt" x={b.x} y={b.y} width={b.w} height={b.h} rx="2">
+                      <title>{a.daily[i].day}: {n(a.daily[i].visitors)} visitors, {n(a.daily[i].views)} views, {n(a.daily[i].converted)} signed up</title>
+                    </rect>
+                  ))}
+                </svg>
+                <p class="chart-x"><span>{a.daily[0]?.day}</span><span>{a.daily[a.daily.length - 1]?.day}</span></p>
+              </figure>
+            </div>
+
+            <div class="card">
+              <p class="h3">What people did</p>
+              <div class="scroll-x">
+                <table class="data">
+                  <thead><tr><th scope="col">&nbsp;</th>{periods.map(([, label]) => <th scope="col">{label}</th>)}</tr></thead>
+                  <tbody>
+                    {EVENT_KINDS.map((k) => (
+                      <tr>
+                        <th scope="row">{EVENT_LABELS[k]}</th>
+                        {periods.map(([key]) => {
+                          const v = a.totals[key].events[k] ?? 0;
+                          return <td class:list={['num', !v && 'zero']}>{n(v)}</td>;
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p class="muted small" style="margin-top:10px">
+                Every action is counted here, including your own. Who did each one is on the{' '}
+                <a class="link" href="/admin/people">people page</a>.
+              </p>
+            </div>
+          </section>
+
+          <section class="stack" id="sources">
+            <p class="h2">Where visitors came from</p>
+            <p class="admin-note">
+              Last 30 days, by the first page view of each visit. A tag on the link wins over the referring site. "Direct or
+              unknown" means the visit arrived with neither: typed in, opened from a message, or sent from an app that hides
+              where it came from, which X, most mail apps and most phone apps do.
+            </p>
+            <div class="card scroll-x">
+              <table class="data wide">
+                <thead>
+                  <tr>
+                    <th scope="col">Source</th><th scope="col">Visitors</th><th scope="col">Views</th><th scope="col">Signed up</th><th scope="col">Rate</th>
+                    <th scope="col">GitHub sign-ins</th><th scope="col">Email list</th><th scope="col">Builders</th><th scope="col">Pledges</th><th scope="col">Panel, organize, sponsor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {a.sources.map((s) => (
+                    <tr>
+                      <th scope="row">
+                        {sourceName(s.label)}
+                        {(s.hosts.length > 0 || s.campaigns.length > 0) && (
+                          <span class="sub">{[s.hosts.join(', '), s.campaigns.length ? `campaigns: ${s.campaigns.join(', ')}` : ''].filter(Boolean).join('; ')}</span>
+                        )}
+                      </th>
+                      <td class="num">{n(s.visitors)}</td>
+                      <td class="num">{n(s.views)}</td>
+                      <td class="num">{n(s.converted)}</td>
+                      <td class="num">{percent(s.converted, s.visitors)}</td>
+                      <td class="num">{n(did(s.events, 'signed_in'))}</td>
+                      <td class="num">{n(did(s.events, 'list_joined'))}</td>
+                      <td class="num">{n(did(s.events, 'joined_builder'))}</td>
+                      <td class="num">{n(did(s.events, 'pledged'))}</td>
+                      <td class="num">{n(did(s.events, 'panel_applied', 'organize_offered', 'sponsor_inquiry'))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div class="card stack">
+              <p class="h3">Tag every link you post</p>
+              <p class="muted">
+                Add <code>?ref=</code> and a short word to the end of the link. Whoever follows it shows up under that word here,
+                along with what they went on to do, even when the app hides where they came from. Use one word per place, and
+                make up new ones freely (letters, numbers, dots and dashes): <code>?ref=x-launch-thread</code>,{' '}
+                <code>?ref=newsletter-nov</code>. The longer <code>utm_source</code>, <code>utm_medium</code> and{' '}
+                <code>utm_campaign</code> work too.
+              </p>
+              <ul class="tag-links">
+                {links.map((l) => <li><strong>{l.where}:</strong> <code>{l.link}</code></li>)}
+              </ul>
+            </div>
+            <p class="admin-note">
+              Sign-ups from before November 12, 2026 have no source: nothing tied an action to a visit until then. They are on
+              the people page, marked as such.
+            </p>
+          </section>
+
+          <section class="stack" id="pages">
+            <p class="h2">Pages, countries and devices</p>
+            <div class="tables">
+              {tables.map(([title, note, rows, empty]) => (
                 <div class="card">
                   <p class="h3">{title}</p>
+                  <p class="muted small" style="margin-bottom:8px">{note}</p>
                   {rows && rows.length ? (
                     <table class="data">
-                      <thead><tr><th scope="col">&nbsp;</th><th scope="col">Visitors</th><th scope="col">Views</th></tr></thead>
+                      <thead><tr><th scope="col">&nbsp;</th><th scope="col">Visitors</th><th scope="col">Views</th>{rows[0].converted !== undefined && <th scope="col">Signed up</th>}</tr></thead>
                       <tbody>
-                        {rows.map((r) => <tr><th scope="row">{r.label}</th><td class="num">{n(r.visitors)}</td><td class="num">{n(r.views)}</td></tr>)}
+                        {rows.map((r) => (
+                          <tr><th scope="row">{r.label}</th><td class="num">{n(r.visitors)}</td><td class="num">{n(r.views)}</td>{r.converted !== undefined && <td class="num">{n(r.converted)}</td>}</tr>
+                        ))}
                       </tbody>
                     </table>
                   ) : (
@@ -98,238 +215,9 @@ const tables: [string, Row[] | undefined, string][] = [
                 </div>
               ))}
             </div>
-          </>
-        )
-      }
-    </section>
-
-    <section class="stack" id="funnel">
-      <p class="h2">Funnel, all time</p>
-      {
-        !a ? (
-          <p class="empty">Unavailable right now.</p>
-        ) : (
-          <ol class="funnel">
-            {steps.map((s) => (
-              <li>
-                <span class="funnel-label">{s.label}</span>
-                <span class="funnel-count num">{n(s.count)}</span>
-                <span class="funnel-pct num">{s.percent === null ? (s.of ? `no ${s.of} yet` : '') : `${s.percent}% of ${s.of}`}</span>
-              </li>
-            ))}
-          </ol>
-        )
-      }
-      <p class="muted small">Posting an idea and pledging need only a sign-in, so both are measured against "signed in".</p>
-    </section>
-
-    <section class="stack" id="countries">
-      <p class="h2">Sign-up countries</p>
-      {
-        a && a.signup_countries.length ? (
-          <div class="card">
-            <table class="data">
-              <thead><tr><th scope="col">&nbsp;</th><th scope="col">Signed in</th><th scope="col">Builders</th></tr></thead>
-              <tbody>
-                {a.signup_countries.map((r) => <tr><th scope="row">{r.label}</th><td class="num">{n(r.people)}</td><td class="num">{n(r.builders)}</td></tr>)}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p class="empty">{a ? 'Nobody has signed in yet.' : 'Unavailable right now.'}</p>
-        )
-      }
-    </section>
-
-    <section class="stack" id="list">
-      <p class="h2">Email list ({list ? n(list.active) : 'unavailable'})</p>
-      {
-        list && (
-          <>
-            <p class="muted">
-              {n(list.active)} on the list, {n(list.unsubscribed)} unsubscribed. Unsubscribed addresses are kept so they are never emailed again.
-              {' '}<a class="link" href="/api/admin/subscribers.csv">Download the list as CSV</a>
-            </p>
-            <div class="tables">
-              <div class="card">
-                <p class="h3">How they joined</p>
-                {list.sources.length ? (
-                  <table class="data"><tbody>
-                    {list.sources.map((r) => <tr><th scope="row">{r.label === 'github' ? 'Signed in with GitHub' : 'Typed into the site'}</th><td class="num">{n(r.people)}</td></tr>)}
-                  </tbody></table>
-                ) : <p class="empty">Nobody yet.</p>}
-              </div>
-              <div class="card">
-                <p class="h3">By country</p>
-                {list.countries.length ? (
-                  <table class="data"><tbody>
-                    {list.countries.map((r) => <tr><th scope="row">{r.label}</th><td class="num">{n(r.people)}</td></tr>)}
-                  </tbody></table>
-                ) : <p class="empty">Nobody yet.</p>}
-              </div>
-            </div>
-          </>
-        )
-      }
-    </section>
-
-    <section class="stack" id="panel">
-      <p class="h2">Review panel applications ({intake ? `${waiting(intake.panel)} to read, ${intake.panel.length} in all` : 'unavailable'})</p>
-      {intake && intake.panel.length === 0 && <p class="empty">Nobody has applied yet.</p>}
-      <ul class="inbox">
-        {intake?.panel.map((r) => (
-          <li class:list={[r.handled && 'handled']}>
-            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
-            <p><strong>Why:</strong> {r.why}</p>
-            <p><strong>Ties:</strong> {r.ties || 'None given'}</p>
-            <form method="post" action="/api/admin/intake">
-              <input type="hidden" name="kind" value="panel" /><input type="hidden" name="id" value={r.person_id} />
-              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not handled' : 'Mark as handled'}</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="stack" id="organize">
-      <p class="h2">Offers to help organize ({intake ? `${waiting(intake.organize)} to read, ${intake.organize.length} in all` : 'unavailable'})</p>
-      {intake && intake.organize.length === 0 && <p class="empty">Nobody has offered yet.</p>}
-      <ul class="inbox">
-        {intake?.organize.map((r) => (
-          <li class:list={[r.handled && 'handled']}>
-            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
-            <p>{r.note}</p>
-            <form method="post" action="/api/admin/intake">
-              <input type="hidden" name="kind" value="organize" /><input type="hidden" name="id" value={r.person_id} />
-              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not handled' : 'Mark as handled'}</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="stack" id="inquiries">
-      <p class="h2">Sponsor inquiries ({intake ? `${waiting(intake.inquiries)} to answer, ${intake.inquiries.length} in all` : 'unavailable'})</p>
-      {intake && intake.inquiries.length === 0 && <p class="empty">No inquiries yet.</p>}
-      <ul class="inbox">
-        {intake?.inquiries.map((r) => (
-          <li class:list={[r.handled && 'handled']}>
-            <p class="inbox-who"><strong>{r.company}</strong> <span class="muted">{r.country ?? 'unknown'}, {r.created_at.slice(0, 10)}</span></p>
-            <p>{r.contact_name}, <a class="link" href={`mailto:${r.email}`}>{r.email}</a></p>
-            <p><strong>{kindLabel[r.kind] ?? r.kind}</strong>{r.amount_usd !== null && `, about $${n(r.amount_usd)}`}</p>
-            {r.message && <p>{r.message}</p>}
-            <form method="post" action="/api/admin/intake">
-              <input type="hidden" name="kind" value="sponsor" /><input type="hidden" name="id" value={r.id} />
-              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not answered' : 'Mark as answered'}</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="stack" id="pledges">
-      <p class="h2">Pledges waiting for a check ({held.length})</p>
-      <ul class="rows">
-        {held.map((p) => (
-          <li>
-            <PledgeWho pledge={p} />
-            <form method="post" action="/api/admin/moderate" class="row-actions">
-              <span class="amt num">{usd(p.amount_cents)}</span>
-              <input type="hidden" name="id" value={p.id} />
-              <button class="key" name="action" value="list_pledge">List it</button>
-              <button class="key key-milk" name="action" value="hide_pledge">Hide</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-      <p class="h2">Listed pledges ({listed.length})</p>
-      <ul class="rows">
-        {listed.map((p) => (
-          <li>
-            <PledgeWho pledge={p} />
-            <form method="post" action="/api/admin/moderate" class="row-actions">
-              <span class="amt num">{usd(p.amount_cents)}</span>
-              <input type="hidden" name="id" value={p.id} />
-              <button class="key key-milk" name="action" value="hide_pledge">Hide</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="stack" id="ideas">
-      <p class="h2">Ideas ({ideas.length})</p>
-      <ul class="rows">
-        {ideas.map((i) => (
-          <li>
-            <span><a class="link" href={`/ideas/${i.slug}`}>{i.title}</a> <span class="muted">by {postedBy(i)}, {n(i.hearts)} hearts</span></span>
-            <form method="post" action="/api/admin/moderate" class="row-actions">
-              <input type="hidden" name="id" value={i.id} />
-              <button class="key key-milk" name="action" value="hide_idea">Hide</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-      <form class="card stack" method="post" action="/api/admin/idea">
-        <p class="h2">Post an idea as Antipaywall</p>
-        <p class="muted">It is shown as "Posted by Antipaywall", counts toward nobody's limit, and gets the same GitHub search for existing projects as any other idea.</p>
-        <div class="field">
-          <label for="pi_title">Name</label>
-          <input class="input" id="pi_title" name="title" required minlength="3" maxlength="80" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="pi_pitch">One-line description <span class="muted">(optional)</span></label>
-          <input class="input" id="pi_pitch" name="pitch" maxlength="280" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="pi_missing">What is missing today <span class="muted">(optional)</span></label>
-          <textarea class="input" id="pi_missing" name="missing" maxlength="600" rows="3"></textarea>
-        </div>
-        <div class="field">
-          <label for="pi_problem">The problem <span class="muted">(optional)</span></label>
-          <textarea class="input" id="pi_problem" name="problem" maxlength="1200" rows="4"></textarea>
-        </div>
-        <div class="field">
-          <label for="pi_build">What to build <span class="muted">(optional)</span></label>
-          <textarea class="input" id="pi_build" name="build" maxlength="1200" rows="4"></textarea>
-        </div>
-        <div class="field">
-          <label for="pi_strong">A strong entry <span class="muted">(optional)</span></label>
-          <textarea class="input" id="pi_strong" name="strong" maxlength="1200" rows="4"></textarea>
-        </div>
-        <div class="field">
-          <label for="pi_source">Source link <span class="muted">(optional, https)</span></label>
-          <input class="input" id="pi_source" name="source_url" type="url" maxlength="300" autocomplete="off" />
-          <span class="help">Needed if the write-up says anything about another product's prices or terms.</span>
-        </div>
-        <div class="field">
-          <label for="pi_search">Search GitHub for <span class="muted">(optional)</span></label>
-          <input class="input" id="pi_search" name="search" maxlength="120" autocomplete="off" />
-          <span class="help">The phrase used to find existing projects. Left blank, the idea's name is used.</span>
-        </div>
-        <button class="key" type="submit" style="justify-self:start">Post as Antipaywall</button>
-      </form>
-    </section>
-
-    <section class="stack" id="sponsors">
-      <p class="h2">Sponsors ({sponsors.length})</p>
-      <p class="muted">Mark a sponsor "paid" only once the money has arrived. The site shows that word exactly as it is set here.</p>
-      {sponsors.map((sp) => (
-        <details class="card">
-          <summary><strong>{sp.name}</strong> <span class="muted">{usd(sp.amount_cents)}, {sp.status}, {sp.kind}, {sp.listed ? 'shown' : 'not shown'}</span></summary>
-          <div class="stack" style="margin-top:16px">
-            <SponsorForm sponsor={sp} />
-            <form method="post" action="/api/admin/sponsor">
-              <input type="hidden" name="id" value={sp.id} />
-              <button class="key key-milk" name="action" value={sp.listed ? 'unlist' : 'list'}>{sp.listed ? 'Stop showing' : 'Show on the site'}</button>
-            </form>
-          </div>
-        </details>
-      ))}
-      <div class="card stack">
-        <p class="h2">Add a sponsor</p>
-        <SponsorForm />
-      </div>
-    </section>
+          </section>
+        </>
+      )
+    }
   </div>
 </Base>

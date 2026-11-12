@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { rulesVersion } from '../../config/site';
+import { recordEvent } from '../../lib/events';
 import { parseProfile } from '../../lib/forms';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async (context) => {
+  const { request, locals } = context;
   const person = locals.person;
   const db = adminClient();
   if (!person || !db) return back('/join/build', 'need_signin');
@@ -19,5 +21,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     rules_version: rulesVersion, rules_accepted_at: now, joined_at: now,
   }).eq('id', person.id);
   if (error) return back('/join/build', 'save_failed');
+  // Saving the form again as a builder is an edit, not a second joining.
+  if (!person.is_builder) await recordEvent(db, context, { kind: 'joined_builder', personId: person.id });
   return back('/join/build', 'joined');
 };

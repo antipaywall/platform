@@ -1,0 +1,122 @@
+---
+import AdminNav from '../../components/AdminNav.astro';
+import Base from '../../layouts/Base.astro';
+import { clock, when } from '../../lib/adminNav';
+import { attempt, getPeople, isAdmin } from '../../lib/db';
+import { buildEntries, describe, filterEntries, PEOPLE_FILTERS, sourceText, timeline } from '../../lib/report';
+
+// Organizer only. Everyone else, signed in or not, gets a plain 404.
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+
+const kind = Astro.url.searchParams.get('kind') ?? 'all';
+const q = (Astro.url.searchParams.get('q') ?? '').slice(0, 100);
+const raw = await attempt(getPeople);
+const all = raw ? buildEntries(raw) : [];
+const shown = filterEntries(all, { kind, q });
+const SHOW = 500;
+const n = (v: number) => v.toLocaleString('en-US');
+const csv = `/api/admin/people.csv?${new URLSearchParams({ kind, q })}`;
+---
+
+<Base title="Admin: people" noindex>
+  <h1 class="page-title">People</h1>
+  <AdminNav />
+
+  <div class="stack" style="margin-top:28px;gap:20px">
+    <p class="admin-note">
+      Everyone who has signed up for anything, once each, with everything they did. A GitHub account carries its sign-in, email
+      address, pledge, ideas and applications. An address typed into the join page or the sponsor form, with no account, is its
+      own row. Open a row for the visit behind each action: where they came from, the page they landed on, and the pages before
+      and after. Times are UTC.
+    </p>
+    <form class="people-filter" method="get" action="/admin/people">
+      <div class="field">
+        <label for="pf_kind">Signed up for</label>
+        <select class="input" id="pf_kind" name="kind">
+          {PEOPLE_FILTERS.map(([value, label]) => <option value={value} selected={value === kind}>{label}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="pf_q">GitHub username or email</label>
+        <input class="input" id="pf_q" name="q" value={q} maxlength="100" autocomplete="off" />
+      </div>
+      <button class="key" type="submit">Show</button>
+    </form>
+
+    {!raw && <p class="empty">Unavailable right now.</p>}
+    {
+      raw && (
+        <>
+          <p class="muted">
+            {n(shown.length)} of {n(all.length)}.{' '}
+            <a class="link" href={csv}>Download these as CSV</a>
+            {shown.length > SHOW && ` Showing the ${SHOW} most recent; the download has all of them.`}
+          </p>
+          {shown.length === 0 && <p class="empty">Nobody matches.</p>}
+          <ul class="people">
+            {shown.slice(0, SHOW).map((e) => {
+              const first = e.journeys[0];
+              return (
+                <li>
+                  <details class="person">
+                    <summary>
+                      <span class="person-top">
+                        <span class="who">{e.handle ? `@${e.handle}` : e.emails[0]?.email}</span>
+                        <span class="muted">{e.country ?? 'unknown country'}, last active {when(e.lastAt)}</span>
+                      </span>
+                      <span class="person-badges">
+                        {e.signedUpFor.map((s) => <span class="badge did">{s}</span>)}
+                        {first ? <span class="badge">from {sourceText(first)}</span> : <span class="badge old">before journey tracking</span>}
+                      </span>
+                    </summary>
+                    <div class="person-body">
+                      <dl class="facts">
+                        {e.handle && <><dt>GitHub</dt><dd><a class="link" href={`https://github.com/${e.handle}`} rel="noopener">@{e.handle}</a></dd></>}
+                        {e.emails.map((m) => (
+                          <><dt>Email</dt><dd><a class="link" href={`mailto:${m.email}`}>{m.email}</a> <span class="muted">({m.subscribed ? 'on the list' : 'not on the list'}, {m.source === 'github' ? 'from GitHub' : m.source === 'form' ? 'typed into the site' : m.source})</span></dd></>
+                        ))}
+                        {e.checks && <><dt>Builder checks</dt><dd>{e.checks}</dd></>}
+                        <dt>First seen</dt><dd>{when(e.firstAt)}</dd>
+                        {first && <><dt>Came from</dt><dd>{sourceText(first)}</dd><dt>Landed on</dt><dd>{first.landing}</dd><dt>Device</dt><dd>{first.device ?? 'not recorded'}</dd></>}
+                      </dl>
+                      <div>
+                        <h3>Everything they did</h3>
+                        <ul class="acts">
+                          {e.events.map((ev) => (
+                            <li><time datetime={ev.at}>{when(ev.at)}</time>{describe(ev.kind, ev.subject)}{ev.untracked && <> <span class="badge old">before journey tracking</span></>}</li>
+                          ))}
+                          {e.events.length === 0 && <li class="muted">Nothing recorded.</li>}
+                        </ul>
+                      </div>
+                      {e.journeys.length > 0 && (
+                        <div class="stack" style="gap:8px">
+                          <h3>The visit behind it</h3>
+                          {e.journeys.map((j) => (
+                            <div class="journey">
+                              <p><strong>{when(j.first_at)}</strong> from {sourceText(j)}, {j.country ?? 'unknown country'}, {j.device ?? 'device not recorded'}</p>
+                              <ol class="trail">
+                                {timeline(j.pages, e.events.filter((ev) => ev.day === j.day && ev.visitor === j.visitor)).map((s) => (
+                                  <li><span class:list={['step', s.type === 'did' && 'did']}>{s.text}</span><time datetime={s.at}>{clock(s.at)}</time></li>
+                                ))}
+                              </ol>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {e.journeys.length === 0 && (
+                        <p class="muted small">
+                          No visit is tied to these actions. They happened before journeys were recorded (November 12, 2026), or were
+                          your own, or came from a mail app.
+                        </p>
+                      )}
+                    </div>
+                  </details>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )
+    }
+  </div>
+</Base>

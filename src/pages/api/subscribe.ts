@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { countryCode } from '../../lib/analytics';
+import { recordEvent } from '../../lib/events';
 import { parseSubscribe } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { MAX_SUBSCRIBES_PER_HOUR, takeSlot } from '../../lib/ratelimit';
@@ -29,9 +30,11 @@ export const POST: APIRoute = async (context) => {
   if (slot === 'limited') return back(HERE, 'too_many');
   if (slot === 'error') return back(HERE, 'save_failed');
 
-  const status = await addToList(db, {
+  const { status, id } = await addToList(db, {
     email: parsed.email, source: 'form',
     country: countryCode(context.request.headers.get('x-vercel-ip-country')),
   });
+  // Recorded only for an address that was new, and by the list entry's id, never the address.
+  if (status === 'new') await recordEvent(db, context, { kind: 'list_joined', subject: id });
   return back(HERE, status === 'failed' ? 'save_failed' : 'subscribed');
 };
