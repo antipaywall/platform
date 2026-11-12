@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { leaveList } from '../../lib/list';
 import { adminClient } from '../../lib/supabase';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -7,10 +8,12 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 // This is the one route another origin may post to: the token in the address is the proof,
 // and all it can do is take that one address off the list. The answer is the same whether
 // or not the token matched, so it cannot be used to test tokens.
-export const POST: APIRoute = async ({ url }) => {
+export const POST: APIRoute = async (context) => {
+  const { url } = context;
   const token = url.searchParams.get('t') ?? '';
   const db = adminClient();
-  if (db && UUID.test(token)) await db.rpc('unsubscribe', { p_token: token });
+  // The request comes from the mail app, not the reader's browser, so it is not tied to any page view.
+  if (db && UUID.test(token)) await leaveList(db, context, token, true);
   return new Response('If that link was valid, the address is off the list.\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
 };
 

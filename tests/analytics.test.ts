@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { countryCode, funnelSteps, isNavigation, isProduction, looksLikeBot, pageViewFor, referrerHost, trackablePath, utmSource, visitorHash } from '../src/lib/analytics';
+import { countryCode, deviceClass, isNavigation, isProduction, looksLikeBot, pageViewFor, referrerHost, sourceTag, trackablePath, utmSource, visitorHash } from '../src/lib/analytics';
 
 const CHROME = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 
@@ -152,10 +152,24 @@ describe('pageViewFor', () => {
     });
   it('records the day, path, country, referrer host, tag and a hash, and nothing else', () => {
     const v = make()!;
-    expect(v).toEqual({ day: '2026-11-12', path: '/ideas', country: 'DE', referrer_host: 'news.ycombinator.com', utm_source: 'hn', visitor: v.visitor });
+    expect(v).toEqual({
+      day: '2026-11-12', path: '/ideas', country: 'DE', referrer_host: 'news.ycombinator.com', utm_source: 'hn',
+      utm_medium: null, utm_campaign: null, utm_content: null, device: 'desktop', visitor: v.visitor,
+    });
     expect(JSON.stringify(v)).not.toContain('203.0.113.77');
     expect(JSON.stringify(v)).not.toContain('someone@example.com');
     expect(JSON.stringify(v)).not.toContain('Chrome');
+  });
+  it('records the other tags on the link, and takes ref in place of utm_source', () => {
+    const v = make({ url: new URL('https://www.antipaywall.org/?ref=x&utm_medium=social&utm_campaign=launch-day&utm_content=thread-2') })!;
+    expect([v.utm_source, v.utm_medium, v.utm_campaign, v.utm_content]).toEqual(['x', 'social', 'launch-day', 'thread-2']);
+    expect(make({ url: new URL('https://www.antipaywall.org/?utm_campaign=%3Cb%3E') })!.utm_campaign).toBeNull();
+  });
+  it('records the kind of device, never the browser name', () => {
+    const phone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+    const v = make({}, { 'user-agent': phone })!;
+    expect(v.device).toBe('mobile');
+    expect(JSON.stringify(v)).not.toContain('iPhone');
   });
   it('records nothing for posts, bots, prefetches, untracked paths, or when there is no key', () => {
     expect(make({ method: 'POST' })).toBeNull();
@@ -184,21 +198,36 @@ describe('pageViewFor', () => {
   });
 });
 
-describe('funnelSteps', () => {
-  it('gives each step its share of the step it follows from, to one decimal', () => {
-    const steps = funnelSteps({ visitors: 2000, signed_in: 300, passed: 240, joined: 180, posted: 45, pledged: 30 });
-    expect(steps.map((s) => [s.label, s.count, s.of, s.percent])).toEqual([
-      ['Visitors', 2000, null, null],
-      ['Signed in', 300, 'visitors', 15],
-      ['Passed the builder checks', 240, 'signed in', 80],
-      ['Joined as a builder', 180, 'passed the checks', 75],
-      ['Posted an idea', 45, 'signed in', 15],
-      ['Pledged', 30, 'signed in', 10],
-    ]);
-    expect(funnelSteps({ visitors: 3, signed_in: 1, passed: 0, joined: 0, posted: 0, pledged: 0 })[1].percent).toBe(33.3);
+describe('deviceClass', () => {
+  it.each([
+    ['Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1', 'mobile'],
+    ['Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 'mobile'],
+    ['Mozilla/5.0 (iPad; CPU OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1', 'tablet'],
+    ['Mozilla/5.0 (Linux; Android 14; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 'tablet'],
+    [CHROME, 'desktop'],
+    ['Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0', 'desktop'],
+    [null, 'desktop'],
+  ])('%s is a %s', (ua, device) => {
+    expect(deviceClass(ua)).toBe(device);
   });
-  it('shows no percentage when the step before is empty', () => {
-    const steps = funnelSteps({ visitors: 0, signed_in: 0, passed: 0, joined: 0, posted: 0, pledged: 0 });
-    expect(steps.every((s) => s.percent === null)).toBe(true);
+});
+
+describe('sourceTag', () => {
+  const tag = (query: string) => sourceTag(new URLSearchParams(query));
+  it('reads utm_source, or the shorter ref', () => {
+    expect(tag('utm_source=HN')).toBe('hn');
+    expect(tag('ref=x')).toBe('x');
+    expect(tag('ref=x-launch-thread')).toBe('x-launch-thread');
+  });
+  it('prefers utm_source when both are there, and falls back to ref when it is not usable', () => {
+    expect(tag('ref=x&utm_source=reddit')).toBe('reddit');
+    expect(tag('ref=x&utm_source=%3Cscript%3E')).toBe('x');
+  });
+  it('is null with no tag, or one that is not a simple word', () => {
+    expect(tag('')).toBeNull();
+    expect(tag('ref=')).toBeNull();
+    expect(tag('ref=a b')).toBeNull();
+    expect(tag('ref=someone@example.com')).toBeNull();
+    expect(tag('ref=' + 'a'.repeat(41))).toBeNull();
   });
 });

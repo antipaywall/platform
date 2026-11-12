@@ -9,12 +9,12 @@ import { adminClient } from '../../../lib/supabase';
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!isAdmin(locals.person)) return new Response(null, { status: 404 });
   const db = adminClient();
-  if (!db) return back('/admin#ideas', 'save_failed');
+  if (!db) return back('/admin/manage#ideas', 'save_failed');
   const form = await request.formData();
   const parsed = parseIdea({ title: form.get('title'), pitch: form.get('pitch'), missing: form.get('missing') });
-  if (!parsed.ok) return back('/admin#ideas', parsed.error);
+  if (!parsed.ok) return back('/admin/manage#ideas', parsed.error);
   const writeup = parseWriteup({ problem: form.get('problem'), build: form.get('build'), strong: form.get('strong'), sourceUrl: form.get('source_url'), search: form.get('search') });
-  if (!writeup.ok) return back('/admin#ideas', writeup.error);
+  if (!writeup.ok) return back('/admin/manage#ideas', writeup.error);
   const { slug, code } = await storeIdea(db, parsed, null, writeup);
-  return back(slug ? `/ideas/${slug}` : '/admin#ideas', code);
+  return back(slug ? `/ideas/${slug}` : '/admin/manage#ideas', code);
 };

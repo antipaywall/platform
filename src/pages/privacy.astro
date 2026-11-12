@@ -17,15 +17,22 @@ import { site } from '../config/site';
       <li>the date, and the address of the page (without anything after a "?");</li>
       <li>your country, as two letters, as reported by our hosting provider;</li>
       <li>the site that linked you here, as a host name only (for example "reddit.com");</li>
-      <li>a campaign tag, if the link you followed carried one (<code>utm_source</code>);</li>
-      <li>a visitor code that is good for that day only.</li>
+      <li>any tags on the link you followed: <code>ref</code> or <code>utm_source</code>, and <code>utm_medium</code>, <code>utm_campaign</code> and <code>utm_content</code>. Whoever posted the link chooses these, usually to say where it was posted;</li>
+      <li>whether you are on a phone, a tablet or a computer. Only that one word is kept, not your browser's name;</li>
+      <li>the time, and a visitor code that is good for that day only.</li>
     </ul>
     <p>
       The visitor code is a scrambled value made from the date, your IP address and your browser's
       name, using a key only our server has, and then cut short. It lets us count how many
-      different people came on a given day. Because the date is part of it, your code tomorrow is
-      unrelated to today's, so we cannot follow you from one day to the next. Your IP address and
-      browser name are not stored.
+      different people came on a given day, and which page views in a day belong together: the
+      organizer can see that one visitor arrived from a certain link, landed on a certain page and
+      opened certain pages in a certain order. Because the date is part of it, your code tomorrow
+      is unrelated to today's, so we cannot follow you from one day to the next. Your IP address
+      and browser name are not stored.
+    </p>
+    <p>
+      If you only visit, nothing in these rows says who you are. That changes if you sign up for
+      something on the same day, as the next section explains.
     </p>
     <p>A view is counted only when all of these are true:</p>
     <ul>
@@ -36,11 +43,41 @@ import { site } from '../config/site';
       <li>it is not from a signed-in organizer.</li>
     </ul>
 
+    <h2>If you sign up or do something: how it is linked to your visit</h2>
+    <p>
+      When you do any of the things listed below, we record that it happened, with the time, your
+      country as two letters, and the same one-day visitor code your page views carry. The
+      things are: signing in with GitHub, passing or not passing the builder checks, joining as
+      a builder, joining or leaving the email list, pledging, posting an idea, hearting an idea,
+      applying to the review panel, offering to help organize, and sending a sponsor inquiry.
+    </p>
+    <p>
+      Because the code is the same, the organizer can see, next to your account or your email
+      address, the pages you viewed that day from the same browser and network, before and after:
+      the link you arrived from and any tags on it, the page you landed on, each page you opened
+      and when, your country, and whether you were on a phone, a tablet or a computer. He uses
+      this to learn which posts and pages bring people who join.
+    </p>
+    <ul>
+      <li>No cookie and no browser storage is used for this. It works only through the one-day code.</li>
+      <li>It reaches no further than that day. Visits on other days, or the same day from another browser or network, cannot be tied to you.</li>
+      <li>Only the organizer sees it, on his private page. It is never shown on the site, sold or shared.</li>
+      <li>The record of an action holds a reference to your account, or to the list entry, inquiry, pledge or idea it was about. It does not hold your email address, your IP address, your browser's name, or anything you typed.</li>
+      <li>A visit by a signed-in organizer is not recorded, and neither is anything away from the live site.</li>
+      <li>If you press the unsubscribe button your mail app shows, the request comes from the mail app, so it is recorded without a visitor code and tied to no page views.</li>
+    </ul>
+    <p>
+      This began on November 12, 2026. Sign-ups before then are not linked to any page views,
+      because nothing recorded the link at the time.
+    </p>
+
     <h2>If you heart an idea</h2>
     <p>
       We set one cookie, <code>apw_visitor</code>, holding a random id, so that a browser can heart
       each idea once. It lasts a year, cannot be read by scripts on the page, and is not linked to
-      a name or an account. We store that id next to the idea you hearted.
+      a name or an account. We store that id next to the idea you hearted. The heart is also
+      recorded as something done during your visit, as described above; if you signed up for
+      something on the same day from the same browser, the organizer can see both in that visit.
     </p>
 
     <h2>If you join the email list</h2>
@@ -51,8 +88,10 @@ import { site } from '../config/site';
       address is seen by the organizer and never shown on the site.
     </p>
     <p>
-      An address typed into the join page is never linked to an account, even if you are signed
-      in when you type it. The form gives the same answer whether or not the address was
+      An address typed into the join page is never linked to an account in the list itself, even
+      if you are signed in when you type it. It is linked to that day's visit, as described
+      above, so if you also signed in that day from the same browser the organizer can see both
+      in the same visit. The form gives the same answer whether or not the address was
       already on the list, so it cannot be used to find out who is on it. We do not ask you to
       confirm a typed address, so someone could type yours; the first email says how it got
       there and how to leave.
@@ -72,7 +111,8 @@ import { site } from '../config/site';
       recorded as three things: which form it was, a code, and the time. The code is a
       scrambled value made from the date and your IP address only, with a key only our server
       has. It is made differently from the visitor code above, so the two cannot be matched to
-      each other, and it is not stored with the address or the message you sent. For the panel
+      each other, and it is not stored with the address or the message you sent. These records
+      are used only to count attempts, never to work out who did what. For the panel
       and organize forms, which need a sign-in, the record holds your account id instead. These
       records are deleted once they are a day old. The same table counts how many emails the
       site has sent in the last hour, without recording who they went to.
@@ -141,7 +181,8 @@ import { site } from '../config/site';
     <h2>How long things are kept</h2>
     <ul>
       <li>Records used to limit form sending: one day.</li>
-      <li>Page-view rows: kept so that totals can be compared over time. They hold nothing that identifies you.</li>
+      <li>Page-view rows: kept so that totals can be compared over time. On their own they hold nothing that identifies you.</li>
+      <li>The record of what you did, which is what ties a day's page views to you: until you ask us to delete your account or address. When that is deleted, the record goes with it and those page views are tied to nobody.</li>
       <li>A pledge you replaced, or one that was hidden: kept in the database and not shown, so the organizer can see what was changed. It is deleted with the rest of your data if you ask.</li>
       <li>Your account, ideas, pledge, applications and email address: until you ask us to delete them.</li>
       <li>Hosting and sign-in logs: set by Vercel and Supabase, as above.</li>
@@ -150,6 +191,7 @@ import { site } from '../config/site';
     <h2>What we don't do</h2>
     <ul>
       <li>No advertising or tracking scripts, and no outside analytics.</li>
+      <li>No cookie or stored id for counting visits or for linking a sign-up to a visit, and no following anyone from one day to the next.</li>
       <li>No selling or sharing of anything above. Sponsors see totals, such as visitors and builders by country, never a list of people.</li>
       <li>No email about anything other than this hackathon.</li>
     </ul>
@@ -158,9 +200,11 @@ import { site } from '../config/site';
     <p>
       Email privacy@antipaywall.org from the address on your GitHub account, or tell us your
       username, and we will delete your account, ideas, pledges, panel application and offer to
-      help. To leave the email list, use the link in any of our emails. To have an address or a
-      sponsor inquiry erased entirely, email from that address and we will delete it. Page-view
-      counts hold nothing that identifies you, so there is nothing of yours in them to remove.
+      help, along with the record of what you did. To leave the email list, use the link in any
+      of our emails. To have an address or a sponsor inquiry erased entirely, email from that
+      address and we will delete it and the record of it. Once that record is gone, nothing ties
+      any page view to you: the page-view rows that remain hold a date, a page, a country, a
+      device kind and a code that cannot be turned back into an address.
     </p>
   </div>
 </Base>
