@@ -2,6 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { searchRepos, type RepoHit } from './github';
 import type { MessageCode } from './respond';
 
+import type { Writeup } from './forms';
+
 type Parsed = { title: string; pitch: string; missing: string; slug: string };
 
 /**
@@ -10,7 +12,7 @@ type Parsed = { title: string; pitch: string; missing: string; slug: string };
  * A person must say what is missing when similar projects already exist; the platform's
  * starter ideas may leave that blank.
  */
-export async function storeIdea(db: SupabaseClient, parsed: Parsed, authorId: string | null): Promise<{ slug: string | null; code: MessageCode }> {
+export async function storeIdea(db: SupabaseClient, parsed: Parsed, authorId: string | null, writeup?: Writeup): Promise<{ slug: string | null; code: MessageCode }> {
   // The same name already listed: send them to it rather than making a duplicate.
   const same = await db.from('ideas').select('slug, status').ilike('title', parsed.title.replace(/[%_\\]/g, '\\$&')).limit(1).maybeSingle();
   if (same.data?.status === 'listed') return { slug: same.data.slug, code: 'idea_exists' };
@@ -18,7 +20,7 @@ export async function storeIdea(db: SupabaseClient, parsed: Parsed, authorId: st
   // The list of existing projects is looked up here, never taken from the form.
   let repos: RepoHit[] = [];
   try {
-    repos = await searchRepos(parsed.title);
+    repos = await searchRepos(writeup?.search || parsed.title);
   } catch {
     // GitHub search is down or rate-limited: the idea can still be posted, without the list.
   }
@@ -33,6 +35,7 @@ export async function storeIdea(db: SupabaseClient, parsed: Parsed, authorId: st
     slug, title: parsed.title, pitch: parsed.pitch, missing: parsed.missing,
     existing_repos: repos.map((r) => ({ fullName: r.fullName, url: r.url, stars: r.stars })),
     author_id: authorId,
+    ...(writeup ? { problem: writeup.problem, build: writeup.build, strong: writeup.strong, source_url: writeup.sourceUrl } : {}),
   });
   return made.error ? { slug: null, code: 'save_failed' } : { slug, code: 'idea_posted' };
 }
