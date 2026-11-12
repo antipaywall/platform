@@ -5,34 +5,50 @@
 import type { Pledge } from '../lib/db';
 
 interface Props {
-  pledge: Pick<Pledge, 'display_name' | 'handle' | 'kind' | 'company_url' | 'x_handle'>;
+  pledge: Pick<Pledge, 'display_name' | 'handle' | 'kind' | 'company_url' | 'x_handle' | 'anonymous'>;
+  /** The organizer's page: an anonymous pledge still shows who made it, marked as hidden in public. */
+  organizer?: boolean;
 }
-const { pledge: p } = Astro.props;
+const { pledge: p, organizer = false } = Astro.props;
+// In public an anonymous pledge always looks the same: no name, handle, picture or link.
+const masked = p.anonymous && !organizer;
 const initial = (p.display_name.trim()[0] ?? '?').toUpperCase();
 const note = 'X account given by the pledger. Not verified.';
 ---
 
-<span class="pwho">
-  <span class="pwho-pic" aria-hidden="true">
-    <span>{initial}</span>
-    {
-      p.x_handle && (
-        // If the image is missing or blocked nothing is drawn, and the initial behind it shows.
-        <img src={`https://unavatar.io/x/${p.x_handle}?fallback=false`} alt="" width="34" height="34" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
-      )
-    }
-  </span>
-  <span class="pwho-text">
-    {
-      p.x_handle ? (
-        <a class="pwho-name" href={`https://x.com/${p.x_handle}`} rel="noopener nofollow ugc" title={note} aria-description={note}>{p.display_name}</a>
-      ) : (
-        <span class="pwho-name">{p.display_name}</span>
-      )
-    }
-    <small>
-      {p.kind === 'company' ? 'Company, pledged by ' : ''}<span title="GitHub account, verified by sign-in">@{p.handle} on GitHub</span>
-      {p.kind === 'company' && p.company_url && <>{' '}<a href={p.company_url} rel="noopener nofollow ugc" title="Website given by the pledger. Not verified.">website</a></>}
-    </small>
-  </span>
-</span>
+{
+  masked ? (
+    <span class="pwho pwho-anon">
+      <span class="pwho-pic" aria-hidden="true"><span>?</span></span>
+      <span class="pwho-text">
+        <span class="pwho-name">Anonymous</span>
+        <small>{p.kind === 'company' ? 'A company that chose to stay anonymous' : 'Chose to stay anonymous'}</small>
+      </span>
+    </span>
+  ) : (
+    <span class="pwho">
+      <span class="pwho-pic" aria-hidden="true">
+        <span>{initial}</span>
+        {
+          p.x_handle && (
+            // If the image is missing or blocked nothing is drawn, and the initial behind it shows.
+            <img src={`https://unavatar.io/x/${p.x_handle}?fallback=false`} alt="" width="34" height="34" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+          )
+        }
+      </span>
+      <span class="pwho-text">
+        {
+          p.x_handle ? (
+            <a class="pwho-name" href={`https://x.com/${p.x_handle}`} rel="noopener nofollow ugc" title={note} aria-description={note}>{p.display_name}</a>
+          ) : (
+            <span class="pwho-name">{p.display_name}</span>
+          )
+        }
+        <small>
+          {p.anonymous ? 'Shown in public as Anonymous. ' : ''}{p.kind === 'company' ? 'Company, pledged by ' : ''}<span title="GitHub account, verified by sign-in">@{p.handle} on GitHub</span>
+          {p.kind === 'company' && p.company_url && <>{' '}<a href={p.company_url} rel="noopener nofollow ugc" title="Website given by the pledger. Not verified.">website</a></>}
+        </small>
+      </span>
+    </span>
+  )
+}
