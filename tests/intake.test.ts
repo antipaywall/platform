@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { funnelSteps, trackablePath } from '../src/lib/analytics';
+import { trackablePath } from '../src/lib/analytics';
 import { csvCell, parseEmail, parseOrganize, parsePanel, parseSponsorInquiry, parseSubscribe, toCsv } from '../src/lib/intake';
 
 describe('parseEmail', () => {
@@ -115,13 +115,3 @@ describe('the join pages are counted, and only them', () => {
   });
 });
 
-describe('funnelSteps with the email list', () => {
-  const base = { visitors: 1000, signed_in: 100, passed: 80, joined: 60, posted: 10, pledged: 5 };
-  it('adds the list as a share of visitors when its size is known', () => {
-    const step = funnelSteps({ ...base, on_list: 250 }).find((s) => s.label === 'Joined the email list');
-    expect(step).toEqual({ label: 'Joined the email list', count: 250, of: 'visitors', percent: 25 });
-  });
-  it('leaves the list out when its size is not known', () => {
-    expect(funnelSteps(base).some((s) => s.label === 'Joined the email list')).toBe(false);
-  });
-});

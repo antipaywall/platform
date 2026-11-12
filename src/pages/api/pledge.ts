@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
+import { recordEvent } from '../../lib/events';
 import { parsePledge } from '../../lib/forms';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
 // A pledge to the prize pool. One open pledge per person: a new one replaces the old.
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async (context) => {
+  const { request, locals } = context;
   const person = locals.person;
   const db = adminClient();
   if (!person || !db) return back('/fund', 'need_signin');
@@ -21,5 +23,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     p_kind: parsed.kind, p_company_url: parsed.companyUrl, p_x_handle: parsed.xHandle,
   });
   if (error) return back('/fund', 'save_failed');
+  const latest = await db.from('pledges').select('id').eq('person_id', person.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+  await recordEvent(db, context, { kind: 'pledged', personId: person.id, subject: latest.data?.id });
   return back('/fund', parsed.status === 'held' ? 'pledge_held' : 'pledge_listed');
 };

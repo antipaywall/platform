@@ -1,0 +1,225 @@
+---
+import AdminNav from '../../components/AdminNav.astro';
+import Base from '../../layouts/Base.astro';
+import PledgeWho from '../../components/PledgeWho.astro';
+import SponsorForm from '../../components/SponsorForm.astro';
+import { postedBy } from '../../lib/ideas';
+import { attempt, getListSummary, isAdmin, listIdeas, listIntake, listPledges, listSponsors, usd } from '../../lib/db';
+
+// Organizer only. Everyone else, signed in or not, gets a plain 404.
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+
+const [held, listed, ideas, sponsors, list, intake] = await Promise.all([
+  listPledges({ statuses: ['held'], limit: 200 }),
+  listPledges({ limit: 200 }),
+  listIdeas(500),
+  listSponsors(true),
+  attempt(getListSummary),
+  attempt(listIntake),
+]);
+
+const n = (v: number) => v.toLocaleString('en-US');
+const waiting = (rows: { handled: boolean }[]) => rows.filter((r) => !r.handled).length;
+const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty', unsure: 'Not sure yet' };
+---
+
+<Base title="Admin: inbox and moderation" noindex>
+  <h1 class="page-title">Inbox and moderation</h1>
+  <AdminNav />
+  <nav class="admin-nav" aria-label="On this page">
+    <a href="#list">Email list</a><a href="#panel">Panel</a><a href="#organize">Organize</a><a href="#inquiries">Sponsor inquiries</a><a href="#pledges">Pledges</a><a href="#ideas">Ideas</a><a href="#sponsors">Sponsors</a>
+  </nav>
+
+  <div class="stack" style="margin-top:32px;gap:48px">
+    <section class="stack" id="list">
+      <p class="h2">Email list ({list ? n(list.active) : 'unavailable'})</p>
+      {
+        list && (
+          <>
+            <p class="muted">
+              {n(list.active)} on the list, {n(list.unsubscribed)} unsubscribed. Unsubscribed addresses are kept so they are never emailed again.
+              {' '}<a class="link" href="/api/admin/subscribers.csv">Download the list as CSV</a>
+            </p>
+            <div class="tables">
+              <div class="card">
+                <p class="h3">How they joined</p>
+                {list.sources.length ? (
+                  <table class="data"><tbody>
+                    {list.sources.map((r) => <tr><th scope="row">{r.label === 'github' ? 'Signed in with GitHub' : 'Typed into the site'}</th><td class="num">{n(r.people)}</td></tr>)}
+                  </tbody></table>
+                ) : <p class="empty">Nobody yet.</p>}
+              </div>
+              <div class="card">
+                <p class="h3">By country</p>
+                {list.countries.length ? (
+                  <table class="data"><tbody>
+                    {list.countries.map((r) => <tr><th scope="row">{r.label}</th><td class="num">{n(r.people)}</td></tr>)}
+                  </tbody></table>
+                ) : <p class="empty">Nobody yet.</p>}
+              </div>
+            </div>
+          </>
+        )
+      }
+    </section>
+
+    <section class="stack" id="panel">
+      <p class="h2">Review panel applications ({intake ? `${waiting(intake.panel)} to read, ${intake.panel.length} in all` : 'unavailable'})</p>
+      {intake && intake.panel.length === 0 && <p class="empty">Nobody has applied yet.</p>}
+      <ul class="inbox">
+        {intake?.panel.map((r) => (
+          <li class:list={[r.handled && 'handled']}>
+            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
+            <p><strong>Why:</strong> {r.why}</p>
+            <p><strong>Ties:</strong> {r.ties || 'None given'}</p>
+            <form method="post" action="/api/admin/intake">
+              <input type="hidden" name="kind" value="panel" /><input type="hidden" name="id" value={r.person_id} />
+              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not handled' : 'Mark as handled'}</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="stack" id="organize">
+      <p class="h2">Offers to help organize ({intake ? `${waiting(intake.organize)} to read, ${intake.organize.length} in all` : 'unavailable'})</p>
+      {intake && intake.organize.length === 0 && <p class="empty">Nobody has offered yet.</p>}
+      <ul class="inbox">
+        {intake?.organize.map((r) => (
+          <li class:list={[r.handled && 'handled']}>
+            <p class="inbox-who"><a class="link" href={`https://github.com/${r.handle}`} rel="noopener">@{r.handle}</a> <span class="muted">{r.country ?? 'unknown'}, {r.updated_at.slice(0, 10)}</span></p>
+            <p>{r.note}</p>
+            <form method="post" action="/api/admin/intake">
+              <input type="hidden" name="kind" value="organize" /><input type="hidden" name="id" value={r.person_id} />
+              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not handled' : 'Mark as handled'}</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="stack" id="inquiries">
+      <p class="h2">Sponsor inquiries ({intake ? `${waiting(intake.inquiries)} to answer, ${intake.inquiries.length} in all` : 'unavailable'})</p>
+      {intake && intake.inquiries.length === 0 && <p class="empty">No inquiries yet.</p>}
+      <ul class="inbox">
+        {intake?.inquiries.map((r) => (
+          <li class:list={[r.handled && 'handled']}>
+            <p class="inbox-who"><strong>{r.company}</strong> <span class="muted">{r.country ?? 'unknown'}, {r.created_at.slice(0, 10)}</span></p>
+            <p>{r.contact_name}, <a class="link" href={`mailto:${r.email}`}>{r.email}</a></p>
+            <p><strong>{kindLabel[r.kind] ?? r.kind}</strong>{r.amount_usd !== null && `, about $${n(r.amount_usd)}`}</p>
+            {r.message && <p>{r.message}</p>}
+            <form method="post" action="/api/admin/intake">
+              <input type="hidden" name="kind" value="sponsor" /><input type="hidden" name="id" value={r.id} />
+              <button class="key key-milk" name="handled" value={r.handled ? '0' : '1'}>{r.handled ? 'Mark as not answered' : 'Mark as answered'}</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="stack" id="pledges">
+      <p class="h2">Pledges waiting for a check ({held.length})</p>
+      <ul class="rows">
+        {held.map((p) => (
+          <li>
+            <PledgeWho pledge={p} />
+            <form method="post" action="/api/admin/moderate" class="row-actions">
+              <span class="amt num">{usd(p.amount_cents)}</span>
+              <input type="hidden" name="id" value={p.id} />
+              <button class="key" name="action" value="list_pledge">List it</button>
+              <button class="key key-milk" name="action" value="hide_pledge">Hide</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+      <p class="h2">Listed pledges ({listed.length})</p>
+      <ul class="rows">
+        {listed.map((p) => (
+          <li>
+            <PledgeWho pledge={p} />
+            <form method="post" action="/api/admin/moderate" class="row-actions">
+              <span class="amt num">{usd(p.amount_cents)}</span>
+              <input type="hidden" name="id" value={p.id} />
+              <button class="key key-milk" name="action" value="hide_pledge">Hide</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="stack" id="ideas">
+      <p class="h2">Ideas ({ideas.length})</p>
+      <ul class="rows">
+        {ideas.map((i) => (
+          <li>
+            <span><a class="link" href={`/ideas/${i.slug}`}>{i.title}</a> <span class="muted">by {postedBy(i)}, {n(i.hearts)} hearts</span></span>
+            <form method="post" action="/api/admin/moderate" class="row-actions">
+              <input type="hidden" name="id" value={i.id} />
+              <button class="key key-milk" name="action" value="hide_idea">Hide</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+      <form class="card stack" method="post" action="/api/admin/idea">
+        <p class="h2">Post an idea as Antipaywall</p>
+        <p class="muted">It is shown as "Posted by Antipaywall", counts toward nobody's limit, and gets the same GitHub search for existing projects as any other idea.</p>
+        <div class="field">
+          <label for="pi_title">Name</label>
+          <input class="input" id="pi_title" name="title" required minlength="3" maxlength="80" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="pi_pitch">One-line description <span class="muted">(optional)</span></label>
+          <input class="input" id="pi_pitch" name="pitch" maxlength="280" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="pi_missing">What is missing today <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_missing" name="missing" maxlength="600" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_problem">The problem <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_problem" name="problem" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_build">What to build <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_build" name="build" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_strong">A strong entry <span class="muted">(optional)</span></label>
+          <textarea class="input" id="pi_strong" name="strong" maxlength="1200" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="pi_source">Source link <span class="muted">(optional, https)</span></label>
+          <input class="input" id="pi_source" name="source_url" type="url" maxlength="300" autocomplete="off" />
+          <span class="help">Needed if the write-up says anything about another product's prices or terms.</span>
+        </div>
+        <div class="field">
+          <label for="pi_search">Search GitHub for <span class="muted">(optional)</span></label>
+          <input class="input" id="pi_search" name="search" maxlength="120" autocomplete="off" />
+          <span class="help">The phrase used to find existing projects. Left blank, the idea's name is used.</span>
+        </div>
+        <button class="key" type="submit" style="justify-self:start">Post as Antipaywall</button>
+      </form>
+    </section>
+
+    <section class="stack" id="sponsors">
+      <p class="h2">Sponsors ({sponsors.length})</p>
+      <p class="muted">Mark a sponsor "paid" only once the money has arrived. The site shows that word exactly as it is set here.</p>
+      {sponsors.map((sp) => (
+        <details class="card">
+          <summary><strong>{sp.name}</strong> <span class="muted">{usd(sp.amount_cents)}, {sp.status}, {sp.kind}, {sp.listed ? 'shown' : 'not shown'}</span></summary>
+          <div class="stack" style="margin-top:16px">
+            <SponsorForm sponsor={sp} />
+            <form method="post" action="/api/admin/sponsor">
+              <input type="hidden" name="id" value={sp.id} />
+              <button class="key key-milk" name="action" value={sp.listed ? 'unlist' : 'list'}>{sp.listed ? 'Stop showing' : 'Show on the site'}</button>
+            </form>
+          </div>
+        </details>
+      ))}
+      <div class="card stack">
+        <p class="h2">Add a sponsor</p>
+        <SponsorForm />
+      </div>
+    </section>
+  </div>
+</Base>

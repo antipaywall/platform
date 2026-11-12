@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { countryCode } from '../../lib/analytics';
 import { deliver, organizerNotice } from '../../lib/email';
+import { recordEvent } from '../../lib/events';
 import { parseSponsorInquiry } from '../../lib/intake';
 import { MAX_INQUIRIES_PER_HOUR, takeSlot } from '../../lib/ratelimit';
 import { senderKey } from '../../lib/requester';
@@ -31,11 +32,13 @@ export const POST: APIRoute = async (context) => {
     p_company: parsed.company, p_contact: parsed.contact, p_email: parsed.email, p_amount: parsed.amountUsd,
     p_kind: parsed.kind, p_message: parsed.message,
     p_country: countryCode(context.request.headers.get('x-vercel-ip-country')),
-    // Nothing that identifies the connection is stored with the inquiry.
     p_sender: '-', p_max_per_hour: 1_000_000,
   });
   if (error) return back(HERE, 'save_failed');
   if (data === false) return back(HERE, 'too_many');
+  // Recorded by the inquiry's id. The address and the message stay in the inquiry itself.
+  const latest = await db.from('sponsor_inquiries').select('id').eq('email', parsed.email).order('created_at', { ascending: false }).limit(1).maybeSingle();
+  await recordEvent(db, context, { kind: 'sponsor_inquiry', subject: latest.data?.id });
   await deliver(db, organizerNotice('A sponsor inquiry', [
     ['Company', parsed.company], ['Contact', parsed.contact], ['Email', parsed.email],
     ['Rough amount', parsed.amountUsd === null ? '' : `$${parsed.amountUsd.toLocaleString('en-US')}`],

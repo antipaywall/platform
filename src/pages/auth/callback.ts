@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { countryCode } from '../../lib/analytics';
+import { isAdmin, type Person } from '../../lib/db';
 import { checkEligibility } from '../../lib/eligibility';
+import { recordEvent } from '../../lib/events';
 import { fetchGithubFacts, GithubUnavailableError } from '../../lib/github';
 import { githubIdentity } from '../../lib/identity';
 import { parseEmail } from '../../lib/intake';
@@ -8,7 +10,8 @@ import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
 
-export const GET: APIRoute = async ({ request, cookies, url, redirect }) => {
+export const GET: APIRoute = async (context) => {
+  const { request, cookies, url, redirect } = context;
   const next = safeNext(url.searchParams.get('next'));
   const code = url.searchParams.get('code');
   const supabase = sessionClient(request, cookies);
@@ -46,6 +49,8 @@ export const GET: APIRoute = async ({ request, cookies, url, redirect }) => {
   // Two letters from the hosting provider. Nothing finer than a country is kept.
   const country = countryCode(request.headers.get('x-vercel-ip-country'));
   const { verified, results } = checkEligibility(facts, new Date());
+  // Whether this account has been here before, so a first sign-in can be told from a return.
+  const before = await db.from('people').select('verified').eq('id', user.id).maybeSingle();
   const saved = await db.from('people').upsert({
     id: user.id,
     github_id: facts.githubId,
@@ -63,6 +68,12 @@ export const GET: APIRoute = async ({ request, cookies, url, redirect }) => {
   // Signing in joins the email list, as the sign-in button says, using the address GitHub gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.
   const email = parseEmail(identity.email);
-  if (email) await addToList(db, { email, source: 'github', personId: user.id, country });
+  const listed = email ? await addToList(db, { email, source: 'github', personId: user.id, country }) : null;
+
+  // What happened, for the organizer's page. The organizer's own sign-ins are not tied to page views.
+  const who = { personId: user.id, organizer: isAdmin({ github_id: facts.githubId } as Person) };
+  if (!before.error && !before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
+  if (!before.error && before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
+  if (listed?.status === 'new') await recordEvent(db, context, { ...who, kind: 'list_joined', subject: listed.id });
   return redirect(next);
 };

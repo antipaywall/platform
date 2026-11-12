@@ -1,0 +1,17 @@
+---
+// Links between the organizer's pages. Only ever rendered by those pages, each of which has
+// already turned everyone else away.
+import '../styles/admin.css';
+import { ADMIN_SECTIONS } from '../lib/adminNav';
+
+interface Props {
+  /** Carry the "leave out possibly automated" choice from page to page. */
+  humans?: boolean;
+}
+const { humans = false } = Astro.props;
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+---
+
+<nav class="admin-nav" aria-label="Admin sections">
+  {ADMIN_SECTIONS.map((s) => <a href={humans && s.path !== '/admin/manage' && s.path !== '/admin/people' ? `${s.path}?humans=1` : s.path} aria-current={here === s.path ? 'page' : undefined}>{s.label}</a>)}
+</nav>
