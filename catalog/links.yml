@@ -1,0 +1,6 @@
+# Links between projects and paid products, made or removed by hand, each with a reason.
+# - project: owner/repo
+#   product: calendly
+#   action: add        # or remove
+#   reason: Does the same job; tagged under a topic we don't track.
+[]
