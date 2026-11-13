@@ -11,7 +11,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "check": "astro check"
+    "check": "astro check",
+    "seed:research": "tsx scripts/seed-research.ts",
+    "sync": "tsx scripts/sync.ts",
+    "match": "tsx scripts/match/index.ts"
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.21",

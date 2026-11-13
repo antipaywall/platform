@@ -1,0 +1,50 @@
+# The daily GitHub sync. It runs in the open: anyone can read its log.
+# It uses this repository's own built-in token for GitHub's public data, and two secrets the
+# maintainers set: SUPABASE_URL and SUPABASE_SECRET_KEY. Until both are set, it skips itself.
+name: Sync from GitHub
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Skip until the database secrets are set
+        id: ready
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "SUPABASE_URL and SUPABASE_SECRET_KEY are not set; nothing to do."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.go == 'true'
+      - uses: pnpm/action-setup@v4
+        if: steps.ready.outputs.go == 'true'
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.go == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: steps.ready.outputs.go == 'true'
+      - run: pnpm sync
+        if: steps.ready.outputs.go == 'true'
