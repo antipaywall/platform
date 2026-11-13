@@ -1,0 +1,102 @@
+---
+// Posts and badges. Organizer only: reported posts, recent posts, who can't post, and badges.
+import AdminNav from '../../components/AdminNav.astro';
+import Base from '../../layouts/Base.astro';
+import { when } from '../../lib/adminNav';
+import { BADGE_INFO } from '../../lib/badges';
+import { isAdmin } from '../../lib/db';
+import { profilePath } from '../../lib/profiles';
+import { adminClient } from '../../lib/supabase';
+import { providerOf } from '../../lib/accounts';
+
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+const db = adminClient()!;
+const [reports, recent, silenced, badges] = await Promise.all([
+  db.from('post_reports').select('post_id, reason, created_at, posts(id, body, hidden_at, people:person_id(handle, provider))').eq('handled', false).order('created_at', { ascending: false }).limit(200),
+  db.from('posts').select('id, body, kind, parent_id, hidden_at, created_at, people:person_id(id, handle, provider, can_post)').order('created_at', { ascending: false }).limit(100),
+  db.from('people').select('id, handle, provider').eq('can_post', false).limit(200),
+  db.from('badges').select('id, kind, season, place, note, granted_at, people:person_id(handle, provider)').order('granted_at', { ascending: false }).limit(500),
+]);
+// One row per reported post, with every reason given.
+const byPost = new Map<string, { post: any; reasons: string[]; count: number }>();
+for (const r of (reports.data ?? []) as any[]) {
+  const e = byPost.get(r.post_id) ?? { post: r.posts, reasons: [], count: 0 };
+  e.count += 1;
+  if (r.reason) e.reasons.push(r.reason);
+  byPost.set(r.post_id, e);
+}
+const reported = [...byPost.values()].filter((e) => e.post);
+const who = (p: any) => (p ? profilePath(providerOf(p), p.handle) : '#');
+const grantable = (['founder', 'organizer', 'panel', 'sponsor', 'winner'] as const).map((k) => ({ key: k, label: BADGE_INFO[k].label }));
+---
+
+<Base title="Admin: posts and badges" noindex>
+  <h1 class="page-title">Posts and badges</h1>
+  <AdminNav />
+  <div class="stack" style="margin-top:32px;gap:48px">
+    <section class="stack" id="reports">
+      <p class="h2">Reported ({reported.length})</p>
+      {reported.length === 0 && <p class="muted">Nothing reported.</p>}
+      {
+        reported.map((e) => (
+          <div class="card stack">
+            <p class="muted small">{e.count} {e.count === 1 ? 'report' : 'reports'} on a post by <a class="link" href={who(e.post.people)}>@{e.post.people?.handle}</a>{e.post.hidden_at ? ', already hidden' : ''}</p>
+            <p class="post-body">{e.post.body}</p>
+            {e.reasons.length > 0 && <ul class="muted small">{e.reasons.map((r) => <li>{r}</li>)}</ul>}
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <form method="post" action="/api/admin/community"><input type="hidden" name="id" value={e.post.id} /><button class="key" name="action" value="hide">Hide it</button></form>
+              <form method="post" action="/api/admin/community"><input type="hidden" name="id" value={e.post.id} /><button class="key key-milk" name="action" value="keep">Keep it up</button></form>
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="stack" id="recent">
+      <p class="h2">Recent posts and replies</p>
+      <ul class="acct-rows">
+        {
+          ((recent.data ?? []) as any[]).map((p) => (
+            <li>
+              <span style="min-width:0;flex:1 1 320px">
+                <a class="link" href={who(p.people)}>@{p.people?.handle}</a> <span class="muted small">{p.parent_id ? 'reply' : p.kind}, {when(p.created_at)}{p.hidden_at ? ', hidden' : ''}{p.people?.can_post === false ? ', posting off' : ''}</span>
+                <br />{p.body.length > 200 ? p.body.slice(0, 200) + '…' : p.body}
+              </span>
+              <span style="display:flex;gap:12px">
+                <form method="post" action="/api/admin/community"><input type="hidden" name="id" value={p.id} /><button class="link-button" name="action" value={p.hidden_at ? 'unhide' : 'hide'}>{p.hidden_at ? 'Show again' : 'Hide'}</button></form>
+                {p.people && <form method="post" action="/api/admin/community"><input type="hidden" name="id" value={p.people.id} /><button class="link-button" name="action" value={p.people.can_post === false ? 'posting_on' : 'posting_off'}>{p.people.can_post === false ? 'Let them post' : 'Stop them posting'}</button></form>}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      {(silenced.data ?? []).length > 0 && <p class="muted small">Posting is off for: {(silenced.data ?? []).map((p: any) => '@' + p.handle).join(', ')}</p>}
+    </section>
+
+    <section class="stack" id="badges">
+      <p class="h2">Badges</p>
+      <p class="muted">Builder, Season 1 builder and Backer are given automatically. These are the ones you give.</p>
+      <form class="card stack" method="post" action="/api/admin/community">
+        <input type="hidden" name="action" value="grant" />
+        <div class="acct-two">
+          <div class="field"><label for="b-handle">Username</label><input class="input" id="b-handle" name="handle" required placeholder="@username" /></div>
+          <div class="field"><label for="b-provider">On</label><select class="input" id="b-provider" name="provider"><option value="github">GitHub</option><option value="gitlab">GitLab</option></select></div>
+          <div class="field"><label for="b-kind">Badge</label><select class="input" id="b-kind" name="kind">{grantable.map((g) => <option value={g.key}>{g.label}</option>)}</select></div>
+          <div class="field"><label for="b-place">Place, for a winner</label><input class="input" id="b-place" name="place" inputmode="numeric" placeholder="1 to 9" /></div>
+        </div>
+        <div class="field"><label for="b-note">What it says when someone points at it (optional)</label><input class="input" id="b-note" name="note" maxlength="80" /></div>
+        <div><button class="key" type="submit">Give badge</button></div>
+      </form>
+      <ul class="acct-rows">
+        {
+          ((badges.data ?? []) as any[]).map((b) => (
+            <li>
+              <span><a class="link" href={who(b.people)}>@{b.people?.handle}</a>: {BADGE_INFO[b.kind as keyof typeof BADGE_INFO]?.label ?? b.kind}{b.place ? `, ${b.place} in season ${b.season}` : ''}{b.note ? ` (${b.note})` : ''}</span>
+              <form method="post" action="/api/admin/community"><input type="hidden" name="id" value={b.id} /><button class="link-button" name="action" value="revoke">Take it back</button></form>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</Base>

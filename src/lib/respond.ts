@@ -47,6 +47,19 @@ export const MESSAGES = {
   need_delete_confirm: { kind: 'error', text: 'Tick the box to confirm you want your account deleted.' },
   organizer_cannot_delete: { kind: 'error', text: "The organizer's account can't be deleted from here." },
   account_deleted: { kind: 'ok', text: 'Your account and everything tied to it is deleted.' },
+  need_post: { kind: 'error', text: 'Write something first.' },
+  bad_post: { kind: 'error', text: 'Keep it under 500 characters.' },
+  need_kind: { kind: 'error', text: 'Pick what kind of post this is: an update, looking for a team, a question, or something you shipped.' },
+  need_checks: { kind: 'error', text: 'Posting is open to anyone who passes the two builder checks.' },
+  posting_off: { kind: 'error', text: 'Your posting has been turned off by the organizer.' },
+  too_many_posts: { kind: 'error', text: 'That is the most posts one person can make in a day. Try again tomorrow.' },
+  too_many_replies: { kind: 'error', text: 'That is the most replies one person can make in a day. Try again tomorrow.' },
+  post_gone: { kind: 'error', text: 'That post is no longer there.' },
+  posted: { kind: 'ok', text: 'Posted.' },
+  replied: { kind: 'ok', text: 'Replied.' },
+  reported: { kind: 'ok', text: 'Thanks. The organizer will look at it.' },
+  post_deleted: { kind: 'ok', text: 'Post deleted.' },
+  no_such_person: { kind: 'error', text: 'Nobody with that username has signed in.' },
   done: { kind: 'ok', text: 'Done.' },
   bad_pay: { kind: 'error', text: 'Pick one of the amounts. It is only a signal: nobody is charged.' },
   signal_saved: { kind: 'ok', text: 'Thanks. Builders can see where people stand.' },
@@ -68,6 +81,18 @@ export function back(path: string, code: MessageCode): Response {
   const [before, hash] = path.split('#', 2);
   const sep = before.includes('?') ? '&' : '?';
   return new Response(null, { status: 303, headers: { location: `${before}${sep}m=${code}${hash ? `#${hash}` : ''}` } });
+}
+
+/**
+ * Where to send someone back to after a post, a brick or a follow: one of our own pages, with
+ * an optional plain query and #section. Never `//host`, never a scheme. Any old message is dropped.
+ */
+export function safeBack(v: unknown, fallback = '/feed'): string {
+  if (typeof v !== 'string' || v.length > 300 || !/^\/(?!\/)[\w\-/.%]*(\?[\w=&\-%.]*)?(#[\w-]+)?$/.test(v)) return fallback;
+  const [pathQuery, hash] = v.split('#', 2);
+  const [path, query = ''] = pathQuery.split('?', 2);
+  const kept = query.split('&').filter((kv) => kv && !kv.startsWith('m=')).join('&');
+  return `${path}${kept ? `?${kept}` : ''}${hash ? `#${hash}` : ''}`;
 }
 
 /** Only our own paths: one leading slash, then letters, digits, dashes and slashes. Never `//host`. */

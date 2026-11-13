@@ -231,3 +231,24 @@ export function parseFeatured(picked: unknown[], available: readonly string[]): 
   if (featured.length > 6) return { ok: false, error: 'too_many_repos' };
   return { ok: true, featured };
 }
+
+export type PostInput = { kind: 'update' | 'team' | 'ask' | 'shipped' | null; body: string; linkUrl: string | null };
+
+/**
+ * A post or a reply. A post needs one of the four kinds; a reply has none. The text keeps its
+ * line breaks (up to two in a row) but loses trailing spaces. One optional https link.
+ */
+export function parsePost(input: { kind?: unknown; body?: unknown; link?: unknown }, reply: boolean): Ok<{ post: PostInput }> | Bad {
+  const body = (typeof input.body === 'string' ? input.body : '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (!body) return { ok: false, error: 'need_post' };
+  if (body.length > 500) return { ok: false, error: 'bad_post' };
+  let kind: PostInput['kind'] = null;
+  if (!reply) {
+    if (input.kind !== 'update' && input.kind !== 'team' && input.kind !== 'ask' && input.kind !== 'shipped') return { ok: false, error: 'need_kind' };
+    kind = input.kind;
+  }
+  const raw = clean(input.link);
+  const link = reply ? null : httpsLink(raw && !/^[a-z][a-z0-9+.-]*:/i.test(raw) ? `https://${raw}` : raw);
+  if (link === false) return { ok: false, error: 'bad_site' };
+  return { ok: true, post: { kind, body, linkUrl: link } };
+}

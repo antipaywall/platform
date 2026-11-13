@@ -7,6 +7,8 @@ import PledgeWho from '../components/PledgeWho.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import BuilderTile from '../components/BuilderTile.astro';
+import GoalMeter from '../components/GoalMeter.astro';
+import { tileBadges } from '../lib/social';
 import Sponsors from '../components/Sponsors.astro';
 import Wall from '../components/Wall.astro';
 import { money as fee, organizerPledge, shape, site } from '../config/site';
@@ -35,7 +37,12 @@ const wallIdeas = ((await attempt(() => listIdeas(12))) ?? []).map((i) => ({ slu
 const need = site.launch.buildersNeeded;
 // The newest builders, then empty "your spot" tiles so the row reads as an invitation.
 const builderCount = stats?.builders;
-const spots = newest ? Math.min(3, 12 - newest.length, Math.max(0, need - (builderCount ?? 0))) : 0;
+const newestBadges = (newest && (await attempt(() => tileBadges(newest.map((b) => b.id))))) || new Map();
+// Up to 12 tiles. Past 12 builders, the last tile becomes "+N more"; under 12, "Your spot" tiles fill in.
+const more = builderCount !== undefined && newest && builderCount > 12 ? builderCount - 11 : 0;
+const shownBuilders = newest ? (more ? newest.slice(0, 11) : newest) : [];
+const spots = newest && !more ? Math.min(3, 12 - newest.length, Math.max(0, need - (builderCount ?? 0))) : 0;
+const reached = builderCount !== undefined && builderCount >= need;
 
 const pending = site.collective.pending;
 
@@ -222,26 +229,26 @@ const gh =
             <div class="wrap crew-grid">
               <div>
                 <h2 id="crew-h" class="section-title">
-                  {builderCount === undefined ? 'The builders so far.' : `${builderCount} ${builderCount === 1 ? 'builder is' : 'builders are'} in. The dates wait on ${need}.`}
+                  {builderCount === undefined ? 'The builders so far.' : reached ? `${builderCount} builders are in.` : `${builderCount} ${builderCount === 1 ? 'builder is' : 'builders are'} in. The dates wait on ${need}.`}
                 </h2>
-                <p class="lede">Everyone here signed in, passed the two checks and is holding a spot for build week. Pick anyone to see what they build.</p>
+                <p class="lede">
+                  {reached
+                    ? `That's past the ${need} the dates were waiting on. ${pending ? 'Dates are announced once the pool holder is confirmed, and anyone can still join.' : 'The dates are on their way, and anyone can still join.'}`
+                    : 'Everyone here signed in, passed the two checks and is holding a spot for build week. Pick anyone to see what they build.'}
+                </p>
                 {
                   builderCount !== undefined && (
-                    <div class="crew-meter">
-                      <span class="crew-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(builderCount, need)} aria-label="Builders joined">
-                        <i style={`width:${Math.max(2, Math.min(100, (builderCount / need) * 100))}%`}></i>
-                      </span>
-                      <p><strong>{builderCount}</strong> of {need} builders.{builderCount < need && ` ${need - builderCount} to go.`}</p>
-                    </div>
+                    <GoalMeter count={builderCount} goal={need} noun="builders" unlocks="The dates are set once we reach it." />
                   )
                 }
                 <div class="actions">
                   <a class="key key-big" href="/join/build">Join with GitHub</a>
-                  <a class="key key-big key-milk" href="/builders">See all builders</a>
+                  <a class="key key-big key-milk" href="/builders">{builderCount !== undefined ? `See all ${builderCount} builders` : 'See all builders'}</a>
                 </div>
               </div>
               <ul class="crew-list crew-tiles">
-                {newest.map((b) => <BuilderTile builder={b} />)}
+                {shownBuilders.map((b) => <BuilderTile builder={b} badge={newestBadges.get(b.id)} />)}
+                {more > 0 && <li><a class="tile tile-more" href="/builders"><span>+{more}</span>more builders</a></li>}
                 {Array.from({ length: spots }, () => (
                   <li><a class="tile tile-spot" href="/join/build"><span aria-hidden="true">+</span>Your spot</a></li>
                 ))}

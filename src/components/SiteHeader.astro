@@ -13,6 +13,7 @@ const cur = (on: boolean) => (on ? 'page' : undefined);
 const links = [
   { href: '/', label: 'Find', on: here === '/' || here.startsWith('/free-alternatives') || here.startsWith('/projects') || here.startsWith('/topics') || here === '/search' },
   { href: '/ideas', label: 'Wanted', on: here.startsWith('/ideas') },
+  { href: '/feed', label: 'Feed', on: here.startsWith('/feed') },
   { href: '/hackathon', label: 'Hackathon', on: here === '/hackathon' || here === '/pool' || here === '/rules' },
   { href: '/builders', label: 'People', on: here.startsWith('/builders') || here.startsWith('/people') },
 ];

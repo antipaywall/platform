@@ -8,7 +8,7 @@ import type { AccountFacts } from '../../lib/eligibility';
 import { fetchGithubFacts, GithubUnavailableError } from '../../lib/github';
 import { fetchGitlabFacts, GitlabUnavailableError } from '../../lib/gitlab';
 import { accountIdentity } from '../../lib/identity';
-import { refreshRepos } from '../../lib/profiles';
+import { refreshActivity, refreshRepos } from '../../lib/profiles';
 import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
@@ -103,11 +103,12 @@ export const GET: APIRoute = async (context) => {
   });
   if (saved.error) return giveUp();
 
-  // Their public repositories, for their profile. A slow provider never holds up the sign-in.
-  await refreshRepos(
-    { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person,
-    { force: true, timeoutMs: 1500 },
-  );
+  // Their public repositories and activity, for their profile. A slow provider never holds up the sign-in.
+  const fresh = { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person;
+  await Promise.all([
+    refreshRepos(fresh, { force: true, timeoutMs: 1500 }),
+    refreshActivity(fresh, { force: true, timeoutMs: 2500, token: provider === 'github' ? provider_token : undefined }),
+  ]);
 
   // What this browser backed before signing in becomes theirs.
   await claimSignals(db, visitorId(cookies), user.id);

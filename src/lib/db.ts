@@ -36,6 +36,10 @@ export type Person = {
   featured_repos?: string[];
   repos?: unknown;
   repos_fetched_at?: string | null;
+  /** Saved activity calendar, and whether this person may post. */
+  contributions?: unknown;
+  contributions_fetched_at?: string | null;
+  can_post?: boolean;
 };
 
 export type Idea = {
@@ -163,11 +167,11 @@ export async function getStats(): Promise<Stats> {
   };
 }
 
-export type BuilderTile = { handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
+export type BuilderTile = { id: string; handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
 
 /** Builders, newest first. */
 export async function listBuilders(limit = 1000): Promise<BuilderTile[]> {
-  const { data, error } = await db().from('people').select('handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
+  const { data, error } = await db().from('people').select('id, handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
   if (error) throw new DataUnavailableError(error.message);
   return (data ?? []).map((b: any) => ({ ...b, provider: providerOf(b) }));
 }

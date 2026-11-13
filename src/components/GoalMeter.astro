@@ -1,0 +1,38 @@
+---
+// A progress bar with a goal on it. The goal is a circle on the bar; point at it, tap it or tab
+// to it for what the goal is. Past the goal the bar keeps growing in moving gold.
+import { goalBar } from '../lib/goal';
+
+interface Props {
+  count: number;
+  goal: number;
+  /** "builders", for "140 builders". */
+  noun: string;
+  /** What reaching the goal does, for the circle's note: "The dates are set once we reach it." */
+  unlocks: string;
+}
+const { count, goal, noun, unlocks } = Astro.props;
+const b = goalBar(count, goal);
+const note = b.reached
+  ? b.over > 0 ? `Our goal was ${goal} ${noun}. We passed it by ${b.over}.` : `Our goal was ${goal} ${noun}. We hit it.`
+  : `Our goal is ${goal} ${noun}. ${unlocks} ${goal - count} to go.`;
+---
+
+<div class:list={['target-meter', b.reached && 'target-meter-over', b.over > 0 && 'target-meter-past']}>
+  {b.reached && <p class="target-pct"><b>{b.percent}%</b> of the goal</p>}
+  <span class="target-bar" role="img" aria-label={`${count} ${noun}. ${note}`}>
+    <span class="target-fill" style={`width:${b.fill}%`}></span>
+    {b.over > 0 && <span class="target-extra" style={`left:${b.goalAt}%`}></span>}
+    <span class="target-dot" style={`left:${b.goalAt}%`} tabindex="0">
+      {b.reached && <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>}
+      <span class="target-tip" role="tooltip">{note}</span>
+    </span>
+  </span>
+  <p class="target-text">
+    {b.reached ? (
+      <><strong>{count}</strong> {noun}{b.over > 0 ? `, ${b.over} past the goal of ${goal}` : `, right on the goal of ${goal}`}.</>
+    ) : (
+      <><strong>{count}</strong> of {goal} {noun}. {goal - count} to go.</>
+    )}
+  </p>
+</div>

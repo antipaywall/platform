@@ -2,25 +2,55 @@
 // A builder's profile: what their GitHub or GitLab account says, the repositories they feature,
 // and what they wrote about themselves here. Builders are always public; anyone else only by choice.
 import Base from '../../layouts/Base.astro';
+import ActivityWall from '../../components/ActivityWall.astro';
+import BadgeMark from '../../components/BadgeMark.astro';
+import PostCard from '../../components/PostCard.astro';
+import PostComposer from '../../components/PostComposer.astro';
+import PersonStats from '../../components/person/PersonStats.astro';
+import PersonWants from '../../components/person/PersonWants.astro';
 import ProfileLinks from '../../components/ProfileLinks.astro';
+import type { Activity } from '../../lib/activity';
+import { badgesFor, topBadge, type Badge } from '../../lib/badges';
 import { providerName, providerOf } from '../../lib/accounts';
-import { DataUnavailableError, type Person } from '../../lib/db';
-import { findProfile, ideasBy, isPublic, parseProfilePath, profilePath, refreshRepos } from '../../lib/profiles';
+import { attempt, DataUnavailableError, type Person } from '../../lib/db';
+import { findProfile, ideasBy, type ProfileIdea, isPublic, parseProfilePath, pledgeOf, profilePath, refreshActivity, refreshRepos } from '../../lib/profiles';
+import { followCounts, grantedBadges, isFollowing, postsBy, type PostView } from '../../lib/social';
 import { languageColor, pickFeatured, savedRepos, type Repo } from '../../lib/repos';
 
 const where = parseProfilePath(Astro.params.slug);
 if (!where) return new Response(null, { status: 404 });
 
 let person: Person | null;
-let ideas: { slug: string; title: string }[] = [];
+let ideas: ProfileIdea[] = [];
 let repos: Repo[] = [];
+let activity: Activity = { public: {}, all: {} };
+let badges: Badge[] = [];
+let counts = { followers: 0, following: 0 };
+let follows = false;
+let posts: PostView[] = [];
+const viewer = Astro.locals.person;
 try {
   person = await findProfile(where.provider, where.handle);
   if (!person || !isPublic(person)) return new Response(null, { status: 404 });
   // One address per profile: a different capitalisation goes to the real one.
   const canonical = profilePath(where.provider, person.handle);
   if (canonical !== Astro.url.pathname) return Astro.redirect(canonical, 301);
-  [ideas, repos] = await Promise.all([ideasBy(person.id), refreshRepos(person)]);
+  const id = person.id;
+  // The profile itself must load; the social parts each fall back to nothing if they can't.
+  const [i, r, act, granted, pledge, c, f, ps] = await Promise.all([
+    ideasBy(id), refreshRepos(person), refreshActivity(person),
+    attempt(() => grantedBadges([id])), attempt(() => pledgeOf(id)), attempt(() => followCounts(id)),
+    viewer && viewer.id !== id ? attempt(() => isFollowing(viewer.id, id)) : Promise.resolve(false),
+    attempt(() => postsBy(id, viewer?.id ?? null)),
+  ]);
+  ideas = i;
+  repos = r;
+  activity = act;
+  // Backer: a pledge for now. The platform's signals (isBacker in src/lib/signals.ts) join this when they exist.
+  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) });
+  counts = c ?? counts;
+  follows = f ?? false;
+  posts = ps ?? [];
 } catch (e) {
   if (!(e instanceof DataUnavailableError)) throw e;
   return new Response('Profiles are unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
@@ -29,10 +59,11 @@ try {
 const p = person!;
 const provider = providerOf(p);
 const name = providerName(provider);
-const own = Astro.locals.person?.id === p.id;
+const own = viewer?.id === p.id;
+const top = topBadge(badges);
+const here = profilePath(provider, p.handle);
 const featured = pickFeatured(repos.length ? repos : savedRepos(p.repos), p.featured_repos ?? []);
 const month = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : null);
-const since = p.account_created_at ? new Date(p.account_created_at).getUTCFullYear() : null;
 const joined = month(p.joined_at ?? p.created_at);
 const about = p.about ?? null;
 const skills = p.skills ?? [];
@@ -42,66 +73,39 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
 
 <Base title={title} description={about ?? p.bio ?? `${p.handle} is building on Antipaywall.`}>
   <p class="crumb"><a class="link" href="/builders">All builders</a></p>
-  <section class="prof-head">
-    <span class="prof-pic" aria-hidden="true">
-      <span>{(p.handle[0] ?? '?').toUpperCase()}</span>
-      {p.avatar_url && <img src={p.avatar_url} alt="" width="112" height="112" />}
-    </span>
-    <div class="prof-id">
-      {p.is_builder && p.verified && <span class="prof-badge">Builder, passed both checks</span>}
-      <h1 class="prof-name">{p.name ?? p.handle}</h1>
-      <p class="prof-handle">@{p.handle} on {name}</p>
-      {p.bio && <p class="prof-bio">{p.bio}</p>}
-      <ul class="prof-meta">
+  <div class="prof">
+    <aside class="pcard" aria-label={`About ${p.name ?? p.handle}`}>
+      <span class="prof-pic" aria-hidden="true">
+        <span>{(p.handle[0] ?? '?').toUpperCase()}</span>
+        {p.avatar_url && <img src={p.avatar_url} alt="" width="96" height="96" />}
+      </span>
+      <div>
+        <h1 class="pcard-name">{p.name ?? p.handle} {top && <BadgeMark badge={top} size="big" />}</h1>
+        <p class="pcard-handle">@{p.handle} on {name}</p>
+      </div>
+      {(about ?? p.bio) && <p class="pcard-bio">{about ?? p.bio}</p>}
+      <div class="pcard-btns">
+        {
+          own ? (
+            <a class="key key-milk" href="/account">Edit profile</a>
+          ) : viewer ? (
+            <form method="post" action="/api/follow">
+              <input type="hidden" name="person" value={p.id} />
+              <input type="hidden" name="back" value={here} />
+              <input type="hidden" name="action" value={follows ? 'unfollow' : 'follow'} />
+              <button class:list={['key', follows && 'key-milk']} type="submit">{follows ? 'Following' : 'Follow'}</button>
+            </form>
+          ) : (
+            <a class="key" href={`/auth/signin?next=/builders`}>Sign in to follow</a>
+          )
+        }
+      </div>
+      <p class="pcard-counts"><span><b>{counts.followers}</b> {counts.followers === 1 ? 'follower' : 'followers'}</span><span><b>{counts.following}</b> following</span></p>
+      <ul class="pcard-meta">
         {p.location && <li>{p.location}</li>}
-        {since && <li>On {name} since {since}</li>}
         {p.is_builder && joined && <li>Joined Antipaywall {joined}</li>}
       </ul>
-      <ProfileLinks provider={provider} handle={p.handle} xHandle={p.x_handle} siteUrl={p.site_url} size="big" />
-    </div>
-    {own && <a class="key key-milk prof-edit" href="/account">Edit profile</a>}
-  </section>
-
-  <div class="prof-cols">
-    <section aria-labelledby="repos-h">
-      <h2 class="prof-h" id="repos-h">
-        Public repositories
-        {(p.repo_count ?? repos.length) > featured.length && (
-          <a class="link" href={provider === 'gitlab' ? `https://gitlab.com/users/${p.handle}/projects` : `https://github.com/${p.handle}?tab=repositories`} rel="noopener">
-            {p.repo_count ? `All ${p.repo_count} on ${name}` : `All on ${name}`}
-          </a>
-        )}
-      </h2>
-      {
-        featured.length ? (
-          <ul class="prof-repos">
-            {featured.map((r) => (
-              <li class="repo">
-                <a class="repo-name" href={r.url} rel="noopener nofollow">{r.name}</a>
-                {r.description && <p>{r.description}</p>}
-                <span class="repo-row">
-                  {r.language && <span><i class="dot" style={`background:${languageColor(r.language)}`}></i>{r.language}</span>}
-                  <span>★ {stars(r.stars)}</span>
-                  {r.pushedAt && <span>Updated {month(r.pushedAt)}</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p class="empty">No public repositories to show yet.</p>
-        )
-      }
-    </section>
-    <aside class="prof-side">
-      {
-        (about || skills.length > 0) && (
-          <div class="prof-box">
-            <h2 class="prof-h prof-h-small">About</h2>
-            {about && <p>{about}</p>}
-            {skills.length > 0 && <ul class="prof-tags">{skills.map((s) => <li>{s}</li>)}</ul>}
-          </div>
-        )
-      }
+      <ProfileLinks provider={provider} handle={p.handle} xHandle={p.x_handle} siteUrl={p.site_url} />
       {
         p.open_to_team && (
           <div class="prof-team">
@@ -110,15 +114,93 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
           </div>
         )
       }
-      <div class="prof-box">
-        <h2 class="prof-h prof-h-small">On Antipaywall</h2>
-        <ul class="prof-list">
-          {ideas.map((i) => <li>Posted <a class="link" href={`/ideas/${i.slug}`}>{i.title}</a></li>)}
-          {p.is_builder && <li class="muted">Their build week entry shows here once submissions open.</li>}
-          {!p.is_builder && ideas.length === 0 && <li class="muted">Nothing posted yet.</li>}
-        </ul>
-      </div>
-      {own && !about && skills.length === 0 && <p class="muted small">Your About and skills show here once you add them in <a class="link" href="/account">your account</a>.</p>}
+      {skills.length > 0 && <ul class="prof-tags">{skills.map((s) => <li>{s}</li>)}</ul>}
+      {
+        badges.length > 0 && (
+          <div class="pcard-badges">
+            <h2 class="pcard-h">Badges</h2>
+            <ul>
+              {badges.map((b) => <li title={b.detail}><BadgeMark badge={b} /><span>{b.label}</span></li>)}
+            </ul>
+          </div>
+        )
+      }
     </aside>
+
+    <div class="pmain">
+      <section aria-labelledby="repos-h">
+        <h2 class="prof-h" id="repos-h">
+          Pinned repositories
+          {(p.repo_count ?? repos.length) > featured.length && (
+            <a class="link" href={provider === 'gitlab' ? `https://gitlab.com/users/${p.handle}/projects` : `https://github.com/${p.handle}?tab=repositories`} rel="noopener">
+              {p.repo_count ? `All ${p.repo_count} on ${name}` : `All on ${name}`}
+            </a>
+          )}
+        </h2>
+        {
+          featured.length ? (
+            <ul class="prof-repos">
+              {featured.map((r) => (
+                <li class="repo">
+                  <a class="repo-name" href={r.url} rel="noopener nofollow">{r.name}</a>
+                  {r.description && <p>{r.description}</p>}
+                  <span class="repo-row">
+                    {r.language && <span><i class="dot" style={`background:${languageColor(r.language)}`}></i>{r.language}</span>}
+                    <span>★ {stars(r.stars)}</span>
+                    {r.pushedAt && <span>Updated {month(r.pushedAt)}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="empty">No public repositories to show yet.</p>
+          )
+        }
+      </section>
+
+      <ActivityWall activity={activity} provider={provider} id={p.id.slice(0, 8)} />
+
+      {/* The platform's sections: what this person backs and wants, and what they build and claim. */}
+      <PersonStats personId={p.id} />
+      <PersonWants personId={p.id} />
+
+      {
+        ideas.length > 0 && (
+          <section aria-labelledby="ideas-h">
+            <h2 class="prof-h" id="ideas-h">
+              Ideas they posted
+              {ideas.length > 4 && <a class="link" href="/ideas">All ideas</a>}
+            </h2>
+            <ul class="prof-ideas">
+              {ideas.slice(0, 4).map((i, n) => (
+                <li class={`prof-idea p${(n % 6) + 1}`}>
+                  <a href={`/ideas/${i.slug}`}>
+                    <h3>{i.title}</h3>
+                    {i.pitch && <p>{i.pitch}</p>}
+                  </a>
+                  <p class="prof-idea-foot">
+                    <span title="Hearts">♥ <b>{i.hearts}</b></span>
+                    {i.similar > 0 && <span>{i.similar} similar {i.similar === 1 ? 'project' : 'projects'} found</span>}
+                    <span>{month(i.created_at)}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <section aria-labelledby="posts-h">
+        <h2 class="prof-h" id="posts-h">Posts</h2>
+        {own && p.verified && p.can_post !== false && <PostComposer back={here} />}
+        {
+          posts.length ? (
+            <div class="posts">{posts.map((post) => <PostCard post={post} viewerId={viewer?.id ?? null} canReply={Boolean(viewer?.verified && viewer.can_post !== false)} back={here} />)}</div>
+          ) : (
+            <p class="empty">{own ? 'Nothing posted yet. Say what you are building, or who you are looking for.' : 'Nothing posted yet.'}</p>
+          )
+        }
+      </section>
+    </div>
   </div>
 </Base>

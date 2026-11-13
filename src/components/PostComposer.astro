@@ -1,0 +1,29 @@
+---
+// Write a post: up to 500 characters, one kind, one optional link.
+import { POST_KINDS, POST_MAX } from '../lib/social';
+
+interface Props {
+  back: string;
+}
+const { back } = Astro.props;
+---
+
+<form class="compose" method="post" action="/api/posts">
+  <input type="hidden" name="back" value={back} />
+  <label class="sr" for="compose-body">Write a post</label>
+  <textarea class="input" id="compose-body" name="body" maxlength={POST_MAX} rows="3" required placeholder="What are you building, or looking for?"></textarea>
+  <label class="sr" for="compose-link">Link (optional)</label>
+  <input class="input compose-link" id="compose-link" name="link" maxlength="300" inputmode="url" placeholder="Link (optional)" />
+  <div class="compose-row">
+    <fieldset class="kinds">
+      <legend class="sr">What kind of post</legend>
+      {POST_KINDS.map((k, i) => (
+        <label class="kind-pick">
+          <input type="radio" name="kind" value={k.key} checked={i === 0} />
+          <span>{k.label}</span>
+        </label>
+      ))}
+    </fieldset>
+    <button class="key" type="submit">Post</button>
+  </div>
+</form>
