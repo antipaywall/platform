@@ -45,6 +45,9 @@ export function parseFollow(form: FormData): { ok: true; kind: FollowKind; id: s
   return { ok: true, kind: kind as FollowKind, id, on: form.get('on') === '1' };
 }
 
+/** Splitting a merge is for builders (a GitHub or GitLab account) and the organizer, since it blocks the pair for good. */
+export const canUnmerge = (who: { person: boolean; admin: boolean }) => who.person || who.admin;
+
 export type Demand = { want: number; pay: number; payMonthCents: number; payOnceCents: number; test: number };
 const noDemand: Demand = { want: 0, pay: 0, payMonthCents: 0, payOnceCents: 0, test: 0 };
 

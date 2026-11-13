@@ -15,6 +15,7 @@ import { loadCatalog, type Product } from '../src/lib/catalog';
 import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
 import { fetchRepoBatch, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
+import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 import { samplePages, starPointsFromSamples } from '../src/lib/sync/stars';
 
 const DRY = process.argv.includes('--dry-run');
@@ -28,6 +29,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const core = new GithubBudget(100);
 const search = new GithubBudget(2);
+const graph = new GithubBudget(100);
 const headers = (accept = 'application/vnd.github+json') => ({ accept, authorization: `Bearer ${TOKEN}`, 'user-agent': 'antipaywall-sync' });
 
 async function gh(url: string, accept?: string, budget = core): Promise<Response> {
@@ -55,14 +57,16 @@ async function upsertCatalog(db: SupabaseClient, products: Product[], topics: { 
   must(await db.from('topics').upsert(topics.map((t) => ({ ...t, tracked: true })), { onConflict: 'slug' }), 'topics');
 }
 
-async function findCandidates(products: Product[]): Promise<Map<string, Map<string, Set<FoundBy>>>> {
+async function findCandidates(products: Product[]): Promise<{ found: Map<string, Map<string, Set<FoundBy>>>; failed: Set<string> }> {
   // product slug → repo full name → how it was found
   const found = new Map<string, Map<string, Set<FoundBy>>>();
+  // Products with a search that didn't answer: their existing links are left alone this run.
+  const failed = new Set<string>();
   const tagged = new Set<string>();
-  const runSearch = async (q: string): Promise<string[]> => {
+  const runSearch = async (q: string): Promise<string[] | null> => {
     const res = await gh(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${SEARCH_PER_QUERY}`, undefined, search);
     await sleep(2200); // 30 searches a minute
-    if (!res.ok) return [];
+    if (!res.ok) return null;
     const body = (await res.json()) as { items?: { full_name: string }[] };
     return (body.items ?? []).map((i) => i.full_name);
   };
@@ -70,7 +74,9 @@ async function findCandidates(products: Product[]): Promise<Map<string, Map<stri
     const byRepo = new Map<string, Set<FoundBy>>();
     for (const q of searchQueries(p)) {
       const how: FoundBy = q.startsWith(`topic:${p.slug}-alternative`) ? 'tag' : q.startsWith('topic:') ? 'topic' : 'search';
-      for (const name of await runSearch(q)) {
+      const names = await runSearch(q);
+      if (!names) failed.add(p.slug);
+      for (const name of names ?? []) {
         const set = byRepo.get(name) ?? new Set();
         set.add(how);
         byRepo.set(name, set);
@@ -79,9 +85,9 @@ async function findCandidates(products: Product[]): Promise<Map<string, Map<stri
     found.set(p.slug, byRepo);
     console.log(`${p.slug}: ${byRepo.size} candidates`);
   }
-  for (const name of await runSearch('topic:antipaywall archived:false fork:false')) tagged.add(name);
+  for (const name of (await runSearch('topic:antipaywall archived:false fork:false')) ?? []) tagged.add(name);
   found.set('', new Map([...tagged].map((n) => [n, new Set<FoundBy>(['tag'])])));
-  return found;
+  return { found, failed };
 }
 
 async function contributorsOf(fullName: string): Promise<number | null> {
@@ -120,20 +126,25 @@ async function main() {
   try {
     if (db) await upsertCatalog(db, catalog.products, catalog.topics);
 
-    const found = await findCandidates(catalog.products);
+    const { found, failed } = await findCandidates(catalog.products);
     // Hand-made links from the catalog count as found, and so do every repo they name.
     const removed = new Set(catalog.links.filter((l) => l.action === 'remove').map((l) => `${l.product}|${l.project.toLowerCase()}`));
     const manual = catalog.links.filter((l) => l.action === 'add');
 
     const names = new Set<string>(manual.map((l) => l.project));
     for (const byRepo of found.values()) for (const n of byRepo.keys()) names.add(n);
+    // Every repo already listed is read again too, so one that was archived or deleted since gets unlisted.
+    const alreadyListed = db
+      ? (await fetchAllRows<{ full_name: string }>((a, b) => db.from('projects').select('full_name').eq('listed', true).order('full_name').range(a, b))).map((r) => r.full_name)
+      : [];
+    for (const n of alreadyListed) names.add(n);
     console.log(`${names.size} repos to read`);
 
     const facts = new Map<string, RepoFacts>();
     const issues = new Map<string, HelpIssue[]>();
     const list = [...names];
     for (let i = 0; i < list.length; i += 50) {
-      const batch = await fetchRepoBatch(list.slice(i, i + 50), TOKEN, core);
+      const batch = await fetchRepoBatch(list.slice(i, i + 50), TOKEN, graph);
       for (const r of batch.repos) facts.set(r.fullName.toLowerCase(), r);
       for (const [k, v] of batch.issues) issues.set(k.toLowerCase(), v);
     }
@@ -145,6 +156,7 @@ async function main() {
       if (verdict.ok) listed.set(r.fullName.toLowerCase(), r);
       else rejected.push({ r, reason: verdict.reason });
     }
+    const gone = toUnlist(alreadyListed.map((n) => n.toLowerCase()), new Set(facts.keys()), new Set(listed.keys())).filter((n) => !facts.has(n));
 
     // product slug → [repo key, source]
     const links: { product: string; repo: string; source: 'topic' | 'search' | 'tag' | 'catalog'; score: number }[] = [];
@@ -182,9 +194,15 @@ async function main() {
     const linkRows = links
       .filter((l) => productId.has(l.product) && ids.has(l.repo))
       .map((l) => ({ project_id: ids.get(l.repo)!, product_id: productId.get(l.product)!, source: l.source, score: l.score }));
-    // Links found automatically are replaced each run; hand-made ones stay.
-    for (const pid of productId.values()) must(await db.from('project_products').delete().eq('product_id', pid).neq('source', 'catalog'), 'unlink');
-    for (let i = 0; i < linkRows.length; i += 500) must(await db.from('project_products').upsert(linkRows.slice(i, i + 500), { onConflict: 'project_id,product_id' }), 'links');
+    // Links are rebuilt from this run's searches and links.yml, which is the source of truth for
+    // hand-made ones. A product whose searches didn't all answer keeps yesterday's links.
+    const fresh = new Set(relinkable(catalog.products.map((p) => p.slug), failed).map((s) => productId.get(s)).filter(Boolean) as string[]);
+    for (const pid of fresh) must(await db.from('project_products').delete().eq('product_id', pid), 'unlink');
+    const keep = linkRows.filter((l) => fresh.has(l.product_id) || links.some((x) => x.source === 'catalog' && productId.get(x.product) === l.product_id && ids.get(x.repo) === l.project_id));
+    for (let i = 0; i < keep.length; i += 500) must(await db.from('project_products').upsert(keep.slice(i, i + 500), { onConflict: 'project_id,product_id' }), 'links');
+    // Repos GitHub no longer returns are unlisted (ones it returned are updated above with the reason).
+    for (const n of gone) must(await db.from('projects').update({ listed: false, reject_reason: 'gone' }).ilike('full_name', n), 'unlist');
+    if (failed.size) console.log(`Searches failed for: ${[...failed].join(', ')}; their links were kept`);
 
     const day = now.toISOString().slice(0, 10);
     const snapshots = [...listed.values()].filter((r) => ids.has(r.fullName.toLowerCase())).map((r) => ({ project_id: ids.get(r.fullName.toLowerCase())!, day, stars: r.stars, forks: r.forks }));
@@ -207,46 +225,62 @@ async function main() {
       if (!seen.length) must(await db.rpc('merge_gap', { p_from: from, p_into: into, p_source: 'pr', p_reason: m.reason, p_by: null }), 'merge');
     }
 
-    // Slower details, refreshed on their own schedule and stopped by the rate-limit reserve.
-    const stale = must(await db.from('projects').select('id, full_name, stars, star_points_at, contributors_at, pushed_at').eq('listed', true), 'stale read') as {
-      id: string; full_name: string; stars: number; star_points_at: string | null; contributors_at: string | null; pushed_at: string;
-    }[];
+    // Which pages search engines may see. Worked out before the slow steps below, so a run that
+    // stops at the rate limit still keeps it right.
+    const indexed = await markIndexable(db, now);
+    const summary = `${listed.size} listed, ${rejected.length} turned away, ${gone.length} unlisted, ${keep.length} links, ${indexed} indexable`;
+    // The directory itself is up to date now: record the run as synced.
+    await finish(true, summary);
+
+    // Slower details, refreshed on their own schedule. Stopping at the rate limit here is normal:
+    // the next run carries on where this one left off.
     let contributorReads = 0;
-    for (const p of stale.filter((p) => !p.contributors_at || now.getTime() - Date.parse(p.contributors_at) > CONTRIBUTOR_REFRESH_DAYS * DAY)) {
-      const n = await contributorsOf(p.full_name);
-      contributorReads++;
-      if (n !== null) must(await db.from('projects').update({ contributors: n, contributors_at: now.toISOString() }).eq('id', p.id), 'contributors');
-    }
     let histories = 0;
-    for (const p of stale
-      .filter((p) => !p.star_points_at || now.getTime() - Date.parse(p.star_points_at) > STAR_REFRESH_DAYS * DAY)
-      .sort((a, b) => b.stars - a.stars)
-      .slice(0, STAR_PROJECTS_PER_RUN)) {
-      const points = await starHistory(p.full_name, p.stars, now);
-      must(await db.from('projects').update({ star_points: points, star_points_at: now.toISOString() }).eq('id', p.id), 'stars');
-      histories++;
+    try {
+      const stale = await fetchAllRows<{ id: string; full_name: string; stars: number; star_points_at: string | null; contributors_at: string | null }>((a, b) =>
+        db.from('projects').select('id, full_name, stars, star_points_at, contributors_at').eq('listed', true).order('stars', { ascending: false }).range(a, b));
+      for (const p of stale
+        .filter((p) => !p.star_points_at || now.getTime() - Date.parse(p.star_points_at) > STAR_REFRESH_DAYS * DAY)
+        .slice(0, STAR_PROJECTS_PER_RUN)) {
+        const points = await starHistory(p.full_name, p.stars, now);
+        must(await db.from('projects').update({ star_points: points, star_points_at: now.toISOString() }).eq('id', p.id), 'stars');
+        histories++;
+      }
+      for (const p of stale.filter((p) => !p.contributors_at || now.getTime() - Date.parse(p.contributors_at) > CONTRIBUTOR_REFRESH_DAYS * DAY)) {
+        const n = await contributorsOf(p.full_name);
+        contributorReads++;
+        if (n !== null) must(await db.from('projects').update({ contributors: n, contributors_at: now.toISOString() }).eq('id', p.id), 'contributors');
+      }
+      await finish(true, `${summary}, ${histories} star histories, ${contributorReads} contributor counts`);
+    } catch (e) {
+      if (!(e instanceof RateLimited)) throw e;
+      await markIndexable(db, now);
+      await finish(true, `${summary}, ${histories} star histories, ${contributorReads} contributor counts; details stopped at the rate limit`);
     }
-
-    // Which pages search engines may see.
-    const gapRepos = new Set<string>();
-    const ideas = must(await db.from('ideas').select('existing_repos').eq('status', 'listed'), 'ideas') as { existing_repos: { fullName?: string }[] }[];
-    for (const i of ideas) for (const r of i.existing_repos ?? []) if (r.fullName) gapRepos.add(r.fullName.toLowerCase());
-    const linkCount = new Map<string, number>();
-    for (const l of linkRows) linkCount.set(l.project_id, (linkCount.get(l.project_id) ?? 0) + 1);
-    const withPoints = must(await db.from('projects').select('id, full_name, stars, pushed_at, star_points, indexable').eq('listed', true), 'index read') as {
-      id: string; full_name: string; stars: number; pushed_at: string; star_points: unknown[]; indexable: boolean;
-    }[];
-    for (const p of withPoints) {
-      const indexable = isIndexable({ productLinks: linkCount.get(p.id) ?? 0, gapLinks: gapRepos.has(p.full_name.toLowerCase()) ? 1 : 0, hasStarPoints: (p.star_points?.length ?? 0) > 1, stars: p.stars, pushedAt: p.pushed_at }, now);
-      if (indexable !== p.indexable) must(await db.from('projects').update({ indexable }).eq('id', p.id), 'indexable');
-    }
-
-    await finish(true, `${listed.size} listed, ${rejected.length} turned away, ${linkRows.length} links, ${contributorReads} contributor counts, ${histories} star histories`);
   } catch (e) {
     if (e instanceof RateLimited) return finish(false, 'rate limit');
     await finish(false, e instanceof Error ? e.message.slice(0, 300) : 'failed');
     throw e;
   }
+}
+
+/** Sets `indexable` on every listed project from its links, the gaps that name it, and its history. */
+async function markIndexable(db: SupabaseClient, now: Date): Promise<number> {
+  const gapRepos = new Set<string>();
+  const ideas = await fetchAllRows<{ existing_repos: { fullName?: string }[] }>((a, b) => db.from('ideas').select('existing_repos').eq('status', 'listed').order('created_at').range(a, b));
+  for (const i of ideas) for (const r of i.existing_repos ?? []) if (r.fullName) gapRepos.add(r.fullName.toLowerCase());
+  const linkCount = new Map<string, number>();
+  const links = await fetchAllRows<{ project_id: string }>((a, b) => db.from('project_products').select('project_id').order('project_id').range(a, b));
+  for (const l of links) linkCount.set(l.project_id, (linkCount.get(l.project_id) ?? 0) + 1);
+  const projects = await fetchAllRows<{ id: string; full_name: string; stars: number; pushed_at: string; star_points_at: string | null; indexable: boolean }>((a, b) =>
+    db.from('projects').select('id, full_name, stars, pushed_at, star_points_at, indexable').eq('listed', true).order('id').range(a, b));
+  let count = 0;
+  for (const p of projects) {
+    const indexable = isIndexable({ productLinks: linkCount.get(p.id) ?? 0, gapLinks: gapRepos.has(p.full_name.toLowerCase()) ? 1 : 0, hasStarPoints: Boolean(p.star_points_at), stars: p.stars, pushedAt: p.pushed_at }, now);
+    if (indexable) count++;
+    if (indexable !== p.indexable) must(await db.from('projects').update({ indexable }).eq('id', p.id), 'indexable');
+  }
+  return count;
 }
 
 main().catch((e) => {

@@ -20,7 +20,11 @@ export const POST: APIRoute = async (context) => {
 
   const key = { idea_id: idea.id, visitor: ensureVisitorId(cookies, url.protocol === 'https:') };
   if (form.get('action') === 'unheart') {
-    const { error } = await db.from('idea_hearts').delete().match(key);
+    // Signed in, take back this person's heart whichever browser gave it.
+    const userId = context.locals.userId;
+    const { error } = userId
+      ? await db.from('idea_hearts').delete().eq('idea_id', idea.id).or(`visitor.eq.${key.visitor},user_id.eq.${userId}`)
+      : await db.from('idea_hearts').delete().match(key);
     if (error) return back(from, 'save_failed');
   } else {
     const { data, error } = await db.from('idea_hearts').upsert(key, { ignoreDuplicates: true }).select('idea_id');

@@ -3,6 +3,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { demandFor } from './gaps';
+import { fetchAllRows } from './sync/plan';
 
 /** A GitHub topic in words, for topics nobody has named in the catalog yet. */
 export const topicName = (slug: string) => {
@@ -78,9 +79,9 @@ export async function getTopicPage(db: SupabaseClient, slug: string, sort: Topic
 export async function listTopics(db: SupabaseClient): Promise<{ slug: string; name: string; blurb: string; count: number }[]> {
   const [topics, projects] = await Promise.all([
     db.from('topics').select('slug, name, blurb').eq('tracked', true).order('name'),
-    db.from('projects').select('topics').eq('listed', true).limit(20000),
+    fetchAllRows<{ topics: string[] }>((a, b) => db.from('projects').select('topics').eq('listed', true).order('id').range(a, b)),
   ]);
   const count = new Map<string, number>();
-  for (const p of (projects.data ?? []) as { topics: string[] }[]) for (const t of p.topics ?? []) count.set(t, (count.get(t) ?? 0) + 1);
+  for (const p of projects) for (const t of p.topics ?? []) count.set(t, (count.get(t) ?? 0) + 1);
   return ((topics.data ?? []) as { slug: string; name: string; blurb: string }[]).map((t) => ({ ...t, count: count.get(t.slug) ?? 0 }));
 }

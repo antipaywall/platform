@@ -4,6 +4,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { demandFor } from './gaps';
+import { fetchAllRows } from './sync/plan';
 
 export const OPEN_FILES = ['products', 'topics', 'projects', 'gaps', 'merges'] as const;
 export type OpenFile = (typeof OPEN_FILES)[number];
@@ -39,22 +40,20 @@ export async function openData(db: SupabaseClient, file: OpenFile): Promise<unkn
     return data ?? [];
   }
   if (file === 'projects') {
-    const { data, error } = await db
+    const data = await fetchAllRows<any>((a, b) => db
       .from('projects')
       .select('full_name, url, description, homepage, topics, license_spdx, stars, forks, open_issues, help_wanted, good_first, contributors, pushed_at, created_on_github, latest_release_tag, star_points, project_products(source, products(slug))')
       .eq('listed', true)
       .order('stars', { ascending: false })
-      .limit(20000);
-    if (error) throw new Error(error.message);
-    return (data ?? []).map((p: any) => {
+      .order('full_name')
+      .range(a, b));
+    return data.map((p: any) => {
       const { project_products, ...rest } = p;
       return { ...rest, products: (project_products ?? []).map((l: any) => ({ slug: l.products?.slug, source: l.source })).filter((l: any) => l.slug) };
     });
   }
   if (file === 'gaps') {
-    const { data, error } = await db.from('ideas').select('id, slug, title, pitch, missing, build_status, words, created_at, merged_into, gap_products(products(slug))').eq('status', 'listed').order('created_at');
-    if (error) throw new Error(error.message);
-    const rows = (data ?? []) as any[];
+    const rows = await fetchAllRows<any>((a, b) => db.from('ideas').select('id, slug, title, pitch, missing, build_status, words, created_at, merged_into, gap_products(products(slug))').eq('status', 'listed').order('created_at').order('id').range(a, b));
     const slugOf = new Map(rows.map((r) => [r.id, r.slug]));
     const demand = await demandFor(db, rows.map((r) => r.id));
     return rows.map((r) => publicGap(r, demand.get(r.id), r.merged_into ? slugOf.get(r.merged_into) ?? null : null, (r.gap_products ?? []).map((g: any) => g.products?.slug).filter(Boolean)));
@@ -68,13 +67,13 @@ export async function sitemapData(db: SupabaseClient) {
   const [products, topics, projects, gaps] = await Promise.all([
     db.from('products').select('slug'),
     db.from('topics').select('slug, tracked'),
-    db.from('projects').select('full_name, indexable').eq('listed', true).eq('indexable', true).limit(50000),
-    db.from('ideas').select('slug').eq('status', 'listed').is('merged_into', null),
+    fetchAllRows<{ full_name: string; indexable: boolean }>((a, b) => db.from('projects').select('full_name, indexable').eq('listed', true).eq('indexable', true).order('full_name').range(a, b)),
+    fetchAllRows<{ slug: string }>((a, b) => db.from('ideas').select('slug').eq('status', 'listed').is('merged_into', null).order('slug').range(a, b)),
   ]);
   return {
     products: (products.data ?? []).map((p) => p.slug as string),
     topics: (topics.data ?? []) as { slug: string; tracked: boolean }[],
-    projects: (projects.data ?? []) as { full_name: string; indexable: boolean }[],
-    gaps: (gaps.data ?? []).map((g) => g.slug as string),
+    projects,
+    gaps: gaps.map((g) => g.slug),
   };
 }
