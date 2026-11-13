@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import { adminClient } from '../../lib/supabase';
 
 const person = Astro.locals.person;
-const signedIn = Boolean(person || Astro.locals.backer);
+const signedIn = Boolean(person);
 // Coming from a search or a paid product's page, the form starts filled in.
 const startTitle = (Astro.url.searchParams.get('title') ?? '').slice(0, 80);
 const productSlug = (Astro.url.searchParams.get('product') ?? '').toLowerCase();
@@ -51,7 +51,6 @@ if (/^[a-z0-9-]{1,60}$/.test(productSlug)) {
         ) : (
           <>
             <SignIn next="/ideas/new" label="Sign in with GitHub to post" />
-            <a class="link small" href="/auth/email?next=/ideas/new">No GitHub? Sign in with your email</a>
           </>
         )
       }

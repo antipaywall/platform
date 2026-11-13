@@ -1,46 +1,12 @@
 ---
-// An email backer's page. Public only if they chose to show it. Someone who also signed in with
-// GitHub or GitLab has a builder profile, and this address sends them there.
-import Platform from '../../layouts/Platform.astro';
-import PersonStats from '../../components/pf/PersonStats.astro';
-import PersonWants from '../../components/pf/PersonWants.astro';
+// An old address for a person page. Every builder's page is /builders/<username>.
 import { providerOf } from '../../lib/accounts';
 import { profilePath } from '../../lib/profiles';
 import { adminClient } from '../../lib/supabase';
 
 const id = String(Astro.params.id);
 if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) return new Response(null, { status: 404 });
-const db = adminClient();
-if (!db) return new Response(null, { status: 503 });
-const person = await db.from('people').select('handle, provider').eq('id', id).maybeSingle();
-if (person.data) return Astro.redirect(profilePath(providerOf(person.data), person.data.handle), 301);
-const { data: backer } = await db.from('backers').select('id, name, about, public').eq('id', id).maybeSingle();
-const mine = Astro.locals.userId === id;
-if (!backer || (!backer.public && !mine)) return new Response(null, { status: 404 });
-const name = backer.name?.trim() || 'A backer';
+const { data } = (await adminClient()?.from('people').select('handle, provider').eq('id', id).maybeSingle()) ?? { data: null };
+if (data) return Astro.redirect(profilePath(providerOf(data), data.handle), 301);
+return new Response(null, { status: 404 });
 ---
-
-<Platform title={name} description={`What ${name} wants built, backs and would pay for, on Antipaywall.`} noindex={!backer.public}>
-  <section class="wrap pf-section">
-    <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:center">
-      <div aria-hidden="true" class="pf-brick p6" style="width:112px;height:112px;border-radius:28px;display:grid;place-items:center;padding:0;font:900 3rem/1 var(--display)">{name.charAt(0).toUpperCase()}</div>
-      <div style="flex:999 1 420px;display:grid;gap:10px;min-width:0">
-        <h1 class="pf-title">{name}</h1>
-        {backer.about && <p class="lede">{backer.about}</p>}
-        <div class="pf-chips"><span class="chip">Backer</span></div>
-      </div>
-    </div>
-    {mine && (
-      <form class="card stack" method="post" action="/api/account/backer" style="max-width:640px">
-        <p class="h2">Your page</p>
-        {!backer.public && <p class="muted">Only you can see this page until you make it public.</p>}
-        <div class="field"><label for="b-name">Name to show</label><input class="input" id="b-name" name="name" maxlength="60" value={backer.name ?? ''} /></div>
-        <div class="field"><label for="b-about">A line about you <span class="muted">(optional)</span></label><textarea class="input" id="b-about" name="about" maxlength="400">{backer.about ?? ''}</textarea></div>
-        <label class="check"><input type="checkbox" name="public" value="1" checked={backer.public} /> Show my page to everyone</label>
-        <button class="key" type="submit" style="justify-self:start">Save</button>
-      </form>
-    )}
-    <PersonStats personId={id} name={name} />
-    <PersonWants personId={id} name={name} />
-  </section>
-</Platform>

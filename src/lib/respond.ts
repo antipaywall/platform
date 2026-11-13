@@ -64,7 +64,6 @@ export const MESSAGES = {
   bad_pay: { kind: 'error', text: 'Pick one of the amounts. It is only a signal: nobody is charged.' },
   signal_saved: { kind: 'ok', text: 'Thanks. Builders can see where people stand.' },
   signin_for_follow: { kind: 'error', text: 'Following needs a GitHub or GitLab sign-in for now. Your signals still count without one.' },
-  email_link_sent: { kind: 'ok', text: 'Check your email for a sign-in link. It works once, for an hour.' },
   claimed: { kind: 'ok', text: "You're on it. Others building it can find you here." },
   unclaimed: { kind: 'ok', text: "You're no longer listed as building this." },
   merged: { kind: 'ok', text: 'Joined. Your support counts on this one now.' },

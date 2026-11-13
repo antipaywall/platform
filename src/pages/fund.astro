@@ -9,7 +9,7 @@ const pledges = await attempt(() => listPledges());
 // With no collective configured there is nowhere to send anyone, so the page falls back to pledging.
 const slug = site.collective.slug;
 const pending = site.collective.pending || !slug;
-const donate = `https://opencollective.com/${encodeURIComponent(slug)}/donate`;
+const payUrl = `https://opencollective.com/${encodeURIComponent(slug)}/donate`;
 ---
 
 <Base title="Back the pool" description="Fund the prize pool. Every contribution is public, and a nonprofit holds the money.">
@@ -22,7 +22,7 @@ const donate = `https://opencollective.com/${encodeURIComponent(slug)}/donate`;
   </p>
   <div class="cols">
     <div class="stack">
-      {pending ? <PledgeForm company={Astro.url.searchParams.get('as') === 'company'} /> : <a class="key key-big key-tomato" href={donate} style="justify-self:start">Pay by card on Open Collective</a>}
+      {pending ? <PledgeForm company={Astro.url.searchParams.get('as') === 'company'} /> : <a class="key key-big key-tomato" href={payUrl} style="justify-self:start">Pay by card on Open Collective</a>}
       <p class="muted">
         Need an invoice, a bounty, or a conversation first?{' '}
         <a class="link" href="/sponsor#inquiry">Ask about sponsoring</a> and a person replies.

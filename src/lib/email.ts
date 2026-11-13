@@ -37,18 +37,6 @@ export function organizerNotice(what: string, lines: [string, string][]): Email 
   return { to: ORGANIZER, subject: `${site.name}: ${what}`, text, html: asHtml(text) };
 }
 
-/** The sign-in link for someone signing in with their email. */
-export function signInEmail(to: string, link: string): Email {
-  const text = [
-    `Here is your link to sign in to ${site.name}:`,
-    link,
-    'It works once, for one hour. If you did not ask for it, ignore this email: nothing happens unless the link is opened.',
-    `Signing in this way does not add you to any email list.`,
-    `${site.name}\n${site.origin}`,
-  ].join('\n\n');
-  return { to, subject: `Your ${site.name} sign-in link`, text, html: asHtml(text) };
-}
-
 /** The request body Resend expects for one email. */
 export function resendBody(email: Email) {
   return {
