@@ -163,8 +163,8 @@ describe('linkSource', () => {
   it('links a repo tagged <slug>-alternative without further checks', () => {
     expect(linkSource(repo({ topics: ['calendly-alternative'], description: 'Something' }), product, ['tag'])).toBe('tag');
   });
-  it('links a topic match that mentions one of the product words', () => {
-    expect(linkSource(repo({ description: 'Open source appointments for everyone' }), product, ['topic'])).toBe('topic');
+  it('links a topic match that shares two of the product words', () => {
+    expect(linkSource(repo({ description: 'Open source booking and appointments for everyone' }), product, ['topic'])).toBe('topic');
   });
   it('refuses a topic match that shares no words with the product', () => {
     expect(linkSource(repo({ description: 'Distributed cron job scheduler', topics: ['scheduling'] }), product, ['topic'])).toBeNull();
@@ -173,7 +173,7 @@ describe('linkSource', () => {
     expect(linkSource(repo({ fullName: 'Someone/Wrong', topics: ['calendly-alternative'] }), product, ['tag'])).toBeNull();
   });
   it('prefers the strongest way it was found', () => {
-    expect(linkSource(repo({ description: 'booking pages' }), product, ['search', 'topic'])).toBe('topic');
+    expect(linkSource(repo({ description: 'booking pages for appointments' }), product, ['search', 'topic'])).toBe('topic');
   });
 });
 
@@ -208,7 +208,7 @@ describe('factsFromSearchItem', () => {
     });
     expect(f).toMatchObject({ githubId: 7, fullName: 'calcom/cal.com', licenseSpdx: 'AGPL-3.0', stars: 38000, topics: ['scheduling'], homepage: null, archived: false });
   });
-  it('treats NOASSERTION as no license', () => {
+  it('leaves out the short code for a license GitHub labels NOASSERTION', () => {
     expect(factsFromSearchItem({ id: 1, full_name: 'a/b', html_url: 'https://github.com/a/b', license: { spdx_id: 'NOASSERTION', name: 'Other' } } as any)?.licenseSpdx).toBeNull();
   });
   it('drops an item that is not a GitHub repo', () => {
@@ -242,5 +242,50 @@ describe('fetchReposResilient', () => {
     const out = await fetchReposResilient(['bad/one', 'good/two'], 't', new GithubBudget(50), f, 0);
     expect(out.repos.map((r) => r.fullName)).toEqual(['good/two']);
     expect(out.failed).toEqual(['bad/one']);
+  });
+});
+
+import { pointsFromSnapshots } from '../src/lib/sync/stars';
+
+describe('pointsFromSnapshots', () => {
+  it('draws the curve from the daily counts the sync saves, oldest first', () => {
+    expect(pointsFromSnapshots([{ day: '2026-11-14', stars: 12 }, { day: '2026-11-13', stars: 10 }])).toEqual([['2026-11-13', 10], ['2026-11-14', 12]]);
+  });
+  it('is empty with no counts', () => {
+    expect(pointsFromSnapshots([])).toEqual([]);
+  });
+});
+
+describe('linkSource is strict about broad topics', () => {
+  const calendly = { slug: 'calendly', name: 'Calendly', words: ['booking', 'appointments', 'scheduling', 'meeting link', 'calendar'], aliases: [], excludes: [] };
+  it('drops a pipeline tool that only shares the word "scheduling"', () => {
+    expect(linkSource(repo({ fullName: 'spotify/luigi', description: 'Build complex pipelines of batch jobs', topics: ['python', 'scheduling', 'hadoop'] }), calendly, ['topic'])).toBeNull();
+  });
+  it('keeps a booking app that shares several of the product words', () => {
+    expect(linkSource(repo({ fullName: 'alextselegidis/easyappointments', description: 'Online appointments scheduler for booking', topics: ['scheduling'] }), calendly, ['topic'])).toBe('topic');
+  });
+  it('keeps a repo that names the product', () => {
+    expect(linkSource(repo({ fullName: 'x/y', description: 'An open source Calendly', topics: [] }), calendly, ['search'])).toBe('search');
+  });
+});
+
+describe('licenses GitHub cannot name', () => {
+  it('keeps a repo whose license GitHub labels NOASSERTION: it has one, GitHub just could not name it', () => {
+    const f = factsFromSearchItem({ id: 1, full_name: 'n8n-io/n8n', html_url: 'https://github.com/n8n-io/n8n', license: { spdx_id: 'NOASSERTION', name: 'Other' }, stargazers_count: 100000, pushed_at: '2026-11-12T00:00:00Z' });
+    expect(f?.licenseSpdx).toBeNull();
+    expect(f?.licenseName).toBe('Other');
+    expect(passesFilter(f!, blocklist, now)).toEqual({ ok: true });
+  });
+  it('still turns away a repo with no license file at all', () => {
+    const f = factsFromSearchItem({ id: 2, full_name: 'a/b', html_url: 'https://github.com/a/b', license: null, stargazers_count: 100, pushed_at: '2026-11-12T00:00:00Z' });
+    expect(passesFilter(f!, blocklist, now)).toEqual({ ok: false, reason: 'no_license' });
+  });
+});
+
+describe('plainLicense for licenses GitHub cannot name', () => {
+  it('says the project has its own or several licenses, never "no license"', () => {
+    const l = plainLicense(null, 'Other');
+    expect(l.label).toBe('Own license');
+    expect(l.words).toMatch(/license file/);
   });
 });

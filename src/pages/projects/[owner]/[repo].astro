@@ -29,7 +29,7 @@ if (`${owner}/${repo}` !== page.project.fullName) return Astro.redirect(`/projec
 const { project: p, products, gaps, similar, issues } = page;
 const here = `/projects/${p.fullName}`;
 const now = new Date();
-const license = plainLicense(p.licenseSpdx);
+const license = plainLicense(p.licenseSpdx, p.licenseName);
 const chart = starChartSvg(p.starPoints.length ? p.starPoints : [[p.syncedAt.slice(0, 10), p.stars]], { paint: 'tomato', width: 960, title: p.fullName });
 const chartUrl = (paint: Paint) => `${site.origin}/chart/${p.fullName}.svg?paint=${paint}`;
 const snippet = (paint: Paint) => `[![Star history on Antipaywall](${chartUrl(paint)})](${site.origin}${here})`;
@@ -76,6 +76,7 @@ const facts: [string, string][] = [
   <section class="wrap pf-section pf-section-tight">
     <div class="card" style="padding:clamp(12px,2vw,20px)">
       <div class="pf-chart" set:html={chart} />
+      <p class="muted small" style="margin-top:10px">Stars counted every day since {p.starPoints[0]?.[0] ?? p.syncedAt.slice(0, 10)}. GitHub doesn't share older star history, so the curve grows from there.</p>
     </div>
     <div class="pf-stats">
       {facts.map(([k, v]) => <div class="card pf-stat"><b>{v}</b><span class="muted">{k}</span></div>)}

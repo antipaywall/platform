@@ -141,7 +141,9 @@ export function factsFromSearchItem(i: SearchItem): RepoFacts | null {
     description: i.description ? String(i.description).slice(0, 400) : null,
     homepage: typeof i.homepage === 'string' && /^https?:\/\//.test(i.homepage) ? i.homepage : null,
     topics: Array.isArray(i.topics) ? i.topics.map(String) : [],
-    licenseSpdx: spdx, licenseName: spdx ? (i.license?.name ?? null) : null,
+    // NOASSERTION means GitHub found a license it couldn't name (often several licenses together):
+    // it has one, so the name is kept and only the short code is left out.
+    licenseSpdx: spdx, licenseName: i.license ? (i.license.name ?? 'Other') : null,
     stars: Number(i.stargazers_count) || 0, forks: Number(i.forks_count) || 0, openIssues: Number(i.open_issues_count) || 0,
     helpWanted: 0, goodFirst: 0, archived: Boolean(i.archived), fork: Boolean(i.fork),
     pushedAt: String(i.pushed_at ?? i.created_at ?? ''), createdAt: String(i.created_at ?? ''),

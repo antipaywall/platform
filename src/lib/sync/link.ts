@@ -20,6 +20,9 @@ export function linkSource(
   if (!best) return null;
   if (best === 'tag' || r.topics.includes(`${p.slug}-alternative`)) return best;
   const haystack = [r.fullName, r.description ?? '', r.topics.join(' ').replace(/-/g, ' ')].join(' ').toLowerCase();
-  const terms = [p.name, ...p.aliases, ...p.words];
-  return terms.some((t) => t.trim() && mentions(haystack, t.trim())) ? best : null;
+  // Naming the product (or an alias) is enough. Otherwise it must share at least two of the
+  // product's plain words: one broad word like "scheduling" also fits cron jobs and music.
+  if ([p.name, ...p.aliases].some((t) => t.trim() && mentions(haystack, t.trim()))) return best;
+  const shared = p.words.filter((w) => w.trim() && mentions(haystack, w.trim())).length;
+  return shared >= 2 ? best : null;
 }

@@ -16,15 +16,12 @@ import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
 import { factsFromSearchItem, fetchReposResilient, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
 import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
-import { samplePages, starPointsFromSamples } from '../src/lib/sync/stars';
 
 const DRY = process.argv.includes('--dry-run');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
 const SEARCH_PER_QUERY = 50;
 /** At most this many projects per paid product, most-starred first. */
 const MAX_PER_PRODUCT = 40;
-const STAR_REFRESH_DAYS = 30;
-const STAR_PROJECTS_PER_RUN = 200;
 const CONTRIBUTOR_REFRESH_DAYS = 7;
 const DAY = 24 * 3600 * 1000;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -110,16 +107,6 @@ async function contributorsOf(fullName: string): Promise<number | null> {
   return Array.isArray(body) ? body.length : null;
 }
 
-async function starHistory(fullName: string, stars: number, now: Date) {
-  const samples: { page: number; firstStarredAt: string }[] = [];
-  for (const page of samplePages(stars)) {
-    const res = await gh(`https://api.github.com/repos/${fullName}/stargazers?per_page=100&page=${page}`, 'application/vnd.github.star+json');
-    if (!res.ok) break;
-    const list = (await res.json().catch(() => [])) as { starred_at?: string }[];
-    if (list[0]?.starred_at) samples.push({ page, firstStarredAt: list[0].starred_at });
-  }
-  return starPointsFromSamples(samples, stars, now);
-}
 
 async function main() {
   if (!TOKEN) throw new Error('GITHUB_TOKEN is required');
@@ -260,27 +247,21 @@ async function main() {
     // Slower details, refreshed on their own schedule. Stopping at the rate limit here is normal:
     // the next run carries on where this one left off.
     let contributorReads = 0;
-    let histories = 0;
     try {
       const stale = await fetchAllRows<{ id: string; full_name: string; stars: number; star_points_at: string | null; contributors_at: string | null }>((a, b) =>
         db.from('projects').select('id, full_name, stars, star_points_at, contributors_at').eq('listed', true).order('stars', { ascending: false }).range(a, b));
-      for (const p of stale
-        .filter((p) => !p.star_points_at || now.getTime() - Date.parse(p.star_points_at) > STAR_REFRESH_DAYS * DAY)
-        .slice(0, STAR_PROJECTS_PER_RUN)) {
-        const points = await starHistory(p.full_name, p.stars, now);
-        must(await db.from('projects').update({ star_points: points, star_points_at: now.toISOString() }).eq('id', p.id), 'stars');
-        histories++;
-      }
+      // Star history comes from the daily counts saved above (project_snapshots): GitHub no longer
+      // lists who starred a repo or when, so there is nothing older to fetch.
       for (const p of stale.filter((p) => !p.contributors_at || now.getTime() - Date.parse(p.contributors_at) > CONTRIBUTOR_REFRESH_DAYS * DAY)) {
         const n = await contributorsOf(p.full_name);
         contributorReads++;
         if (n !== null) must(await db.from('projects').update({ contributors: n, contributors_at: now.toISOString() }).eq('id', p.id), 'contributors');
       }
-      await finish(true, `${summary}, ${histories} star histories, ${contributorReads} contributor counts`);
+      await finish(true, `${summary}, ${contributorReads} contributor counts`);
     } catch (e) {
       if (!(e instanceof RateLimited)) throw e;
       await markIndexable(db, now);
-      await finish(true, `${summary}, ${histories} star histories, ${contributorReads} contributor counts; details stopped at the rate limit`);
+      await finish(true, `${summary}, ${contributorReads} contributor counts; details stopped at the rate limit`);
     }
   } catch (e) {
     if (e instanceof RateLimited) return finish(false, 'rate limit');

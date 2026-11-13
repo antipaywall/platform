@@ -29,3 +29,8 @@ export function starPointsFromSamples(samples: { page: number; firstStarredAt: s
   points.push([today, total]);
   return points;
 }
+
+/** The star curve from the sync's daily counts, oldest first. GitHub no longer shares older history. */
+export function pointsFromSnapshots(rows: { day: string; stars: number }[]): StarPoint[] {
+  return [...rows].sort((a, b) => a.day.localeCompare(b.day)).map((r) => [r.day, r.stars]);
+}

@@ -3,4 +3,479 @@
 #   product: calendly
 #   action: add        # or remove
 #   reason: Does the same job; tagged under a topic we don't track.
-[]
+- project: open-webui/open-webui
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ollama/ollama
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: janhq/jan
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: lobehub/lobehub
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GNOME/gimp
+  product: photoshop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/krita
+  product: photoshop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mattermost/mattermost
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zulip/zulip
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: RocketChat/Rocket.Chat
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: element-hq/element-web
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: coollabsio/coolify
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: caprover/caprover
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dokku/dokku
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: makeplane/plane
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: taigaio/taiga-back
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Kong/insomnia
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: usebruno/bruno
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: hoppscotch/hoppscotch
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LibreOffice/core
+  product: microsoft-365
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ONLYOFFICE/DocumentServer
+  product: microsoft-365
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: coollabsio/coolify
+  product: vercel
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Dokploy/dokploy
+  product: vercel
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: AppFlowy-IO/AppFlowy
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: toeverything/AFFiNE
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: outline/outline
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: siyuan-note/siyuan
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: navidrome/navidrome
+  product: spotify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jellyfin/jellyfin
+  product: spotify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: continuedev/continue
+  product: github-copilot
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: TabbyML/tabby
+  product: github-copilot
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zed-industries/zed
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: continuedev/continue
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: cline/cline
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: abiosoft/colima
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: podman-desktop/podman-desktop
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: rancher-sandbox/rancher-desktop
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nextcloud/server
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: syncthing/syncthing
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: haiwen/seafile
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: penpot/penpot
+  product: figma
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: grafana/grafana
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: SigNoz/signoz
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openobserve/openobserve
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: appsmithorg/appsmith
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ToolJet/ToolJet
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Budibase/budibase
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: darktable-org/darktable
+  product: lightroom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: RawTherapee/RawTherapee
+  product: lightroom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: immich-app/immich
+  product: google-photos
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: photoprism/photoprism
+  product: google-photos
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jitsi/jitsi-meet
+  product: zoom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bigbluebutton/bigbluebutton
+  product: zoom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: juanfont/headscale
+  product: tailscale
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: netbirdio/netbird
+  product: tailscale
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nocodb/nocodb
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: baserow/baserow
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: teableio/teable
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: languagetool-org/languagetool
+  product: grammarly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Automattic/harper
+  product: grammarly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: medusajs/medusa
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: saleor/saleor
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bagisto/bagisto
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: formbricks/formbricks
+  product: typeform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: heyform/heyform
+  product: typeform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: twentyhq/twenty
+  product: salesforce
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: CapSoftware/Cap
+  product: loom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: keycloak/keycloak
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zitadel/zitadel
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: logto-io/logto
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: supertokens/supertokens-core
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: godotengine/godot
+  product: unity
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gnu-octave/octave
+  product: matlab
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: sympy/sympy
+  product: mathematica
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: laurent22/joplin
+  product: evernote
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: usememos/memos
+  product: evernote
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: outline/outline
+  product: confluence
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: BookStackApp/BookStack
+  product: confluence
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: wekan/wekan
+  product: trello
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: trello
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chatwoot/chatwoot
+  product: intercom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: akaunting/akaunting
+  product: quickbooks
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: invoiceninja/invoiceninja
+  product: quickbooks
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: fatedier/frp
+  product: ngrok
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openziti/zrok
+  product: ngrok
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: docusealco/docuseal
+  product: docusign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenSignLabs/OpenSign
+  product: docusign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: n8n-io/n8n
+  product: zapier
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: activepieces/activepieces
+  product: zapier
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: TryGhost/Ghost
+  product: substack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: getsentry/self-hosted
+  product: sentry
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: luanti-org/luanti
+  product: minecraft
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Comfy-Org/ComfyUI
+  product: midjourney
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: AUTOMATIC1111/stable-diffusion-webui
+  product: midjourney
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dani-garcia/vaultwarden
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: keepassxreboot/keepassxc
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bitwarden/server
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: psi-4ward/psitransfer
+  product: wetransfer
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: knadh/listmonk
+  product: mailchimp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mautic/mautic
+  product: mailchimp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LinkStackOrg/LinkStack
+  product: linktree
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: metabase/metabase
+  product: tableau
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: apache/superset
+  product: tableau
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: calcom/cal.diy
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: lukevella/rallly
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: alextselegidis/easyappointments
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Stirling-Tools/Stirling-PDF
+  product: adobe-acrobat
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GrapesJS/grapesjs
+  product: webflow
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: excalidraw/excalidraw
+  product: miro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: tldraw/tldraw
+  product: miro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openreplay/openreplay
+  product: hotjar
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: PostHog/posthog
+  product: hotjar
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zammad/zammad
+  product: zendesk
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: freescout-help-desk/freescout
+  product: zendesk
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: todoist
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/kdenlive
+  product: premiere-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mltframework/shotcut
+  product: premiere-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nextcloud/server
+  product: google-workspace
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jellyfin/jellyfin
+  product: plex
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
