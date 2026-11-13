@@ -10,6 +10,8 @@ import { BUILD_STATUS, getGapPage, type GapPage } from '../../lib/gaps';
 import { profilePath } from '../../lib/profiles';
 import { adminClient } from '../../lib/supabase';
 import { visitorId } from '../../lib/visitor';
+import { appConfigured, fileHistory, suggestionFiles } from '../../lib/githubApp';
+import { canDecide, repoIdeaUrl } from '../../lib/suggestions';
 
 const slug = String(Astro.params.slug);
 const db = adminClient();
@@ -25,6 +27,21 @@ if (!page) return new Response(null, { status: 404 });
 if ('redirect' in page) return Astro.redirect(page.redirect, 301);
 
 const { idea, demand, merged, products, closest, claims, season, mine } = page;
+
+// The idea's life on GitHub: open suggestions, who may decide on them, and who shaped it.
+const { data: repoRow } = await db.from('ideas').select('repo_path, started_by_login').eq('id', idea.id).maybeSingle();
+const onGithub = Boolean(repoRow?.repo_path);
+const { data: openSuggestions } = await db.from('idea_suggestions').select('pr_number, author_login, title, created_at, mergeable').eq('idea_id', idea.id).eq('state', 'open').order('created_at');
+const viewerLogin = person ? person.username ?? person.handle : null;
+const deciding = Boolean(viewerLogin && canDecide({ startedBy: repoRow?.started_by_login ?? null }, viewerLogin, isAdmin(person) ? [viewerLogin] : []));
+const diffs = new Map<number, string>();
+if (deciding && appConfigured()) {
+  for (const s of (openSuggestions ?? []).slice(0, 5)) {
+    const files = await suggestionFiles(s.pr_number).catch(() => []);
+    diffs.set(s.pr_number, files.map((f) => f.patch).join('\n'));
+  }
+}
+const history = onGithub && appConfigured() ? await fileHistory(repoRow!.repo_path!).catch(() => []) : [];
 const here = `/ideas/${idea.slug}`;
 const status = BUILD_STATUS[idea.status];
 const now = new Date();
@@ -103,6 +120,49 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
       </section>
     )
   }
+
+  <section id="suggestions" class="wrap pf-section pf-section-tight">
+    <div class="pf-split">
+      <div>
+        <h2 class="pf-h2">Make it better</h2>
+        <p class="lede">Ideas aren't finished when they're posted. Know how this could work? Suggest an improvement: the person who started it decides.</p>
+        <div class="pf-chips">
+          <a class="key key-sm" href={`/ideas/${idea.slug}/suggest`}>Suggest an improvement</a>
+          {onGithub && <a class="key key-milk key-sm" href={repoIdeaUrl(idea.slug)} rel="noopener">See it on GitHub</a>}
+        </div>
+      </div>
+      <div style="display:grid;gap:16px">
+        {(openSuggestions ?? []).length > 0 ? (
+          <ul class="pf-list">
+            {(openSuggestions ?? []).map((s) => (
+              <li class="pf-row-flat" style="display:grid;gap:10px">
+                <div><b>{s.title}</b><div class="muted small">Suggested by @{s.author_login}{s.mergeable === false ? ' · needs updating: another change came first' : ''}</div></div>
+                {deciding && diffs.get(s.pr_number) && <pre class="pf-code" style="white-space:pre-wrap">{diffs.get(s.pr_number)}</pre>}
+                {deciding && (
+                  <form method="post" action="/api/ideas/decide" class="pf-chips">
+                    <input type="hidden" name="idea" value={idea.slug} />
+                    <input type="hidden" name="pr" value={s.pr_number} />
+                    <button class="key key-mint key-sm" name="action" value="accept" type="submit">Accept</button>
+                    <button class="key key-milk key-sm" name="action" value="decline" type="submit">Decline</button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="muted">No suggestions waiting.</p>
+        )}
+        {history.length > 0 && (
+          <div style="display:grid;gap:8px">
+            <h3 class="pf-h3" style="font-size:1.2rem">Who shaped it</h3>
+            <ul class="pf-list" style="gap:6px">
+              {history.map((h) => <li class="small"><b>@{h.login}</b> · {h.message} <span class="muted">· {timeAgo(h.date, now)}</span></li>)}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
 
   <section class="pf-band">
     <div class="wrap pf-section">

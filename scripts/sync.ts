@@ -15,6 +15,8 @@ import { loadCatalog, type Product } from '../src/lib/catalog';
 import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
 import { factsFromSearchItem, fetchReposResilient, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
+import { parseIdeaFile } from '../src/lib/ideaFile';
+import { applyIdeaFile } from '../src/lib/ideasSync';
 import { dedupeLinks, fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 
 const DRY = process.argv.includes('--dry-run');
@@ -237,6 +239,10 @@ async function main() {
       if (!seen.length) must(await db.rpc('merge_gap', { p_from: from, p_into: into, p_source: 'pr', p_reason: m.reason, p_by: null }), 'merge');
     }
 
+    // The ideas repo is the source of truth for ideas. The App's events keep the site in step; this
+    // re-reads any file whose version differs, in case an event was missed.
+    await syncIdeasRepo(db).catch((e) => console.log(`Ideas repo not read: ${e instanceof Error ? e.message : e}`));
+
     // Which pages search engines may see. Worked out before the slow steps below, so a run that
     // stops at the rate limit still keeps it right.
     const indexed = await markIndexable(db, now);
@@ -268,6 +274,28 @@ async function main() {
     await finish(false, e instanceof Error ? e.message.slice(0, 300) : 'failed');
     throw e;
   }
+}
+
+/** Re-reads idea files whose version on GitHub differs from the site's copy. */
+async function syncIdeasRepo(db: SupabaseClient): Promise<void> {
+  const res = await gh('https://api.github.com/repos/antipaywall/ideas/contents/ideas');
+  if (res.status === 404) return; // The repo doesn't exist yet.
+  if (!res.ok) throw new Error(`status ${res.status}`);
+  const files = ((await res.json()) as { name: string; path: string; sha: string; download_url: string }[]).filter((f) => /^[a-z0-9-]+\.md$/.test(f.name));
+  const known = await fetchAllRows<{ repo_path: string | null; repo_sha: string | null }>((a, b) => db.from('ideas').select('repo_path, repo_sha').not('repo_path', 'is', null).order('repo_path').range(a, b));
+  const shaOf = new Map(known.map((k) => [k.repo_path, k.repo_sha]));
+  let updated = 0;
+  for (const f of files) {
+    if (shaOf.get(f.path) === f.sha) continue;
+    const text = await (await fetch(f.download_url)).text();
+    try {
+      await applyIdeaFile(db, parseIdeaFile(text, f.path), f.sha);
+      updated++;
+    } catch {
+      console.log(`Skipped ${f.path}: not a valid idea file`);
+    }
+  }
+  console.log(`Ideas repo: ${files.length} files, ${updated} updated`);
 }
 
 /** Sets `indexable` on every listed project from its links, the gaps that name it, and its history. */
