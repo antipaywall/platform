@@ -34,3 +34,5 @@ supabase/.temp/
 .vscode/
 AGENTS.md
 .superpowers/
+
+match-bundle.md
