@@ -1,0 +1,26 @@
+# Added 2026-11-13. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: formspree
+name: Formspree
+category: Forms and surveys
+price:
+  cents: 1000
+  period: month
+blurb: A form endpoint for static sites, so an ordinary HTML form emails you what people send.
+words:
+  - form backend
+  - form endpoint
+  - contact form
+  - static site form
+  - form submissions
+  - html form
+topics:
+  - form-backend
+  - contact-form
+  - form-endpoint
+  - formspree-alternative
+search_terms:
+  - formspree alternative
+  - form backend static site
+aliases:
+  - formspree.io
+excludes: []

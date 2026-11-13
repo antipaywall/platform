@@ -1,0 +1,28 @@
+# Added 2026-11-13. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: semrush
+name: Semrush
+category: Analytics
+price:
+  cents: 13995
+  period: month
+blurb: Search-engine tools that track your rankings, audit your site and research keywords.
+words:
+  - seo
+  - rank tracker
+  - keyword research
+  - site audit
+  - backlinks
+  - search rankings
+topics:
+  - seo
+  - rank-tracker
+  - seo-tools
+  - keyword-research
+  - semrush-alternative
+search_terms:
+  - semrush alternative
+  - open source seo rank tracker
+aliases:
+  - semrush.com
+  - ahrefs
+excludes: []

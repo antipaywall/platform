@@ -343,12 +343,9 @@ textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
 /* ---- Home: the hackathon, as loud as the wall ---- */
 .hm-season { background: var(--wall); color: #fff; position: relative; overflow: hidden; }
 .hm-season::before {
-  /* A course of bricks along the top edge, so the band reads as the wall coming back. */
-  content: ''; position: absolute; inset: 0 0 auto 0; height: 26px; opacity: 0.55;
-  background:
-    repeating-linear-gradient(90deg, transparent 0 118px, var(--wall) 118px 124px),
-    linear-gradient(oklch(0.31 0.05 310), oklch(0.31 0.05 310));
-  box-shadow: inset 0 -5px 0 var(--wall-edge);
+  /* The whole band is the wall: a quiet running bond of bricks behind everything. */
+  content: ''; position: absolute; inset: 0; background: url('/brick-texture.svg') 0 0 / 248px 106px; pointer-events: none;
+  mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.55), #000 55%); -webkit-mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.55), #000 55%);
 }
 .hm-season-in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; padding-block: clamp(72px, 9vw, 132px) clamp(64px, 8vw, 120px); position: relative; }
 .hm-season-main { display: grid; gap: 22px; justify-items: start; }
@@ -391,7 +388,7 @@ textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
 .hm-cats span { font-size: 0.8125rem; font-weight: 700; white-space: nowrap; }
 
 /* ---- Home: the ending ---- */
-.hm-end { position: relative; padding-block: 0 clamp(72px, 9vw, 128px); overflow: hidden; }
+.hm-end { position: relative; padding-block: clamp(72px, 9vw, 128px); overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
 .hm-end-course { display: flex; gap: 7px; margin: 0 -40px clamp(56px, 7vw, 96px); }
 .hm-end-course i { flex: 1 0 120px; height: 46px; border-radius: 12px; background: var(--p); box-shadow: inset 0 -5px 0 var(--pe); }
 .hm-end-in { display: grid; gap: 22px; justify-items: center; text-align: center; }
@@ -407,3 +404,37 @@ textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
   .hm-end .pf-search .key { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .hm-cats a { transition: none; } .hm-cats a:hover { transform: none; } }
+
+/* ---- Home: what do you pay for ---- */
+.hm-pay { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); }
+.hm-pay .pf-brick { gap: 10px; padding: 18px 20px 24px; }
+.hm-pay-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.hm-pay-top b { font-size: 1.7rem; }
+.hm-pay-top s { font-size: 0.875rem; font-weight: 700; white-space: nowrap; text-decoration-thickness: 2px; opacity: 0.75; }
+.hm-pay-what { font-size: 0.9375rem; line-height: 1.4; }
+.hm-pay-free { margin-top: auto; padding-top: 8px; font-size: 0.9375rem; font-weight: 500; }
+.hm-pay-free b { font: inherit; font-weight: 800; letter-spacing: 0; }
+
+/* ---- Home: how it grows, as a wall going up one course at a time ---- */
+.hm-how { padding-block: clamp(56px, 8vw, 112px); display: grid; gap: clamp(28px, 4vw, 48px); }
+.hm-how-head { display: grid; gap: 12px; max-width: 720px; }
+.hm-how-head .lede { margin: 0; }
+.hm-stairs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: end; counter-reset: step; }
+.hm-stairs li { display: grid; gap: 8px; counter-increment: step; }
+.hm-step { display: grid; gap: 8px; align-content: start; min-height: 190px; padding: 20px 20px 26px; border-radius: 18px; background: var(--p); box-shadow: inset 0 -6px 0 var(--pe); }
+.hm-step::before { content: counter(step); font: 900 2.6rem/0.9 var(--display); letter-spacing: -0.04em; }
+.hm-step b { font: 800 1.35rem/1.1 var(--display); letter-spacing: -0.02em; }
+.hm-step span { font-size: 0.9375rem; line-height: 1.45; }
+/* The courses already laid under each step. */
+.hm-stairs i { height: 46px; border-radius: 12px; background: var(--wall); box-shadow: inset 0 -5px 0 var(--wall-edge), inset 0 1px 0 rgb(255 255 255 / 0.08); }
+.hm-how-note { margin: 0; }
+@media (max-width: 860px) {
+  .hm-stairs { grid-template-columns: 1fr; }
+  .hm-stairs i { display: none; }
+  .hm-step { min-height: 0; }
+}
+
+/* The home headline is a full sentence now, so it runs a little smaller and wider than the old one. */
+.pf .hero-title { font-size: clamp(2.5rem, 5.1vw, 5.25rem); max-width: 15ch; line-height: 0.98; }
+.pf .hero-title { max-width: none; }
+@media (min-width: 900px) { .pf .hero-title span { display: block; white-space: nowrap; } }

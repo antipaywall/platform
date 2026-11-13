@@ -479,3 +479,11 @@
   product: plex
   action: add
   reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: towfiqi/serpbear
+  product: semrush
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: StJudeWasHere/seonaut
+  product: semrush
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
