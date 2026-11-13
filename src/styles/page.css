@@ -601,6 +601,24 @@ textarea.input {
   height: 100%;
   object-fit: cover;
 }
+.tile-more {
+  place-content: center;
+  justify-items: center;
+  min-height: 132px;
+  background: var(--ink);
+  color: #fff;
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-align: center;
+  text-decoration: none;
+}
+.tile-more span {
+  font: 800 1.875rem/1 var(--display);
+}
+.tile-more:hover {
+  box-shadow: 0 10px 22px -16px oklch(0.23 0.045 310 / 0.6);
+}
 .tile-spot {
   place-content: center;
   justify-items: center;

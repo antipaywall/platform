@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { providerOf, type Provider } from './accounts';
 import { DataUnavailableError, type Person } from './db';
 import { fetchActivity, savedActivity, type Activity } from './activity';
-import { fetchRepos, isStale, savedRepos, type Repo } from './repos';
+import { fetchDetails, fetchRepos, isStale, savedRepos, type Repo } from './repos';
 import { adminClient } from './supabase';
 
 /** A builder's page is always public. Anyone else's only when they switched it on. */
@@ -75,9 +75,17 @@ export async function refreshRepos(person: Person, opts: { timeoutMs?: number; f
   const accountId = Number(provider === 'gitlab' ? person.gitlab_id : person.github_id);
   const work = (async () => {
     try {
-      const repos = await fetchRepos({ provider, handle: person.handle, accountId }, { githubToken: import.meta.env.GITHUB_TOKEN });
+      const who = { provider, handle: person.handle, accountId };
+      const opts = { githubToken: import.meta.env.GITHUB_TOKEN };
+      // The name, bio and location refresh with the repos, so a profile stays current without a new sign-in.
+      const [repos, details] = await Promise.all([fetchRepos(who, opts), fetchDetails(who, opts)]);
       const client = adminClient();
-      if (client) await client.from('people').update({ repos, repos_fetched_at: now.toISOString() }).eq('id', person.id);
+      if (client) {
+        await client.from('people').update({
+          repos, repos_fetched_at: now.toISOString(),
+          ...(details ? { name: details.name, bio: details.bio, location: details.location, ...(details.repoCount !== null ? { repo_count: details.repoCount } : {}) } : {}),
+        }).eq('id', person.id);
+      }
       return repos;
     } catch {
       return saved;

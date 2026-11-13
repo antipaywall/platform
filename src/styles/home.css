@@ -991,6 +991,15 @@ main > section.sponsors {
 .crew-meter strong {
   color: var(--ink);
 }
+/* Past 100 the bar stays full and says so. */
+.crew-done {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--mint);
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
 .crew .actions {
   margin-top: 24px;
 }
