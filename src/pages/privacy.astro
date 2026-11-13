@@ -141,6 +141,7 @@ import { site } from '../config/site';
       <li>To run the builder checks we read when your account was created and how many contributions your profile shows for the last year. For GitLab, the count comes from the activity calendar on your public profile page. We store those two facts, whether each check passed, and when it was run. The checks run again every time you sign in.</li>
       <li>We store your country, as two letters, from the moment you signed in.</li>
       <li>If you join as a builder we store which version of the rules you accepted, and when.</li>
+      <li>We save how many contributions GitHub or GitLab counts for you on each day of the last year, once for public repositories only and once for everything GitHub shows on your profile, to draw the activity wall on your profile. We never see what the private work was.</li>
       <li>We save a list of your public repositories (name, description, language, stars and when each was last updated) so your profile can show them. It is refreshed when you sign in, and when your profile is viewed and the list is more than a day old.</li>
       <li>Signing in sets cookies that keep you signed in. Scripts on the page cannot read them, and they are sent over a secure connection only. Signing out removes them.</li>
       <li>We never see your private repositories. We use the access GitHub or GitLab gives us during sign-in, to run the checks, and do not save it in our database.</li>
@@ -150,6 +151,7 @@ import { site } from '../config/site';
     <ul>
       <li>If you join as a builder: a public profile at antipaywall.org/builders/ followed by your username. It shows your picture, name, bio and location from GitHub or GitLab, when you joined, up to six of your public repositories, your ideas, and whatever you add on your account page (about, skills, a team note, an X handle and a website). You also appear on the builders list and the home page.</li>
       <li>If you sign in without joining as a builder, your profile stays private unless you switch it on in your account.</li>
+      <li>If you post or reply: what you wrote, any link, and when. Posts and replies are public, on your profile and in the feed. Who you follow, how many follow you, and the bricks you lay are public too. If you report a post, only the organizer sees that you did.</li>
       <li>If you post an idea: the idea, with your username. While you type the idea's name, and again when you post it, our server sends that name to GitHub's search to find existing projects. GitHub sees the words and our server, not you.</li>
       <li>If you pledge: the name you choose, the amount, whether it is from you or a company, and your GitHub username. If you choose to add them: an X username and, for a company, its website. These are shown publicly once the pledge is listed. If you tick "Keep me anonymous", the public list shows only "Anonymous" and the amount; the organizer still sees who pledged.</li>
       <li>If you pledge: your email address, so the organizer can reach you when the pool opens. It is never shown on the site, and it does not add you to the email list.</li>

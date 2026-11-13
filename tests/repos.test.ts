@@ -87,3 +87,16 @@ describe('profile addresses', () => {
     expect(isPublic({ is_builder: false })).toBe(false);
   });
 });
+
+import { fetchDetails } from '../src/lib/repos';
+
+describe('fetchDetails', () => {
+  it('reads name, bio, location and repo count from GitHub', async () => {
+    const f = (async () => new Response(JSON.stringify({ name: ' Nikema ', bio: 'Builds  agents', location: '', public_repos: 208 }))) as unknown as typeof fetch;
+    expect(await fetchDetails({ provider: 'github', handle: 'prophen', accountId: 1 }, { fetchImpl: f })).toEqual({ name: 'Nikema', bio: 'Builds agents', location: null, repoCount: 208 });
+  });
+  it('gives nothing, rather than blanks, when the provider does not answer', async () => {
+    const f = (async () => new Response('limit', { status: 403 })) as unknown as typeof fetch;
+    expect(await fetchDetails({ provider: 'github', handle: 'a', accountId: 1 }, { fetchImpl: f })).toBeNull();
+  });
+});

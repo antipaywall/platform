@@ -92,3 +92,23 @@ const LANG: Record<string, string> = {
   Elixir: '#6e4a7e', Zig: '#ec915c', Lua: '#000080', 'Jupyter Notebook': '#DA5B0B',
 };
 export const languageColor = (lang: string | null) => (lang && LANG[lang]) || 'oklch(0.66 0.025 310)';
+
+export type Details = { name: string | null; bio: string | null; location: string | null; repoCount: number | null };
+
+/** The public profile details: name, bio, location and public repo count. Null when the provider doesn't answer. */
+export async function fetchDetails(
+  who: { provider: Provider; handle: string; accountId: number },
+  opts: { fetchImpl?: typeof fetch; githubToken?: string } = {},
+): Promise<Details | null> {
+  const f = opts.fetchImpl ?? fetch;
+  const github = who.provider === 'github';
+  const headers: Record<string, string> = { 'user-agent': 'antipaywall', accept: github ? 'application/vnd.github+json' : 'application/json' };
+  if (github && opts.githubToken) headers.authorization = `Bearer ${opts.githubToken}`;
+  const url = github ? `https://api.github.com/users/${encodeURIComponent(who.handle)}` : `https://gitlab.com/api/v4/users/${who.accountId}`;
+  const res = await f(url, { headers }).catch(() => null);
+  if (!res || !res.ok) return null;
+  const u = (await res.json().catch(() => null)) as any;
+  if (!u || typeof u !== 'object') return null;
+  const count = Number(u.public_repos);
+  return { name: text(u.name, 120), bio: text(u.bio, 400), location: text(u.location, 120), repoCount: github && Number.isSafeInteger(count) && count >= 0 ? count : null };
+}

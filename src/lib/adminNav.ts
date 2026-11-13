@@ -5,6 +5,7 @@ export const ADMIN_SECTIONS = [
   { path: '/admin/visitors', label: 'Visitors' },
   { path: '/admin/people', label: 'People' },
   { path: '/admin/manage', label: 'Inbox and moderation' },
+  { path: '/admin/community', label: 'Posts and badges' },
 ] as const;
 
 /** A time as "Nov 12, 14:05", in UTC, which is how the database counts days. */

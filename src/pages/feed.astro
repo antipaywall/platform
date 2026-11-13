@@ -1,0 +1,126 @@
+---
+// The feed. Following: people you follow, newest first, never ranked. Everyone: all builders,
+// sorted Top (responses push a post up, time pulls it down) or Latest.
+import Base from '../layouts/Base.astro';
+import BadgeMark from '../components/BadgeMark.astro';
+import PostCard from '../components/PostCard.astro';
+import PostComposer from '../components/PostComposer.astro';
+import SignIn from '../components/SignIn.astro';
+import { site } from '../config/site';
+import { attempt, getStats } from '../lib/db';
+import { profilePath } from '../lib/profiles';
+import { feedLatest, feedTop, POST_KINDS, suggestions, type PostKind } from '../lib/social';
+
+const viewer = Astro.locals.person;
+const q = Astro.url.searchParams;
+const tab = viewer && q.get('tab') !== 'everyone' ? 'following' : 'everyone';
+const sort = q.get('sort') === 'latest' ? 'latest' : 'top';
+const kind = (POST_KINDS.find((k) => k.key === q.get('kind'))?.key ?? null) as PostKind | null;
+const viewerId = viewer?.id ?? null;
+
+const [posts, people, stats] = await Promise.all([
+  attempt(() =>
+    tab === 'following'
+      ? feedLatest({ viewerId, following: true, kind })
+      : sort === 'latest'
+        ? feedLatest({ viewerId, following: false, kind })
+        : feedTop({ viewerId, kind, boostKinds: site.feed.boostBuildWeek }),
+  ),
+  attempt(() => suggestions(viewerId)),
+  attempt(getStats),
+]);
+
+const link = (over: Record<string, string | null>) => {
+  const p = new URLSearchParams();
+  const next = { tab, sort, kind, ...over };
+  if (next.tab === 'everyone' && viewer) p.set('tab', 'everyone');
+  if (next.tab === 'everyone' && next.sort === 'latest') p.set('sort', 'latest');
+  if (next.kind) p.set('kind', next.kind);
+  const s = p.toString();
+  return `/feed${s ? `?${s}` : ''}`;
+};
+const here = link({});
+const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
+---
+
+<Base title="Feed" description="What builders on Antipaywall are working on, looking for and shipping.">
+  <div class="feed">
+    <div class="feed-main">
+      <h1 class="acct-title">Feed</h1>
+      <nav class="feed-tabs" aria-label="Which posts">
+        {viewer && <a href={link({ tab: 'following' })} aria-current={tab === 'following' ? 'page' : undefined}>Following</a>}
+        <a href={link({ tab: 'everyone' })} aria-current={tab === 'everyone' ? 'page' : undefined}>Everyone</a>
+      </nav>
+
+      {
+        viewer ? (
+          canPost ? (
+            <PostComposer back={here} />
+          ) : (
+            <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/join/build">See yours</a></p>
+          )
+        ) : (
+          <div class="feed-in">
+            <p>Sign in to post, follow builders and lay bricks.</p>
+            <SignIn next="/feed" />
+          </div>
+        )
+      }
+
+      <div class="feed-filters">
+        {
+          tab === 'everyone' && (
+            <span class="seg" role="group" aria-label="Sort">
+              <a href={link({ sort: 'top' })} aria-current={sort === 'top' ? 'true' : undefined}>Top</a>
+              <a href={link({ sort: 'latest' })} aria-current={sort === 'latest' ? 'true' : undefined}>Latest</a>
+            </span>
+          )
+        }
+        <span class="feed-kinds">
+          <a href={link({ kind: null })} aria-current={!kind ? 'true' : undefined}>All</a>
+          {POST_KINDS.map((k) => <a href={link({ kind: k.key })} aria-current={kind === k.key ? 'true' : undefined}>{k.plural}</a>)}
+        </span>
+        {tab === 'everyone' && sort === 'top' && <a class="link small" href="/feed/how-it-works">How this is ranked</a>}
+      </div>
+
+      {
+        !posts ? (
+          <p class="empty">The feed is unavailable right now. Try again in a minute.</p>
+        ) : posts.length ? (
+          <div class="posts">{posts.map((p) => <PostCard post={p} viewerId={viewerId} canReply={canPost} back={here} />)}</div>
+        ) : tab === 'following' ? (
+          <p class="empty">Nothing here yet. Follow builders to see their posts, or <a class="link" href={link({ tab: 'everyone' })}>see everyone's</a>.</p>
+        ) : (
+          <p class="empty">No posts yet. {canPost ? 'Be the first.' : ''}</p>
+        )
+      }
+    </div>
+
+    <aside class="feed-side">
+      <div class="prof-box">
+        <h2 class="pcard-h">Season 1</h2>
+        <p>{stats ? `${stats.builders} of ${site.launch.buildersNeeded} builders are in.` : 'The builder count is unavailable right now.'} The dates are set at {site.launch.buildersNeeded}.</p>
+        <p style="margin-top:10px"><a class="key key-milk" href="/join/build">Join as a builder</a></p>
+      </div>
+      {
+        people && people.length > 0 && (
+          <div class="prof-box">
+            <h2 class="pcard-h">Builders to follow</h2>
+            <ul class="who-list">
+              {people.map((a) => (
+                <li>
+                  <a class="post-pic" href={profilePath(a.provider, a.handle)} aria-hidden="true" tabindex="-1">
+                    <span>{(a.handle[0] ?? '?').toUpperCase()}</span>
+                    {a.avatar_url && <img src={a.avatar_url} alt="" width="34" height="34" loading="lazy" />}
+                  </a>
+                  <a class="who-name" href={profilePath(a.provider, a.handle)}>{a.name ?? a.handle}</a>
+                  {a.badge && <BadgeMark badge={a.badge} />}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </aside>
+  </div>
+</Base>
