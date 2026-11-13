@@ -48,6 +48,17 @@ export const MESSAGES = {
   organizer_cannot_delete: { kind: 'error', text: "The organizer's account can't be deleted from here." },
   account_deleted: { kind: 'ok', text: 'Your account and everything tied to it is deleted.' },
   done: { kind: 'ok', text: 'Done.' },
+  bad_pay: { kind: 'error', text: 'Pick one of the amounts. It is only a signal: nobody is charged.' },
+  signal_saved: { kind: 'ok', text: 'Thanks. Builders can see where people stand.' },
+  signin_for_follow: { kind: 'error', text: 'Following needs a GitHub or GitLab sign-in for now. Your signals still count without one.' },
+  email_link_sent: { kind: 'ok', text: 'Check your email for a sign-in link. It works once, for an hour.' },
+  claimed: { kind: 'ok', text: "You're on it. Others building it can find you here." },
+  unclaimed: { kind: 'ok', text: "You're no longer listed as building this." },
+  merged: { kind: 'ok', text: 'Joined. Your support counts on this one now.' },
+  unmerged: { kind: 'ok', text: 'Split back out. They will not be joined again.' },
+  bad_repo_url: { kind: 'error', text: 'The repo address must start with https://github.com/ or https://gitlab.com/.' },
+  bad_claim_note: { kind: 'error', text: 'Keep the note under 140 characters.' },
+  need_builder_signin: { kind: 'error', text: 'Claiming is for builders. Sign in with GitHub or GitLab first.' },
 } as const;
 
 export type MessageCode = keyof typeof MESSAGES;

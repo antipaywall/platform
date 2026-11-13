@@ -13,6 +13,8 @@ import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
+import { claimSignals } from '../../lib/signals';
+import { visitorId } from '../../lib/visitor';
 
 export const GET: APIRoute = async (context) => {
   const { request, cookies, url, redirect } = context;
@@ -91,6 +93,9 @@ export const GET: APIRoute = async (context) => {
     { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person,
     { force: true, timeoutMs: 1500 },
   );
+
+  // What this browser backed before signing in becomes theirs.
+  await claimSignals(db, visitorId(cookies), user.id);
 
   // Signing in joins the email list, as the sign-in button says, using the address the provider gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.
