@@ -1,0 +1,171 @@
+---
+import Platform from '../../../layouts/Platform.astro';
+import FollowButton from '../../../components/pf/FollowButton.astro';
+import SignalButton from '../../../components/pf/SignalButton.astro';
+import SignalScript from '../../../components/pf/SignalScript.astro';
+import { site } from '../../../config/site';
+import { PAINTS, starChartSvg, type Paint } from '../../../lib/chart';
+import { shortCount, timeAgo } from '../../../lib/format';
+import { getProjectPage, type ProjectPage } from '../../../lib/projects';
+import { plainLicense } from '../../../lib/sync/license';
+import { adminClient } from '../../../lib/supabase';
+import { visitorId } from '../../../lib/visitor';
+
+const owner = String(Astro.params.owner);
+const repo = String(Astro.params.repo);
+if (!/^[\w.-]{1,100}$/.test(owner) || !/^[\w.-]{1,100}$/.test(repo)) return new Response(null, { status: 404 });
+const db = adminClient();
+if (!db) return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+let page: ProjectPage | null;
+try {
+  page = await getProjectPage(db, owner, repo, { userId: Astro.locals.userId, personId: Astro.locals.person?.id ?? null, visitor: visitorId(Astro.cookies) });
+} catch {
+  return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+}
+if (!page) return new Response(null, { status: 404 });
+// One address per project, spelled the way GitHub spells it.
+if (`${owner}/${repo}` !== page.project.fullName) return Astro.redirect(`/projects/${page.project.fullName}`, 301);
+
+const { project: p, products, gaps, similar, issues } = page;
+const here = `/projects/${p.fullName}`;
+const now = new Date();
+const license = plainLicense(p.licenseSpdx);
+const chart = starChartSvg(p.starPoints.length ? p.starPoints : [[p.syncedAt.slice(0, 10), p.stars]], { paint: 'tomato', width: 960, title: p.fullName });
+const chartUrl = (paint: Paint) => `${site.origin}/chart/${p.fullName}.svg?paint=${paint}`;
+const snippet = (paint: Paint) => `[![Star history on Antipaywall](${chartUrl(paint)})](${site.origin}${here})`;
+const replaces = products.map((x) => x.name);
+const description = (p.description ? `${p.description} ` : '') + (replaces.length ? `A free, open-source alternative to ${replaces.slice(0, 3).join(', ')}.` : 'A free, open-source project on GitHub.');
+const facts: [string, string][] = [
+  ['Stars', shortCount(p.stars)],
+  ['Contributors', p.contributors != null ? shortCount(p.contributors) : 'not counted yet'],
+  ['Last worked on', timeAgo(p.pushedAt, now)],
+  ['Latest release', p.latestReleaseTag ? `${p.latestReleaseTag}, ${timeAgo(p.latestReleaseAt, now)}` : 'none published'],
+  ['Open issues', shortCount(p.openIssues)],
+  ['Started', p.createdOnGithub ? new Date(p.createdOnGithub).getUTCFullYear().toString() : 'unknown'],
+];
+---
+
+<Platform title={`${p.name}: ${replaces.length ? `free alternative to ${replaces[0]}` : 'open-source project'}`} description={description.slice(0, 160)} noindex={!p.indexable}>
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <nav aria-label="Breadcrumb" class="pf-crumbs">
+        <a href="/free-alternatives">Find</a><span aria-hidden="true">/</span>
+        {products[0] ? <><a href={`/free-alternatives/${products[0].slug}`}>{products[0].name}</a><span aria-hidden="true">/</span></> : null}
+        <span>{p.name}</span>
+      </nav>
+      <h1 class="pf-title">{p.name}</h1>
+      {p.description && <p class="lede">{p.description}</p>}
+      <div class="pf-chips">
+        <a class="chip" href={p.url} rel="noopener">{p.fullName} on GitHub</a>
+        {p.homepage && <a class="chip" href={p.homepage} rel="noopener nofollow">Website</a>}
+        <span class="chip">{license.label}</span>
+        <FollowButton kind="project" id={p.id} following={page.following} next={here} label="Follow" signedIn={Boolean(Astro.locals.person)} />
+      </div>
+      {replaces.length > 0 && (
+        <p class="muted">Free, open-source alternative to {products.map((x, i) => <>{i > 0 && ', '}<a class="link" href={`/free-alternatives/${x.slug}`}>{x.name}</a></>)}.</p>
+      )}
+    </div>
+    <aside class="card pf-hero-side pf-signal">
+      <h2 class="pf-h3">{page.users} {page.users === 1 ? 'person uses' : 'people use'} this</h2>
+      <SignalButton subjectKind="project" subjectId={p.id} kind="use" on={page.mineUse} count={page.users} label="I use this" onLabel="You use this" variant="toggle" next={here} />
+      <p class="small"><b>The license, in plain words:</b> {license.words}</p>
+      <p class="pf-note">Antipaywall links to this project. It doesn't host, copy or change it.</p>
+    </aside>
+  </section>
+
+  <section class="wrap pf-section pf-section-tight">
+    <div class="card" style="padding:clamp(12px,2vw,20px)">
+      <div class="pf-chart" set:html={chart} />
+    </div>
+    <div class="pf-stats">
+      {facts.map(([k, v]) => <div class="card pf-stat"><b>{v}</b><span class="muted">{k}</span></div>)}
+    </div>
+  </section>
+
+  {
+    (gaps.length > 0 || issues.length > 0) && (
+      <section id="help" class="pf-band">
+        <div class="wrap pf-section">
+          {issues.length > 0 && (
+            <div style="display:grid;gap:16px">
+              <h2 class="pf-h2">What it needs help with</h2>
+              <p class="lede">Issues the maintainers labeled "help wanted" or "good first issue". Pick one and open a pull request.</p>
+              <div class="pf-grid pf-grid-wide">
+                {issues.map((i, n) => (
+                  <a class={`pf-brick p${((n + 2) % 6) + 1}`} href={i.url} rel="noopener">
+                    <small>#{i.number} · {i.labels.find((l) => /help|first/i.test(l)) ?? 'help wanted'}</small>
+                    <b style="font-size:1.2rem">{i.title}</b>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {gaps.length > 0 && (
+            <div style="display:grid;gap:16px">
+              <h2 class="pf-h3">Wishes it partly meets</h2>
+              <ul class="pf-list">
+                {gaps.map((g) => <li class="pf-row-flat"><div><a href={`/ideas/${g.slug}`}>{g.title}</a></div></li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    similar.length > 0 && (
+      <section class="wrap pf-section">
+        <h2 class="pf-h2">Similar projects</h2>
+        <div class="pf-grid">
+          {similar.map((s, i) => (
+            <a class={`pf-brick p${(i % 6) + 1}`} href={`/projects/${s.fullName}`}>
+              <b>{s.fullName.split('/')[1]}</b>
+              {s.description && <span style="font-size:0.9375rem">{s.description.length > 120 ? s.description.slice(0, 117) + '…' : s.description}</span>}
+              <small class="num">★ {shortCount(s.stars)}</small>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="wrap pf-section">
+    <div class="card" style="display:grid;gap:14px">
+      <h2 class="pf-h3">Put this chart in your README</h2>
+      <p class="muted">Maintainer? Show your star growth, in any of the six paints. It updates every day and links back to this page.</p>
+      <div class="pf-chips" role="group" aria-label="Paint">
+        {(Object.keys(PAINTS) as Paint[]).map((paint, i) => (
+          <button type="button" class="pf-toggle" data-paint={paint} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <span aria-hidden="true" style={`width:12px;height:12px;border-radius:50%;background:${PAINTS[paint].fill};display:inline-block`}></span>{paint}
+          </button>
+        ))}
+      </div>
+      <label class="pf-sr" for="embed">Markdown for your README</label>
+      <textarea id="embed" class="pf-code" rows="2" readonly data-embed data-template={snippet('tomato')}>{snippet('tomato')}</textarea>
+      <button type="button" class="key key-sm" data-copy style="justify-self:start">Copy</button>
+    </div>
+  </section>
+  <SignalScript />
+</Platform>
+
+<script>
+  const box = document.querySelector<HTMLTextAreaElement>('[data-embed]');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-paint]');
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      buttons.forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+      if (box) box.value = (box.dataset.template ?? '').replace('paint=tomato', `paint=${b.dataset.paint}`);
+    }),
+  );
+  document.querySelector<HTMLButtonElement>('[data-copy]')?.addEventListener('click', async (e) => {
+    const button = e.currentTarget as HTMLButtonElement;
+    if (!box) return;
+    try {
+      await navigator.clipboard.writeText(box.value);
+      button.textContent = 'Copied';
+    } catch {
+      box.select();
+    }
+  });
+</script>
