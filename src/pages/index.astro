@@ -1,157 +1,243 @@
 ---
+import '../styles/home.css';
 import Platform from '../layouts/Platform.astro';
+import BuilderTile from '../components/BuilderTile.astro';
 import Heart from '../components/Heart.astro';
+import Wall from '../components/Wall.astro';
 import { site } from '../config/site';
-import { attempt, getStats, heartedBy } from '../lib/db';
+import { attempt, getStats, heartedBy, listBuilders } from '../lib/db';
 import { shortCount } from '../lib/format';
 import { demandFor } from '../lib/gaps';
 import { listProducts, type ProductSummary } from '../lib/products';
+import { tileBadges } from '../lib/social';
 import { adminClient } from '../lib/supabase';
+import { listTopics } from '../lib/topics';
 import { visitorId } from '../lib/visitor';
 
 const db = adminClient();
 const need = site.launch.buildersNeeded;
-const [stats, platform, products] = await Promise.all([
+const [stats, platform, products, topics, builders] = await Promise.all([
   attempt(getStats),
   db ? db.rpc('site_platform_stats').then((r) => (r.error ? null : (r.data as { products: number; projects: number; gaps: number; signals: number })), () => null) : Promise.resolve(null),
   db ? listProducts(db).catch(() => [] as ProductSummary[]) : Promise.resolve([] as ProductSummary[]),
+  db ? listTopics(db).catch(() => []) : Promise.resolve([]),
+  attempt(() => listBuilders(8)),
 ]);
+const builderBadges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
 // The paid products people care about most first, then the ones with the most free options.
-const featured = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions).slice(0, 12);
-const searching = featured.slice(0, 4);
+const ranked = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions);
+const featured = ranked.slice(0, 12);
+const searching = ranked.slice(0, 5);
 
-// "Wanted, but nobody has built it": listed gaps nobody is building yet, most wanted first.
-let gaps: { id: string; slug: string; title: string; want: number; pay: number; hearted: boolean }[] = [];
+// Every gap, with its demand: the wall's real bricks and "Wanted, but nobody has built it".
+let wanted: { id: string; slug: string; title: string; want: number; pay: number; status: string; hearted: boolean }[] = [];
 if (db) {
-  const { data } = await db.from('ideas').select('id, slug, title').eq('status', 'listed').is('merged_into', null).eq('build_status', 'wanted').limit(500);
+  const { data } = await db.from('ideas').select('id, slug, title, build_status').eq('status', 'listed').is('merged_into', null).limit(500);
   const demand = await demandFor(db, (data ?? []).map((i) => i.id)).catch(() => new Map());
-  const top = (data ?? []).map((i) => ({ ...i, want: demand.get(i.id)?.want ?? 0, pay: demand.get(i.id)?.pay ?? 0 })).sort((a, b) => b.want - a.want || b.pay - a.pay).slice(0, 6);
-  const mine = await attempt(() => heartedBy(visitorId(Astro.cookies), top.map((g) => g.id)));
-  gaps = top.map((g) => ({ ...g, hearted: mine?.has(g.id) ?? false }));
+  const all = (data ?? [])
+    .map((i) => ({ id: i.id, slug: i.slug, title: i.title, status: i.build_status, want: demand.get(i.id)?.want ?? 0, pay: demand.get(i.id)?.pay ?? 0 }))
+    .sort((a, b) => b.want - a.want || b.pay - a.pay);
+  const mine = await attempt(() => heartedBy(visitorId(Astro.cookies), all.slice(0, 12).map((g) => g.id)));
+  wanted = all.map((g) => ({ ...g, hearted: mine?.has(g.id) ?? false }));
 }
-const most = Math.max(1, ...gaps.map((g) => g.want));
-const builders = stats?.builders ?? null;
+const nobody = wanted.filter((g) => g.status === 'wanted').slice(0, 6);
+const most = Math.max(1, ...nobody.map((g) => g.want));
+// The wall: real paid products, and the most wanted ideas nearest the headline.
+const wallProducts = ranked.slice(0, 48).map((p) => ({ slug: p.slug, name: p.name, free: p.freeOptions }));
+const wallIdeas = wanted.slice(0, 10).map((g) => ({ slug: g.slug, title: g.title, hearts: g.want }));
+
+// Open issues maintainers want help with, across the projects that replace paid products.
+let help: { title: string; url: string; repo: string; label: string }[] = [];
+if (db) {
+  const { data } = await db
+    .from('help_issues')
+    .select('title, url, labels, updated_at, projects!inner(full_name, listed, stars)')
+    .eq('projects.listed', true)
+    .gte('projects.stars', 500)
+    .order('updated_at', { ascending: false })
+    .limit(6);
+  help = ((data ?? []) as any[]).map((i) => ({ title: i.title, url: i.url, repo: i.projects.full_name, label: (i.labels ?? []).find((l: string) => /help|first/i.test(l)) ?? 'help wanted' }));
+}
+const topTopics = [...topics].sort((a, b) => b.count - a.count).slice(0, 14);
 const paints = ['p4', 'p6', 'p3', 'p2', 'p5', 'p1'];
-const wall = Array.from({ length: 20 }, (_, i) => ({ 5: 'p2', 10: 'p3', 12: 'p1', 15: 'p5' })[i] ?? null);
+const builderCount = stats?.builders ?? null;
 ---
 
 <Platform
   title={`${site.name}: find the free version of anything you pay for`}
   bareTitle
-  description="Free, open-source alternatives to paid tools, pulled from GitHub. See what's still missing, say what you want, and help build it."
+  description="Free, open-source alternatives to the tools you pay for, pulled from GitHub. If it doesn't exist yet, find the builders who want to make it."
 >
-  <section class="wrap pf-home-hero">
-    <div>
-      <a class="chip" href="/hackathon" style="justify-self:start;text-decoration:none"><span class="pulse"></span>Season 1 hackathon: builders wanted</a>
-      <h1 class="pf-home-title">Find the free version of anything you pay for.</h1>
-      <p class="lede">We pull open-source projects straight from GitHub, show what people still wish existed, and bring builders together to make it. Nobody has to list anything.</p>
-      <form class="pf-search" action="/search" method="get" role="search">
-        <label for="q" class="pf-sr">A paid product, or what you need it to do</label>
-        <input id="q" name="q" type="search" placeholder="A tool you pay for, like Calendly" autocomplete="off" maxlength="200" />
-        <button class="key key-tomato" type="submit">Find it free</button>
-      </form>
-      {searching.length > 0 && (
-        <div class="pf-chips" style="align-items:center">
-          <span class="muted small" style="font-weight:700">Try:</span>
-          {searching.map((p) => <a class="chip" href={`/free-alternatives/${p.slug}`}>{p.name}</a>)}
+  <script slot="head" is:inline src="/wall-boot.js"></script>
+
+  <section class="hero">
+    <Wall ideas={wallIdeas} products={wallProducts} yoursHref="/ideas/new" />
+    <div class="wrap hero-body">
+      <div class="hero-content" data-clear>
+        <a class="chip" href="/hackathon" style="text-decoration:none"><span class="pulse"></span>Season 1 hackathon: builders wanted</a>
+        <h1 class="display hero-title">Find the free version of anything you pay for.</h1>
+        <p class="lede hero-lede">
+          If it doesn't exist yet, find the builders who want to make it. Open-source projects come straight from GitHub,
+          people say what's still missing, and the most wanted gaps get built together.
+        </p>
+        <form class="pf-search" action="/search" method="get" role="search">
+          <label for="q" class="pf-sr">A paid tool, or what you need it to do</label>
+          <input id="q" name="q" type="search" placeholder="Calendly, or “book appointments with a deposit”" autocomplete="off" maxlength="200" />
+          <button class="key key-tomato" type="submit">Find it free</button>
+        </form>
+        {searching.length > 0 && (
+          <div class="pf-chips" style="align-items:center">
+            <span class="muted small" style="font-weight:700">Try:</span>
+            {searching.map((p) => <a class="chip" href={`/free-alternatives/${p.slug}`}>{p.name}</a>)}
+          </div>
+        )}
+      </div>
+    </div>
+    <p class="hint chip" aria-hidden="true">Each brick is something people pay for. Knock one out to see what's free.{wallIdeas.length > 0 && ' The bold ones are wanted ideas.'}</p>
+  </section>
+
+  <div>
+    <section class="wrap pf-section-tight">
+      <a class="pf-season" href="/hackathon" style="text-decoration:none">
+        <div style="display:grid;gap:10px;max-width:760px">
+          <span class="chip" style="justify-self:start;background:rgb(255 255 255 / 0.1);color:#fff;box-shadow:none">The {site.name} Hackathon · Season 1</span>
+          <h2>One week to build the most wanted gaps. Free to enter, builders vote.</h2>
+          <p>The dates are announced once {need}+ builders have joined and the pool holder is confirmed.</p>
+          {builderCount !== null && (
+            <>
+              <div class="pf-season-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(builderCount, need)} aria-label="Builders joined">
+                <span style={`width:${Math.min(100, (builderCount / need) * 100)}%`}></span>
+              </div>
+              <p class="num"><b style="color:#fff">{builderCount}</b> of {need}+ builders joined</p>
+            </>
+          )}
         </div>
+        <span class="key key-marigold key-big">Join Season 1</span>
+      </a>
+    </section>
+
+    {
+      platform && (
+        <section class="wrap pf-section pf-section-tight">
+          <div class="pf-stats">
+            <div class="card pf-stat"><b>{platform.projects.toLocaleString('en-US')}</b><span class="muted">open-source projects found on GitHub</span></div>
+            <div class="card pf-stat"><b>{platform.products.toLocaleString('en-US')}</b><span class="muted">paid tools mapped to free ones</span></div>
+            <div class="card pf-stat"><b>{platform.gaps.toLocaleString('en-US')}</b><span class="muted">things people want that don't exist yet</span></div>
+            {builderCount !== null && <div class="card pf-stat"><b>{builderCount.toLocaleString('en-US')}</b><span class="muted">builders signed up for Season 1</span></div>}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="wrap pf-section">
+      <div class="pf-head-row">
+        <div style="display:grid;gap:10px">
+          <h2 class="pf-h2">Paid tools, and what's free instead.</h2>
+          <p class="lede">Each page is built from public repos. People mark what they use and what's still missing.</p>
+        </div>
+        <a class="key key-milk key-sm" href="/free-alternatives">See all {products.length}</a>
+      </div>
+      {featured.length ? (
+        <div class="pf-grid">
+          {featured.map((p, i) => (
+            <a class={`pf-brick ${paints[i % 6]}`} href={`/free-alternatives/${p.slug}`} style="gap:18px">
+              <div style="display:grid;gap:4px"><small>{p.category}</small><b style="font-size:1.8rem">{p.name}</b></div>
+              <small class="num">{p.freeOptions === 0 ? 'No good free option yet' : `${shortCount(p.freeOptions)} free ${p.freeOptions === 1 ? 'alternative' : 'alternatives'}`}</small>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="pf-empty"><p>The directory is filling up from GitHub. Search for anything in the meantime.</p></div>
       )}
-    </div>
-    <div class="pf-wallbits" aria-hidden="true">
-      {wall.map((paint) => <span class:list={[paint && `pf-brick ${paint}`]}></span>)}
-    </div>
-  </section>
+    </section>
 
-  <section class="wrap pf-section-tight" style="padding-top:0">
-    <a class="pf-season" href="/hackathon" style="text-decoration:none">
-      <div style="display:grid;gap:10px;max-width:760px">
-        <span class="chip" style="justify-self:start;background:rgb(255 255 255 / 0.1);color:#fff;box-shadow:none">The {site.name} Hackathon · Season 1</span>
-        <h2>One week to build the most wanted gaps. Free to enter, builders vote.</h2>
-        <p>The dates are announced once {need}+ builders have joined and the pool holder is confirmed.</p>
-        {builders !== null && (
-          <>
-            <div class="pf-season-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(builders, need)} aria-label="Builders joined">
-              <span style={`width:${Math.min(100, (builders / need) * 100)}%`}></span>
-            </div>
-            <p class="num"><b style="color:#fff">{builders}</b> of {need}+ builders joined</p>
-          </>
-        )}
-      </div>
-      <span class="key key-marigold key-big">Join Season 1</span>
-    </a>
-  </section>
-
-  {
-    platform && (
-      <section class="wrap pf-section pf-section-tight">
-        <div class="pf-stats">
-          <div class="card pf-stat"><b>{platform.projects.toLocaleString('en-US')}</b><span class="muted">open-source projects found on GitHub</span></div>
-          <div class="card pf-stat"><b>{platform.products.toLocaleString('en-US')}</b><span class="muted">paid products mapped to free ones</span></div>
-          <div class="card pf-stat"><b>{platform.signals.toLocaleString('en-US')}</b><span class="muted">times people said what they want</span></div>
-          {builders !== null && <div class="card pf-stat"><b>{builders.toLocaleString('en-US')}</b><span class="muted">builders signed up</span></div>}
+    <section class="pf-band">
+      <div class="wrap pf-section">
+        <div class="pf-split">
+          <div>
+            <h2 class="pf-h2">Wanted, but nobody has built it.</h2>
+            <p class="lede">Gaps people asked for. Tap the ones you'd use. The most wanted become the next hackathon's briefs, and builders find each other on them.</p>
+            <a class="key key-marigold" href="/ideas/new" style="justify-self:start">Post something you want</a>
+          </div>
+          {nobody.length ? (
+            <ol class="pf-list">
+              {nobody.map((g) => (
+                <li class="pf-row-flat pf-gap-row">
+                  <div style="display:grid;gap:6px">
+                    <a href={`/ideas/${g.slug}`} style="font-size:1.0625rem">{g.title}</a>
+                    <span class="muted small num">{g.want} want it{g.pay > 0 ? ` · ${g.pay} would pay` : ''}</span>
+                    <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${Math.max(3, Math.round((g.want / most) * 100))}%;--p:var(--tomato)`}></span></div>
+                  </div>
+                  <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div class="pf-empty"><p>Nothing posted yet. Be the first to say what you wish was free.</p></div>
+          )}
         </div>
-      </section>
-    )
-  }
-
-  <section class="wrap pf-section">
-    <div class="pf-head-row">
-      <div style="display:grid;gap:10px">
-        <h2 class="pf-h2">Paid tools, and what's free instead.</h2>
-        <p class="lede">Each page is built from public repos. People mark what they use and what's still missing.</p>
       </div>
-      <a class="key key-milk key-sm" href="/free-alternatives">See all {products.length}</a>
-    </div>
-    {featured.length ? (
-      <div class="pf-grid">
-        {featured.map((p, i) => (
-          <a class={`pf-brick ${paints[i % 6]}`} href={`/free-alternatives/${p.slug}`} style="gap:18px">
-            <div style="display:grid;gap:4px"><small>{p.category}</small><b style="font-size:1.8rem">{p.name}</b></div>
-            <small class="num">{p.freeOptions === 0 ? 'No good free option yet' : `${shortCount(p.freeOptions)} free ${p.freeOptions === 1 ? 'alternative' : 'alternatives'}`}</small>
-          </a>
-        ))}
-      </div>
-    ) : (
-      <div class="pf-empty"><p>The directory is filling up from GitHub. Search for anything in the meantime.</p></div>
-    )}
-  </section>
+    </section>
 
-  <section class="pf-band">
-    <div class="wrap pf-section">
-      <div class="pf-split">
-        <div>
-          <h2 class="pf-h2">Wanted, but nobody has built it.</h2>
-          <p class="lede">Gaps people asked for. Tap the ones you'd use. The most wanted become the next hackathon's briefs.</p>
-          <a class="key key-marigold" href="/ideas/new" style="justify-self:start">Post something you want</a>
-        </div>
-        {gaps.length ? (
-          <ol class="pf-list">
-            {gaps.map((g) => (
-              <li class="pf-row-flat pf-gap-row">
-                <div style="display:grid;gap:6px">
-                  <a href={`/ideas/${g.slug}`} style="font-size:1.0625rem">{g.title}</a>
-                  <span class="muted small num">{g.want} want it{g.pay > 0 ? ` · ${g.pay} would pay` : ''}</span>
-                  <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${Math.max(3, Math.round((g.want / most) * 100))}%;--p:var(--tomato)`}></span></div>
-                </div>
-                <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
-              </li>
+    {
+      help.length > 0 && (
+        <section class="wrap pf-section">
+          <div style="display:grid;gap:10px">
+            <h2 class="pf-h2">Want to build? Start here.</h2>
+            <p class="lede">Open issues the maintainers of free alternatives asked for help with. Pick one and open a pull request.</p>
+          </div>
+          <div class="pf-grid pf-grid-wide">
+            {help.map((i, n) => (
+              <a class={`pf-brick ${paints[(n + 2) % 6]}`} href={i.url} rel="noopener">
+                <small>{i.repo} · {i.label}</small>
+                <b style="font-size:1.2rem">{i.title}</b>
+              </a>
             ))}
-          </ol>
-        ) : (
-          <div class="pf-empty"><p>Nothing posted yet. Be the first to say what you wish was free.</p></div>
-        )}
-      </div>
-    </div>
-  </section>
+          </div>
+        </section>
+      )
+    }
 
-  <section class="wrap pf-section">
-    <h2 class="pf-h2">How it keeps growing.</h2>
-    <ol class="pf-steps">
-      <li class="pf-brick p4"><b class="pf-step-n">1</b><b>Find</b><span>Search a paid tool. See the free, open-source versions, pulled from GitHub.</span></li>
-      <li class="pf-brick p2"><b class="pf-step-n">2</b><b>Say what you want</b><span>Mark what you use, what's missing, and what you'd pay if it worked. No code needed.</span></li>
-      <li class="pf-brick p3"><b class="pf-step-n">3</b><b>Contribute</b><span>Every project shows what it needs help with. Pick an issue and open a pull request.</span></li>
-      <li class="pf-brick p1"><b class="pf-step-n">4</b><b>Build it together</b><span>The most wanted gaps become the briefs for each hackathon season.</span></li>
-    </ol>
-    <p class="muted">Everything that decides what this site shows lives in the open: the catalog, the matching and the GitHub sync are in <a class="link" href={site.repo} rel="noopener">the public repo</a>, and the data is free to download.</p>
-  </section>
+    {
+      topTopics.length > 0 && (
+        <section class="wrap pf-section pf-section-tight">
+          <h2 class="pf-h3">Browse open source by what it does</h2>
+          <div class="pf-chips">
+            {topTopics.map((t) => <a class="chip" href={`/topics/${t.slug}`}>{t.name} <span class="muted num">{t.count}</span></a>)}
+            <a class="chip" href="/topics">All topics</a>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      builders && builders.length > 0 && (
+        <section class="pf-band">
+          <div class="wrap pf-section">
+            <div class="pf-head-row">
+              <div style="display:grid;gap:10px">
+                <h2 class="pf-h2">The builders.</h2>
+                <p class="lede">People who signed in with GitHub to build the free versions. Follow them, see what they're making, find someone to build with.</p>
+              </div>
+              <a class="key key-milk key-sm" href="/builders">All builders</a>
+            </div>
+            <ul class="crew-list">
+              {builders.map((b) => <BuilderTile builder={b} badge={builderBadges.get(b.id)} />)}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="wrap pf-section">
+      <h2 class="pf-h2">How it keeps growing.</h2>
+      <ol class="pf-steps">
+        <li class="pf-brick p4"><b class="pf-step-n">1</b><b>Find</b><span>Search a paid tool. See the free, open-source versions, pulled from GitHub.</span></li>
+        <li class="pf-brick p2"><b class="pf-step-n">2</b><b>Say what you want</b><span>Mark what you use, what's missing, and what you'd pay if it worked. No code needed.</span></li>
+        <li class="pf-brick p3"><b class="pf-step-n">3</b><b>Contribute</b><span>Every project shows what it needs help with. Pick an issue and open a pull request.</span></li>
+        <li class="pf-brick p1"><b class="pf-step-n">4</b><b>Build it together</b><span>The most wanted gaps become the briefs for each hackathon season.</span></li>
+      </ol>
+      <p class="muted">Everything that decides what this site shows lives in the open: the catalog, the matching and the GitHub sync are in <a class="link" href={site.repo} rel="noopener">the public repo</a>, and the data is free to download.</p>
+    </section>
+  </div>
 </Platform>

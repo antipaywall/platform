@@ -183,3 +183,8 @@ a.pf-brick:hover { transform: translateY(-3px); }
 .pf-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
 .pf-steps li b.pf-step-n { font-size: 2.4rem; }
 .pf-gap-row .pf-meter-bar { height: 8px; max-width: 320px; }
+
+/* On a phone the home hero is mostly the search: the brick hint would cover it. */
+@media (max-width: 760px) {
+  .pf .hero .hint { display: none; }
+}
