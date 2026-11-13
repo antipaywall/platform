@@ -153,3 +153,13 @@ a.pf-brick:hover { transform: translateY(-3px); }
   .pf-opt, .pf-brick, a.pf-brick { transition: none; }
   .pf-opt:hover, a.pf-brick:hover { transform: none; }
 }
+
+.pf-toggle-dark { background: rgb(255 255 255 / 0.12); color: #fff; }
+.pf-toggle-dark[aria-pressed='true'] { background: var(--mint); color: var(--ink); }
+.pf-wall a.pf-brick, .pf-wall .pf-brick { color: var(--ink); }
+.pf-claim { display: grid; gap: 10px; max-width: 560px; }
+.pf-claim .input { background: #fff; }
+.pf-season-card { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; text-decoration: none; }
+.pf-writeup { display: grid; gap: 22px; max-width: 70ch; }
+.pf-writeup p { margin: 0; }
+.pf-quote { font-size: clamp(1.125rem, 1.45vw, 1.3125rem); line-height: 1.45; color: var(--ink-2); max-width: 60ch; text-wrap: pretty; margin: 0; }

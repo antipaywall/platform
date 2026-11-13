@@ -1,0 +1,29 @@
+---
+// Follow a gap, project, paid product or topic. Signed out, it asks you to sign in.
+interface Props {
+  kind: 'gap' | 'project' | 'tool' | 'topic';
+  id: string;
+  following: boolean;
+  next: string;
+  label: string;
+  signedIn: boolean;
+  dark?: boolean;
+}
+const { kind, id, following, next, label, signedIn, dark = false } = Astro.props;
+---
+
+{
+  signedIn ? (
+    <form method="post" action="/api/follow-subject" data-signal>
+      <input type="hidden" name="subject_kind" value={kind} />
+      <input type="hidden" name="subject_id" value={id} />
+      <input type="hidden" name="on" value={following ? '0' : '1'} />
+      <input type="hidden" name="next" value={next} />
+      <button type="submit" class:list={['pf-toggle', dark && 'pf-toggle-dark']} aria-pressed={following ? 'true' : 'false'} data-label={label} data-on-label="Following">
+        <span data-label-text>{following ? 'Following' : label}</span>
+      </button>
+    </form>
+  ) : (
+    <a class="pf-toggle" href={`/auth/signin?next=${encodeURIComponent(next)}`}>{label}</a>
+  )
+}

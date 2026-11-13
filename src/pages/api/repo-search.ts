@@ -10,7 +10,7 @@ const PER_MINUTE = 12;
 export const GET: APIRoute = async ({ url, locals }) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
-  const person = locals.person;
+  const person = locals.userId ? { id: locals.userId } : null;
   if (!person) return json({ hits: [], signin: true }, 401);
 
   const q = (url.searchParams.get('q') ?? '').trim().toLowerCase().slice(0, 120);
