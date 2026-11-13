@@ -144,7 +144,7 @@ const builderCount = stats?.builders ?? null;
   <div>
     <section class="wrap" style="padding-top:clamp(24px,3vw,36px)">
       <nav class="pf-numbers" aria-label="What's on Antipaywall">
-        {platform && <a href="/explore"><b>{platform.projects.toLocaleString('en-US')}</b><span>open-source projects</span></a>}
+        {platform && <a href="/explore?show=all"><b>{platform.projects.toLocaleString('en-US')}</b><span>open-source projects</span></a>}
         {platform && <a href="/free-alternatives"><b>{platform.products}</b><span>paid tools mapped</span></a>}
         <a href="/topics"><b>{topics.length}</b><span>topics</span></a>
         {platform && <a href="/ideas"><b>{platform.gaps}</b><span>things wanted</span></a>}
@@ -251,7 +251,7 @@ const builderCount = stats?.builders ?? null;
                 <h2 class="pf-h2">The free alternatives people use most.</h2>
                 <p class="lede">Open source, free to use, and standing in for tools people pay for every month.</p>
               </div>
-              <a class="key key-milk key-sm" href="/explore">Explore all {platform?.projects.toLocaleString('en-US') ?? ''} projects</a>
+              <a class="key key-milk key-sm" href="/explore?show=all">Explore all {platform?.projects.toLocaleString('en-US') ?? ''} projects</a>
             </div>
             <div class="pf-grid">
               {topProjects.map((p) => <ProjectCard {...p} />)}

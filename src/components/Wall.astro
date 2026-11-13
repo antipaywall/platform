@@ -57,7 +57,10 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
     products = [];
   }
   // With real products, the wall is made of them; otherwise of generic kinds of tools.
-  const names = products.length ? products.map((p) => p.name) : NAMES;
+  const names = [...new Set(products.length ? products.map((p) => p.name) : NAMES)];
+  // Step through the names by a stride that shares no factor with their count, so neighbours differ.
+  const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+  const stride = [17, 13, 11, 7, 19, 23, 29].find((k) => names.length > k && gcd(k, names.length) === 1) ?? 1;
   const productBy = new Map(products.map((p) => [p.name, p]));
   const yoursHref = wall?.dataset.yours || '/hackathon/join';
 
@@ -123,7 +126,7 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
         const x = c * (bw + gap) - (r % 2 ? bw / 2 : 0) - gap;
         const y = r * (bh + gap);
         const hit = zones.some((z) => x < z.r && x + bw > z.l && y < z.b && y + bh > z.t);
-        const name = names[(n++ * 17 + r * 5) % names.length];
+        const name = names[(n++ * stride + r * 5) % names.length];
         const tone = rand();
         if (hit && !intro) continue;
 
@@ -248,11 +251,12 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
         name.textContent = idea.title;
         const tag = document.createElement('span');
         tag.className = 'tag';
-        tag.textContent = `♥ ${idea.hearts}`;
+        tag.textContent = idea.hearts > 0 ? `♥ ${idea.hearts}` : 'wanted';
         link.append(name, tag);
         slot.replaceWith(link);
         slots.set(brick, link);
         brick.querySelector('.name')!.textContent = idea.title;
+        brick.querySelector('.tag')!.textContent = 'wanted';
         real.add(brick);
       });
     }
