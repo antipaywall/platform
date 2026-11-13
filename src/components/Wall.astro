@@ -385,8 +385,13 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
   .wall .slot.real {
     font-weight: 800;
   }
-  .wall .slot.real.on {
+  /* Any slot that links somewhere (a wanted idea, a paid tool's free alternatives) can be clicked once revealed. */
+  .wall a.slot.on {
     pointer-events: auto;
+    cursor: pointer;
+  }
+  .wall a.slot.on:hover {
+    filter: brightness(1.06);
   }
   .wall .slot.real:hover {
     filter: brightness(1.06);
