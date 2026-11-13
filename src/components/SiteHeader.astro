@@ -77,7 +77,7 @@ const mine = person
           </div>
         </details>
       ) : (
-        <a class="key top-join" href="/hackathon/join">Join</a>
+        !here.startsWith('/hackathon') && <a class="key top-join" href="/hackathon/join">Join</a>
       )
     }
     <details class="menu" data-menu>

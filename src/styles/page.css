@@ -541,7 +541,7 @@ textarea.input {
   margin: clamp(24px, 3vw, 40px) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 184px), 1fr));
   gap: 10px;
 }
 .tile {
@@ -573,6 +573,8 @@ textarea.input {
   min-width: 0;
 }
 .tile-main b {
+  min-width: 0;
+  font-size: 0.9375rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -602,6 +604,7 @@ textarea.input {
   object-fit: cover;
 }
 .tile-more {
+  height: 100%;
   place-content: center;
   justify-items: center;
   min-height: 132px;
@@ -2368,3 +2371,6 @@ span.brick {
   box-shadow: inset 0 -3px 0 oklch(0.56 0.17 30);
 }
 .hack-nav .hack-join:hover { text-decoration: none; }
+
+/* A link the builder hasn't added is left out, not shown greyed. */
+.tile .plink-off { display: none; }
