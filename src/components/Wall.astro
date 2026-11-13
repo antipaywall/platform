@@ -155,6 +155,7 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
             link.className = slot.className;
             link.style.cssText = pos;
             link.href = `/free-alternatives/${encodeURIComponent(product.slug)}`;
+            link.title = product.free > 0 ? `Free ${product.name}: ${product.free} open-source ${product.free === 1 ? 'option' : 'options'}` : `Free ${product.name}: wanted, not built yet`;
             link.tabIndex = -1;
             const label = document.createElement('span');
             label.className = 'name';
@@ -240,6 +241,7 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
         link.className = slot.className + ' real';
         link.style.cssText = slot.style.cssText;
         link.href = `/ideas/${encodeURIComponent(idea.slug)}`;
+        link.title = idea.title;
         link.tabIndex = -1;
         const name = document.createElement('span');
         name.className = 'name';
