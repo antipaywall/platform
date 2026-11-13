@@ -141,6 +141,11 @@ describe('the social migration', () => {
     expect(sql).toContain('revoke execute on function public.feed_top(int, int, text, boolean) from public, anon, authenticated');
     expect(sql).not.toMatch(/create policy/i);
   });
+  it('has one follows table for every kind of subject, never following yourself', () => {
+    expect(sql).toContain("subject_kind text not null check (subject_kind in ('person', 'gap', 'project', 'tool', 'topic'))");
+    expect(sql).toContain('primary key (follower_id, subject_kind, subject_id)');
+    expect(sql).toContain("check (not (subject_kind = 'person' and subject_id = follower_id))");
+  });
   it('allows only one founding organizer', () => {
     expect(sql).toContain("create unique index badges_one_founder on public.badges (kind) where kind = 'founder'");
   });

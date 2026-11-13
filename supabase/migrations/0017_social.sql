@@ -49,14 +49,29 @@ create table public.post_bricks (
 );
 create index post_bricks_person on public.post_bricks (person_id);
 
+-- One table for everything that can be followed: people, and the platform's gaps, projects,
+-- tools and topics. subject_id points at different tables, so it has no foreign key; whoever
+-- deletes a subject deletes its follow rows. Following always needs sign-in.
 create table public.follows (
   follower_id uuid not null references public.people (id) on delete cascade,
-  followee_id uuid not null references public.people (id) on delete cascade,
+  subject_kind text not null check (subject_kind in ('person', 'gap', 'project', 'tool', 'topic')),
+  subject_id uuid not null,
   created_at timestamptz not null default now(),
-  primary key (follower_id, followee_id),
-  check (follower_id <> followee_id)
+  primary key (follower_id, subject_kind, subject_id),
+  check (not (subject_kind = 'person' and subject_id = follower_id))
 );
-create index follows_followee on public.follows (followee_id);
+create index follows_subject on public.follows (subject_kind, subject_id);
+
+-- A person's followers go when the person does (their own follows go by the foreign key above).
+create function public.follows_forget_person() returns trigger
+language plpgsql set search_path = ''
+as $$
+begin
+  delete from public.follows where subject_kind = 'person' and subject_id = old.id;
+  return old;
+end;
+$$;
+create trigger follows_forget_person after delete on public.people for each row execute function public.follows_forget_person();
 
 create table public.post_reports (
   id uuid primary key default gen_random_uuid(),
@@ -124,3 +139,4 @@ $$;
 revoke execute on function public.feed_top(int, int, text, boolean) from public, anon, authenticated;
 grant execute on function public.feed_top(int, int, text, boolean) to service_role;
 revoke execute on function public.posts_one_level() from public, anon, authenticated;
+revoke execute on function public.follows_forget_person() from public, anon, authenticated;

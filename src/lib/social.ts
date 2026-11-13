@@ -101,9 +101,9 @@ export async function feedLatest(opts: { viewerId: string | null; following: boo
   if (opts.kind) q = q.eq('kind', opts.kind);
   if (opts.following) {
     if (!opts.viewerId) return [];
-    const f = await db().from('follows').select('followee_id').eq('follower_id', opts.viewerId).limit(2000);
+    const f = await db().from('follows').select('subject_id').eq('follower_id', opts.viewerId).eq('subject_kind', 'person').limit(2000);
     if (f.error) throw new DataUnavailableError(f.error.message);
-    const ids = (f.data ?? []).map((r) => r.followee_id);
+    const ids = (f.data ?? []).map((r) => r.subject_id);
     if (!ids.length) return [];
     q = q.in('person_id', ids);
   }
@@ -126,15 +126,15 @@ export async function feedTop(opts: { viewerId: string | null; kind: PostKind | 
 
 export async function followCounts(personId: string): Promise<{ followers: number; following: number }> {
   const [a, b] = await Promise.all([
-    db().from('follows').select('follower_id', { count: 'exact', head: true }).eq('followee_id', personId),
-    db().from('follows').select('followee_id', { count: 'exact', head: true }).eq('follower_id', personId),
+    db().from('follows').select('follower_id', { count: 'exact', head: true }).eq('subject_kind', 'person').eq('subject_id', personId),
+    db().from('follows').select('subject_id', { count: 'exact', head: true }).eq('subject_kind', 'person').eq('follower_id', personId),
   ]);
   if (a.error || b.error) throw new DataUnavailableError((a.error ?? b.error)!.message);
   return { followers: a.count ?? 0, following: b.count ?? 0 };
 }
 
 export async function isFollowing(followerId: string, followeeId: string): Promise<boolean> {
-  const { data, error } = await db().from('follows').select('followee_id').eq('follower_id', followerId).eq('followee_id', followeeId).maybeSingle();
+  const { data, error } = await db().from('follows').select('subject_id').eq('follower_id', followerId).eq('subject_kind', 'person').eq('subject_id', followeeId).maybeSingle();
   if (error) throw new DataUnavailableError(error.message);
   return Boolean(data);
 }
@@ -143,8 +143,8 @@ export async function isFollowing(followerId: string, followeeId: string): Promi
 export async function suggestions(viewerId: string | null, limit = 3): Promise<Author[]> {
   const exclude = new Set<string>(viewerId ? [viewerId] : []);
   if (viewerId) {
-    const f = await db().from('follows').select('followee_id').eq('follower_id', viewerId).limit(2000);
-    for (const r of f.data ?? []) exclude.add(r.followee_id);
+    const f = await db().from('follows').select('subject_id').eq('follower_id', viewerId).eq('subject_kind', 'person').limit(2000);
+    for (const r of f.data ?? []) exclude.add(r.subject_id);
   }
   const { data, error } = await db().from('people').select('id').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit + exclude.size);
   if (error) throw new DataUnavailableError(error.message);

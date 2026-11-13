@@ -6,6 +6,8 @@ import ActivityWall from '../../components/ActivityWall.astro';
 import BadgeMark from '../../components/BadgeMark.astro';
 import PostCard from '../../components/PostCard.astro';
 import PostComposer from '../../components/PostComposer.astro';
+import PersonStats from '../../components/person/PersonStats.astro';
+import PersonWants from '../../components/person/PersonWants.astro';
 import ProfileLinks from '../../components/ProfileLinks.astro';
 import type { Activity } from '../../lib/activity';
 import { badgesFor, topBadge, type Badge } from '../../lib/badges';
@@ -44,6 +46,7 @@ try {
   ideas = i;
   repos = r;
   activity = act;
+  // Backer: a pledge for now. The platform's signals (isBacker in src/lib/signals.ts) join this when they exist.
   badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) });
   counts = c ?? counts;
   follows = f ?? false;
@@ -156,6 +159,10 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
       </section>
 
       <ActivityWall activity={activity} provider={provider} id={p.id.slice(0, 8)} />
+
+      {/* The platform's sections: what this person backs and wants, and what they build and claim. */}
+      <PersonStats personId={p.id} />
+      <PersonWants personId={p.id} />
 
       {
         ideas.length > 0 && (
