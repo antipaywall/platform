@@ -23,3 +23,10 @@ describe('terms', () => {
     expect(parseTerms(f)).toEqual(['open_source', 'credit']);
   });
 });
+
+describe('review fixes: a gap is offered by its poster, matched by account', () => {
+  it('lets the person who posted it offer it, whatever their username is now', () => {
+    expect(canOffer({ kind: 'gap', authorId: 'p1', startedBy: 'old-name', claimers: [] }, { login: 'new-name', personId: 'p1' })).toBe(true);
+    expect(canOffer({ kind: 'gap', authorId: 'p1', startedBy: 'sam', claimers: [] }, { login: 'sam', personId: 'p2' })).toBe(false);
+  });
+});

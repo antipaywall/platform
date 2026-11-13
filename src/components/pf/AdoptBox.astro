@@ -15,9 +15,9 @@ const { kind, id, subject, next, noun } = Astro.props;
 const db = adminClient();
 const adoption = db ? await openAdoption(db, kind, id).catch(() => null) : null;
 const person = Astro.locals.person;
-const login = person ? person.username ?? person.handle : null;
-const mine = Boolean(person && adoption && adoption.offeredBy.username.toLowerCase() === login!.toLowerCase());
-const mayOffer = Boolean(person && !adoption && canOffer(subject, { login: login!, personId: person.id }));
+const login = person?.username ?? null;
+const mine = Boolean(person && login && adoption && adoption.offeredById === person.id);
+const mayOffer = Boolean(person && login && !adoption && canOffer(subject, { login, personId: person.id }));
 const interested = Boolean(person && adoption?.interest.some((i) => i.personId === person.id));
 ---
 

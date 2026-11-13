@@ -38,7 +38,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
   if (after.startedBy !== before.startedBy) return back(page, 'bad_idea_file');
   if (text.trim() === current.text.trim()) return back(page, 'no_change');
-  const login = person.username ?? person.handle;
+  const login = person.username;
+  if (!login) return back('/auth/username', 'need_username');
   const pr = await openSuggestion(path, text, {
     branch: suggestionBranch(slug, login, new Date()),
     title: summary,

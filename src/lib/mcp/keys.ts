@@ -19,7 +19,7 @@ export async function personForKey(db: SupabaseClient, header: string | null): P
   const hash = hashKey(m[1]);
   const { data } = await db.from('mcp_keys').select('id, revoked_at, people:person_id(*)').eq('key_hash', hash).is('revoked_at', null).maybeSingle();
   const row: any = data;
-  if (!row || row.revoked_at || !row.people) return null;
+  if (!row || row.revoked_at || !row.people || !row.people.username) return null;
   await db.from('mcp_keys').update({ last_used_at: new Date().toISOString() }).eq('key_hash', hash);
   return row.people as Person;
 }

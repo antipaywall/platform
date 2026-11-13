@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { hashKey, newKey, personForKey } from '../src/lib/mcp/keys';
+import { newKey, personForKey } from '../src/lib/mcp/keys';
 import { handleRpc, TOOLS } from '../src/lib/mcp/server';
 
 describe('MCP keys', () => {
@@ -25,7 +25,11 @@ describe('MCP keys', () => {
     }) as any;
   it('finds the builder behind a key', async () => {
     const k = newKey();
-    expect(await personForKey(db([{ key_hash: k.hash, revoked_at: null, people: { id: 'p1', handle: 'maya', is_builder: true } }]), `Bearer ${k.plain}`)).toMatchObject({ id: 'p1' });
+    expect(await personForKey(db([{ key_hash: k.hash, revoked_at: null, people: { id: 'p1', handle: 'maya', username: 'maya', is_builder: true } }]), `Bearer ${k.plain}`)).toMatchObject({ id: 'p1' });
+  });
+  it('refuses a key whose builder has not chosen a username yet', async () => {
+    const k = newKey();
+    expect(await personForKey(db([{ key_hash: k.hash, revoked_at: null, people: { id: 'p1', handle: 'maya', username: null } }]), `Bearer ${k.plain}`)).toBeNull();
   });
   it('refuses a missing, unknown or revoked key, and a key whose builder is gone', async () => {
     const k = newKey();

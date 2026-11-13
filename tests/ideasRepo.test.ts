@@ -74,11 +74,12 @@ import { canDecide, changedIdeaPaths, ideaFromRow, suggestionBranch } from '../s
 
 describe('suggestions', () => {
   it('lets the starter decide, or a maintainer when Antipaywall posted the idea', () => {
-    expect(canDecide({ startedBy: 'maya' }, 'Maya', ['ethanplusai'])).toBe(true);
-    expect(canDecide({ startedBy: 'maya' }, 'sam', ['ethanplusai'])).toBe(false);
-    expect(canDecide({ startedBy: null }, 'ethanplusai', ['ethanplusai'])).toBe(true);
-    expect(canDecide({ startedBy: null }, 'sam', ['ethanplusai'])).toBe(false);
-    expect(canDecide({ startedBy: 'maya' }, 'ethanplusai', ['ethanplusai'])).toBe(true);
+    const v = (login: string) => ({ personId: 'x', login });
+    expect(canDecide({ startedBy: 'maya' }, v('Maya'), ['ethanplusai'])).toBe(true);
+    expect(canDecide({ startedBy: 'maya' }, v('sam'), ['ethanplusai'])).toBe(false);
+    expect(canDecide({ startedBy: null }, v('ethanplusai'), ['ethanplusai'])).toBe(true);
+    expect(canDecide({ startedBy: null }, v('sam'), ['ethanplusai'])).toBe(false);
+    expect(canDecide({ startedBy: 'maya' }, v('ethanplusai'), ['ethanplusai'])).toBe(true);
   });
   it('gives two suggestions to the same idea their own branches', () => {
     const now = new Date('2026-11-13T00:00:00Z');
@@ -96,5 +97,56 @@ describe('suggestions', () => {
   it('turns a database row into an idea file', () => {
     const f = ideaFromRow({ slug: 'x', title: 'X', pitch: 'p', problem: 'pr', build: 'b', strong: '', missing: 'm', build_status: 'wanted', merged_into_slug: null, created_at: '2026-11-12T10:00:00Z' }, 'maya', ['calendly']);
     expect(f).toMatchObject({ slug: 'x', title: 'X', pitch: 'p', startedBy: 'maya', replaces: ['calendly'], created: '2026-11-12', sections: { problem: 'pr', build: 'b', missing: 'm' } });
+  });
+});
+
+import { suggestionFromEvent, validSuggestionPr } from '../src/lib/suggestions';
+
+describe('review fixes: only real suggestions can be accepted', () => {
+  const pr = { head: { ref: 'suggest/brand-kit/sam-abc', repo: { full_name: 'antipaywall/ideas' } }, base: { repo: { full_name: 'antipaywall/ideas' } }, user: { type: 'Bot' }, state: 'open' };
+  it('accepts a suggestion the App opened from its own branch, changing only that idea', () => {
+    expect(validSuggestionPr(pr, ['ideas/brand-kit.md'], 'brand-kit')).toBe(true);
+  });
+  it('refuses a pull request from a fork, from a person, for another idea, or touching other files', () => {
+    expect(validSuggestionPr({ ...pr, head: { ...pr.head, repo: { full_name: 'evil/ideas' } } }, ['ideas/brand-kit.md'], 'brand-kit')).toBe(false);
+    expect(validSuggestionPr({ ...pr, user: { type: 'User' } }, ['ideas/brand-kit.md'], 'brand-kit')).toBe(false);
+    expect(validSuggestionPr(pr, ['ideas/brand-kit.md'], 'other-idea')).toBe(false);
+    expect(validSuggestionPr(pr, ['ideas/brand-kit.md', 'ideas/someone-else.md'], 'brand-kit')).toBe(false);
+    expect(validSuggestionPr(pr, ['.github/workflows/x.yml'], 'brand-kit')).toBe(false);
+  });
+  it('reads a suggestion from a pull request event only when the App opened it on its own branch', () => {
+    const event = { repository: { full_name: 'antipaywall/ideas' }, pull_request: { ...pr, number: 3 } };
+    expect(suggestionFromEvent(event)).toEqual({ slug: 'brand-kit', login: 'sam', number: 3 });
+    expect(suggestionFromEvent({ ...event, pull_request: { ...event.pull_request, head: { ...pr.head, repo: { full_name: 'evil/ideas' } } } })).toBeNull();
+    expect(suggestionFromEvent({ ...event, pull_request: { ...event.pull_request, user: { type: 'User' } } })).toBeNull();
+  });
+});
+
+describe('review fixes: who decides is a person, not a name', () => {
+  it('lets the person who posted it decide, whatever their username is now', () => {
+    expect(canDecide({ authorId: 'p1', startedBy: 'old-name' }, { personId: 'p1', login: 'new-name' }, [])).toBe(true);
+    expect(canDecide({ authorId: 'p1', startedBy: 'sam' }, { personId: 'p2', login: 'sam' }, [])).toBe(false);
+  });
+  it('falls back to the login only for ideas added straight on GitHub', () => {
+    expect(canDecide({ authorId: null, startedBy: 'sam' }, { personId: 'p2', login: 'sam' }, [])).toBe(true);
+    expect(canDecide({ authorId: null, startedBy: null }, { personId: 'p3', login: 'ethanplusai' }, ['ethanplusai'])).toBe(true);
+  });
+});
+
+import { remembered } from '../src/lib/githubApp';
+
+describe('remembered', () => {
+  it('asks GitHub once per key within the time limit', async () => {
+    let calls = 0;
+    const get = () => remembered('k-test', 60_000, async () => ++calls);
+    expect(await get()).toBe(1);
+    expect(await get()).toBe(1);
+    expect(calls).toBe(1);
+  });
+  it('asks again after the time limit', async () => {
+    let calls = 0;
+    await remembered('k-short', 0, async () => ++calls);
+    await remembered('k-short', 0, async () => ++calls);
+    expect(calls).toBe(2);
   });
 });

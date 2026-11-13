@@ -43,9 +43,10 @@ describe('decideUsername', () => {
   it('lets a GitLab builder who connected GitHub take that login', async () => {
     expect(await decideUsername({ id: 'me', provider: 'gitlab', handle: 'sam', githubLogin: 'samuel' }, free, async () => 'yes')).toEqual({ username: 'samuel', bump: null });
   });
-  it('keeps the name a person already holds', async () => {
+  it('checks a GitLab handle against GitHub even when the person already holds it', async () => {
     const holder = async () => ({ id: 'me', provider: 'gitlab' as const });
-    expect(await decideUsername({ id: 'me', provider: 'gitlab', handle: 'sam' }, holder, async () => 'yes')).toEqual({ username: 'sam', bump: null });
+    expect(await decideUsername({ id: 'me', provider: 'gitlab', handle: 'sam', current: 'sam' }, holder, async () => 'yes')).toEqual({ choose: true, wanted: 'sam', reason: 'on_github' });
+    expect(await decideUsername({ id: 'me', provider: 'gitlab', handle: 'sam', current: 'sam' }, holder, async () => 'no')).toEqual({ username: 'sam', bump: null });
   });
 });
 
@@ -72,5 +73,41 @@ describe('a GitLab builder who already chose a name', () => {
   it('keeps it at their next sign-in', async () => {
     const holder = async (n: string) => (n === 'sam-builds' ? { id: 'me', provider: 'gitlab' as const } : null);
     expect(await decideUsername({ id: 'me', provider: 'gitlab', handle: 'sam', current: 'sam-builds' }, holder, async () => 'yes')).toEqual({ username: 'sam-builds', bump: null });
+  });
+});
+
+import { usernameGate } from '../src/lib/usernames';
+
+describe('a signed-in builder without a username', () => {
+  it('is sent to choose one from any page', () => {
+    expect(usernameGate('/ideas', 'GET')).toBe('choose');
+    expect(usernameGate('/', 'GET')).toBe('choose');
+  });
+  it('cannot change anything until they have', () => {
+    expect(usernameGate('/api/ideas', 'POST')).toBe('refuse');
+    expect(usernameGate('/mcp', 'POST')).toBe('refuse');
+  });
+  it('can still choose, connect GitHub, sign out, and load files', () => {
+    for (const p of ['/auth/username', '/auth/link-github', '/auth/linked', '/auth/signout', '/api/account/username', '/favicon.svg', '/_astro/x.css']) {
+      expect(usernameGate(p, p.startsWith('/api') || p === '/auth/signout' ? 'POST' : 'GET'), p).toBe('allow');
+    }
+  });
+});
+
+import { pickFreeName } from '../src/lib/usernames';
+
+describe('pickFreeName', () => {
+  it('tries a few numbered names, then gives up on lookups and uses a unique suffix', async () => {
+    let calls = 0;
+    const name = await pickFreeName('sam', async () => ({ id: 'x', provider: 'github' as const }), async () => { calls++; return 'no'; }, 5);
+    expect(name).toMatch(/^sam-[a-z0-9]+$/);
+    expect(calls).toBe(0);
+  });
+  it('takes the first numbered name that is free here and not on GitHub', async () => {
+    const taken = new Set(['sam-2']);
+    expect(await pickFreeName('sam', async (n) => (taken.has(n) ? { id: 'x', provider: 'github' as const } : null), async (n) => (n === 'sam-3' ? 'yes' : 'no'), 5)).toBe('sam-4');
+  });
+  it('does not stall when GitHub cannot be asked', async () => {
+    expect(await pickFreeName('sam', async () => null, async () => 'unknown', 5)).toBe('sam-2');
   });
 });

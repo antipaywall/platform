@@ -113,7 +113,7 @@ export const TOOLS: Tool[] = [
       if ((mine.count ?? 0) >= site.ideas.maxPerPerson) return { error: 'You have posted the most ideas one person can.' };
       const { slug, code } = await storeIdea(ctx.db, parsed, ctx.person.id);
       if (!slug) return { error: code };
-      await pushNewIdea(ctx.db, slug, { login: ctx.person.username ?? ctx.person.handle, githubId: ctx.person.github_id }).catch(() => false);
+      await pushNewIdea(ctx.db, slug, { login: ctx.person.username!, githubId: ctx.person.github_id }).catch(() => false);
       return { posted: code === 'idea_posted', already_existed: code === 'idea_exists', page: url(ctx, `/ideas/${slug}`), slug };
     },
   },

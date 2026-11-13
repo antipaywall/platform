@@ -2,6 +2,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { ADMIN_HEADERS, isAdminPath } from './lib/admin';
 import { isProduction, pageViewFor } from './lib/analytics';
 import { attempt, getPerson, isAdmin } from './lib/db';
+import { usernameGate } from './lib/usernames';
 import { allowedRequest } from './lib/origin';
 import { clientIp, VISITOR_KEY } from './lib/requester';
 import { adminClient, sessionClient } from './lib/supabase';
@@ -43,6 +44,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.userId = user.id;
       context.locals.person = await attempt(() => getPerson(user.id));
     }
+  }
+  // Someone signed in without a username yet chooses one before anything else.
+  const me = context.locals.person;
+  if (me && !me.username) {
+    const gate = usernameGate(context.url.pathname, context.request.method);
+    if (gate === 'choose') return context.redirect(`/auth/username?next=${encodeURIComponent(context.url.pathname)}`, 302);
+    if (gate === 'refuse') return new Response(null, { status: 303, headers: { location: '/auth/username?m=need_username' } });
   }
   // Counted after the session is read, so an organizer's own visits are left out.
   const counted = countView(context).catch(() => undefined);

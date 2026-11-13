@@ -14,7 +14,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!['project', 'gap'].includes(kind) || !/^[0-9a-f-]{36}$/.test(id)) return back(next, 'save_failed');
   const db = adminClient();
   if (!db) return back(next, 'save_failed');
-  const login = person.username ?? person.handle;
+  const login = person.username;
+  if (!login) return back('/auth/username', 'need_username');
   let subject;
   if (kind === 'project') {
     const { data } = await db.from('projects').select('full_name').eq('id', id).maybeSingle();
@@ -23,8 +24,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } else {
     const { data } = await db.from('ideas').select('started_by_login, author_id, gap_claims(person_id)').eq('id', id).maybeSingle();
     if (!data) return back(next, 'save_failed');
-    const starter = data.started_by_login ?? (data.author_id === person.id ? login : null);
-    subject = { kind: 'gap' as const, startedBy: starter, claimers: ((data as any).gap_claims ?? []).map((c: any) => c.person_id) };
+    subject = { kind: 'gap' as const, authorId: data.author_id, startedBy: data.started_by_login, claimers: ((data as any).gap_claims ?? []).map((c: any) => c.person_id) };
   }
   if (!canOffer(subject, { login, personId: person.id })) return back(next, 'not_yours_to_offer');
   const note = String(form.get('note') ?? '').replace(/\s+/g, ' ').trim().slice(0, 500) || null;

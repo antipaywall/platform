@@ -12,7 +12,7 @@ export const isPublic = (p: Pick<Person, 'is_builder' | 'profile_public'>) => p.
 
 /** The profile's address on this site. GitLab accounts live under /builders/gitlab/ so names never collide. */
 /** A builder's address: /builders/<username>, one namespace for GitHub and GitLab sign-ins alike. */
-export const profilePath = (p: { username?: string | null; handle: string }) => `/builders/${encodeURIComponent(p.username || p.handle)}`;
+export const profilePath = (p: { username?: string | null; handle: string }) => (p.username ? `/builders/${encodeURIComponent(p.username)}` : '/builders');
 
 /**
  * Reads /builders/<username>, and the old /builders/gitlab/<handle> addresses (kept so they can
