@@ -17,6 +17,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.119.0
         version: 2.119.0
+      '@vercel/analytics':
+        specifier: ^2.0.1
+        version: 2.0.1
       astro:
         specifier: ^7.4.11
         version: 7.4.11(@types/node@22.20.5)(@vercel/functions@3.11.1)(yaml@2.9.1)
