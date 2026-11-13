@@ -13,11 +13,13 @@ interface Props {
   products?: { slug: string; name: string; free: number }[];
   /** Where the "Your idea here" slot goes. */
   yoursHref?: string;
+  /** Leave more open space between the words and the bricks. */
+  roomy?: boolean;
 }
-const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props;
+const { ideas = [], products = [], yoursHref = '/hackathon/join', roomy = false } = Astro.props;
 ---
 
-<div class="wall" data-wall data-ideas={JSON.stringify(ideas)} data-products={JSON.stringify(products)} data-yours={yoursHref} aria-hidden="true"></div>
+<div class="wall" data-wall data-ideas={JSON.stringify(ideas)} data-products={JSON.stringify(products)} data-yours={yoursHref} data-roomy={roomy ? "1" : undefined} aria-hidden="true"></div>
 
 <script>
   const NAMES = [
@@ -98,7 +100,8 @@ const { ideas = [], products = [], yoursHref = '/hackathon/join' } = Astro.props
     const bw = clamp(124, W * 0.122, 196);
     const bh = clamp(46, W * 0.045, 66);
     const gap = W < 700 ? 5 : 7;
-    const pad = W < 700 ? 10 : 26;
+    // Open space kept clear around the words, so the wall frames them without crowding.
+    const pad = wall.dataset.roomy ? (W < 700 ? 16 : Math.round(clamp(48, W * 0.06, 96))) : W < 700 ? 10 : 26;
     const box = hero.getBoundingClientRect();
     const zones = [...hero.querySelectorAll<HTMLElement>('[data-clear]')].map((el) => {
       const r = el.getBoundingClientRect();
