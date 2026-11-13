@@ -19,7 +19,8 @@ const PLAIN: Record<string, string> = {
   'EPL-2.0': 'Free to use and sell. If you change its files and give them out, share those changes.',
 };
 
-export function plainLicense(spdx: string | null): { label: string; words: string } {
+export function plainLicense(spdx: string | null, name?: string | null): { label: string; words: string } {
+  if (!spdx && name) return { label: 'Own license', words: "It uses its own license, or several together. Read the project's license file before you rely on it." };
   if (!spdx) return { label: 'No license', words: 'No license was found, so you may not have the right to use it.' };
   return { label: spdx, words: PLAIN[spdx] ?? "See the project's license file." };
 }

@@ -4,6 +4,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { demandKey, signalsOf } from './signals';
+import { pointsFromSnapshots } from './sync/stars';
 
 export type ProjectPage = {
   project: {
@@ -32,7 +33,7 @@ export async function getProjectPage(
   if (error) throw new Error(error.message);
   if (!p) return null;
   const topics: string[] = p.topics ?? [];
-  const [products, gaps, similar, issues, uses, mine, follow] = await Promise.all([
+  const [products, gaps, similar, issues, uses, mine, follow, snaps] = await Promise.all([
     db.from('project_products').select('products(id, slug, name)').eq('project_id', p.id),
     db.from('ideas').select('slug, title').eq('status', 'listed').is('merged_into', null).contains('existing_repos', [{ fullName: p.full_name }]).limit(10),
     topics.length
@@ -42,6 +43,7 @@ export async function getProjectPage(
     db.from('signals').select('user_id, visitor').eq('subject_kind', 'project').eq('subject_id', p.id).eq('kind', 'use'),
     signalsOf(db, { userId: who.userId ?? undefined, visitor: who.visitor }, 'project', [p.id]),
     who.personId ? db.from('follows').select('follower_id').eq('follower_id', who.personId).eq('subject_kind', 'project').eq('subject_id', p.id).limit(1) : Promise.resolve({ data: [] }),
+    db.from('project_snapshots').select('day, stars').eq('project_id', p.id).order('day', { ascending: false }).limit(1000),
   ]);
   // Similar: shares at least two topics (or the only one it has).
   const need = Math.min(2, topics.length);
@@ -49,7 +51,7 @@ export async function getProjectPage(
     .filter((s) => (s.topics ?? []).filter((t: string) => topics.includes(t)).length >= need)
     .slice(0, 6)
     .map((s) => ({ fullName: s.full_name, description: s.description, stars: s.stars }));
-  const points = Array.isArray(p.star_points) ? (p.star_points as [string, number][]).filter((x) => Array.isArray(x) && x.length === 2) : [];
+  const points = pointsFromSnapshots(((snaps as any).data ?? []) as { day: string; stars: number }[]);
   return {
     project: {
       id: p.id, fullName: p.full_name, owner: p.owner, name: p.name, url: p.url, description: p.description,
@@ -71,8 +73,9 @@ export async function getProjectPage(
 /** The star points for the README chart, with today's count from the row when history is missing. */
 export async function getStarPoints(db: SupabaseClient, owner: string, repo: string): Promise<{ fullName: string; points: [string, number][] } | null> {
   const full = `${owner}/${repo}`;
-  const { data } = await db.from('projects').select('full_name, stars, star_points, synced_at').ilike('full_name', full.replace(/[%_\\]/g, '\\$&')).eq('listed', true).maybeSingle();
+  const { data } = await db.from('projects').select('id, full_name, stars, synced_at').ilike('full_name', full.replace(/[%_\\]/g, '\\$&')).eq('listed', true).maybeSingle();
   if (!data) return null;
-  const points = Array.isArray(data.star_points) ? (data.star_points as [string, number][]) : [];
+  const snaps = await db.from('project_snapshots').select('day, stars').eq('project_id', data.id).order('day', { ascending: false }).limit(1000);
+  const points = pointsFromSnapshots((snaps.data ?? []) as { day: string; stars: number }[]);
   return { fullName: data.full_name, points: points.length ? points : [[String(data.synced_at).slice(0, 10), data.stars]] };
 }

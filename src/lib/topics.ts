@@ -48,12 +48,20 @@ export const MIN_PROJECTS_UNTRACKED = 5;
 export async function getTopicPage(db: SupabaseClient, slug: string, sort: TopicSort, now: Date): Promise<TopicPage | null> {
   const [t, projects, products] = await Promise.all([
     db.from('topics').select('id, slug, name, blurb, tracked').eq('slug', slug).maybeSingle(),
-    db.from('projects').select('full_name, name, description, stars, pushed_at, license_spdx, star_points').eq('listed', true).contains('topics', [slug]).order('stars', { ascending: false }).limit(200),
+    db.from('projects').select('id, full_name, name, description, stars, pushed_at, license_spdx').eq('listed', true).contains('topics', [slug]).order('stars', { ascending: false }).limit(200),
     db.from('products').select('id, slug, name').contains('topics', [slug]),
   ]);
-  const list = ((projects.data ?? []) as any[]).map((p) => ({
+  const rows = (projects.data ?? []) as any[];
+  // Growth over the last 30 days, from the sync's daily counts.
+  const since = new Date(now.getTime() - 31 * DAY).toISOString().slice(0, 10);
+  const snaps = rows.length
+    ? ((await db.from('project_snapshots').select('project_id, day, stars').in('project_id', rows.map((r) => r.id)).gte('day', since).limit(20000)).data ?? [])
+    : [];
+  const byProject = new Map<string, [string, number][]>();
+  for (const s of snaps as { project_id: string; day: string; stars: number }[]) byProject.set(s.project_id, [...(byProject.get(s.project_id) ?? []), [s.day, s.stars]]);
+  const list = rows.map((p) => ({
     fullName: p.full_name, name: p.name, description: p.description, stars: p.stars, pushedAt: p.pushed_at, license: p.license_spdx,
-    gained: starsGained(Array.isArray(p.star_points) ? p.star_points : [], 30, now),
+    gained: starsGained(byProject.get(p.id) ?? [], 30, now),
   }));
   if (!t.data && list.length < MIN_PROJECTS_UNTRACKED) return null;
   if (sort === 'growth') list.sort((a, b) => b.gained - a.gained || b.stars - a.stars);
