@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: dropbox
+name: Dropbox
+category: Files and storage
+price:
+  cents: 1199
+  period: month
+blurb: Keep files in sync across your devices and share them.
+words:
+  - file sync
+  - cloud storage
+  - file sharing
+  - backup
+  - sync folder
+topics:
+  - file-sync
+  - cloud-storage
+  - file-sharing
+  - dropbox-alternative
+search_terms:
+  - dropbox alternative
+  - self-hosted file sync
+aliases: []
+excludes: []

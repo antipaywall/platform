@@ -1,0 +1,21 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: docker-desktop
+name: Docker Desktop
+category: Developer tools
+price:
+  cents: 900
+  period: month
+blurb: Run containers on your laptop, paid for larger companies.
+words:
+  - containers
+  - docker
+  - virtual machine
+  - local development
+topics:
+  - containers
+  - docker
+  - container-runtime
+search_terms:
+  - docker desktop alternative
+aliases: []
+excludes: []

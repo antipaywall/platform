@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: google-photos
+name: Google Photos
+category: Photos and video
+price:
+  cents: 199
+  period: month
+blurb: Back up your photos and videos and find them later.
+words:
+  - photo backup
+  - photo library
+  - gallery
+  - photo storage
+  - albums
+  - face recognition
+topics:
+  - photo-management
+  - photos
+  - self-hosted
+  - gallery
+search_terms:
+  - google photos alternative
+  - self-hosted photo backup
+aliases: []
+excludes: []

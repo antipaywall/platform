@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: hotjar
+name: Hotjar
+category: Analytics
+price:
+  cents: 3200
+  period: month
+blurb: See how people use your website with heatmaps and recordings.
+words:
+  - heatmaps
+  - session recording
+  - website analytics
+  - user behavior
+  - feedback
+topics:
+  - session-replay
+  - heatmap
+  - analytics
+search_terms:
+  - hotjar alternative
+  - session replay
+aliases: []
+excludes: []

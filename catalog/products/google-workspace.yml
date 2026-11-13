@@ -1,0 +1,26 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: google-workspace
+name: Google Workspace
+category: Office
+price:
+  cents: 700
+  period: month
+blurb: Gmail, Docs, Drive and Calendar on your own domain, for businesses.
+words:
+  - email hosting
+  - office suite
+  - documents
+  - calendar
+  - shared drive
+  - business email
+topics:
+  - office-suite
+  - groupware
+  - email-server
+search_terms:
+  - google workspace alternative
+  - self-hosted groupware
+aliases:
+  - g suite
+  - gsuite
+excludes: []

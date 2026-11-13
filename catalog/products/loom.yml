@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: loom
+name: Loom
+category: Video and calls
+price:
+  cents: 1500
+  period: month
+blurb: Record your screen and camera and share the video with a link.
+words:
+  - screen recording
+  - video messages
+  - record screen
+  - screencast
+  - async video
+topics:
+  - screen-recorder
+  - screen-recording
+  - screencast
+search_terms:
+  - loom alternative
+  - screen recorder
+aliases: []
+excludes: []

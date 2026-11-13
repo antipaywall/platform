@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: zoom
+name: Zoom
+category: Video and calls
+price:
+  cents: 1333
+  period: month
+blurb: Video meetings and webinars.
+words:
+  - video calls
+  - video meetings
+  - conferencing
+  - webinar
+  - screen sharing
+topics:
+  - video-conferencing
+  - webrtc
+  - video-call
+  - meetings
+search_terms:
+  - zoom alternative
+  - video conferencing
+aliases: []
+excludes: []

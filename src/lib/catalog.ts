@@ -10,7 +10,8 @@ export const CATEGORIES = [
   'Scheduling', 'Forms and surveys', 'Video and calls', 'Docs and notes', 'Design', 'Email and newsletters',
   'Analytics', 'Support and chat', 'Project management', 'Files and storage', 'Passwords and security',
   'Writing', 'Social media', 'Selling online', 'Websites', 'Money and invoicing', 'Automation', 'AI tools',
-  'Games', 'Developer tools', 'Other',
+  'Games', 'Developer tools', 'Team chat', 'Photos and video', 'Music and media', 'Hosting and cloud', 'Office',
+  'Sales and CRM', 'Science and maths', 'Other',
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 

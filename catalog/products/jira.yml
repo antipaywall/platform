@@ -1,0 +1,27 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: jira
+name: Jira
+category: Project management
+price:
+  cents: 860
+  period: month
+blurb: Track tasks and bugs for software teams.
+words:
+  - issue tracker
+  - tasks
+  - bugs
+  - sprints
+  - kanban
+  - tickets
+  - project tracking
+topics:
+  - issue-tracker
+  - project-management
+  - kanban
+  - agile
+search_terms:
+  - jira alternative
+  - issue tracker
+aliases:
+  - atlassian jira
+excludes: []

@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: lightroom
+name: Adobe Lightroom
+category: Photos and video
+price:
+  cents: 1199
+  period: month
+blurb: Organize and edit your photos.
+words:
+  - photo editing
+  - raw editor
+  - photo library
+  - develop raw
+  - presets
+topics:
+  - raw-image
+  - photo-editing
+  - photography
+search_terms:
+  - lightroom alternative
+  - raw photo editor
+aliases:
+  - adobe lightroom
+excludes: []

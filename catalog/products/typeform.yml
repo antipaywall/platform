@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: typeform
+name: Typeform
+category: Forms and surveys
+price:
+  cents: 2900
+  period: month
+blurb: Forms and surveys that ask one question at a time.
+words:
+  - forms
+  - surveys
+  - questionnaire
+  - form builder
+  - quiz
+topics:
+  - forms
+  - form-builder
+  - surveys
+  - typeform-alternative
+search_terms:
+  - typeform alternative
+  - form builder
+aliases: []
+excludes: []

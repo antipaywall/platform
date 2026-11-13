@@ -1,0 +1,26 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: notion
+name: Notion
+category: Docs and notes
+price:
+  cents: 1200
+  period: month
+blurb: Notes, docs, wikis and simple databases in one workspace.
+words:
+  - notes
+  - wiki
+  - docs
+  - knowledge base
+  - workspace
+  - pages
+  - databases
+topics:
+  - notion-alternative
+  - note-taking
+  - knowledge-base
+  - wiki
+search_terms:
+  - notion alternative
+aliases:
+  - notion.so
+excludes: []

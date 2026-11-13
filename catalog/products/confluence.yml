@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: confluence
+name: Confluence
+category: Docs and notes
+price:
+  cents: 640
+  period: month
+blurb: A wiki where teams write and share documents.
+words:
+  - wiki
+  - team docs
+  - knowledge base
+  - documentation
+  - pages
+topics:
+  - wiki
+  - knowledge-base
+  - documentation
+search_terms:
+  - confluence alternative
+  - team wiki
+aliases:
+  - atlassian confluence
+excludes: []

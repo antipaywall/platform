@@ -1,0 +1,4991 @@
+{
+  "generated_at": "2026-11-13T03:41:02.335Z",
+  "method": "Hacker News stories and comments matching each phrase, five years, one count per thread per product; coverage = stars of the top GitHub repo for topic:<name>-alternative, else \"<name> alternative\".",
+  "phrases": [
+    "\"alternative to\"",
+    "\"alternatives to\"",
+    "\"free version of\"",
+    "\"replacement for\"",
+    "\"open source version of\""
+  ],
+  "min_threads": 3,
+  "candidates": [
+    {
+      "name": "Twitter",
+      "demand": 161,
+      "coverage": 0.3010299956639812,
+      "gapScore": 123.74810768127877,
+      "key": "twitter",
+      "topRepo": "carcinocron/kpbb",
+      "coverageStars": 1
+    },
+    {
+      "name": "Google",
+      "demand": 268,
+      "coverage": 2.2227164711475833,
+      "gapScore": 83.15965813293137,
+      "key": "google",
+      "topRepo": "Ronin-CK/QuickSnip",
+      "coverageStars": 166
+    },
+    {
+      "name": "Python",
+      "demand": 65,
+      "coverage": 0,
+      "gapScore": 65,
+      "key": "python",
+      "topRepo": "maheshree123/Campus-Rush",
+      "coverageStars": 0
+    },
+    {
+      "name": "Windows",
+      "demand": 128,
+      "coverage": 1.380211241711606,
+      "gapScore": 53.77673954180445,
+      "key": "windows",
+      "topRepo": "Avi7ii/GetBackMyWindows",
+      "coverageStars": 23
+    },
+    {
+      "name": "GitHub",
+      "demand": 134,
+      "coverage": 1.9138138523837167,
+      "gapScore": 45.98783820400127,
+      "key": "github",
+      "topRepo": "codician-team/diffinery",
+      "coverageStars": 81
+    },
+    {
+      "name": "Nvidia",
+      "demand": 43,
+      "coverage": 0,
+      "gapScore": 43,
+      "key": "nvidia",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Microsoft",
+      "demand": 40,
+      "coverage": 0,
+      "gapScore": 40,
+      "key": "microsoft",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Facebook",
+      "demand": 61,
+      "coverage": 0.6020599913279624,
+      "gapScore": 38.07597738548887,
+      "key": "facebook",
+      "topRepo": "alisalahio/facebook-alternatives",
+      "coverageStars": 3
+    },
+    {
+      "name": "ChatGPT",
+      "demand": 150,
+      "coverage": 3.0090257420869104,
+      "gapScore": 37.41557416937838,
+      "key": "chatgpt",
+      "topRepo": "nejib1/Free-LLM",
+      "coverageStars": 1020
+    },
+    {
+      "name": "YouTube",
+      "demand": 116,
+      "coverage": 2.278753600952829,
+      "gapScore": 35.37929778141596,
+      "key": "youtube",
+      "topRepo": "yashoncode/meetube",
+      "coverageStars": 189
+    },
+    {
+      "name": "Visa",
+      "demand": 34,
+      "coverage": 0,
+      "gapScore": 34,
+      "key": "visa",
+      "topRepo": "atalovesyou/h1b-plan-b-guide",
+      "coverageStars": 0
+    },
+    {
+      "name": "WhatsApp",
+      "demand": 34,
+      "coverage": 0,
+      "gapScore": 34,
+      "key": "whatsapp",
+      "topRepo": "abjelosevic88/pocket-homelab-chat",
+      "coverageStars": 0
+    },
+    {
+      "name": "US",
+      "demand": 67,
+      "coverage": 1,
+      "gapScore": 33.5,
+      "key": "us",
+      "topRepo": "happysegfault/boycottusa",
+      "coverageStars": 9
+    },
+    {
+      "name": "CUDA",
+      "demand": 62,
+      "coverage": 0.9030899869919435,
+      "gapScore": 32.5785960852005,
+      "key": "cuda",
+      "topRepo": "badnikhil/Vulkore",
+      "coverageStars": 7
+    },
+    {
+      "name": "Amazon",
+      "demand": 44,
+      "coverage": 0.47712125471966244,
+      "gapScore": 29.787669671269203,
+      "key": "amazon",
+      "topRepo": "seanpm2001/BlazeOS_Docs",
+      "coverageStars": 2
+    },
+    {
+      "name": "Android",
+      "demand": 66,
+      "coverage": 1.3010299956639813,
+      "gapScore": 28.682807318622178,
+      "key": "android",
+      "topRepo": "seanpm2001/Candroid-App-Store",
+      "coverageStars": 19
+    },
+    {
+      "name": "Linux",
+      "demand": 42,
+      "coverage": 0.6020599913279624,
+      "gapScore": 26.21624672443496,
+      "key": "linux",
+      "topRepo": "Packss/linux-nitrosense-rust",
+      "coverageStars": 3
+    },
+    {
+      "name": "Chrome",
+      "demand": 69,
+      "coverage": 1.6334684555795866,
+      "gapScore": 26.201187203821714,
+      "key": "chrome",
+      "topRepo": "YSamed/yalqen",
+      "coverageStars": 42
+    },
+    {
+      "name": "X11",
+      "demand": 25,
+      "coverage": 0,
+      "gapScore": 25,
+      "key": "x11",
+      "topRepo": "otakai/uinput-expander",
+      "coverageStars": 0
+    },
+    {
+      "name": "AWS",
+      "demand": 58,
+      "coverage": 1.3222192947339193,
+      "gapScore": 24.97610804092714,
+      "key": "aws",
+      "topRepo": "dinivas/dinivas",
+      "coverageStars": 20
+    },
+    {
+      "name": "Reddit",
+      "demand": 90,
+      "coverage": 2.6232492903979003,
+      "gapScore": 24.839582591932647,
+      "key": "reddit",
+      "topRepo": "bitsocialnet/seedit",
+      "coverageStars": 419
+    },
+    {
+      "name": "React",
+      "demand": 50,
+      "coverage": 1.0791812460476249,
+      "gapScore": 24.047927565259847,
+      "key": "react",
+      "topRepo": "wfjs-admin/WildflowerJS",
+      "coverageStars": 11
+    },
+    {
+      "name": "HN",
+      "demand": 24,
+      "coverage": 0,
+      "gapScore": 24,
+      "key": "hn",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "PayPal",
+      "demand": 24,
+      "coverage": 0,
+      "gapScore": 24,
+      "key": "paypal",
+      "topRepo": "Joviccc17/PhotoWebShop",
+      "coverageStars": 0
+    },
+    {
+      "name": "SQL",
+      "demand": 34,
+      "coverage": 0.47712125471966244,
+      "gapScore": 23.01774474598075,
+      "key": "sql",
+      "topRepo": "absterjr/UNSeQueL",
+      "coverageStars": 2
+    },
+    {
+      "name": "Java",
+      "demand": 52,
+      "coverage": 1.380211241711606,
+      "gapScore": 21.84680043885806,
+      "key": "java",
+      "topRepo": "strangeway-org/nameof",
+      "coverageStars": 23
+    },
+    {
+      "name": "SMS",
+      "demand": 37,
+      "coverage": 0.6989700043360189,
+      "gapScore": 21.777900672507823,
+      "key": "sms",
+      "topRepo": "idMJA/WApi",
+      "coverageStars": 4
+    },
+    {
+      "name": "HTML",
+      "demand": 28,
+      "coverage": 0.3010299956639812,
+      "gapScore": 21.52141003152674,
+      "key": "html",
+      "topRepo": "atskas/HyperSharp",
+      "coverageStars": 1
+    },
+    {
+      "name": "American",
+      "demand": 21,
+      "coverage": 0,
+      "gapScore": 21,
+      "key": "american",
+      "topRepo": "chardynamics/landofthedivided",
+      "coverageStars": 0
+    },
+    {
+      "name": "Wikipedia",
+      "demand": 21,
+      "coverage": 0,
+      "gapScore": 21,
+      "key": "wikipedia",
+      "topRepo": "bitsocialnet/infinipedia",
+      "coverageStars": 0
+    },
+    {
+      "name": "China",
+      "demand": 20,
+      "coverage": 0,
+      "gapScore": 20,
+      "key": "china",
+      "topRepo": "flycrane/apkwatching",
+      "coverageStars": 0
+    },
+    {
+      "name": "Unity",
+      "demand": 25,
+      "coverage": 0.3010299956639812,
+      "gapScore": 19.21554467100602,
+      "key": "unity",
+      "topRepo": "auraoneai/aura3d",
+      "coverageStars": 1
+    },
+    {
+      "name": "TikTok",
+      "demand": 19,
+      "coverage": 0,
+      "gapScore": 19,
+      "key": "tiktok",
+      "topRepo": "sh20raj-backup/JSTikTok",
+      "coverageStars": 0
+    },
+    {
+      "name": "IRC",
+      "demand": 19,
+      "coverage": 0,
+      "gapScore": 19,
+      "key": "irc",
+      "topRepo": "landpir8/CRASHBITE-IRC-ALTERNATIVE",
+      "coverageStars": 0
+    },
+    {
+      "name": "USD",
+      "demand": 18,
+      "coverage": 0,
+      "gapScore": 18,
+      "key": "usd",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "MS Office",
+      "demand": 18,
+      "coverage": 0,
+      "gapScore": 18,
+      "key": "ms office",
+      "topRepo": "Hafij-BGE/work-suite",
+      "coverageStars": 0
+    },
+    {
+      "name": "RHEL",
+      "demand": 18,
+      "coverage": 0,
+      "gapScore": 18,
+      "key": "rhel",
+      "topRepo": "yacomelian/checkmk-oracle-podman",
+      "coverageStars": 0
+    },
+    {
+      "name": "Starlink",
+      "demand": 18,
+      "coverage": 0,
+      "gapScore": 18,
+      "key": "starlink",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Node",
+      "demand": 23,
+      "coverage": 0.3010299956639812,
+      "gapScore": 17.678301097325537,
+      "key": "node",
+      "topRepo": "jealouscloud/html-compose",
+      "coverageStars": 1
+    },
+    {
+      "name": "Adobe",
+      "demand": 32,
+      "coverage": 0.8450980400142568,
+      "gapScore": 17.343251852217424,
+      "key": "adobe",
+      "topRepo": "KollektionHannemann/artcraft-parity",
+      "coverageStars": 6
+    },
+    {
+      "name": "TSMC",
+      "demand": 17,
+      "coverage": 0,
+      "gapScore": 17,
+      "key": "tsmc",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Photoshop",
+      "demand": 58,
+      "coverage": 2.4578818967339924,
+      "gapScore": 16.773273851481637,
+      "key": "photoshop",
+      "topRepo": "beckettharriman/openfill",
+      "coverageStars": 286
+    },
+    {
+      "name": "Apple",
+      "demand": 52,
+      "coverage": 2.1789769472931693,
+      "gapScore": 16.35746369418529,
+      "key": "apple",
+      "topRepo": "silentprovider423/HomeRoll",
+      "coverageStars": 150
+    },
+    {
+      "name": "Big Tech",
+      "demand": 24,
+      "coverage": 0.47712125471966244,
+      "gapScore": 16.247819820692293,
+      "key": "big tech",
+      "topRepo": "DiegoMoralesMagri/OpenRed",
+      "coverageStars": 2
+    },
+    {
+      "name": "Rust",
+      "demand": 40,
+      "coverage": 1.6020599913279625,
+      "gapScore": 15.372435736804816,
+      "key": "rust",
+      "topRepo": "thagore-foundation/thagore",
+      "coverageStars": 39
+    },
+    {
+      "name": "GPS",
+      "demand": 20,
+      "coverage": 0.3010299956639812,
+      "gapScore": 15.372435736804816,
+      "key": "gps",
+      "topRepo": "api-evangelist/xairos",
+      "coverageStars": 1
+    },
+    {
+      "name": "CPython",
+      "demand": 15,
+      "coverage": 0,
+      "gapScore": 15,
+      "key": "cpython",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Firefox",
+      "demand": 39,
+      "coverage": 1.6334684555795866,
+      "gapScore": 14.80936668042097,
+      "key": "firefox",
+      "topRepo": "YSamed/yalqen",
+      "coverageStars": 42
+    },
+    {
+      "name": "Google Analytics",
+      "demand": 56,
+      "coverage": 2.81424759573192,
+      "gapScore": 14.681794664474081,
+      "key": "google analytics",
+      "topRepo": "OpenLabs-so/openanalytics",
+      "coverageStars": 651
+    },
+    {
+      "name": "AI",
+      "demand": 21,
+      "coverage": 0.47712125471966244,
+      "gapScore": 14.216842343105757,
+      "key": "ai",
+      "topRepo": "Whitzzscott/PyrenzAI",
+      "coverageStars": 2
+    },
+    {
+      "name": "SWIFT",
+      "demand": 25,
+      "coverage": 0.7781512503836436,
+      "gapScore": 14.059546393821192,
+      "key": "swift",
+      "topRepo": "ileafsolutions/ILSImageCache",
+      "coverageStars": 5
+    },
+    {
+      "name": "Microsoft's",
+      "demand": 14,
+      "coverage": 0,
+      "gapScore": 14,
+      "key": "microsoft s",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Chromium",
+      "demand": 14,
+      "coverage": 0,
+      "gapScore": 14,
+      "key": "chromium",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Perl",
+      "demand": 14,
+      "coverage": 0,
+      "gapScore": 14,
+      "key": "perl",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "GitHub Copilot",
+      "demand": 18,
+      "coverage": 0.3010299956639812,
+      "gapScore": 13.835192163124335,
+      "key": "github copilot",
+      "topRepo": "VISHWAJ33T/local-nim-coding-stack",
+      "coverageStars": 1
+    },
+    {
+      "name": "Signal",
+      "demand": 18,
+      "coverage": 0.3010299956639812,
+      "gapScore": 13.835192163124335,
+      "key": "signal",
+      "topRepo": "Whospr/Whospair",
+      "coverageStars": 1
+    },
+    {
+      "name": "Excel",
+      "demand": 37,
+      "coverage": 1.716003343634799,
+      "gapScore": 13.622958192121843,
+      "key": "excel",
+      "topRepo": "IreliaTable/irelia",
+      "coverageStars": 51
+    },
+    {
+      "name": "Discord",
+      "demand": 54,
+      "coverage": 3.0073209529227447,
+      "gapScore": 13.475336923191795,
+      "key": "discord",
+      "topRepo": "ancsemi/Haven",
+      "coverageStars": 1016
+    },
+    {
+      "name": "OpenAI",
+      "demand": 53,
+      "coverage": 3.0090257420869104,
+      "gapScore": 13.220169539847028,
+      "key": "openai",
+      "topRepo": "nejib1/Free-LLM",
+      "coverageStars": 1020
+    },
+    {
+      "name": "CSS",
+      "demand": 13,
+      "coverage": 0,
+      "gapScore": 13,
+      "key": "css",
+      "topRepo": "EdinstvoAI/edinstvo-glass",
+      "coverageStars": 0
+    },
+    {
+      "name": "Apple's",
+      "demand": 13,
+      "coverage": 0,
+      "gapScore": 13,
+      "key": "apple s",
+      "topRepo": "wjivan/apple-fee-calculator",
+      "coverageStars": 0
+    },
+    {
+      "name": "Tesla",
+      "demand": 13,
+      "coverage": 0,
+      "gapScore": 13,
+      "key": "tesla",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "Mastodon",
+      "demand": 13,
+      "coverage": 0,
+      "gapScore": 13,
+      "key": "mastodon",
+      "topRepo": null,
+      "coverageStars": 0
+    },
+    {
+      "name": "K8s",
+      "demand": 13,
+      "coverage": 0,
+      "gapScore": 13,
+      "key": "k8s",
+      "topRepo": "alexgim961101/dure",
+      "coverageStars": 0
+    },
+    {
+      "name": "Gmail",
+      "demand": 54,
+      "coverage": 3.2342641243787895,
+      "gapScore": 12.753101463155032,
+      "key": "gmail",
+      "topRepo": "forwardemail/forwardemail.net",
+      "coverageStars": 1714
+    },
+    {
+      "name": "Docker Desktop",
+      "demand": 31,
+      "coverage": 1.4471580313422192,
+      "gapScore": 12.667755658998896,
+      "key": "docker desktop",
+      "topRepo": "appautomaton/docker-for-apple-container",
+      "coverageStars": 27
+    },
+    {
+      "name": "Qt",
+      "demand": 16,
+      "coverage": 0.3010299956639812,
+      "gapScore": 12.297948589443852,
+      "key": "qt",
+      "topRepo": "frankrukatlx102-wq/vmm-kvm-rs",
+      "coverageStars": 1
+    },
+    {
+      "name": "Matlab",
+      "demand": 16,
+      "coverage": 0.3010299956639812,
+      "gapScore": 12.297948589443852,
+      "key": "matlab",
+      "topRepo": "07zzm/matlab-alternative",
+      "coverageStars": 1
+    },
+    {
+      "name": "Heroku",
+      "demand": 46,
+      "coverage": 2.762678563727436,
+      "gapScore": 12.225333421633245,
+      "key": "heroku",
+      "topRepo": "bex-co/bex",
+      "coverageStars": 578
+    },
+    {
+      "name": "Google's",
+      "demand": 18,
+      "coverage": 0.47712125471966244,
+      "gapScore": 12.18586486551922,
+      "key": "google s",
+      "topRepo": "ArtificialHaze/WIKI-SEARCH-",
+      "coverageStars": 2
+    },
+    {
+      "name": "Russian",
+      "demand": 18,
+      "coverage": 0.47712125471966244,
+      "gapScore": 12.18586486551922,
+      "key": "russian",
+      "topRepo": "AlexAtHome/atom-fish-text",
+      "coverageStars": 2
+    },
+    {
+      "name": "LLVM",
+      "demand": 18,
+      "coverage": 0.47712125471966244,
+      "gapScore": 12.18586486551922,
+      "key": "llvm",
+      "topRepo": "KarpelesLab/latticefoundry",
+      "coverageStars": 2
+    },
+    {
+      "name": "JavaScript",
+      "demand": 42,
+      "coverage": 2.514547752660286,
+      "gapScore": 11.950328450711392,
+      "key": "javascript",
+      "topRepo": "zedshaw/jzed",
+      "coverageStars": 326
+    },
+    {
+      "name": "Datadog",
+      "demand": 21,
+      "coverage": 0.7781512503836436,
+      "gapScore": 11.810018970809802,
+      "key": "datadog",
+      "topRepo": "middle-monitor/middle-monitor",
+      "coverageStars": 5
+    },
+    {
+      "name": "Git",
+      "demand": 29,
+      "coverage": 1.505149978319906,
+      "gapScore": 11.576153224745859,
+      "key": "git",
+      "topRepo": "holasoymalva/claude-code-rewind",
+      "coverageStars": 31
+    },
+    {
+      "name": "S3",
+      "demand": 20,
+      "coverage": 0.7781512503836436,
+      "gapScore": 11.247637115056953,
+      "key": "s3",
+      "topRepo": "668mt/mos",
+      "coverageStars": 5
+    },
+    {
+      "name": "Slack",
+      "demand": 53,
+      "coverage": 3.7985125330313516,
+      "gapScore": 11.04508941784892,
+      "key": "slack",
+      "topRepo": "macro-inc/macro",
+      "coverageStars": 6287
+    },
+    {
+      "name": "Docker",
+      "demand": 49,
+      "coverage": 3.52608069180203,
+      "gapScore": 10.826143707237124,
+      "key": "docker",
+      "topRepo": "xpf0000/FlyEnv",
+      "coverageStars": 3357
+    },
+    {
+      "name": "Electron",
+      "demand": 62,
+      "coverage": 4.802534284386976,
+      "gapScore": 10.684986414785167,
+      "key": "electron",
+      "topRepo": "tw93/Pake",
+      "coverageStars": 63464
+    },
+    {
+      "name": "Cloudflare",
+      "demand": 36,
+      "coverage": 2.4756711883244296,
+      "gapScore": 10.357711661831589,
+      "key": "cloudflare",
+      "topRepo": "Rain-kl/OpenFlare",
+      "coverageStars": 298
+    },
+    {
+      "name": "LinkedIn",
+      "demand": 17,
+      "coverage": 0.7781512503836436,
+      "gapScore": 9.56049154779841,
+      "key": "linkedin",
+      "topRepo": "euron-sde-team/euron-open-talent-network",
+      "coverageStars": 5
+    },
+    {
+      "name": "WordPress",
+      "demand": 34,
+      "coverage": 2.632457292184724,
+      "gapScore": 9.360054988988146,
+      "key": "wordpress",
+      "topRepo": "RavelloH/NeutralPress",
+      "coverageStars": 428
+    },
+    {
+      "name": "Google Docs",
+      "demand": 21,
+      "coverage": 1.255272505103306,
+      "gapScore": 9.311513332637407,
+      "key": "google docs",
+      "topRepo": "cloudillo/cloudillo",
+      "coverageStars": 17
+    },
+    {
+      "name": "Dropbox",
+      "demand": 29,
+      "coverage": 2.123851640967086,
+      "gapScore": 9.283411420595552,
+      "key": "dropbox",
+      "topRepo": "deeeeone/gitdrive",
+      "coverageStars": 132
+    },
+    {
+      "name": "Instagram",
+      "demand": 21,
+      "coverage": 1.3222192947339193,
+      "gapScore": 9.043073601025345,
+      "key": "instagram",
+      "topRepo": "aic0d3r/oxbow",
+      "coverageStars": 20
+    },
+    {
+      "name": "Goodreads",
+      "demand": 19,
+      "coverage": 1.146128035678238,
+      "gapScore": 8.853153066422458,
+      "key": "goodreads",
+      "topRepo": "tn3w/Shelf",
+      "coverageStars": 13
+    },
+    {
+      "name": "Google Maps",
+      "demand": 39,
+      "coverage": 3.412460547429961,
+      "gapScore": 8.838605938973338,
+      "key": "google maps",
+      "topRepo": "PimpinPumpkin/Vela",
+      "coverageStars": 2584
+    },
+    {
+      "name": "Go",
+      "demand": 32,
+      "coverage": 2.7363965022766426,
+      "gapScore": 8.564401551200982,
+      "key": "go",
+      "topRepo": "projectdiscovery/simplehttpserver",
+      "coverageStars": 544
+    },
+    {
+      "name": "TCP",
+      "demand": 18,
+      "coverage": 1.1760912590556813,
+      "gapScore": 8.271711916995214,
+      "key": "tcp",
+      "topRepo": "x1colegal/USTP-Secure",
+      "coverageStars": 14
+    },
+    {
+      "name": "Stack Overflow",
+      "demand": 14,
+      "coverage": 0.6989700043360189,
+      "gapScore": 8.240286740948905,
+      "key": "stack overflow",
+      "topRepo": "pjborowiecki/AI-OVERFLOW-Modern-Stack-Overflow-Alternative",
+      "coverageStars": 4
+    },
+    {
+      "name": "Spotify",
+      "demand": 34,
+      "coverage": 3.1476763242410986,
+      "gapScore": 8.197360966015347,
+      "key": "spotify",
+      "topRepo": "LaurenceRawlings/savify",
+      "coverageStars": 1404
+    },
+    {
+      "name": "Office",
+      "demand": 16,
+      "coverage": 0.9542425094393249,
+      "gapScore": 8.187315505991334,
+      "key": "office",
+      "topRepo": "arenacontrolcabin42/wps-office-suite",
+      "coverageStars": 8
+    },
+    {
+      "name": "Vercel",
+      "demand": 37,
+      "coverage": 3.5412046906832586,
+      "gapScore": 8.147617762288771,
+      "key": "vercel",
+      "topRepo": "Anil-matcha/awesome-open-source-saas-alternatives",
+      "coverageStars": 3476
+    },
+    {
+      "name": "LaTeX",
+      "demand": 25,
+      "coverage": 2.161368002234975,
+      "gapScore": 7.907968949621141,
+      "key": "latex",
+      "topRepo": "aburousan/hilbert-editor",
+      "coverageStars": 144
+    },
+    {
+      "name": "GNU",
+      "demand": 14,
+      "coverage": 0.7781512503836436,
+      "gapScore": 7.873345980539868,
+      "key": "gnu",
+      "topRepo": "yule-l/tm",
+      "coverageStars": 5
+    },
+    {
+      "name": "VS Code",
+      "demand": 16,
+      "coverage": 1.041392685158225,
+      "gapScore": 7.837786485827379,
+      "key": "vs code",
+      "topRepo": "dmwarenet/dscode",
+      "coverageStars": 10
+    },
+    {
+      "name": "JSON",
+      "demand": 31,
+      "coverage": 3.044539760392411,
+      "gapScore": 7.664654530925493,
+      "key": "json",
+      "topRepo": "fxamacker/cbor",
+      "coverageStars": 1107
+    },
+    {
+      "name": "Stripe",
+      "demand": 28,
+      "coverage": 2.765668554759014,
+      "gapScore": 7.435598644127583,
+      "key": "stripe",
+      "topRepo": "zonelessdev/zoneless",
+      "coverageStars": 582
+    },
+    {
+      "name": "Jira",
+      "demand": 43,
+      "coverage": 4.795045370421125,
+      "gapScore": 7.420131724848808,
+      "key": "jira",
+      "topRepo": "makeplane/plane",
+      "coverageStars": 62379
+    },
+    {
+      "name": "DNS",
+      "demand": 27,
+      "coverage": 2.649334858712142,
+      "gapScore": 7.398608526028318,
+      "key": "dns",
+      "topRepo": "Revertron/Alfis",
+      "coverageStars": 445
+    },
+    {
+      "name": "Postman",
+      "demand": 39,
+      "coverage": 4.2897895556069106,
+      "gapScore": 7.37269405333185,
+      "key": "postman",
+      "topRepo": "mountain-loop/yaak",
+      "coverageStars": 19488
+    },
+    {
+      "name": "Claude",
+      "demand": 27,
+      "coverage": 2.7267272090265724,
+      "gapScore": 7.24496280130266,
+      "key": "claude",
+      "topRepo": "FrigadeHQ/hob",
+      "coverageStars": 532
+    },
+    {
+      "name": "Flash",
+      "demand": 16,
+      "coverage": 1.2304489213782739,
+      "gapScore": 7.173443806152274,
+      "key": "flash",
+      "topRepo": "q0s0id/q0idmation",
+      "coverageStars": 16
+    },
+    {
+      "name": "Claude Code",
+      "demand": 34,
+      "coverage": 3.8171024042569233,
+      "gapScore": 7.058185013869302,
+      "key": "claude code",
+      "topRepo": "anus-dev/ANUS",
+      "coverageStars": 6562
+    },
+    {
+      "name": "RSS",
+      "demand": 15,
+      "coverage": 1.146128035678238,
+      "gapScore": 6.989331368228256,
+      "key": "rss",
+      "topRepo": "samvad-hq/samvad-news-harvester",
+      "coverageStars": 13
+    },
+    {
+      "name": "Google Drive",
+      "demand": 19,
+      "coverage": 1.7242758696007892,
+      "gapScore": 6.974330394367964,
+      "key": "google drive",
+      "topRepo": "herliansyah/teledrive",
+      "coverageStars": 52
+    },
+    {
+      "name": "VSCode",
+      "demand": 28,
+      "coverage": 3.0433622780211294,
+      "gapScore": 6.9249298169996125,
+      "key": "vscode",
+      "topRepo": "eugenioenko/ttt",
+      "coverageStars": 1104
+    },
+    {
+      "name": "Wayland",
+      "demand": 15,
+      "coverage": 1.1760912590556813,
+      "gapScore": 6.893093264162679,
+      "key": "wayland",
+      "topRepo": "avsribhas/SomaOS",
+      "coverageStars": 14
+    },
+    {
+      "name": "JS",
+      "demand": 31,
+      "coverage": 3.51560894923448,
+      "gapScore": 6.8650763049921215,
+      "key": "js",
+      "topRepo": "cristianbote/goober",
+      "coverageStars": 3277
+    },
+    {
+      "name": "Ansible",
+      "demand": 13,
+      "coverage": 0.9030899869919435,
+      "gapScore": 6.830995953348491,
+      "key": "ansible",
+      "topRepo": "hclivess/sshauto",
+      "coverageStars": 7
+    },
+    {
+      "name": "Elasticsearch",
+      "demand": 27,
+      "coverage": 3.060320028688285,
+      "gapScore": 6.649722142400323,
+      "key": "elasticsearch",
+      "topRepo": "codelibs/fess",
+      "coverageStars": 1148
+    },
+    {
+      "name": "Kubernetes",
+      "demand": 26,
+      "coverage": 3.002166061756508,
+      "gapScore": 6.496482054667386,
+      "key": "kubernetes",
+      "topRepo": "next-hat/nanocl",
+      "coverageStars": 1004
+    },
+    {
+      "name": "Lightroom",
+      "demand": 23,
+      "coverage": 2.5899496013257077,
+      "gapScore": 6.406775179101815,
+      "key": "lightroom",
+      "topRepo": "pdcgomes/redlamp",
+      "coverageStars": 388
+    },
+    {
+      "name": "Gemini",
+      "demand": 15,
+      "coverage": 1.3979400086720377,
+      "gapScore": 6.255369169267456,
+      "key": "gemini",
+      "topRepo": "huecoder/MD3-Agent",
+      "coverageStars": 24
+    },
+    {
+      "name": "SQLite",
+      "demand": 22,
+      "coverage": 2.5563025007672873,
+      "gapScore": 6.186200413281324,
+      "key": "sqlite",
+      "topRepo": "tinbase/tinbase",
+      "coverageStars": 359
+    },
+    {
+      "name": "Redis",
+      "demand": 25,
+      "coverage": 3.04493154614916,
+      "gapScore": 6.180574310040031,
+      "key": "redis",
+      "topRepo": "kividbio/kividb",
+      "coverageStars": 1108
+    },
+    {
+      "name": "MinIO",
+      "demand": 17,
+      "coverage": 1.7708520116421442,
+      "gapScore": 6.135296987559057,
+      "key": "minio",
+      "topRepo": "mojatter/s2",
+      "coverageStars": 58
+    },
+    {
+      "name": "HTTP",
+      "demand": 16,
+      "coverage": 1.6334684555795866,
+      "gapScore": 6.0756376124803975,
+      "key": "http",
+      "topRepo": "mjdave/katipo",
+      "coverageStars": 42
+    },
+    {
+      "name": "TypeScript",
+      "demand": 14,
+      "coverage": 1.3222192947339193,
+      "gapScore": 6.028715734016896,
+      "key": "typescript",
+      "topRepo": "quinnjr/prax",
+      "coverageStars": 20
+    },
+    {
+      "name": "Notion",
+      "demand": 35,
+      "coverage": 4.896652960073501,
+      "gapScore": 5.935570608782059,
+      "key": "notion",
+      "topRepo": "AppFlowy-IO/AppFlowy",
+      "coverageStars": 78822
+    },
+    {
+      "name": "Postgres",
+      "demand": 17,
+      "coverage": 1.8976270912904414,
+      "gapScore": 5.866869498527897,
+      "key": "postgres",
+      "topRepo": "serilog-contrib/Serilog.Sinks.Postgresql.Alternative",
+      "coverageStars": 78
+    },
+    {
+      "name": "MCP",
+      "demand": 18,
+      "coverage": 2.173186268412274,
+      "gapScore": 5.672531795306938,
+      "key": "mcp",
+      "topRepo": "pilot-protocol/pilotprotocol",
+      "coverageStars": 148
+    },
+    {
+      "name": "VMware",
+      "demand": 15,
+      "coverage": 1.7781512503836436,
+      "gapScore": 5.399274066856008,
+      "key": "vmware",
+      "topRepo": "withcoresystem/v-EMU",
+      "coverageStars": 59
+    },
+    {
+      "name": "Google Search",
+      "demand": 14,
+      "coverage": 1.6334684555795866,
+      "gapScore": 5.316182910920348,
+      "key": "google search",
+      "topRepo": "NorkzYT/Novexity",
+      "coverageStars": 42
+    },
+    {
+      "name": "GitHub Actions",
+      "demand": 12,
+      "coverage": 1.2787536009528289,
+      "gapScore": 5.26603665924318,
+      "key": "github actions",
+      "topRepo": "AmirhosseinHonardoust/PR-Guardian-AI",
+      "coverageStars": 18
+    },
+    {
+      "name": "Kafka",
+      "demand": 15,
+      "coverage": 1.8512583487190752,
+      "gapScore": 5.260835099961648,
+      "key": "kafka",
+      "topRepo": "queen-mq/queen",
+      "coverageStars": 70
+    },
+    {
+      "name": "ICE",
+      "demand": 21,
+      "coverage": 3.077731179652392,
+      "gapScore": 5.149922610099607,
+      "key": "ice",
+      "topRepo": "fif7y/dimble",
+      "coverageStars": 1195
+    },
+    {
+      "name": "Make",
+      "demand": 13,
+      "coverage": 1.5314789170422551,
+      "gapScore": 5.135338047843202,
+      "key": "make",
+      "topRepo": "andrewsky-labs/zentrun",
+      "coverageStars": 33
+    },
+    {
+      "name": "Ubuntu",
+      "demand": 12,
+      "coverage": 1.3617278360175928,
+      "gapScore": 5.081025771468533,
+      "key": "ubuntu",
+      "topRepo": "haukened/mirrorselect",
+      "coverageStars": 22
+    },
+    {
+      "name": "Copilot",
+      "demand": 15,
+      "coverage": 1.9542425094393248,
+      "gapScore": 5.077443693966342,
+      "key": "copilot",
+      "topRepo": "cesarandreslopez/sidekick-agent-hub",
+      "coverageStars": 89
+    },
+    {
+      "name": "LLMs",
+      "demand": 19,
+      "coverage": 2.7558748556724915,
+      "gapScore": 5.0587414996813145,
+      "key": "llms",
+      "topRepo": "xNul/code-llama-for-vscode",
+      "coverageStars": 569
+    },
+    {
+      "name": "Retool",
+      "demand": 20,
+      "coverage": 2.9916690073799486,
+      "gapScore": 5.010435475241871,
+      "key": "retool",
+      "topRepo": "Rheosoph/flow-like",
+      "coverageStars": 980
+    },
+    {
+      "name": "Algolia",
+      "demand": 12,
+      "coverage": 1.3979400086720377,
+      "gapScore": 5.004295335413965,
+      "key": "algolia",
+      "topRepo": "openviglet/turing",
+      "coverageStars": 24
+    },
+    {
+      "name": "AirDrop",
+      "demand": 16,
+      "coverage": 2.2624510897304293,
+      "gapScore": 4.904288082774615,
+      "key": "airdrop",
+      "topRepo": "baiyuze/pasteferry",
+      "coverageStars": 182
+    },
+    {
+      "name": "Google Workspace",
+      "demand": 14,
+      "coverage": 1.8864907251724818,
+      "gapScore": 4.850180143628707,
+      "key": "google workspace",
+      "topRepo": "eigen-is/eigen",
+      "coverageStars": 76
+    },
+    {
+      "name": "Plex",
+      "demand": 16,
+      "coverage": 2.3010299956639813,
+      "gapScore": 4.846972012073977,
+      "key": "plex",
+      "topRepo": "movieclaw/MovieClaw",
+      "coverageStars": 199
+    },
+    {
+      "name": "Jupyter",
+      "demand": 15,
+      "coverage": 2.3783979009481375,
+      "gapScore": 4.439974342806185,
+      "key": "jupyter",
+      "topRepo": "arpanjot-coding/Datly",
+      "coverageStars": 238
+    },
+    {
+      "name": "Grammarly",
+      "demand": 14,
+      "coverage": 2.2095150145426308,
+      "gapScore": 4.3620297573199105,
+      "key": "grammarly",
+      "topRepo": "riponcm/GemType",
+      "coverageStars": 161
+    },
+    {
+      "name": "Microsoft Office",
+      "demand": 22,
+      "coverage": 4.088632141846319,
+      "gapScore": 4.32336222913093,
+      "key": "microsoft office",
+      "topRepo": "genspark-ai/genoffice",
+      "coverageStars": 12263
+    },
+    {
+      "name": "Teams",
+      "demand": 15,
+      "coverage": 2.4913616938342726,
+      "gapScore": 4.296317974299233,
+      "key": "teams",
+      "topRepo": "sapientorius/Nebulynk",
+      "coverageStars": 309
+    },
+    {
+      "name": "Splitwise",
+      "demand": 12,
+      "coverage": 1.8195439355418688,
+      "gapScore": 4.256007451678103,
+      "key": "splitwise",
+      "topRepo": "sw-carlos-cristobal/sharetab",
+      "coverageStars": 65
+    },
+    {
+      "name": "Figma",
+      "demand": 25,
+      "coverage": 5.031008325054971,
+      "gapScore": 4.145243822022436,
+      "key": "figma",
+      "topRepo": "nexu-io/open-design",
+      "coverageStars": 107400
+    },
+    {
+      "name": "Zoom",
+      "demand": 18,
+      "coverage": 3.499549625905149,
+      "gapScore": 4.0004003725993,
+      "key": "zoom",
+      "topRepo": "miroslavpejic85/mirotalksfu",
+      "coverageStars": 3158
+    },
+    {
+      "name": "Node.js",
+      "demand": 12,
+      "coverage": 2.0969100130080562,
+      "gapScore": 3.874830056280613,
+      "key": "node js",
+      "topRepo": "halitsever/girici-web-proxy",
+      "coverageStars": 124
+    },
+    {
+      "name": "Obsidian",
+      "demand": 19,
+      "coverage": 3.943346098356591,
+      "gapScore": 3.843550425554166,
+      "key": "obsidian",
+      "topRepo": "tw93/MiaoYan",
+      "coverageStars": 8776
+    },
+    {
+      "name": "Google Photos",
+      "demand": 23,
+      "coverage": 5.075707511185185,
+      "gapScore": 3.7855673528815745,
+      "key": "google photos",
+      "topRepo": "immich-app/immich",
+      "coverageStars": 119043
+    },
+    {
+      "name": "Shopify",
+      "demand": 14,
+      "coverage": 2.8273692730538253,
+      "gapScore": 3.6578649723102155,
+      "key": "shopify",
+      "topRepo": "innocommerce/innoshop",
+      "coverageStars": 671
+    },
+    {
+      "name": "Terraform",
+      "demand": 14,
+      "coverage": 2.893206753059848,
+      "gapScore": 3.5960073245523794,
+      "key": "terraform",
+      "topRepo": "platform-engineering-labs/formae",
+      "coverageStars": 781
+    },
+    {
+      "name": "SaaS",
+      "demand": 12,
+      "coverage": 2.4183012913197452,
+      "gapScore": 3.51051559746128,
+      "key": "saas",
+      "topRepo": "shumaiOne/shumai",
+      "coverageStars": 261
+    },
+    {
+      "name": "Typeform",
+      "demand": 13,
+      "coverage": 2.795184589682424,
+      "gapScore": 3.4253933353707633,
+      "key": "typeform",
+      "topRepo": "quillforms/quillforms",
+      "coverageStars": 623
+    },
+    {
+      "name": "LangChain",
+      "demand": 13,
+      "coverage": 2.8512583487190755,
+      "gapScore": 3.3755201087259668,
+      "key": "langchain",
+      "topRepo": "swarmclawai/swarmclaw",
+      "coverageStars": 709
+    },
+    {
+      "name": "OpenClaw",
+      "demand": 14,
+      "coverage": 3.161368002234975,
+      "gapScore": 3.3642782836031144,
+      "key": "openclaw",
+      "topRepo": "remorses/kimaki",
+      "coverageStars": 1449
+    },
+    {
+      "name": "Bash",
+      "demand": 13,
+      "coverage": 2.9084850188786495,
+      "gapScore": 3.3260969243089797,
+      "key": "bash",
+      "topRepo": "ergonomica/ergonomica",
+      "coverageStars": 809
+    },
+    {
+      "name": "Tailscale",
+      "demand": 17,
+      "coverage": 4.343231294564039,
+      "gapScore": 3.1815953798022982,
+      "key": "tailscale",
+      "topRepo": "anderspitman/awesome-tunneling",
+      "coverageStars": 22040
+    },
+    {
+      "name": "Cursor",
+      "demand": 15,
+      "coverage": 3.807940721215499,
+      "gapScore": 3.119838797889305,
+      "key": "cursor",
+      "topRepo": "FlorianBruniaux/claude-code-ultimate-guide",
+      "coverageStars": 6425
+    },
+    {
+      "name": "Salesforce",
+      "demand": 13,
+      "coverage": 3.392696953259666,
+      "gapScore": 2.959457512850541,
+      "key": "salesforce",
+      "topRepo": "Django-CRM/Django-CRM",
+      "coverageStars": 2469
+    },
+    {
+      "name": "Firebase",
+      "demand": 13,
+      "coverage": 3.5412046906832586,
+      "gapScore": 2.862676511074433,
+      "key": "firebase",
+      "topRepo": "Anil-matcha/awesome-open-source-saas-alternatives",
+      "coverageStars": 3476
+    },
+    {
+      "name": "Loom",
+      "demand": 12,
+      "coverage": 3.389343311252078,
+      "gapScore": 2.73389414977817,
+      "key": "loom",
+      "topRepo": "KartikLabhshetwar/better-shot",
+      "coverageStars": 2450
+    },
+    {
+      "name": "Auth0",
+      "demand": 12,
+      "coverage": 3.5412046906832586,
+      "gapScore": 2.642470625607169,
+      "key": "auth0",
+      "topRepo": "Anil-matcha/awesome-open-source-saas-alternatives",
+      "coverageStars": 3476
+    },
+    {
+      "name": "Airtable",
+      "demand": 15,
+      "coverage": 4.81636726027562,
+      "gapScore": 2.578929309097513,
+      "key": "airtable",
+      "topRepo": "nocodb/nocodb",
+      "coverageStars": 65518
+    }
+  ],
+  "unchecked": [
+    {
+      "key": "homebrew",
+      "name": "Homebrew",
+      "threads": 12
+    },
+    {
+      "key": "gimp",
+      "name": "GIMP",
+      "threads": 12
+    },
+    {
+      "key": "php",
+      "name": "PHP",
+      "threads": 12
+    },
+    {
+      "key": "django",
+      "name": "Django",
+      "threads": 12
+    },
+    {
+      "key": "trump",
+      "name": "Trump",
+      "threads": 12
+    },
+    {
+      "key": "unix",
+      "name": "Unix",
+      "threads": 12
+    },
+    {
+      "key": "notepad",
+      "name": "Notepad",
+      "threads": 12
+    },
+    {
+      "key": "davinci resolve",
+      "name": "DaVinci Resolve",
+      "threads": 12
+    },
+    {
+      "key": "confluence",
+      "name": "Confluence",
+      "threads": 11
+    },
+    {
+      "key": "evernote",
+      "name": "Evernote",
+      "threads": 11
+    },
+    {
+      "key": "alexa",
+      "name": "Alexa",
+      "threads": 11
+    },
+    {
+      "key": "fb",
+      "name": "FB",
+      "threads": 11
+    },
+    {
+      "key": "nextcloud",
+      "name": "Nextcloud",
+      "threads": 11
+    },
+    {
+      "key": "emacs",
+      "name": "Emacs",
+      "threads": 11
+    },
+    {
+      "key": "steam",
+      "name": "Steam",
+      "threads": 11
+    },
+    {
+      "key": "rails",
+      "name": "Rails",
+      "threads": 11
+    },
+    {
+      "key": "intel",
+      "name": "Intel",
+      "threads": 11
+    },
+    {
+      "key": "mysql",
+      "name": "MySQL",
+      "threads": 11
+    },
+    {
+      "key": "ie",
+      "name": "IE",
+      "threads": 11
+    },
+    {
+      "key": "uber",
+      "name": "Uber",
+      "threads": 11
+    },
+    {
+      "key": "pandas",
+      "name": "Pandas",
+      "threads": 11
+    },
+    {
+      "key": "safari",
+      "name": "Safari",
+      "threads": 11
+    },
+    {
+      "key": "spacex",
+      "name": "SpaceX",
+      "threads": 11
+    },
+    {
+      "key": "basic",
+      "name": "BASIC",
+      "threads": 11
+    },
+    {
+      "key": "trello",
+      "name": "Trello",
+      "threads": 10
+    },
+    {
+      "key": "google play",
+      "name": "Google Play",
+      "threads": 10
+    },
+    {
+      "key": "intercom",
+      "name": "Intercom",
+      "threads": 10
+    },
+    {
+      "key": "airflow",
+      "name": "Airflow",
+      "threads": 10
+    },
+    {
+      "key": "bitcoin",
+      "name": "Bitcoin",
+      "threads": 10
+    },
+    {
+      "key": "csv",
+      "name": "CSV",
+      "threads": 10
+    },
+    {
+      "key": "duolingo",
+      "name": "Duolingo",
+      "threads": 10
+    },
+    {
+      "key": "transformers",
+      "name": "Transformers",
+      "threads": 10
+    },
+    {
+      "key": "wispr flow",
+      "name": "Wispr Flow",
+      "threads": 10
+    },
+    {
+      "key": "pdf",
+      "name": "PDF",
+      "threads": 10
+    },
+    {
+      "key": "telegram",
+      "name": "Telegram",
+      "threads": 10
+    },
+    {
+      "key": "ga",
+      "name": "GA",
+      "threads": 10
+    },
+    {
+      "key": "ms",
+      "name": "MS",
+      "threads": 10
+    },
+    {
+      "key": "patreon",
+      "name": "Patreon",
+      "threads": 10
+    },
+    {
+      "key": "gitlab",
+      "name": "GitLab",
+      "threads": 10
+    },
+    {
+      "key": "yaml",
+      "name": "YAML",
+      "threads": 10
+    },
+    {
+      "key": "bitwarden",
+      "name": "Bitwarden",
+      "threads": 10
+    },
+    {
+      "key": "gnome",
+      "name": "GNOME",
+      "threads": 10
+    },
+    {
+      "key": "markdown",
+      "name": "Markdown",
+      "threads": 10
+    },
+    {
+      "key": "pgp",
+      "name": "PGP",
+      "threads": 10
+    },
+    {
+      "key": "teamviewer",
+      "name": "TeamViewer",
+      "threads": 9
+    },
+    {
+      "key": "rest",
+      "name": "REST",
+      "threads": 9
+    },
+    {
+      "key": "mathematica",
+      "name": "Mathematica",
+      "threads": 9
+    },
+    {
+      "key": "quickbooks",
+      "name": "QuickBooks",
+      "threads": 9
+    },
+    {
+      "key": "gpt 4",
+      "name": "GPT-4",
+      "threads": 9
+    },
+    {
+      "key": "docusign",
+      "name": "DocuSign",
+      "threads": 9
+    },
+    {
+      "key": "helm",
+      "name": "Helm",
+      "threads": 9
+    },
+    {
+      "key": "ngrok",
+      "name": "Ngrok",
+      "threads": 9
+    },
+    {
+      "key": "perplexity",
+      "name": "Perplexity",
+      "threads": 9
+    },
+    {
+      "key": "stackoverflow",
+      "name": "StackOverflow",
+      "threads": 9
+    },
+    {
+      "key": "notebooklm",
+      "name": "NotebookLM",
+      "threads": 9
+    },
+    {
+      "key": "htmx",
+      "name": "Htmx",
+      "threads": 9
+    },
+    {
+      "key": "screen studio",
+      "name": "Screen Studio",
+      "threads": 9
+    },
+    {
+      "key": "xml",
+      "name": "XML",
+      "threads": 9
+    },
+    {
+      "key": "rag",
+      "name": "RAG",
+      "threads": 9
+    },
+    {
+      "key": "zfs",
+      "name": "ZFS",
+      "threads": 9
+    },
+    {
+      "key": "putin",
+      "name": "Putin",
+      "threads": 9
+    },
+    {
+      "key": "macos",
+      "name": "MacOS",
+      "threads": 9
+    },
+    {
+      "key": "pow",
+      "name": "PoW",
+      "threads": 9
+    },
+    {
+      "key": "chinese",
+      "name": "Chinese",
+      "threads": 9
+    },
+    {
+      "key": "meta",
+      "name": "Meta",
+      "threads": 9
+    },
+    {
+      "key": "facebook events",
+      "name": "Facebook Events",
+      "threads": 9
+    },
+    {
+      "key": "arm",
+      "name": "ARM",
+      "threads": 9
+    },
+    {
+      "key": "snowflake",
+      "name": "Snowflake",
+      "threads": 9
+    },
+    {
+      "key": "builtwith",
+      "name": "Builtwith",
+      "threads": 9
+    },
+    {
+      "key": "websockets",
+      "name": "WebSockets",
+      "threads": 8
+    },
+    {
+      "key": "sentry",
+      "name": "Sentry",
+      "threads": 8
+    },
+    {
+      "key": "zapier",
+      "name": "Zapier",
+      "threads": 8
+    },
+    {
+      "key": "next js",
+      "name": "Next.js",
+      "threads": 8
+    },
+    {
+      "key": "bootstrap",
+      "name": "Bootstrap",
+      "threads": 8
+    },
+    {
+      "key": "gpt 3",
+      "name": "GPT-3",
+      "threads": 8
+    },
+    {
+      "key": "openai s",
+      "name": "OpenAI's",
+      "threads": 8
+    },
+    {
+      "key": "tor",
+      "name": "Tor",
+      "threads": 8
+    },
+    {
+      "key": "leetcode",
+      "name": "Leetcode",
+      "threads": 8
+    },
+    {
+      "key": "temporal",
+      "name": "Temporal",
+      "threads": 8
+    },
+    {
+      "key": "pocket",
+      "name": "Pocket",
+      "threads": 8
+    },
+    {
+      "key": "substack",
+      "name": "Substack",
+      "threads": 8
+    },
+    {
+      "key": "yc",
+      "name": "YC",
+      "threads": 8
+    },
+    {
+      "key": "openrouter",
+      "name": "OpenRouter",
+      "threads": 8
+    },
+    {
+      "key": "ssh",
+      "name": "SSH",
+      "threads": 8
+    },
+    {
+      "key": "indesign",
+      "name": "InDesign",
+      "threads": 8
+    },
+    {
+      "key": "fptp",
+      "name": "FPTP",
+      "threads": 8
+    },
+    {
+      "key": "nato",
+      "name": "NATO",
+      "threads": 8
+    },
+    {
+      "key": "webkit",
+      "name": "WebKit",
+      "threads": 8
+    },
+    {
+      "key": "ip",
+      "name": "IP",
+      "threads": 8
+    },
+    {
+      "key": "mac",
+      "name": "Mac",
+      "threads": 8
+    },
+    {
+      "key": "objective c",
+      "name": "Objective-C",
+      "threads": 8
+    },
+    {
+      "key": "posix",
+      "name": "POSIX",
+      "threads": 8
+    },
+    {
+      "key": "gcc",
+      "name": "GCC",
+      "threads": 8
+    },
+    {
+      "key": "evs",
+      "name": "EVs",
+      "threads": 8
+    },
+    {
+      "key": "lua",
+      "name": "Lua",
+      "threads": 8
+    },
+    {
+      "key": "gpus",
+      "name": "GPUs",
+      "threads": 8
+    },
+    {
+      "key": "postgresql",
+      "name": "PostgreSQL",
+      "threads": 8
+    },
+    {
+      "key": "proton",
+      "name": "Proton",
+      "threads": 8
+    },
+    {
+      "key": "npm",
+      "name": "NPM",
+      "threads": 8
+    },
+    {
+      "key": "resolve",
+      "name": "Resolve",
+      "threads": 8
+    },
+    {
+      "key": "opengl",
+      "name": "OpenGL",
+      "threads": 8
+    },
+    {
+      "key": "git lfs",
+      "name": "Git LFS",
+      "threads": 7
+    },
+    {
+      "key": "skype",
+      "name": "Skype",
+      "threads": 7
+    },
+    {
+      "key": "xcode",
+      "name": "Xcode",
+      "threads": 7
+    },
+    {
+      "key": "product hunt",
+      "name": "Product Hunt",
+      "threads": 7
+    },
+    {
+      "key": "google forms",
+      "name": "Google Forms",
+      "threads": 7
+    },
+    {
+      "key": "mint",
+      "name": "Mint",
+      "threads": 7
+    },
+    {
+      "key": "turbotax",
+      "name": "TurboTax",
+      "threads": 7
+    },
+    {
+      "key": "devin",
+      "name": "Devin",
+      "threads": 7
+    },
+    {
+      "key": "illustrator",
+      "name": "Illustrator",
+      "threads": 7
+    },
+    {
+      "key": "anthropic",
+      "name": "Anthropic",
+      "threads": 7
+    },
+    {
+      "key": "supabase",
+      "name": "Supabase",
+      "threads": 7
+    },
+    {
+      "key": "codex",
+      "name": "Codex",
+      "threads": 7
+    },
+    {
+      "key": "protobuf",
+      "name": "Protobuf",
+      "threads": 7
+    },
+    {
+      "key": "home assistant",
+      "name": "Home Assistant",
+      "threads": 7
+    },
+    {
+      "key": "claude cowork",
+      "name": "Claude Cowork",
+      "threads": 7
+    },
+    {
+      "key": "overleaf",
+      "name": "Overleaf",
+      "threads": 7
+    },
+    {
+      "key": "es",
+      "name": "ES",
+      "threads": 7
+    },
+    {
+      "key": "yt",
+      "name": "YT",
+      "threads": 7
+    },
+    {
+      "key": "jpeg",
+      "name": "JPEG",
+      "threads": 7
+    },
+    {
+      "key": "nix",
+      "name": "Nix",
+      "threads": 7
+    },
+    {
+      "key": "boeing",
+      "name": "Boeing",
+      "threads": 7
+    },
+    {
+      "key": "vms",
+      "name": "VMs",
+      "threads": 7
+    },
+    {
+      "key": "dram",
+      "name": "DRAM",
+      "threads": 7
+    },
+    {
+      "key": "vim",
+      "name": "Vim",
+      "threads": 7
+    },
+    {
+      "key": "general relativity",
+      "name": "General Relativity",
+      "threads": 7
+    },
+    {
+      "key": "os",
+      "name": "OS",
+      "threads": 7
+    },
+    {
+      "key": "ubi",
+      "name": "UBI",
+      "threads": 7
+    },
+    {
+      "key": "powerpoint",
+      "name": "PowerPoint",
+      "threads": 7
+    },
+    {
+      "key": "nginx",
+      "name": "Nginx",
+      "threads": 7
+    },
+    {
+      "key": "twilio",
+      "name": "Twilio",
+      "threads": 6
+    },
+    {
+      "key": "jq",
+      "name": "JQ",
+      "threads": 6
+    },
+    {
+      "key": "office 365",
+      "name": "Office 365",
+      "threads": 6
+    },
+    {
+      "key": "meetup",
+      "name": "Meetup",
+      "threads": 6
+    },
+    {
+      "key": "graphql",
+      "name": "GraphQL",
+      "threads": 6
+    },
+    {
+      "key": "midjourney",
+      "name": "Midjourney",
+      "threads": 6
+    },
+    {
+      "key": "labview",
+      "name": "LabVIEW",
+      "threads": 6
+    },
+    {
+      "key": "pagerduty",
+      "name": "PagerDuty",
+      "threads": 6
+    },
+    {
+      "key": "myfitnesspal",
+      "name": "MyFitnessPal",
+      "threads": 6
+    },
+    {
+      "key": "upwork",
+      "name": "Upwork",
+      "threads": 6
+    },
+    {
+      "key": "hashicorp vault",
+      "name": "HashiCorp Vault",
+      "threads": 6
+    },
+    {
+      "key": "ozempic",
+      "name": "Ozempic",
+      "threads": 6
+    },
+    {
+      "key": "ollama",
+      "name": "Ollama",
+      "threads": 6
+    },
+    {
+      "key": "superwhisper",
+      "name": "Superwhisper",
+      "threads": 6
+    },
+    {
+      "key": "grafana",
+      "name": "Grafana",
+      "threads": 6
+    },
+    {
+      "key": "minecraft",
+      "name": "Minecraft",
+      "threads": 6
+    },
+    {
+      "key": "jev",
+      "name": "Jev",
+      "threads": 6
+    },
+    {
+      "key": "oop",
+      "name": "OOP",
+      "threads": 6
+    },
+    {
+      "key": "delphi",
+      "name": "Delphi",
+      "threads": 6
+    },
+    {
+      "key": "lastpass",
+      "name": "LastPass",
+      "threads": 6
+    },
+    {
+      "key": "intellij",
+      "name": "IntelliJ",
+      "threads": 6
+    },
+    {
+      "key": "anki",
+      "name": "Anki",
+      "threads": 6
+    },
+    {
+      "key": "nixos",
+      "name": "NixOS",
+      "threads": 6
+    },
+    {
+      "key": "amd",
+      "name": "AMD",
+      "threads": 6
+    },
+    {
+      "key": "vs",
+      "name": "VS",
+      "threads": 6
+    },
+    {
+      "key": "outlook",
+      "name": "Outlook",
+      "threads": 6
+    },
+    {
+      "key": "gpu",
+      "name": "GPU",
+      "threads": 6
+    },
+    {
+      "key": "spark",
+      "name": "Spark",
+      "threads": 6
+    },
+    {
+      "key": "let s encrypt",
+      "name": "Let's Encrypt",
+      "threads": 6
+    },
+    {
+      "key": "gpt",
+      "name": "GPT",
+      "threads": 6
+    },
+    {
+      "key": "splunk",
+      "name": "Splunk",
+      "threads": 6
+    },
+    {
+      "key": "bazel",
+      "name": "Bazel",
+      "threads": 6
+    },
+    {
+      "key": "so",
+      "name": "SO",
+      "threads": 6
+    },
+    {
+      "key": "dos",
+      "name": "DOS",
+      "threads": 6
+    },
+    {
+      "key": "lisp",
+      "name": "Lisp",
+      "threads": 6
+    },
+    {
+      "key": "google chrome",
+      "name": "Google Chrome",
+      "threads": 6
+    },
+    {
+      "key": "vault",
+      "name": "Vault",
+      "threads": 6
+    },
+    {
+      "key": "webrtc",
+      "name": "WebRTC",
+      "threads": 6
+    },
+    {
+      "key": "digg",
+      "name": "Digg",
+      "threads": 6
+    },
+    {
+      "key": "rsa",
+      "name": "RSA",
+      "threads": 6
+    },
+    {
+      "key": "le",
+      "name": "LE",
+      "threads": 6
+    },
+    {
+      "key": "after effects",
+      "name": "After Effects",
+      "threads": 6
+    },
+    {
+      "key": "oracle",
+      "name": "Oracle",
+      "threads": 6
+    },
+    {
+      "key": "airbnb",
+      "name": "Airbnb",
+      "threads": 6
+    },
+    {
+      "key": "xslt",
+      "name": "XSLT",
+      "threads": 6
+    },
+    {
+      "key": "tv",
+      "name": "TV",
+      "threads": 6
+    },
+    {
+      "key": "sls",
+      "name": "SLS",
+      "threads": 6
+    },
+    {
+      "key": "word",
+      "name": "Word",
+      "threads": 6
+    },
+    {
+      "key": "beads",
+      "name": "Beads",
+      "threads": 6
+    },
+    {
+      "key": "calibre",
+      "name": "Calibre",
+      "threads": 6
+    },
+    {
+      "key": "insomnia",
+      "name": "Insomnia",
+      "threads": 6
+    },
+    {
+      "key": "synapse",
+      "name": "Synapse",
+      "threads": 6
+    },
+    {
+      "key": "macbooks",
+      "name": "Macbooks",
+      "threads": 6
+    },
+    {
+      "key": "xorg",
+      "name": "Xorg",
+      "threads": 6
+    },
+    {
+      "key": "simcity",
+      "name": "SimCity",
+      "threads": 6
+    },
+    {
+      "key": "storybook",
+      "name": "Storybook",
+      "threads": 5
+    },
+    {
+      "key": "cloudflare workers",
+      "name": "Cloudflare Workers",
+      "threads": 5
+    },
+    {
+      "key": "linktree",
+      "name": "Linktree",
+      "threads": 5
+    },
+    {
+      "key": "mailchimp",
+      "name": "Mailchimp",
+      "threads": 5
+    },
+    {
+      "key": "yelp",
+      "name": "Yelp",
+      "threads": 5
+    },
+    {
+      "key": "jupyter notebooks",
+      "name": "Jupyter Notebooks",
+      "threads": 5
+    },
+    {
+      "key": "western",
+      "name": "Western",
+      "threads": 5
+    },
+    {
+      "key": "adobe s",
+      "name": "Adobe's",
+      "threads": 5
+    },
+    {
+      "key": "producthunt",
+      "name": "ProductHunt",
+      "threads": 5
+    },
+    {
+      "key": "mongodb",
+      "name": "MongoDB",
+      "threads": 5
+    },
+    {
+      "key": "terraform enterprise",
+      "name": "Terraform Enterprise",
+      "threads": 5
+    },
+    {
+      "key": "pastebin",
+      "name": "Pastebin",
+      "threads": 5
+    },
+    {
+      "key": "debian",
+      "name": "Debian",
+      "threads": 5
+    },
+    {
+      "key": "bandcamp",
+      "name": "Bandcamp",
+      "threads": 5
+    },
+    {
+      "key": "strava",
+      "name": "Strava",
+      "threads": 5
+    },
+    {
+      "key": "authy",
+      "name": "Authy",
+      "threads": 5
+    },
+    {
+      "key": "u s",
+      "name": "U.S",
+      "threads": 5
+    },
+    {
+      "key": "tailwind",
+      "name": "Tailwind",
+      "threads": 5
+    },
+    {
+      "key": "ros",
+      "name": "ROS",
+      "threads": 5
+    },
+    {
+      "key": "wetransfer",
+      "name": "WeTransfer",
+      "threads": 5
+    },
+    {
+      "key": "dark matter",
+      "name": "Dark Matter",
+      "threads": 5
+    },
+    {
+      "key": "mixpanel",
+      "name": "Mixpanel",
+      "threads": 5
+    },
+    {
+      "key": "cloudflare tunnels",
+      "name": "Cloudflare Tunnels",
+      "threads": 5
+    },
+    {
+      "key": "llm",
+      "name": "LLM",
+      "threads": 5
+    },
+    {
+      "key": "cf",
+      "name": "CF",
+      "threads": 5
+    },
+    {
+      "key": "bgp",
+      "name": "BGP",
+      "threads": 5
+    },
+    {
+      "key": "play integrity",
+      "name": "Play Integrity",
+      "threads": 5
+    },
+    {
+      "key": "bloomberg",
+      "name": "Bloomberg",
+      "threads": 5
+    },
+    {
+      "key": "linear",
+      "name": "Linear",
+      "threads": 5
+    },
+    {
+      "key": "access",
+      "name": "Access",
+      "threads": 5
+    },
+    {
+      "key": "hypercard",
+      "name": "Hypercard",
+      "threads": 5
+    },
+    {
+      "key": "jsx",
+      "name": "JSX",
+      "threads": 5
+    },
+    {
+      "key": "perforce",
+      "name": "Perforce",
+      "threads": 5
+    },
+    {
+      "key": "microsoft windows",
+      "name": "Microsoft Windows",
+      "threads": 5
+    },
+    {
+      "key": "medium",
+      "name": "Medium",
+      "threads": 5
+    },
+    {
+      "key": "little snitch",
+      "name": "Little Snitch",
+      "threads": 5
+    },
+    {
+      "key": "gc",
+      "name": "GC",
+      "threads": 5
+    },
+    {
+      "key": "autohotkey",
+      "name": "AutoHotkey",
+      "threads": 5
+    },
+    {
+      "key": "scratch",
+      "name": "Scratch",
+      "threads": 5
+    },
+    {
+      "key": "ynab",
+      "name": "YNAB",
+      "threads": 5
+    },
+    {
+      "key": "lambda",
+      "name": "Lambda",
+      "threads": 5
+    },
+    {
+      "key": "paint",
+      "name": "Paint.NET",
+      "threads": 5
+    },
+    {
+      "key": "lora",
+      "name": "LoRa",
+      "threads": 5
+    },
+    {
+      "key": "nvidia s",
+      "name": "Nvidia's",
+      "threads": 5
+    },
+    {
+      "key": "ms word",
+      "name": "MS Word",
+      "threads": 5
+    },
+    {
+      "key": "teamspeak",
+      "name": "TeamSpeak",
+      "threads": 5
+    },
+    {
+      "key": "netflix",
+      "name": "Netflix",
+      "threads": 5
+    },
+    {
+      "key": "ruby",
+      "name": "Ruby",
+      "threads": 5
+    },
+    {
+      "key": "ach",
+      "name": "ACH",
+      "threads": 5
+    },
+    {
+      "key": "gdp",
+      "name": "GDP",
+      "threads": 5
+    },
+    {
+      "key": "pp",
+      "name": "PP",
+      "threads": 5
+    },
+    {
+      "key": "acrobat",
+      "name": "Acrobat",
+      "threads": 5
+    },
+    {
+      "key": "mac os",
+      "name": "Mac OS",
+      "threads": 5
+    },
+    {
+      "key": "imap",
+      "name": "IMAP",
+      "threads": 5
+    },
+    {
+      "key": "onenote",
+      "name": "OneNote",
+      "threads": 5
+    },
+    {
+      "key": "cmake",
+      "name": "CMake",
+      "threads": 5
+    },
+    {
+      "key": "tls",
+      "name": "TLS",
+      "threads": 5
+    },
+    {
+      "key": "vb",
+      "name": "VB",
+      "threads": 5
+    },
+    {
+      "key": "fortran",
+      "name": "Fortran",
+      "threads": 5
+    },
+    {
+      "key": "adsense",
+      "name": "Adsense",
+      "threads": 5
+    },
+    {
+      "key": "internet explorer",
+      "name": "Internet Explorer",
+      "threads": 5
+    },
+    {
+      "key": "webpack",
+      "name": "Webpack",
+      "threads": 5
+    },
+    {
+      "key": "cc",
+      "name": "CC",
+      "threads": 5
+    },
+    {
+      "key": "google pay",
+      "name": "Google Pay",
+      "threads": 5
+    },
+    {
+      "key": "news",
+      "name": "NeWS",
+      "threads": 5
+    },
+    {
+      "key": "usb",
+      "name": "USB",
+      "threads": 5
+    },
+    {
+      "key": "apache kafka",
+      "name": "Apache Kafka",
+      "threads": 5
+    },
+    {
+      "key": "capitalism",
+      "name": "Capitalism",
+      "threads": 5
+    },
+    {
+      "key": "centos",
+      "name": "CentOS",
+      "threads": 5
+    },
+    {
+      "key": "grapheneos",
+      "name": "GrapheneOS",
+      "threads": 5
+    },
+    {
+      "key": "crowdstrike",
+      "name": "CrowdStrike",
+      "threads": 5
+    },
+    {
+      "key": "nfs",
+      "name": "NFS",
+      "threads": 5
+    },
+    {
+      "key": "feedly",
+      "name": "Feedly",
+      "threads": 5
+    },
+    {
+      "key": "google reader",
+      "name": "Google Reader",
+      "threads": 5
+    },
+    {
+      "key": "gpg",
+      "name": "GPG",
+      "threads": 5
+    },
+    {
+      "key": "chrome s",
+      "name": "Chrome's",
+      "threads": 5
+    },
+    {
+      "key": "sharepoint",
+      "name": "SharePoint",
+      "threads": 5
+    },
+    {
+      "key": "simulink",
+      "name": "Simulink",
+      "threads": 5
+    },
+    {
+      "key": "arc",
+      "name": "Arc",
+      "threads": 5
+    },
+    {
+      "key": "duckduckgo",
+      "name": "DuckDuckGo",
+      "threads": 5
+    },
+    {
+      "key": "visual studio",
+      "name": "Visual Studio",
+      "threads": 5
+    },
+    {
+      "key": "keras",
+      "name": "Keras",
+      "threads": 5
+    },
+    {
+      "key": "ices",
+      "name": "ICEs",
+      "threads": 5
+    },
+    {
+      "key": "go s",
+      "name": "Go's",
+      "threads": 5
+    },
+    {
+      "key": "li ion",
+      "name": "Li-ion",
+      "threads": 5
+    },
+    {
+      "key": "llama",
+      "name": "LLaMA",
+      "threads": 5
+    },
+    {
+      "key": "rocksdb",
+      "name": "RocksDB",
+      "threads": 5
+    },
+    {
+      "key": "bert",
+      "name": "Bert",
+      "threads": 5
+    },
+    {
+      "key": "google translate",
+      "name": "Google Translate",
+      "threads": 4
+    },
+    {
+      "key": "gitbook",
+      "name": "GitBook",
+      "threads": 4
+    },
+    {
+      "key": "flatfile",
+      "name": "Flatfile",
+      "threads": 4
+    },
+    {
+      "key": "jni",
+      "name": "JNI",
+      "threads": 4
+    },
+    {
+      "key": "openapi",
+      "name": "OpenAPI",
+      "threads": 4
+    },
+    {
+      "key": "vpns",
+      "name": "VPNs",
+      "threads": 4
+    },
+    {
+      "key": "dall e",
+      "name": "DALL-E",
+      "threads": 4
+    },
+    {
+      "key": "sublime",
+      "name": "Sublime",
+      "threads": 4
+    },
+    {
+      "key": "performance reviews",
+      "name": "Performance Reviews",
+      "threads": 4
+    },
+    {
+      "key": "tableau",
+      "name": "Tableau",
+      "threads": 4
+    },
+    {
+      "key": "scribe",
+      "name": "Scribe",
+      "threads": 4
+    },
+    {
+      "key": "agile",
+      "name": "Agile",
+      "threads": 4
+    },
+    {
+      "key": "deepl",
+      "name": "DeepL",
+      "threads": 4
+    },
+    {
+      "key": "gumroad",
+      "name": "Gumroad",
+      "threads": 4
+    },
+    {
+      "key": "docsend",
+      "name": "DocSend",
+      "threads": 4
+    },
+    {
+      "key": "discourse",
+      "name": "Discourse",
+      "threads": 4
+    },
+    {
+      "key": "paas",
+      "name": "PaaS",
+      "threads": 4
+    },
+    {
+      "key": "big tech s a i",
+      "name": "Big Tech's A.I",
+      "threads": 4
+    },
+    {
+      "key": "keybase",
+      "name": "Keybase",
+      "threads": 4
+    },
+    {
+      "key": "terraform cloud",
+      "name": "Terraform Cloud",
+      "threads": 4
+    },
+    {
+      "key": "carta",
+      "name": "Carta",
+      "threads": 4
+    },
+    {
+      "key": "lng",
+      "name": "LNG",
+      "threads": 4
+    },
+    {
+      "key": "semver",
+      "name": "SemVer",
+      "threads": 4
+    },
+    {
+      "key": "langsmith",
+      "name": "LangSmith",
+      "threads": 4
+    },
+    {
+      "key": "hacker news",
+      "name": "Hacker News",
+      "threads": 4
+    },
+    {
+      "key": "influxdb",
+      "name": "InfluxDB",
+      "threads": 4
+    },
+    {
+      "key": "flipperzero",
+      "name": "FlipperZero",
+      "threads": 4
+    },
+    {
+      "key": "aspera",
+      "name": "Aspera",
+      "threads": 4
+    },
+    {
+      "key": "makefiles",
+      "name": "Makefiles",
+      "threads": 4
+    },
+    {
+      "key": "zotero",
+      "name": "Zotero",
+      "threads": 4
+    },
+    {
+      "key": "mastercard",
+      "name": "Mastercard",
+      "threads": 4
+    },
+    {
+      "key": "systemverilog",
+      "name": "SystemVerilog",
+      "threads": 4
+    },
+    {
+      "key": "openai operator",
+      "name": "OpenAI Operator",
+      "threads": 4
+    },
+    {
+      "key": "stripe billing",
+      "name": "Stripe Billing",
+      "threads": 4
+    },
+    {
+      "key": "honey",
+      "name": "Honey",
+      "threads": 4
+    },
+    {
+      "key": "celery",
+      "name": "Celery",
+      "threads": 4
+    },
+    {
+      "key": "self attention",
+      "name": "Self-Attention",
+      "threads": 4
+    },
+    {
+      "key": "raspberry pi",
+      "name": "Raspberry Pi",
+      "threads": 4
+    },
+    {
+      "key": "lodash",
+      "name": "Lodash",
+      "threads": 4
+    },
+    {
+      "key": "uefi",
+      "name": "UEFI",
+      "threads": 4
+    },
+    {
+      "key": "tradingview",
+      "name": "TradingView",
+      "threads": 4
+    },
+    {
+      "key": "lovable",
+      "name": "Lovable",
+      "threads": 4
+    },
+    {
+      "key": "ros 2",
+      "name": "ROS 2",
+      "threads": 4
+    },
+    {
+      "key": "render",
+      "name": "Render",
+      "threads": 4
+    },
+    {
+      "key": "adobe acrobat",
+      "name": "Adobe Acrobat",
+      "threads": 4
+    },
+    {
+      "key": "google sheets",
+      "name": "Google Sheets",
+      "threads": 4
+    },
+    {
+      "key": "duckdb",
+      "name": "DuckDB",
+      "threads": 4
+    },
+    {
+      "key": "claude design",
+      "name": "Claude Design",
+      "threads": 4
+    },
+    {
+      "key": "opencode",
+      "name": "OpenCode",
+      "threads": 4
+    },
+    {
+      "key": "claude managed agents",
+      "name": "Claude Managed Agents",
+      "threads": 4
+    },
+    {
+      "key": "jwt",
+      "name": "JWT",
+      "threads": 4
+    },
+    {
+      "key": "google timeline",
+      "name": "Google Timeline",
+      "threads": 4
+    },
+    {
+      "key": "logitech options",
+      "name": "Logitech Options",
+      "threads": 4
+    },
+    {
+      "key": "puppeteer",
+      "name": "Puppeteer",
+      "threads": 4
+    },
+    {
+      "key": "raycast",
+      "name": "Raycast",
+      "threads": 4
+    },
+    {
+      "key": "subversion",
+      "name": "Subversion",
+      "threads": 4
+    },
+    {
+      "key": "microsoft 365",
+      "name": "Microsoft 365",
+      "threads": 4
+    },
+    {
+      "key": "fusion",
+      "name": "Fusion",
+      "threads": 4
+    },
+    {
+      "key": "totp",
+      "name": "TOTP",
+      "threads": 4
+    },
+    {
+      "key": "turing",
+      "name": "Turing",
+      "threads": 4
+    },
+    {
+      "key": "elastic",
+      "name": "Elastic",
+      "threads": 4
+    },
+    {
+      "key": "irl",
+      "name": "IRL",
+      "threads": 4
+    },
+    {
+      "key": "drm",
+      "name": "DRM",
+      "threads": 4
+    },
+    {
+      "key": "prolog",
+      "name": "Prolog",
+      "threads": 4
+    },
+    {
+      "key": "ipv6",
+      "name": "IPv6",
+      "threads": 4
+    },
+    {
+      "key": "blink",
+      "name": "Blink",
+      "threads": 4
+    },
+    {
+      "key": "gif",
+      "name": "GIF",
+      "threads": 4
+    },
+    {
+      "key": "godaddy",
+      "name": "GoDaddy",
+      "threads": 4
+    },
+    {
+      "key": "invidious",
+      "name": "Invidious",
+      "threads": 4
+    },
+    {
+      "key": "unicode",
+      "name": "Unicode",
+      "threads": 4
+    },
+    {
+      "key": "fusion 360",
+      "name": "Fusion 360",
+      "threads": 4
+    },
+    {
+      "key": "microsoft word",
+      "name": "Microsoft Word",
+      "threads": 4
+    },
+    {
+      "key": "hcl",
+      "name": "HCL",
+      "threads": 4
+    },
+    {
+      "key": "ac",
+      "name": "AC",
+      "threads": 4
+    },
+    {
+      "key": "ocaml",
+      "name": "OCaml",
+      "threads": 4
+    },
+    {
+      "key": "comcast",
+      "name": "Comcast",
+      "threads": 4
+    },
+    {
+      "key": "gboard",
+      "name": "Gboard",
+      "threads": 4
+    },
+    {
+      "key": "myspace",
+      "name": "MySpace",
+      "threads": 4
+    },
+    {
+      "key": "ticketmaster",
+      "name": "Ticketmaster",
+      "threads": 4
+    },
+    {
+      "key": "dnssec",
+      "name": "DNSSEC",
+      "threads": 4
+    },
+    {
+      "key": "mozilla",
+      "name": "Mozilla",
+      "threads": 4
+    },
+    {
+      "key": "kde",
+      "name": "KDE",
+      "threads": 4
+    },
+    {
+      "key": "flutter",
+      "name": "Flutter",
+      "threads": 4
+    },
+    {
+      "key": "dji",
+      "name": "DJI",
+      "threads": 4
+    },
+    {
+      "key": "azure",
+      "name": "Azure",
+      "threads": 4
+    },
+    {
+      "key": "python s",
+      "name": "Python's",
+      "threads": 4
+    },
+    {
+      "key": "gitea",
+      "name": "Gitea",
+      "threads": 4
+    },
+    {
+      "key": "wireshark",
+      "name": "Wireshark",
+      "threads": 4
+    },
+    {
+      "key": "adobe photoshop",
+      "name": "Adobe Photoshop",
+      "threads": 4
+    },
+    {
+      "key": "apple photos",
+      "name": "Apple Photos",
+      "threads": 4
+    },
+    {
+      "key": "neo4j",
+      "name": "Neo4j",
+      "threads": 4
+    },
+    {
+      "key": "siri",
+      "name": "Siri",
+      "threads": 4
+    },
+    {
+      "key": "tex",
+      "name": "TeX",
+      "threads": 4
+    },
+    {
+      "key": "swing",
+      "name": "Swing",
+      "threads": 4
+    },
+    {
+      "key": "onedrive",
+      "name": "OneDrive",
+      "threads": 4
+    },
+    {
+      "key": "nextjs",
+      "name": "NextJS",
+      "threads": 4
+    },
+    {
+      "key": "julia",
+      "name": "Julia",
+      "threads": 4
+    },
+    {
+      "key": "jenkins",
+      "name": "Jenkins",
+      "threads": 4
+    },
+    {
+      "key": "whisper",
+      "name": "Whisper",
+      "threads": 4
+    },
+    {
+      "key": "keycloak",
+      "name": "Keycloak",
+      "threads": 4
+    },
+    {
+      "key": "western union",
+      "name": "Western Union",
+      "threads": 4
+    },
+    {
+      "key": "pcie",
+      "name": "PCIe",
+      "threads": 4
+    },
+    {
+      "key": "docker hub",
+      "name": "Docker Hub",
+      "threads": 4
+    },
+    {
+      "key": "coke",
+      "name": "Coke",
+      "threads": 4
+    },
+    {
+      "key": "spss",
+      "name": "SPSS",
+      "threads": 4
+    },
+    {
+      "key": "api",
+      "name": "API",
+      "threads": 4
+    },
+    {
+      "key": "vm",
+      "name": "VM",
+      "threads": 4
+    },
+    {
+      "key": "red hat",
+      "name": "Red Hat",
+      "threads": 4
+    },
+    {
+      "key": "vc",
+      "name": "VC",
+      "threads": 4
+    },
+    {
+      "key": "uuidv4",
+      "name": "UUIDv4",
+      "threads": 4
+    },
+    {
+      "key": "matrix",
+      "name": "Matrix",
+      "threads": 4
+    },
+    {
+      "key": "euv",
+      "name": "EUV",
+      "threads": 4
+    },
+    {
+      "key": "vulkan",
+      "name": "Vulkan",
+      "threads": 4
+    },
+    {
+      "key": "yahoo",
+      "name": "Yahoo",
+      "threads": 4
+    },
+    {
+      "key": "visual basic",
+      "name": "Visual Basic",
+      "threads": 4
+    },
+    {
+      "key": "roku",
+      "name": "Roku",
+      "threads": 4
+    },
+    {
+      "key": "tla",
+      "name": "TLA",
+      "threads": 4
+    },
+    {
+      "key": "pytorch",
+      "name": "PyTorch",
+      "threads": 4
+    },
+    {
+      "key": "audible",
+      "name": "Audible",
+      "threads": 4
+    },
+    {
+      "key": "active directory",
+      "name": "Active Directory",
+      "threads": 4
+    },
+    {
+      "key": "ae",
+      "name": "AE",
+      "threads": 4
+    },
+    {
+      "key": "spring",
+      "name": "Spring",
+      "threads": 4
+    },
+    {
+      "key": "office365",
+      "name": "Office365",
+      "threads": 4
+    },
+    {
+      "key": "asml",
+      "name": "ASML",
+      "threads": 4
+    },
+    {
+      "key": "orion",
+      "name": "Orion",
+      "threads": 4
+    },
+    {
+      "key": "infiniband",
+      "name": "Infiniband",
+      "threads": 4
+    },
+    {
+      "key": "poetry",
+      "name": "Poetry",
+      "threads": 4
+    },
+    {
+      "key": "paxos",
+      "name": "Paxos",
+      "threads": 4
+    },
+    {
+      "key": "cfcs",
+      "name": "CFCs",
+      "threads": 4
+    },
+    {
+      "key": "chromeos",
+      "name": "ChromeOS",
+      "threads": 4
+    },
+    {
+      "key": "helvetica",
+      "name": "Helvetica",
+      "threads": 4
+    },
+    {
+      "key": "ftp",
+      "name": "FTP",
+      "threads": 4
+    },
+    {
+      "key": "corba",
+      "name": "CORBA",
+      "threads": 4
+    },
+    {
+      "key": "sketchup",
+      "name": "SketchUp",
+      "threads": 4
+    },
+    {
+      "key": "directx",
+      "name": "DirectX",
+      "threads": 4
+    },
+    {
+      "key": "sonnet",
+      "name": "Sonnet",
+      "threads": 4
+    },
+    {
+      "key": "hamachi",
+      "name": "Hamachi",
+      "threads": 4
+    },
+    {
+      "key": "openscad",
+      "name": "OpenSCAD",
+      "threads": 4
+    },
+    {
+      "key": "opus",
+      "name": "Opus",
+      "threads": 4
+    },
+    {
+      "key": "ad",
+      "name": "AD",
+      "threads": 4
+    },
+    {
+      "key": "ipv4",
+      "name": "IPv4",
+      "threads": 4
+    },
+    {
+      "key": "hetzner",
+      "name": "Hetzner",
+      "threads": 4
+    },
+    {
+      "key": "google play services",
+      "name": "Google Play Services",
+      "threads": 4
+    },
+    {
+      "key": "apache",
+      "name": "Apache",
+      "threads": 4
+    },
+    {
+      "key": "huawei",
+      "name": "Huawei",
+      "threads": 4
+    },
+    {
+      "key": "google products",
+      "name": "Google Products",
+      "threads": 4
+    },
+    {
+      "key": "conda",
+      "name": "Conda",
+      "threads": 4
+    },
+    {
+      "key": "win32",
+      "name": "Win32",
+      "threads": 4
+    },
+    {
+      "key": "sv",
+      "name": "SV",
+      "threads": 4
+    },
+    {
+      "key": "english",
+      "name": "English",
+      "threads": 4
+    },
+    {
+      "key": "russia",
+      "name": "Russia",
+      "threads": 4
+    },
+    {
+      "key": "windows xp",
+      "name": "Windows XP",
+      "threads": 4
+    },
+    {
+      "key": "prometheus",
+      "name": "Prometheus",
+      "threads": 4
+    },
+    {
+      "key": "c based",
+      "name": "C-based",
+      "threads": 4
+    },
+    {
+      "key": "png",
+      "name": "PNG",
+      "threads": 4
+    },
+    {
+      "key": "wpf",
+      "name": "WPF",
+      "threads": 4
+    },
+    {
+      "key": "aperture",
+      "name": "Aperture",
+      "threads": 4
+    },
+    {
+      "key": "launchdarkly",
+      "name": "LaunchDarkly",
+      "threads": 3
+    },
+    {
+      "key": "jest",
+      "name": "Jest",
+      "threads": 3
+    },
+    {
+      "key": "zookeeper",
+      "name": "ZooKeeper",
+      "threads": 3
+    },
+    {
+      "key": "wordle",
+      "name": "Wordle",
+      "threads": 3
+    },
+    {
+      "key": "open source",
+      "name": "Open Source",
+      "threads": 3
+    },
+    {
+      "key": "skia",
+      "name": "Skia",
+      "threads": 3
+    },
+    {
+      "key": "hyperloglog",
+      "name": "HyperLogLog",
+      "threads": 3
+    },
+    {
+      "key": "pinboard",
+      "name": "Pinboard",
+      "threads": 3
+    },
+    {
+      "key": "emscripten",
+      "name": "Emscripten",
+      "threads": 3
+    },
+    {
+      "key": "captcha",
+      "name": "CAPTCHA",
+      "threads": 3
+    },
+    {
+      "key": "strings",
+      "name": "Strings",
+      "threads": 3
+    },
+    {
+      "key": "github s",
+      "name": "GitHub's",
+      "threads": 3
+    },
+    {
+      "key": "power apps",
+      "name": "Power Apps",
+      "threads": 3
+    },
+    {
+      "key": "databricks",
+      "name": "Databricks",
+      "threads": 3
+    },
+    {
+      "key": "webflow",
+      "name": "Webflow",
+      "threads": 3
+    },
+    {
+      "key": "github codespaces",
+      "name": "GitHub Codespaces",
+      "threads": 3
+    },
+    {
+      "key": "hotjar",
+      "name": "Hotjar",
+      "threads": 3
+    },
+    {
+      "key": "c4",
+      "name": "C4",
+      "threads": 3
+    },
+    {
+      "key": "mongodb atlas",
+      "name": "MongoDB Atlas",
+      "threads": 3
+    },
+    {
+      "key": "vpn",
+      "name": "VPN",
+      "threads": 3
+    },
+    {
+      "key": "scrum",
+      "name": "Scrum",
+      "threads": 3
+    },
+    {
+      "key": "zod",
+      "name": "Zod",
+      "threads": 3
+    },
+    {
+      "key": "calendly",
+      "name": "Calendly",
+      "threads": 3
+    },
+    {
+      "key": "elevenlabs",
+      "name": "ElevenLabs",
+      "threads": 3
+    },
+    {
+      "key": "apache flink",
+      "name": "Apache Flink",
+      "threads": 3
+    },
+    {
+      "key": "gnu make",
+      "name": "GNU Make",
+      "threads": 3
+    },
+    {
+      "key": "democracy",
+      "name": "Democracy",
+      "threads": 3
+    },
+    {
+      "key": "roam",
+      "name": "Roam",
+      "threads": 3
+    },
+    {
+      "key": "airplane",
+      "name": "Airplane",
+      "threads": 3
+    },
+    {
+      "key": "adept",
+      "name": "Adept.ai",
+      "threads": 3
+    },
+    {
+      "key": "crunchbase",
+      "name": "Crunchbase",
+      "threads": 3
+    },
+    {
+      "key": "openai assistants api",
+      "name": "OpenAI Assistants API",
+      "threads": 3
+    },
+    {
+      "key": "putty",
+      "name": "PuTTY",
+      "threads": 3
+    },
+    {
+      "key": "letsencrypt",
+      "name": "LetsEncrypt",
+      "threads": 3
+    },
+    {
+      "key": "streamlit",
+      "name": "Streamlit",
+      "threads": 3
+    },
+    {
+      "key": "miro",
+      "name": "Miro",
+      "threads": 3
+    },
+    {
+      "key": "google location history",
+      "name": "Google Location History",
+      "threads": 3
+    },
+    {
+      "key": "noteforms",
+      "name": "NoteForms",
+      "threads": 3
+    },
+    {
+      "key": "eventbrite",
+      "name": "Eventbrite",
+      "threads": 3
+    },
+    {
+      "key": "windirstat",
+      "name": "WinDirStat",
+      "threads": 3
+    },
+    {
+      "key": "neural nets",
+      "name": "Neural Nets",
+      "threads": 3
+    },
+    {
+      "key": "notebooklm s",
+      "name": "NotebookLM's",
+      "threads": 3
+    },
+    {
+      "key": "esxi",
+      "name": "ESXi",
+      "threads": 3
+    },
+    {
+      "key": "typora",
+      "name": "Typora",
+      "threads": 3
+    },
+    {
+      "key": "todoist",
+      "name": "Todoist",
+      "threads": 3
+    },
+    {
+      "key": "https",
+      "name": "HTTPS",
+      "threads": 3
+    },
+    {
+      "key": "logseq",
+      "name": "Logseq",
+      "threads": 3
+    },
+    {
+      "key": "formspree",
+      "name": "Formspree",
+      "threads": 3
+    },
+    {
+      "key": "result",
+      "name": "Result",
+      "threads": 3
+    },
+    {
+      "key": "bento me",
+      "name": "Bento.me",
+      "threads": 3
+    },
+    {
+      "key": "systemd",
+      "name": "Systemd",
+      "threads": 3
+    },
+    {
+      "key": "apple pay",
+      "name": "Apple Pay",
+      "threads": 3
+    },
+    {
+      "key": "descript",
+      "name": "Descript",
+      "threads": 3
+    },
+    {
+      "key": "lens",
+      "name": "Lens",
+      "threads": 3
+    },
+    {
+      "key": "drata",
+      "name": "Drata",
+      "threads": 3
+    },
+    {
+      "key": "nvidia s cuda",
+      "name": "Nvidia's CUDA",
+      "threads": 3
+    },
+    {
+      "key": "gpt 4o",
+      "name": "GPT-4o",
+      "threads": 3
+    },
+    {
+      "key": "clay",
+      "name": "Clay",
+      "threads": 3
+    },
+    {
+      "key": "codepush",
+      "name": "CodePush",
+      "threads": 3
+    },
+    {
+      "key": "operator",
+      "name": "Operator",
+      "threads": 3
+    },
+    {
+      "key": "branch",
+      "name": "Branch.io",
+      "threads": 3
+    },
+    {
+      "key": "manus",
+      "name": "Manus",
+      "threads": 3
+    },
+    {
+      "key": "gandi",
+      "name": "Gandi",
+      "threads": 3
+    },
+    {
+      "key": "musk",
+      "name": "Musk",
+      "threads": 3
+    },
+    {
+      "key": "netlify",
+      "name": "Netlify",
+      "threads": 3
+    },
+    {
+      "key": "canny",
+      "name": "Canny",
+      "threads": 3
+    },
+    {
+      "key": "llm as judge",
+      "name": "LLM-as-Judge",
+      "threads": 3
+    },
+    {
+      "key": "google news",
+      "name": "Google News",
+      "threads": 3
+    },
+    {
+      "key": "teleport",
+      "name": "Teleport",
+      "threads": 3
+    },
+    {
+      "key": "big tech s",
+      "name": "Big Tech's",
+      "threads": 3
+    },
+    {
+      "key": "cluely",
+      "name": "Cluely",
+      "threads": 3
+    },
+    {
+      "key": "dragon",
+      "name": "Dragon",
+      "threads": 3
+    },
+    {
+      "key": "capcut",
+      "name": "CapCut",
+      "threads": 3
+    },
+    {
+      "key": "disqus",
+      "name": "Disqus",
+      "threads": 3
+    },
+    {
+      "key": "graphite",
+      "name": "Graphite",
+      "threads": 3
+    },
+    {
+      "key": "copilot chat",
+      "name": "Copilot Chat",
+      "threads": 3
+    },
+    {
+      "key": "mathpix",
+      "name": "Mathpix",
+      "threads": 3
+    },
+    {
+      "key": "vnc",
+      "name": "VNC",
+      "threads": 3
+    },
+    {
+      "key": "cli",
+      "name": "CLI",
+      "threads": 3
+    },
+    {
+      "key": "nexus",
+      "name": "Nexus",
+      "threads": 3
+    },
+    {
+      "key": "docusaurus",
+      "name": "Docusaurus",
+      "threads": 3
+    },
+    {
+      "key": "wisprflow",
+      "name": "WisprFlow",
+      "threads": 3
+    },
+    {
+      "key": "webcontainers",
+      "name": "WebContainers",
+      "threads": 3
+    },
+    {
+      "key": "buffer",
+      "name": "Buffer",
+      "threads": 3
+    },
+    {
+      "key": "zendesk",
+      "name": "Zendesk",
+      "threads": 3
+    },
+    {
+      "key": "palantir",
+      "name": "Palantir",
+      "threads": 3
+    },
+    {
+      "key": "logi options",
+      "name": "Logi Options",
+      "threads": 3
+    },
+    {
+      "key": "suno",
+      "name": "Suno",
+      "threads": 3
+    },
+    {
+      "key": "conductor",
+      "name": "Conductor",
+      "threads": 3
+    },
+    {
+      "key": "proton mail",
+      "name": "Proton Mail",
+      "threads": 3
+    },
+    {
+      "key": "openwebui",
+      "name": "OpenWebUI",
+      "threads": 3
+    },
+    {
+      "key": "puppet",
+      "name": "Puppet",
+      "threads": 3
+    },
+    {
+      "key": "xd",
+      "name": "XD",
+      "threads": 3
+    },
+    {
+      "key": "borg",
+      "name": "Borg",
+      "threads": 3
+    },
+    {
+      "key": "maps",
+      "name": "Maps",
+      "threads": 3
+    },
+    {
+      "key": "magento",
+      "name": "Magento",
+      "threads": 3
+    },
+    {
+      "key": "wp",
+      "name": "WP",
+      "threads": 3
+    },
+    {
+      "key": "via",
+      "name": "Via",
+      "threads": 3
+    },
+    {
+      "key": "windows 11",
+      "name": "Windows 11",
+      "threads": 3
+    },
+    {
+      "key": "kotlin",
+      "name": "Kotlin",
+      "threads": 3
+    },
+    {
+      "key": "ia",
+      "name": "IA",
+      "threads": 3
+    },
+    {
+      "key": "alpine",
+      "name": "Alpine",
+      "threads": 3
+    },
+    {
+      "key": "ubiquiti",
+      "name": "Ubiquiti",
+      "threads": 3
+    },
+    {
+      "key": "ps",
+      "name": "PS",
+      "threads": 3
+    },
+    {
+      "key": "monero",
+      "name": "Monero",
+      "threads": 3
+    },
+    {
+      "key": "google street view",
+      "name": "Google Street View",
+      "threads": 3
+    },
+    {
+      "key": "fireworks",
+      "name": "Fireworks",
+      "threads": 3
+    },
+    {
+      "key": "ram",
+      "name": "RAM",
+      "threads": 3
+    },
+    {
+      "key": "christian",
+      "name": "Christian",
+      "threads": 3
+    },
+    {
+      "key": "spotlight",
+      "name": "Spotlight",
+      "threads": 3
+    },
+    {
+      "key": "flickr",
+      "name": "Flickr",
+      "threads": 3
+    },
+    {
+      "key": "kodi",
+      "name": "Kodi",
+      "threads": 3
+    },
+    {
+      "key": "youtube s",
+      "name": "YouTube's",
+      "threads": 3
+    },
+    {
+      "key": "aa",
+      "name": "AA",
+      "threads": 3
+    },
+    {
+      "key": "lunar",
+      "name": "Lunar",
+      "threads": 3
+    },
+    {
+      "key": "okta",
+      "name": "Okta",
+      "threads": 3
+    },
+    {
+      "key": "blender",
+      "name": "Blender",
+      "threads": 3
+    },
+    {
+      "key": "kindle",
+      "name": "Kindle",
+      "threads": 3
+    },
+    {
+      "key": "spas",
+      "name": "SPAs",
+      "threads": 3
+    },
+    {
+      "key": "applescript",
+      "name": "AppleScript",
+      "threads": 3
+    },
+    {
+      "key": "bigtech",
+      "name": "BigTech",
+      "threads": 3
+    },
+    {
+      "key": "lucene",
+      "name": "Lucene",
+      "threads": 3
+    },
+    {
+      "key": "rabbitmq",
+      "name": "RabbitMQ",
+      "threads": 3
+    },
+    {
+      "key": "german",
+      "name": "German",
+      "threads": 3
+    },
+    {
+      "key": "opensea",
+      "name": "OpenSea",
+      "threads": 3
+    },
+    {
+      "key": "seo",
+      "name": "SEO",
+      "threads": 3
+    },
+    {
+      "key": "sas",
+      "name": "SAS",
+      "threads": 3
+    },
+    {
+      "key": "workos",
+      "name": "WorkOS",
+      "threads": 3
+    },
+    {
+      "key": "blas",
+      "name": "BLAS",
+      "threads": 3
+    },
+    {
+      "key": "pico 8",
+      "name": "PICO-8",
+      "threads": 3
+    },
+    {
+      "key": "amplitude",
+      "name": "Amplitude",
+      "threads": 3
+    },
+    {
+      "key": "sqs",
+      "name": "SQS",
+      "threads": 3
+    },
+    {
+      "key": "freecad",
+      "name": "FreeCAD",
+      "threads": 3
+    },
+    {
+      "key": "dd",
+      "name": "DD",
+      "threads": 3
+    },
+    {
+      "key": "cocoa",
+      "name": "Cocoa",
+      "threads": 3
+    },
+    {
+      "key": "chromecast",
+      "name": "Chromecast",
+      "threads": 3
+    },
+    {
+      "key": "pro",
+      "name": "Pro",
+      "threads": 3
+    },
+    {
+      "key": "cloudflare tunnel",
+      "name": "Cloudflare Tunnel",
+      "threads": 3
+    },
+    {
+      "key": "linode",
+      "name": "Linode",
+      "threads": 3
+    },
+    {
+      "key": "bevs",
+      "name": "BEVs",
+      "threads": 3
+    },
+    {
+      "key": "uservoice",
+      "name": "UserVoice",
+      "threads": 3
+    },
+    {
+      "key": "data analysis",
+      "name": "Data Analysis",
+      "threads": 3
+    },
+    {
+      "key": "bitkeeper",
+      "name": "BitKeeper",
+      "threads": 3
+    },
+    {
+      "key": "premiere",
+      "name": "Premiere",
+      "threads": 3
+    },
+    {
+      "key": "lsp",
+      "name": "LSP",
+      "threads": 3
+    },
+    {
+      "key": "alternativeto",
+      "name": "AlternativeTo",
+      "threads": 3
+    },
+    {
+      "key": "samsung",
+      "name": "Samsung",
+      "threads": 3
+    },
+    {
+      "key": "pinecone",
+      "name": "Pinecone",
+      "threads": 3
+    },
+    {
+      "key": "zip",
+      "name": "ZIP",
+      "threads": 3
+    },
+    {
+      "key": "gsuite",
+      "name": "GSuite",
+      "threads": 3
+    },
+    {
+      "key": "acls",
+      "name": "ACLs",
+      "threads": 3
+    },
+    {
+      "key": "leds",
+      "name": "LEDs",
+      "threads": 3
+    },
+    {
+      "key": "google keep",
+      "name": "Google Keep",
+      "threads": 3
+    },
+    {
+      "key": "cra",
+      "name": "CRA",
+      "threads": 3
+    },
+    {
+      "key": "gtk",
+      "name": "GTK",
+      "threads": 3
+    },
+    {
+      "key": "flink",
+      "name": "Flink",
+      "threads": 3
+    },
+    {
+      "key": "next",
+      "name": "Next",
+      "threads": 3
+    },
+    {
+      "key": "photos",
+      "name": "Photos",
+      "threads": 3
+    },
+    {
+      "key": "sourceforge",
+      "name": "SourceForge",
+      "threads": 3
+    },
+    {
+      "key": "opencl",
+      "name": "OpenCL",
+      "threads": 3
+    },
+    {
+      "key": "imdb",
+      "name": "IMDB",
+      "threads": 3
+    },
+    {
+      "key": "okrs",
+      "name": "OKRs",
+      "threads": 3
+    },
+    {
+      "key": "pg",
+      "name": "PG",
+      "threads": 3
+    },
+    {
+      "key": "ibm s",
+      "name": "IBM's",
+      "threads": 3
+    },
+    {
+      "key": "free software",
+      "name": "Free Software",
+      "threads": 3
+    },
+    {
+      "key": "uml",
+      "name": "UML",
+      "threads": 3
+    },
+    {
+      "key": "comic code",
+      "name": "Comic Code",
+      "threads": 3
+    },
+    {
+      "key": "internet",
+      "name": "Internet",
+      "threads": 3
+    },
+    {
+      "key": "di",
+      "name": "DI",
+      "threads": 3
+    },
+    {
+      "key": "proxmox",
+      "name": "Proxmox",
+      "threads": 3
+    },
+    {
+      "key": "pi",
+      "name": "Pi",
+      "threads": 3
+    },
+    {
+      "key": "huffman",
+      "name": "Huffman",
+      "threads": 3
+    },
+    {
+      "key": "pycharm",
+      "name": "PyCharm",
+      "threads": 3
+    },
+    {
+      "key": "libreoffice",
+      "name": "LibreOffice",
+      "threads": 3
+    },
+    {
+      "key": "webview",
+      "name": "WebView",
+      "threads": 3
+    },
+    {
+      "key": "epic",
+      "name": "Epic",
+      "threads": 3
+    },
+    {
+      "key": "garmin",
+      "name": "Garmin",
+      "threads": 3
+    },
+    {
+      "key": "hamas",
+      "name": "Hamas",
+      "threads": 3
+    },
+    {
+      "key": "dataview",
+      "name": "Dataview",
+      "threads": 3
+    },
+    {
+      "key": "ring",
+      "name": "Ring",
+      "threads": 3
+    },
+    {
+      "key": "redhat",
+      "name": "Redhat",
+      "threads": 3
+    },
+    {
+      "key": "mongo",
+      "name": "Mongo",
+      "threads": 3
+    },
+    {
+      "key": "google voice",
+      "name": "Google Voice",
+      "threads": 3
+    },
+    {
+      "key": "b trees",
+      "name": "B-Trees",
+      "threads": 3
+    },
+    {
+      "key": "efs",
+      "name": "EFS",
+      "threads": 3
+    },
+    {
+      "key": "lcdm",
+      "name": "LCDM",
+      "threads": 3
+    },
+    {
+      "key": "gpt4",
+      "name": "GPT4",
+      "threads": 3
+    },
+    {
+      "key": "aqua voice",
+      "name": "Aqua Voice",
+      "threads": 3
+    },
+    {
+      "key": "flask",
+      "name": "Flask",
+      "threads": 3
+    },
+    {
+      "key": "kicad",
+      "name": "KiCad",
+      "threads": 3
+    },
+    {
+      "key": "obs",
+      "name": "OBS",
+      "threads": 3
+    },
+    {
+      "key": "icann",
+      "name": "ICANN",
+      "threads": 3
+    },
+    {
+      "key": "reader",
+      "name": "Reader",
+      "threads": 3
+    },
+    {
+      "key": "ethernet",
+      "name": "Ethernet",
+      "threads": 3
+    },
+    {
+      "key": "mcdonalds",
+      "name": "McDonalds",
+      "threads": 3
+    },
+    {
+      "key": "grub",
+      "name": "GRUB",
+      "threads": 3
+    },
+    {
+      "key": "vba",
+      "name": "VBA",
+      "threads": 3
+    },
+    {
+      "key": "jwts",
+      "name": "JWTs",
+      "threads": 3
+    },
+    {
+      "key": "clojure",
+      "name": "Clojure",
+      "threads": 3
+    },
+    {
+      "key": "tauri",
+      "name": "Tauri",
+      "threads": 3
+    },
+    {
+      "key": "j2ee",
+      "name": "J2EE",
+      "threads": 3
+    },
+    {
+      "key": "craigslist",
+      "name": "Craigslist",
+      "threads": 3
+    },
+    {
+      "key": "recall",
+      "name": "Recall",
+      "threads": 3
+    },
+    {
+      "key": "asp",
+      "name": "ASP.NET",
+      "threads": 3
+    },
+    {
+      "key": "exchange",
+      "name": "Exchange",
+      "threads": 3
+    },
+    {
+      "key": "ec2",
+      "name": "EC2",
+      "threads": 3
+    },
+    {
+      "key": "america",
+      "name": "America",
+      "threads": 3
+    },
+    {
+      "key": "ubo",
+      "name": "UBO",
+      "threads": 3
+    },
+    {
+      "key": "rust s",
+      "name": "Rust's",
+      "threads": 3
+    },
+    {
+      "key": "aws ses",
+      "name": "AWS SES",
+      "threads": 3
+    },
+    {
+      "key": "ocr",
+      "name": "OCR",
+      "threads": 3
+    },
+    {
+      "key": "flex",
+      "name": "FLEX",
+      "threads": 3
+    },
+    {
+      "key": "hf",
+      "name": "HF",
+      "threads": 3
+    },
+    {
+      "key": "publisher",
+      "name": "Publisher",
+      "threads": 3
+    },
+    {
+      "key": "op s",
+      "name": "OP's",
+      "threads": 3
+    },
+    {
+      "key": "wine",
+      "name": "Wine",
+      "threads": 3
+    },
+    {
+      "key": "exwm",
+      "name": "EXWM",
+      "threads": 3
+    },
+    {
+      "key": "explorer",
+      "name": "Explorer",
+      "threads": 3
+    },
+    {
+      "key": "webgl",
+      "name": "WebGL",
+      "threads": 3
+    },
+    {
+      "key": "gemini cli",
+      "name": "Gemini CLI",
+      "threads": 3
+    },
+    {
+      "key": "us based",
+      "name": "US-based",
+      "threads": 3
+    },
+    {
+      "key": "deepseek",
+      "name": "DeepSeek",
+      "threads": 3
+    },
+    {
+      "key": "mullvad",
+      "name": "Mullvad",
+      "threads": 3
+    },
+    {
+      "key": "fable",
+      "name": "Fable",
+      "threads": 3
+    },
+    {
+      "key": "cnn",
+      "name": "CNN",
+      "threads": 3
+    },
+    {
+      "key": "com",
+      "name": "COM",
+      "threads": 3
+    },
+    {
+      "key": "moe",
+      "name": "MoE",
+      "threads": 3
+    },
+    {
+      "key": "kagi",
+      "name": "Kagi",
+      "threads": 3
+    },
+    {
+      "key": "box",
+      "name": "Box",
+      "threads": 3
+    },
+    {
+      "key": "bambu",
+      "name": "Bambu",
+      "threads": 3
+    },
+    {
+      "key": "nova",
+      "name": "Nova",
+      "threads": 3
+    },
+    {
+      "key": "total commander",
+      "name": "Total Commander",
+      "threads": 3
+    },
+    {
+      "key": "localstack",
+      "name": "Localstack",
+      "threads": 3
+    },
+    {
+      "key": "chat gpt",
+      "name": "Chat GPT",
+      "threads": 3
+    },
+    {
+      "key": "fandom",
+      "name": "Fandom",
+      "threads": 3
+    },
+    {
+      "key": "glitch",
+      "name": "Glitch",
+      "threads": 3
+    },
+    {
+      "key": "nat",
+      "name": "NAT",
+      "threads": 3
+    },
+    {
+      "key": "gh actions",
+      "name": "GH Actions",
+      "threads": 3
+    },
+    {
+      "key": "faang",
+      "name": "FAANG",
+      "threads": 3
+    },
+    {
+      "key": "openssl",
+      "name": "OpenSSL",
+      "threads": 3
+    },
+    {
+      "key": "atom",
+      "name": "Atom",
+      "threads": 3
+    },
+    {
+      "key": "ascii",
+      "name": "ASCII",
+      "threads": 3
+    },
+    {
+      "key": "jvm",
+      "name": "JVM",
+      "threads": 3
+    },
+    {
+      "key": "wifi",
+      "name": "WiFi",
+      "threads": 3
+    },
+    {
+      "key": "express",
+      "name": "Express",
+      "threads": 3
+    },
+    {
+      "key": "fuse",
+      "name": "FUSE",
+      "threads": 3
+    },
+    {
+      "key": "openai s api",
+      "name": "OpenAI's API",
+      "threads": 3
+    },
+    {
+      "key": "google cloud",
+      "name": "Google Cloud",
+      "threads": 3
+    },
+    {
+      "key": "facetime",
+      "name": "FaceTime",
+      "threads": 3
+    },
+    {
+      "key": "iap",
+      "name": "IAP",
+      "threads": 3
+    },
+    {
+      "key": "finder",
+      "name": "Finder",
+      "threads": 3
+    },
+    {
+      "key": "nodejs",
+      "name": "NodeJS",
+      "threads": 3
+    },
+    {
+      "key": "redux",
+      "name": "Redux",
+      "threads": 3
+    },
+    {
+      "key": "lightroom classic",
+      "name": "Lightroom Classic",
+      "threads": 3
+    },
+    {
+      "key": "id",
+      "name": "ID",
+      "threads": 3
+    },
+    {
+      "key": "vagrant",
+      "name": "Vagrant",
+      "threads": 3
+    },
+    {
+      "key": "eslint",
+      "name": "ESLint",
+      "threads": 3
+    },
+    {
+      "key": "vivado",
+      "name": "Vivado",
+      "threads": 3
+    },
+    {
+      "key": "wordperfect",
+      "name": "WordPerfect",
+      "threads": 3
+    },
+    {
+      "key": "aosp",
+      "name": "AOSP",
+      "threads": 3
+    },
+    {
+      "key": "foundation",
+      "name": "Foundation",
+      "threads": 3
+    },
+    {
+      "key": "relay",
+      "name": "Relay",
+      "threads": 3
+    },
+    {
+      "key": "msvc",
+      "name": "MSVC",
+      "threads": 3
+    },
+    {
+      "key": "google fonts",
+      "name": "Google Fonts",
+      "threads": 3
+    },
+    {
+      "key": "requests",
+      "name": "Requests",
+      "threads": 3
+    },
+    {
+      "key": "xlib",
+      "name": "Xlib",
+      "threads": 3
+    },
+    {
+      "key": "finger",
+      "name": "Finger",
+      "threads": 3
+    },
+    {
+      "key": "vite",
+      "name": "Vite",
+      "threads": 3
+    },
+    {
+      "key": "ntfs",
+      "name": "NTFS",
+      "threads": 3
+    },
+    {
+      "key": "times new roman",
+      "name": "Times New Roman",
+      "threads": 3
+    },
+    {
+      "key": "qa",
+      "name": "QA",
+      "threads": 3
+    },
+    {
+      "key": "ddg",
+      "name": "DDG",
+      "threads": 3
+    },
+    {
+      "key": "hangouts",
+      "name": "Hangouts",
+      "threads": 3
+    },
+    {
+      "key": "gecko",
+      "name": "Gecko",
+      "threads": 3
+    },
+    {
+      "key": "numpy",
+      "name": "NumPy",
+      "threads": 3
+    },
+    {
+      "key": "privacy shield",
+      "name": "Privacy Shield",
+      "threads": 3
+    },
+    {
+      "key": "date",
+      "name": "Date",
+      "threads": 3
+    }
+  ]
+}

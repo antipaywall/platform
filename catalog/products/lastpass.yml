@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: lastpass
+name: LastPass
+category: Passwords and security
+price:
+  cents: 300
+  period: month
+blurb: Keep your passwords and fill them in for you.
+words:
+  - password manager
+  - passwords
+  - vault
+  - autofill
+  - logins
+topics:
+  - password-manager
+  - passwords
+  - vault
+search_terms:
+  - lastpass alternative
+  - password manager
+aliases: []
+excludes: []

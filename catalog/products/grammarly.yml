@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: grammarly
+name: Grammarly
+category: Writing
+price:
+  cents: 1200
+  period: month
+blurb: Checks your spelling, grammar and tone as you write.
+words:
+  - grammar checker
+  - spell check
+  - proofreading
+  - writing assistant
+  - tone
+topics:
+  - grammar-checker
+  - spellcheck
+  - proofreading
+search_terms:
+  - grammarly alternative
+  - grammar checker
+aliases: []
+excludes: []

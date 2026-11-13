@@ -1,0 +1,22 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: wetransfer
+name: WeTransfer
+category: Files and storage
+price:
+  cents: 1200
+  period: month
+blurb: Send big files with a link.
+words:
+  - send large files
+  - file transfer
+  - share files
+  - upload link
+topics:
+  - file-sharing
+  - file-transfer
+  - file-upload
+search_terms:
+  - wetransfer alternative
+  - self-hosted file sharing
+aliases: []
+excludes: []

@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: tailscale
+name: Tailscale
+category: Developer tools
+price:
+  cents: 500
+  period: month
+blurb: Connect your devices into one private network.
+words:
+  - vpn
+  - private network
+  - mesh network
+  - wireguard
+  - remote access
+topics:
+  - vpn
+  - wireguard
+  - mesh-network
+search_terms:
+  - tailscale alternative
+  - self-hosted vpn
+aliases: []
+excludes: []

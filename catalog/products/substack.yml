@@ -1,0 +1,20 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: substack
+name: Substack
+category: Email and newsletters
+blurb: Write a newsletter and charge for subscriptions.
+words:
+  - newsletter
+  - blog
+  - paid subscriptions
+  - writers
+  - email list
+topics:
+  - newsletter
+  - blogging
+  - substack
+search_terms:
+  - substack alternative
+  - newsletter platform
+aliases: []
+excludes: []

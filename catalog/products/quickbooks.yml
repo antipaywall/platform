@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: quickbooks
+name: QuickBooks
+category: Money and invoicing
+price:
+  cents: 3800
+  period: month
+blurb: "Bookkeeping for small businesses: invoices, expenses and taxes."
+words:
+  - accounting
+  - bookkeeping
+  - invoices
+  - expenses
+  - small business
+  - taxes
+topics:
+  - accounting
+  - bookkeeping
+  - invoicing
+search_terms:
+  - quickbooks alternative
+  - open source accounting
+aliases: []
+excludes: []
