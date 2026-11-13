@@ -5,6 +5,8 @@
 // Anyone can run it against their own Supabase:
 //   SUPABASE_URL=… SUPABASE_SECRET_KEY=… GITHUB_TOKEN=… pnpm sync
 //   pnpm sync --dry-run          (reads GitHub, writes nothing, prints counts)
+//   pnpm sync --links-only       (a few minutes: only adds the hand-made links in catalog/links.yml;
+//                                 searches nothing, removes nothing, unlists nothing)
 // Production runs it daily in GitHub Actions (.github/workflows/sync.yml).
 //
 // It never spends GitHub's whole allowance: when only a reserve is left it stops, records
@@ -20,6 +22,8 @@ import { applyIdeaFile } from '../src/lib/ideasSync';
 import { dedupeLinks, fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 
 const DRY = process.argv.includes('--dry-run');
+/** Only the hand-made links: no searches, and every product keeps the links it has. */
+const LINKS_ONLY = process.argv.includes('--links-only');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
 const SEARCH_PER_QUERY = 50;
 /** At most this many projects per paid product, most-starred first. */
@@ -126,7 +130,10 @@ async function main() {
   try {
     if (db) await upsertCatalog(db, catalog.products, catalog.topics);
 
-    const { found, failed, seen } = await findCandidates(catalog.products);
+    // With no searches, every product counts as "not searched", so none of its links are replaced.
+    const { found, failed, seen } = LINKS_ONLY
+      ? { found: new Map<string, Map<string, Set<FoundBy>>>(), failed: new Set(catalog.products.map((p) => p.slug)), seen: new Map<string, RepoFacts>() }
+      : await findCandidates(catalog.products);
     // Hand-made links from the catalog count as found, and so do every repo they name.
     const removed = new Set(catalog.links.filter((l) => l.action === 'remove').map((l) => `${l.product}|${l.project.toLowerCase()}`));
     const manual = catalog.links.filter((l) => l.action === 'add');
@@ -148,7 +155,7 @@ async function main() {
       found.set(slug, new Map(ok.map(({ n, how }) => [n, how])));
     }
     // Every repo already listed is read again too, so one that was archived or deleted since gets unlisted.
-    const alreadyListed = db
+    const alreadyListed = db && !LINKS_ONLY
       ? (await fetchAllRows<{ full_name: string }>((a, b) => db.from('projects').select('full_name').eq('listed', true).order('full_name').range(a, b))).map((r) => r.full_name)
       : [];
     for (const n of alreadyListed) names.add(n);
@@ -216,7 +223,7 @@ async function main() {
     for (let i = 0; i < keep.length; i += 500) must(await db.from('project_products').upsert(keep.slice(i, i + 500), { onConflict: 'project_id,product_id' }), 'links');
     // Repos GitHub no longer returns are unlisted (ones it returned are updated above with the reason).
     for (const n of gone) must(await db.from('projects').update({ listed: false, reject_reason: 'gone' }).ilike('full_name', n), 'unlist');
-    if (failed.size) console.log(`Searches failed for: ${[...failed].join(', ')}; their links were kept`);
+    if (failed.size && !LINKS_ONLY) console.log(`Searches failed for: ${[...failed].join(', ')}; their links were kept`);
 
     const day = now.toISOString().slice(0, 10);
     const snapshots = [...listed.values()].filter((r) => ids.has(r.fullName.toLowerCase())).map((r) => ({ project_id: ids.get(r.fullName.toLowerCase())!, day, stars: r.stars, forks: r.forks }));
@@ -248,7 +255,8 @@ async function main() {
     const indexed = await markIndexable(db, now);
     const summary = `${listed.size} listed, ${rejected.length} turned away, ${gone.length} unlisted, ${keep.length} links, ${indexed} indexable`;
     // The directory itself is up to date now: record the run as synced.
-    await finish(true, summary);
+    await finish(true, LINKS_ONLY ? `links only: ${keep.length} hand-made links, ${indexed} indexable` : summary);
+    if (LINKS_ONLY) return;
 
     // Slower details, refreshed on their own schedule. Stopping at the rate limit here is normal:
     // the next run carries on where this one left off.
