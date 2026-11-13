@@ -1,0 +1,53 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import { listProducts, type ProductSummary } from '../../lib/products';
+import { adminClient } from '../../lib/supabase';
+
+let products: ProductSummary[] = [];
+let failed = false;
+try {
+  const db = adminClient();
+  if (db) products = await listProducts(db);
+} catch {
+  failed = true;
+}
+const byCategory = new Map<string, ProductSummary[]>();
+for (const p of products) byCategory.set(p.category, [...(byCategory.get(p.category) ?? []), p]);
+const categories = [...byCategory.keys()].sort();
+const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
+---
+
+<Platform title="Free, open-source alternatives to paid tools" description="Every paid product we track, with the free, open-source projects that replace it, pulled from GitHub.">
+  <section class="wrap pf-section">
+    <h1 class="pf-title">Free alternatives to things you pay for</h1>
+    <p class="lede">Every paid product we track, grouped by what it's for. Each page lists the open-source projects that replace it and what people say is still missing.</p>
+    <form class="pf-search" action="/search" method="get" role="search">
+      <label for="q" class="pf-sr">A paid product, or what you need it to do</label>
+      <input id="q" name="q" type="search" placeholder="Search a product or a need" autocomplete="off" />
+      <button class="key" type="submit">Search</button>
+    </form>
+    {failed && <p class="flash flash-error" role="alert">The list isn't loading right now. Try again in a minute.</p>}
+  </section>
+  {
+    categories.map((c, ci) => (
+      <section class="wrap pf-section pf-section-tight" id={anchor(c)}>
+        <h2 class="pf-h3">{c}</h2>
+        <div class="pf-grid">
+          {byCategory.get(c)!.map((p, i) => (
+            <a class={`pf-brick p${((ci + i) % 6) + 1}`} href={`/free-alternatives/${p.slug}`}>
+              <b>{p.name}</b>
+              <span>{p.blurb}</span>
+              <small class="num">{p.freeOptions} free {p.freeOptions === 1 ? 'option' : 'options'}</small>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+  <section class="wrap pf-section">
+    <div class="pf-empty">
+      <p><b>Something missing?</b> The list lives in the open catalog on GitHub, and anyone can add a product with a pull request. Or tell us what you'd want instead.</p>
+      <a class="key key-marigold key-sm" href="/ideas/new">Add what you want</a>
+    </div>
+  </section>
+</Platform>
