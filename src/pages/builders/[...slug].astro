@@ -12,6 +12,7 @@ import ProfileLinks from '../../components/ProfileLinks.astro';
 import type { Activity } from '../../lib/activity';
 import { badgesFor, topBadge, type Badge } from '../../lib/badges';
 import { isBacker } from '../../lib/signals';
+import { entriesFor } from '../../lib/entries';
 import { adminClient } from '../../lib/supabase';
 import { providerName, providerOf } from '../../lib/accounts';
 import { attempt, DataUnavailableError, type Person } from '../../lib/db';
@@ -43,18 +44,19 @@ try {
   const id = person.id;
   // The profile itself must load; the social parts each fall back to nothing if they can't.
   const db = adminClient();
-  const [i, r, act, granted, pledge, c, f, ps, backed] = await Promise.all([
+  const [i, r, act, granted, pledge, c, f, ps, backed, entry] = await Promise.all([
     ideasBy(id), refreshRepos(person), refreshActivity(person),
     attempt(() => grantedBadges([id])), attempt(() => pledgeOf(id)), attempt(() => followCounts(id)),
     viewer && viewer.id !== id ? attempt(() => isFollowing(viewer.id, id)) : Promise.resolve(false),
     attempt(() => postsBy(id, viewer?.id ?? null)),
     db ? isBacker(db, id).catch(() => false) : Promise.resolve(false),
+    db ? entriesFor(db, [id]).catch(() => new Map<string, string>()) : Promise.resolve(new Map<string, string>()),
   ]);
   ideas = i;
   repos = r;
   activity = act;
   // Backer: a pledge, or anything backed while signed in (a signal or a heart).
-  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) || backed });
+  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) || backed, entry: entry.has(id) });
   counts = c ?? counts;
   follows = f ?? false;
   posts = ps ?? [];

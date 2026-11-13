@@ -16,14 +16,17 @@ export const BADGE_INFO: Record<BadgeKind, { label: string; detail: string }> = 
   sponsor: { label: 'Sponsor', detail: 'Backs the pool or a bounty.' },
   winner: { label: 'Winner', detail: 'Placed in a season.' },
   builder: { label: 'Builder', detail: 'Passed the two checks: a real account at least 30 days old, with real activity.' },
-  season: { label: 'Season 1 builder', detail: 'Entered the Season 1 hackathon.' },
-  backer: { label: 'Backer', detail: 'Pledged to the pool.' },
+  season: { label: 'Season 1 builder', detail: 'Started their Season 1 entry.' },
+  backer: { label: 'Backer', detail: 'Backs what they want built, or pledged to the pool.' },
 };
 
 const ordinal = (n: number) => (n === 1 ? '1st' : n === 2 ? '2nd' : n === 3 ? '3rd' : `${n}th`);
 
 /** Everything a person has earned or been given, most important first. */
-export function badgesFor(p: { verified?: boolean; is_builder?: boolean }, granted: readonly GrantedBadge[], opts: { backer?: boolean } = {}): Badge[] {
+/** The badge for someone who joined Season 1 but hasn't started an entry yet. */
+export const INTERESTED = { label: 'Interested in Season 1', detail: 'Joined the Season 1 hackathon. Becomes a Season 1 builder once their entry repo is started.' };
+
+export function badgesFor(p: { verified?: boolean; is_builder?: boolean }, granted: readonly GrantedBadge[], opts: { backer?: boolean; entry?: boolean } = {}): Badge[] {
   const out: Badge[] = [];
   for (const g of granted) {
     const info = BADGE_INFO[g.kind];
@@ -34,7 +37,8 @@ export function badgesFor(p: { verified?: boolean; is_builder?: boolean }, grant
     }
   }
   if (p.verified) out.push({ kind: 'builder', ...BADGE_INFO.builder });
-  if (p.is_builder) out.push({ kind: 'season', ...BADGE_INFO.season, season: 1 });
+  if (opts.entry) out.push({ kind: 'season', ...BADGE_INFO.season, season: 1 });
+  else if (p.is_builder) out.push({ kind: 'season', ...INTERESTED, season: 1 });
   if (opts.backer) out.push({ kind: 'backer', ...BADGE_INFO.backer });
   const seen = new Set<string>();
   return out

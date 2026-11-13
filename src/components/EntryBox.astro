@@ -1,0 +1,46 @@
+---
+// "Start your Season 1 entry": for a builder who joined. Shows their entry once it's started.
+import { CURRENT_SEASON } from '../lib/entries';
+import { adminClient } from '../lib/supabase';
+
+interface Props {
+  next: string;
+}
+const { next } = Astro.props;
+const person = Astro.locals.person;
+let entry: string | null = null;
+if (person?.is_builder) {
+  const { data } = (await adminClient()?.from('season_entries').select('repo_full_name').eq('season_id', CURRENT_SEASON).eq('person_id', person.id).maybeSingle()) ?? { data: null };
+  entry = data?.repo_full_name ?? null;
+}
+---
+
+{
+  person?.is_builder && (
+    <div class="card stack entry-box">
+      {entry ? (
+        <>
+          <p class="h2">You're a Season 1 builder.</p>
+          <p>Your entry: <a class="link" href={`https://github.com/${entry}`} rel="noopener">{entry}</a>. You can change it until the final cutoff.</p>
+        </>
+      ) : (
+        <>
+          <p class="h2">Start your entry</p>
+          <p class="muted">You've joined, so you're interested in Season 1. Start your entry repo any time before the final cutoff to become a Season 1 builder. It must be a public GitHub repo you own.</p>
+        </>
+      )}
+      <form class="stack" method="post" action="/api/hackathon/entry" style="gap:10px">
+        <input type="hidden" name="next" value={next} />
+        <label for="entry-repo">{entry ? 'Change it to' : 'Your entry repo'}</label>
+        <input class="input" id="entry-repo" name="repo" required placeholder="you/your-entry or https://github.com/you/your-entry" />
+        <button class="key" type="submit" style="justify-self:start">{entry ? 'Change my entry' : 'Start my entry'}</button>
+      </form>
+      {entry && (
+        <form method="post" action="/api/hackathon/entry">
+          <input type="hidden" name="next" value={next} />
+          <button class="link-button" name="action" value="remove" type="submit">Remove my entry</button>
+        </form>
+      )}
+    </div>
+  )
+}
