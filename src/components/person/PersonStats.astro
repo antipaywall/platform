@@ -1,8 +1,11 @@
 ---
-// A slot on the person page, owned by the platform work: ideas backed, total would-pay (a signal,
-// never money), builds tested, saved by switching. Shows nothing until that work fills it in.
+// The person page's stats slot: things backed, would-pay (a signal, never money), builds tested,
+// saved by switching. Shows nothing for someone who hasn't backed anything.
+import Stats from '../pf/PersonStats.astro';
 interface Props {
   personId: string;
 }
-const { personId: _personId } = Astro.props;
+const { personId } = Astro.props;
 ---
+
+<Stats personId={personId} />
