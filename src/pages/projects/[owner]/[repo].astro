@@ -1,6 +1,7 @@
 ---
 import Platform from '../../../layouts/Platform.astro';
 import FollowButton from '../../../components/pf/FollowButton.astro';
+import AdoptBox from '../../../components/pf/AdoptBox.astro';
 import SignalButton from '../../../components/pf/SignalButton.astro';
 import SignalScript from '../../../components/pf/SignalScript.astro';
 import { site } from '../../../config/site';
@@ -72,6 +73,8 @@ const facts: [string, string][] = [
       <p class="pf-note">Antipaywall links to this project. It doesn't host, copy or change it.</p>
     </aside>
   </section>
+
+  <AdoptBox kind="project" id={p.id} subject={{ kind: 'project', fullName: p.fullName }} next={here} noun="project" />
 
   <section class="wrap pf-section pf-section-tight">
     <div class="card" style="padding:clamp(12px,2vw,20px)">

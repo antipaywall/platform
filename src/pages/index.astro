@@ -58,6 +58,28 @@ if (db) {
     .limit(6);
   help = ((data ?? []) as any[]).map((i) => ({ title: i.title, url: i.url, repo: i.projects.full_name, label: (i.labels ?? []).find((l: string) => /help|first/i.test(l)) ?? 'help wanted' }));
 }
+// Projects and ideas whose builders are looking for someone to carry them on.
+let handoffs: { href: string; title: string; by: string }[] = [];
+if (db) {
+  const { data } = await db.from('adoptions').select('subject_kind, subject_id, people:offered_by(username, handle)').eq('status', 'open').order('created_at', { ascending: false }).limit(6);
+  const rows = (data ?? []) as any[];
+  const projectIds = rows.filter((r) => r.subject_kind === 'project').map((r) => r.subject_id);
+  const gapIds = rows.filter((r) => r.subject_kind === 'gap').map((r) => r.subject_id);
+  const [projects, gaps] = await Promise.all([
+    projectIds.length ? db.from('projects').select('id, full_name').in('id', projectIds) : Promise.resolve({ data: [] }),
+    gapIds.length ? db.from('ideas').select('id, slug, title').in('id', gapIds) : Promise.resolve({ data: [] }),
+  ]);
+  const pBy = new Map(((projects as any).data ?? []).map((p: any) => [p.id, p]));
+  const gBy = new Map(((gaps as any).data ?? []).map((g: any) => [g.id, g]));
+  handoffs = rows.flatMap((r) => {
+    const by = r.people?.username ?? r.people?.handle ?? 'someone';
+    const p: any = r.subject_kind === 'project' ? pBy.get(r.subject_id) : null;
+    const g: any = r.subject_kind === 'gap' ? gBy.get(r.subject_id) : null;
+    if (p) return [{ href: `/projects/${p.full_name}#adopt`, title: p.full_name, by }];
+    if (g) return [{ href: `/ideas/${g.slug}#adopt`, title: g.title, by }];
+    return [];
+  });
+}
 const topTopics = [...topics].sort((a, b) => b.count - a.count).slice(0, 14);
 const paints = ['p4', 'p6', 'p3', 'p2', 'p5', 'p1'];
 const builderCount = stats?.builders ?? null;
@@ -194,6 +216,20 @@ const builderCount = stats?.builders ?? null;
               </a>
             ))}
           </div>
+        </section>
+      )
+    }
+
+    {
+      handoffs.length > 0 && (
+        <section class="wrap pf-section pf-section-tight">
+          <div style="display:grid;gap:10px">
+            <h2 class="pf-h2">Looking for a new owner.</h2>
+            <p class="lede">Builders moving on from something they started, on their own terms. Pick it up and carry it forward.</p>
+          </div>
+          <ul class="pf-list">
+            {handoffs.map((h) => <li class="pf-row-flat"><div><a href={h.href}>{h.title}</a><div class="muted small">Offered by @{h.by}</div></div></li>)}
+          </ul>
         </section>
       )
     }

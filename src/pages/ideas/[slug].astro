@@ -2,6 +2,7 @@
 import Platform from '../../layouts/Platform.astro';
 import Heart from '../../components/Heart.astro';
 import FollowButton from '../../components/pf/FollowButton.astro';
+import AdoptBox from '../../components/pf/AdoptBox.astro';
 import SignalButton from '../../components/pf/SignalButton.astro';
 import SignalScript from '../../components/pf/SignalScript.astro';
 import { isAdmin } from '../../lib/db';
@@ -41,6 +42,8 @@ if (deciding && appConfigured()) {
     diffs.set(s.pr_number, files.map((f) => f.patch).join('\n'));
   }
 }
+const { data: claimRows } = await db.from('gap_claims').select('person_id').eq('idea_id', idea.id);
+const starter = repoRow?.started_by_login ?? (idea.poster.kind === 'person' ? idea.poster.username ?? idea.poster.handle : null);
 const history = onGithub && appConfigured() ? await fileHistory(repoRow!.repo_path!).catch(() => []) : [];
 const here = `/ideas/${idea.slug}`;
 const status = BUILD_STATUS[idea.status];
@@ -120,6 +123,8 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
       </section>
     )
   }
+
+  <AdoptBox kind="gap" id={idea.id} subject={{ kind: 'gap', startedBy: starter, claimers: (claimRows ?? []).map((c) => c.person_id) }} next={here} noun="idea" />
 
   <section id="suggestions" class="wrap pf-section pf-section-tight">
     <div class="pf-split">
