@@ -118,3 +118,30 @@ export function isIndexable(p: { productLinks: number; gapLinks: number; hasStar
   if (p.productLinks > 0 || p.gapLinks > 0 || p.hasStarPoints) return true;
   return p.stars >= 200 && now.getTime() - Date.parse(p.pushedAt) < YEAR_MS;
 }
+
+/** A repository search result as GitHub returns it (the fields the sync reads). */
+export type SearchItem = {
+  id: number; full_name: string; html_url: string; description?: string | null; homepage?: string | null; topics?: string[];
+  license?: { spdx_id?: string | null; name?: string | null } | null; stargazers_count?: number; forks_count?: number;
+  open_issues_count?: number; archived?: boolean; fork?: boolean; pushed_at?: string; created_at?: string;
+};
+
+/**
+ * Repo facts from a search result, so the junk filter and the product check run before any
+ * further request. Help-wanted counts and releases come later, only for repos that pass.
+ */
+export function factsFromSearchItem(i: SearchItem): RepoFacts | null {
+  if (typeof i?.id !== 'number' || typeof i.full_name !== 'string' || typeof i.html_url !== 'string' || !i.html_url.startsWith('https://github.com/')) return null;
+  const spdx = i.license?.spdx_id && i.license.spdx_id !== 'NOASSERTION' ? i.license.spdx_id : null;
+  return {
+    githubId: i.id, fullName: i.full_name, url: i.html_url,
+    description: i.description ? String(i.description).slice(0, 400) : null,
+    homepage: typeof i.homepage === 'string' && /^https?:\/\//.test(i.homepage) ? i.homepage : null,
+    topics: Array.isArray(i.topics) ? i.topics.map(String) : [],
+    licenseSpdx: spdx, licenseName: spdx ? (i.license?.name ?? null) : null,
+    stars: Number(i.stargazers_count) || 0, forks: Number(i.forks_count) || 0, openIssues: Number(i.open_issues_count) || 0,
+    helpWanted: 0, goodFirst: 0, archived: Boolean(i.archived), fork: Boolean(i.fork),
+    pushedAt: String(i.pushed_at ?? i.created_at ?? ''), createdAt: String(i.created_at ?? ''),
+    latestReleaseTag: null, latestReleaseAt: null,
+  };
+}
