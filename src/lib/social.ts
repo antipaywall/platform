@@ -2,6 +2,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { providerOf, type Provider } from './accounts';
+import { entriesFor } from './entries';
 import { badgesFor, topBadge, type Badge, type GrantedBadge } from './badges';
 import { DataUnavailableError } from './db';
 import { adminClient } from './supabase';
@@ -46,15 +47,16 @@ async function authors(ids: string[], now: Date): Promise<Map<string, Author>> {
   const unique = [...new Set(ids)];
   const out = new Map<string, Author>();
   if (!unique.length) return out;
-  const [{ data, error }, granted] = await Promise.all([
+  const [{ data, error }, granted, entries] = await Promise.all([
     db().from('people').select('id, handle, username, provider, name, avatar_url, verified, is_builder, created_at').in('id', unique),
     grantedBadges(unique),
+    entriesFor(db(), unique),
   ]);
   if (error) throw new DataUnavailableError(error.message);
   for (const p of data ?? []) {
     out.set(p.id, {
       id: p.id, handle: p.handle, username: p.username ?? null, provider: providerOf(p), name: p.name ?? null, avatar_url: p.avatar_url ?? null,
-      badge: topBadge(badgesFor(p, granted.get(p.id) ?? [])),
+      badge: topBadge(badgesFor(p, granted.get(p.id) ?? [], { entry: entries.has(p.id) })),
       newAccount: now.getTime() - Date.parse(p.created_at) < NEW_ACCOUNT_MS,
     });
   }
@@ -174,6 +176,6 @@ export function ago(iso: string, now = new Date()): string {
 
 /** The badge shown next to each builder's name on a tile. Everyone on a tile is a builder. */
 export async function tileBadges(ids: string[]): Promise<Map<string, Badge | null>> {
-  const granted = await grantedBadges(ids);
-  return new Map(ids.map((id) => [id, topBadge(badgesFor({ verified: true, is_builder: true }, granted.get(id) ?? []))]));
+  const [granted, entries] = await Promise.all([grantedBadges(ids), entriesFor(db(), ids)]);
+  return new Map(ids.map((id) => [id, topBadge(badgesFor({ verified: true, is_builder: true }, granted.get(id) ?? [], { entry: entries.has(id) }))]));
 }

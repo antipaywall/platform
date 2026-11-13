@@ -11,6 +11,7 @@ import GoalMeter from '../../components/GoalMeter.astro';
 import { tileBadges } from '../../lib/social';
 import Sponsors from '../../components/Sponsors.astro';
 import Wall from '../../components/Wall.astro';
+import EntryBox from '../../components/EntryBox.astro';
 import { money as fee, organizerPledge, shape, site } from '../../config/site';
 import { WAYS } from '../../lib/ways';
 import { attempt, getOrganizerPledge, getStats, listBuilders, listIdeas, listPledges, listSponsors, usd as usdCents } from '../../lib/db';
@@ -161,6 +162,7 @@ const gh =
     </section>
 
     <main>
+      {Astro.locals.person?.is_builder && <section class="wrap" style="padding-top:32px"><EntryBox next="/hackathon" /></section>}
       <section class="when" aria-label="How it runs">
         <ol class="wrap when-row">
           {
