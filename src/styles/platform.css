@@ -275,3 +275,15 @@ a.pf-brick:hover { transform: translateY(-3px); }
 textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
 .pf-pcard-meta .pf-pcard-up { background: var(--mint); color: var(--ink); }
 .pf-chip-wrap { white-space: normal; flex-wrap: wrap; max-width: 100%; }
+
+@media (max-width: 600px) {
+  /* Numbers in an even two-column block, not ragged pills. */
+  .pf-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pf-numbers a { display: grid; gap: 4px; padding: 12px 14px; }
+  .pf-numbers b { font-size: 1.4rem; }
+  .pf-numbers span { font-size: 0.875rem; }
+  /* Happening now: the time goes under the line, so the line keeps its words. */
+  .pf-now li a { grid-template-columns: 12px 1fr; row-gap: 2px; }
+  .pf-now .t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .pf-now time { grid-column: 2; }
+}

@@ -2,10 +2,13 @@
 // The feed. Following: people you follow, newest first, never ranked. Everyone: all builders,
 // sorted Top (responses push a post up, time pulls it down) or Latest.
 import Base from '../layouts/Base.astro';
+import '../styles/platform.css';
+import { getHappening } from '../lib/happening';
+import { adminClient } from '../lib/supabase';
+import { timeAgo } from '../lib/format';
 import BadgeMark from '../components/BadgeMark.astro';
 import PostCard from '../components/PostCard.astro';
 import PostComposer from '../components/PostComposer.astro';
-import SignIn from '../components/SignIn.astro';
 import { site } from '../config/site';
 import { attempt, getStats } from '../lib/db';
 import { profilePath } from '../lib/profiles';
@@ -29,6 +32,10 @@ const [posts, people, stats] = await Promise.all([
   attempt(() => suggestions(viewerId)),
   attempt(getStats),
 ]);
+const adb = adminClient();
+const happening = adb ? await getHappening(adb, 10).catch(() => []) : [];
+const paint: Record<string, string> = { idea: 'var(--marigold)', backed: 'var(--tomato)', signal: 'var(--marigold)', switched: 'var(--mint)', joined: 'var(--sky)', claimed: 'var(--lilac)', posted: 'var(--pink)', pushed: 'var(--mint)' };
+const now = new Date();
 
 const link = (over: Record<string, string | null>) => {
   const p = new URLSearchParams();
@@ -47,10 +54,13 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
   <div class="feed">
     <div class="feed-main">
       <h1 class="acct-title">Feed</h1>
-      <nav class="feed-tabs" aria-label="Which posts">
-        {viewer && <a href={link({ tab: 'following' })} aria-current={tab === 'following' ? 'page' : undefined}>Following</a>}
-        <a href={link({ tab: 'everyone' })} aria-current={tab === 'everyone' ? 'page' : undefined}>Everyone</a>
-      </nav>
+      <p class="muted">What builders are working on, looking for and shipping.</p>
+      {viewer && (
+        <nav class="feed-tabs" aria-label="Which posts">
+          <a href={link({ tab: 'following' })} aria-current={tab === 'following' ? 'page' : undefined}>Following</a>
+          <a href={link({ tab: 'everyone' })} aria-current={tab === 'everyone' ? 'page' : undefined}>Everyone</a>
+        </nav>
+      )}
 
       {
         viewer ? (
@@ -60,14 +70,11 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
             <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/hackathon/join/build">See yours</a></p>
           )
         ) : (
-          <div class="feed-in">
-            <p>Sign in to post, follow builders and lay bricks.</p>
-            <SignIn next="/feed" />
-          </div>
+          <p class="feed-in-line"><a class="key key-sm" href="/auth/signin?next=%2Ffeed">Sign in to post</a><span class="muted small">Then follow builders and back their ideas.</span></p>
         )
       }
 
-      <div class="feed-filters">
+      <div class="feed-filters" hidden={Boolean(posts && posts.length === 0 && !kind && sort === 'top')}>
         {
           tab === 'everyone' && (
             <span class="seg" role="group" aria-label="Sort">
@@ -91,12 +98,30 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
         ) : tab === 'following' ? (
           <p class="empty">Nothing here yet. Follow builders to see their posts, or <a class="link" href={link({ tab: 'everyone' })}>see everyone's</a>.</p>
         ) : (
-          <p class="empty">No posts yet. {canPost ? 'Be the first.' : ''}</p>
+          <p class="empty">No posts yet. {canPost ? 'Be the first.' : 'Builders post here once they’re in.'}</p>
         )
       }
     </div>
 
     <aside class="feed-side">
+      {
+        happening.length > 0 && (
+          <div class="prof-box">
+            <h2 class="pcard-h">Across Antipaywall</h2>
+            <ol class="pf-now">
+              {happening.map((h) => (
+                <li>
+                  <a href={h.href}>
+                    <span class="dot" style={`--p:${paint[h.kind]}`} aria-hidden="true"></span>
+                    <span class="t" style="white-space:normal">{h.text}</span>
+                    <time datetime={h.at} style="grid-column:2">{timeAgo(h.at, now)}</time>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )
+      }
       <div class="prof-box">
         <h2 class="pcard-h">Season 1</h2>
         <p>{stats ? `${stats.builders} of ${site.launch.buildersNeeded} builders are in.` : 'The builder count is unavailable right now.'} The dates are set at {site.launch.buildersNeeded}.</p>
@@ -124,3 +149,8 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
     </aside>
   </div>
 </Base>
+
+<style>
+  .feed-in-line { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 4px 0 8px; }
+  .feed-side .pf-now li a { grid-template-columns: 12px 1fr; row-gap: 2px; padding: 9px 6px; }
+</style>
