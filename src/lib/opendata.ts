@@ -16,7 +16,7 @@ export function publicGap(row: { slug: string; title: string; pitch: string; mis
   };
 }
 
-const STATIC = ['/', '/free-alternatives', '/topics', '/hackathon', '/hackathon/about', '/hackathon/join', '/hackathon/join/build', '/hackathon/join/panel', '/hackathon/join/organize', '/ideas', '/hackathon/pool', '/hackathon/fund', '/hackathon/sponsor', '/builders', '/hackathon/rules', '/hackathon/faq', '/privacy', '/terms'];
+const STATIC = ['/explore', '/', '/free-alternatives', '/topics', '/hackathon', '/hackathon/about', '/hackathon/join', '/hackathon/join/build', '/hackathon/join/panel', '/hackathon/join/organize', '/ideas', '/hackathon/pool', '/hackathon/fund', '/hackathon/sponsor', '/builders', '/hackathon/rules', '/hackathon/faq', '/privacy', '/terms'];
 
 export function sitemapPaths(d: { products: string[]; topics: { slug: string; tracked: boolean }[]; projects: { full_name: string; indexable: boolean }[]; gaps: string[] }): string[] {
   return [
