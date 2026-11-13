@@ -1,0 +1,97 @@
+---
+import Platform from '../layouts/Platform.astro';
+import { findMatches, isWeak, recordMiss, type Matches } from '../lib/match';
+import { shortCount } from '../lib/format';
+import { adminClient } from '../lib/supabase';
+
+const q = (Astro.url.searchParams.get('q') ?? '').trim().slice(0, 200);
+let matches: Matches | null = null;
+let failed = false;
+const db = adminClient();
+if (q && db) {
+  try {
+    matches = await findMatches(db, q, 12);
+    if (isWeak(matches)) await recordMiss(db, q);
+  } catch {
+    failed = true;
+  }
+}
+const empty = matches && !matches.products.length && !matches.gaps.length && !matches.projects.length && !matches.topics.length;
+---
+
+<Platform title={q ? `"${q}"` : 'Search'} description="Search for a free, open-source version of anything you pay for." noindex>
+  <section class="wrap pf-section">
+    <h1 class="pf-title">{q ? <>Results for “{q}”</> : 'Find the free version'}</h1>
+    <form class="pf-search" action="/search" method="get" role="search">
+      <label for="q" class="pf-sr">A paid product, or what you need it to do</label>
+      <input id="q" name="q" type="search" value={q} placeholder="Calendly, or “book appointments with a deposit”" autocomplete="off" maxlength="200" />
+      <button class="key" type="submit">Search</button>
+    </form>
+    {failed && <p class="flash flash-error" role="alert">Search isn't answering right now. Try again in a minute.</p>}
+  </section>
+
+  {
+    matches && !empty && (
+      <section class="wrap pf-section pf-section-tight">
+        {matches.products.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Paid products</h2>
+            <div class="pf-grid">
+              {matches.products.map((p, i) => (
+                <a class={`pf-brick p${(i % 6) + 1}`} href={`/free-alternatives/${p.slug}`}>
+                  <small>Free alternatives to</small>
+                  <b>{p.name}</b>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        {matches.gaps.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Wanted</h2>
+            <ul class="pf-list">
+              {matches.gaps.map((g) => (
+                <li class="pf-row-flat"><div><a href={`/ideas/${g.slug}`}>{g.title}</a></div></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {matches.projects.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Open-source projects</h2>
+            <ul class="pf-list">
+              {matches.projects.map((p) => (
+                <li class="pf-row-flat">
+                  <div>
+                    <a href={`/projects/${p.fullName}`}>{p.fullName}</a>
+                    {p.description && <div class="muted small">{p.description}</div>}
+                  </div>
+                  <span class="pf-tag num">★ {shortCount(p.stars)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {matches.topics.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Topics</h2>
+            <div class="pf-chips">
+              {matches.topics.map((t) => <a class="chip" href={`/topics/${t.slug}`}>{t.name}</a>)}
+            </div>
+          </div>
+        )}
+      </section>
+    )
+  }
+
+  {
+    q && matches && isWeak(matches) && (
+      <section class="wrap pf-section pf-section-tight">
+        <div class="pf-empty">
+          <p><b>{empty ? `Nothing yet for “${q}”.` : 'No paid product or wish matches that yet.'}</b> If you want it, say so. Others who want it too can back it, and builders see it.</p>
+          <a class="key key-marigold key-sm" href={`/ideas/new?title=${encodeURIComponent(q.slice(0, 80))}`}>Add it as something you want</a>
+        </div>
+      </section>
+    )
+  }
+</Platform>
