@@ -219,3 +219,43 @@ a.pf-brick:hover { transform: translateY(-3px); }
 /* While someone is searching in the hero, its results sit above the brick wall and may spill below it. */
 .pf .hero:has(.pf-isearch [aria-expanded='true']) { overflow: visible; z-index: 30; }
 .pf .hero-body:has(.pf-isearch [aria-expanded='true']) { z-index: 6; }
+
+/* A project card with its owner's picture. */
+.pf-pcard {
+  display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 20px; min-width: 0;
+  background: var(--card); color: var(--ink); text-decoration: none;
+  box-shadow: 0 0 0 1px var(--line), 0 18px 36px -28px oklch(0.23 0.045 310 / 0.5);
+  transition: transform 200ms var(--spring), box-shadow 200ms var(--out);
+}
+.pf-pcard:hover { transform: translateY(-3px); box-shadow: 0 0 0 1.5px var(--ink), 0 24px 40px -26px oklch(0.23 0.045 310 / 0.55); }
+.pf-pcard:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.pf-pcard-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.pf-pcard-top img { width: 44px; height: 44px; border-radius: 12px; flex: none; background: var(--milk-2); }
+.pf-pcard-name { display: grid; min-width: 0; line-height: 1.2; }
+.pf-pcard-name b { font: 800 1.25rem/1.1 var(--display); letter-spacing: -0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-pcard-name span { font-size: 0.875rem; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-pcard-desc { font-size: 0.9375rem; color: var(--ink-2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pf-pcard-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.pf-pcard-meta span { padding: 3px 9px; border-radius: 999px; background: var(--milk-2); font-size: 0.8125rem; font-weight: 700; color: var(--ink-2); }
+.pf-pcard-replaces { font-size: 0.8125rem; font-weight: 700; color: var(--ink); }
+
+/* The home page's strip of numbers, each one a way in. */
+.pf-numbers { display: flex; flex-wrap: wrap; gap: 10px; }
+.pf-numbers a {
+  display: inline-flex; align-items: baseline; gap: 8px; padding: 12px 18px 14px; border-radius: 16px; text-decoration: none; color: var(--ink);
+  background: var(--card); box-shadow: 0 0 0 1px var(--line);
+}
+.pf-numbers a:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+.pf-numbers b { font: 800 1.6rem/1 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.pf-numbers span { font-weight: 700; color: var(--ink-2); }
+
+/* Happening now. */
+.pf-now { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.pf-now li a { display: grid; grid-template-columns: 12px 1fr auto; align-items: baseline; gap: 12px; padding: 11px 12px; border-radius: 12px; text-decoration: none; color: var(--ink); }
+.pf-now li a:hover { background: var(--milk-2); }
+.pf-now .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--p, var(--ink-3)); align-self: center; }
+.pf-now .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.pf-now time { font-size: 0.8125rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pf-two { display: grid; gap: 24px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 900px) { .pf-two { grid-template-columns: 1fr; } }
+.pf-panel { background: var(--card); border-radius: 24px; padding: clamp(16px, 2.4vw, 26px); box-shadow: 0 0 0 1px var(--line); display: grid; gap: 14px; min-width: 0; }

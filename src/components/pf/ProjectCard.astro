@@ -1,0 +1,31 @@
+---
+// One open-source project as a card: its GitHub owner's picture, name, what it does, stars, license
+// and when it was last worked on. Used on the home page, Explore and topic pages.
+import { shortCount, updated } from '../../lib/format';
+
+interface Props {
+  fullName: string;
+  description: string | null;
+  stars: number;
+  license?: string | null;
+  pushedAt?: string | null;
+  replaces?: string[];
+}
+const { fullName, description, stars, license, pushedAt, replaces = [] } = Astro.props;
+const [owner, name] = fullName.split('/');
+const now = new Date();
+---
+
+<a class="pf-pcard" href={`/projects/${fullName}`}>
+  <span class="pf-pcard-top">
+    <img src={`https://github.com/${owner}.png?size=88`} alt="" width="44" height="44" loading="lazy" decoding="async" />
+    <span class="pf-pcard-name"><b>{name}</b><span>{owner}</span></span>
+  </span>
+  {description && <span class="pf-pcard-desc">{description}</span>}
+  <span class="pf-pcard-meta">
+    <span class="num">★ {shortCount(stars)}</span>
+    {license && <span>{license}</span>}
+    {pushedAt && <span>Updated {updated(pushedAt, now)}</span>}
+  </span>
+  {replaces.length > 0 && <span class="pf-pcard-replaces">Free alternative to {replaces.slice(0, 2).join(', ')}</span>}
+</a>
