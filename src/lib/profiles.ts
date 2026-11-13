@@ -1,7 +1,7 @@
 // Public profiles: who can be seen, where their page is, and keeping their saved repositories fresh.
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { providerOf, type Provider } from './accounts';
+import { providerOf } from './accounts';
 import { DataUnavailableError, type Person } from './db';
 import { fetchActivity, savedActivity, type Activity } from './activity';
 import { fetchDetails, fetchRepos, isStale, savedRepos, type Repo } from './repos';

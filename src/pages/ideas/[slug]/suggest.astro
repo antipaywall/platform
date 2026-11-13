@@ -1,0 +1,56 @@
+---
+// Suggest an improvement to an idea. Saving opens a pull request on the public ideas repo, in your
+// name; the person who started the idea decides whether to accept it.
+import Base from '../../../layouts/Base.astro';
+import { appConfigured, readIdeaFile } from '../../../lib/githubApp';
+import { ideaPath, renderIdeaFile } from '../../../lib/ideaFile';
+import { ideaFromRow, repoIdeaUrl } from '../../../lib/suggestions';
+import { adminClient } from '../../../lib/supabase';
+
+const slug = String(Astro.params.slug);
+if (!/^[a-z0-9-]{1,90}$/.test(slug)) return new Response(null, { status: 404 });
+const db = adminClient();
+if (!db) return new Response(null, { status: 503 });
+const { data: row } = await db
+  .from('ideas')
+  .select('slug, title, pitch, problem, build, strong, missing, build_status, created_at, started_by_login, status, gap_products(products(slug))')
+  .eq('slug', slug)
+  .eq('status', 'listed')
+  .maybeSingle();
+if (!row) return new Response(null, { status: 404 });
+const person = Astro.locals.person;
+const ready = appConfigured();
+const current = ready ? await readIdeaFile(ideaPath(slug)) : null;
+const text = current?.text ?? renderIdeaFile(ideaFromRow({ ...(row as any), merged_into_slug: null }, row.started_by_login ?? null, ((row as any).gap_products ?? []).map((g: any) => g.products?.slug).filter(Boolean)));
+---
+
+<Base title={`Suggest an improvement: ${row.title}`} description={`Suggest an improvement to “${row.title}”.`} noindex>
+  <p class="muted small"><a class="link" href={`/ideas/${slug}`}>Back to the idea</a></p>
+  <h1 class="page-title" style="margin-top:12px">Suggest an improvement</h1>
+  <p class="lede">
+    Make the idea clearer, more complete, or easier to build. Your change goes to whoever started it, who can accept it or not.
+    {row.started_by_login ? '' : ' Antipaywall posted this one, so its maintainers decide.'}
+  </p>
+  {
+    !person ? (
+      <p class="flash flash-error">Sign in with GitHub to suggest an improvement. <a class="link" href={`/auth/signin?next=/ideas/${slug}/suggest`}>Sign in</a></p>
+    ) : !ready ? (
+      <p class="flash flash-error">Suggesting changes needs the Antipaywall GitHub App, which isn't connected here yet.</p>
+    ) : (
+      <form class="card stack" method="post" action="/api/ideas/suggest" style="max-width:860px">
+        <input type="hidden" name="idea" value={slug} />
+        <div class="field">
+          <label for="summary">What you changed, in a line</label>
+          <input class="input" id="summary" name="summary" required minlength="5" maxlength="120" placeholder="Explain how reviews refresh without a server" />
+        </div>
+        <div class="field">
+          <label for="text">The idea</label>
+          <textarea class="input" id="text" name="text" rows="22" required style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.875rem">{text}</textarea>
+          <span class="help">Keep the part between the two lines of dashes as it is, apart from the status or the products it replaces. Write in plain words.</span>
+        </div>
+        <button class="key key-tomato" type="submit" style="justify-self:start">Send my suggestion</button>
+        <p class="muted small">This opens a pull request in your name on <a class="link" href={repoIdeaUrl(slug)} rel="noopener">the public ideas repo</a>. Developers can also edit there directly.</p>
+      </form>
+    )
+  }
+</Base>

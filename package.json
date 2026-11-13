@@ -14,7 +14,8 @@
     "check": "astro check",
     "seed:research": "tsx scripts/seed-research.ts",
     "sync": "tsx scripts/sync.ts",
-    "match": "tsx scripts/match/index.ts"
+    "match": "tsx scripts/match/index.ts",
+    "ideas:export": "tsx scripts/ideas-export.ts"
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.21",

@@ -3,6 +3,7 @@ import { site } from '../../config/site';
 import { recordEvent } from '../../lib/events';
 import { parseIdea } from '../../lib/forms';
 import { storeIdea } from '../../lib/postIdea';
+import { pushNewIdea } from '../../lib/ideasSync';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
@@ -26,5 +27,7 @@ export const POST: APIRoute = async (context) => {
 
   const { slug, code } = await storeIdea(db, parsed, person.id, undefined, { productIds });
   if (slug) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
+  // The idea also becomes a file in the public ideas repo, credited to the person who posted it.
+  if (slug) await pushNewIdea(db, slug, { login: person.username ?? person.handle, githubId: person.github_id }).catch(() => false);
   return back(slug ? `/ideas/${slug}` : '/ideas/new', code);
 };
