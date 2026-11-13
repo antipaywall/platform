@@ -1,0 +1,106 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import FollowButton from '../../components/pf/FollowButton.astro';
+import SignalScript from '../../components/pf/SignalScript.astro';
+import { site } from '../../config/site';
+import { shortCount, updated } from '../../lib/format';
+import { getTopicPage, type TopicPage, type TopicSort } from '../../lib/topics';
+import { adminClient } from '../../lib/supabase';
+
+const slug = String(Astro.params.slug).toLowerCase();
+if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) return new Response(null, { status: 404 });
+const sortParam = Astro.url.searchParams.get('sort');
+const sort: TopicSort = sortParam === 'growth' || sortParam === 'active' ? sortParam : 'stars';
+const db = adminClient();
+if (!db) return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+let page: TopicPage | null;
+try {
+  page = await getTopicPage(db, slug, sort, new Date());
+} catch {
+  return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+}
+if (!page) return new Response(null, { status: 404 });
+const { topic, projects, products, gaps } = page;
+const here = `/topics/${topic.slug}`;
+const now = new Date();
+let following = false;
+if (topic.id && Astro.locals.person) {
+  const f = await db.from('follows').select('follower_id').eq('follower_id', Astro.locals.person.id).eq('subject_kind', 'topic').eq('subject_id', topic.id).limit(1);
+  following = (f.data ?? []).length > 0;
+}
+const title = `Free, open-source ${topic.name.toLowerCase()} software`;
+const description = `${projects.length} open-source ${topic.name.toLowerCase()} projects from GitHub${products.length ? `, as free alternatives to ${products.slice(0, 3).map((p) => p.name).join(', ')}` : ''}.`;
+const sorts: [TopicSort, string][] = [['stars', 'Most stars'], ['growth', 'Growing fastest'], ['active', 'Recently worked on']];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: title,
+  url: new URL(here, site.origin).href,
+  itemListElement: projects.slice(0, 20).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: new URL(`/projects/${p.fullName}`, site.origin).href, name: p.name })),
+};
+---
+
+<Platform title={title} description={description.slice(0, 160)} jsonLd={jsonLd} noindex={!topic.tracked}>
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/topics">Topics</a><span aria-hidden="true">/</span><span>{topic.name}</span></nav>
+      <h1 class="pf-title">{title}</h1>
+      <p class="lede">{topic.blurb ? `${topic.blurb} ` : ''}Every project here is public, open source and pulled from GitHub, where it carries the "{topic.slug}" topic.</p>
+      <div class="pf-chips">
+        <span class="chip num">{projects.length} projects</span>
+        {topic.id && <FollowButton kind="topic" id={topic.id} following={following} next={here} label="Follow this topic" signedIn={Boolean(Astro.locals.person)} />}
+      </div>
+    </div>
+    {products.length > 0 && (
+      <aside class="pf-hero-side" style="display:grid;gap:10px">
+        <h2 class="pf-h3" style="font-size:1.25rem">Paid products these replace</h2>
+        <div class="pf-grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))">
+          {products.map((p, i) => <a class={`pf-brick p${(i % 6) + 1}`} href={`/free-alternatives/${p.slug}`} style="padding:14px 14px 20px"><b style="font-size:1.15rem">{p.name}</b></a>)}
+        </div>
+      </aside>
+    )}
+  </section>
+
+  <section class="wrap pf-section pf-section-tight">
+    <nav class="pf-filters" aria-label="Sort projects">
+      {sorts.map(([key, label]) => <a class="pf-toggle" href={key === 'stars' ? here : `${here}?sort=${key}`} aria-current={sort === key ? 'true' : undefined} aria-pressed={sort === key ? 'true' : 'false'}>{label}</a>)}
+    </nav>
+    {projects.length ? (
+      <ul class="pf-list">
+        {projects.map((p) => (
+          <li class="pf-row" style="padding:18px 22px">
+            <div class="pf-row-main">
+              <div class="pf-row-title">
+                <h2 class="pf-h3" style="font-size:1.4rem"><a href={`/projects/${p.fullName}`}>{p.name}</a></h2>
+                <span class="muted small" style="font-weight:700">{p.fullName}</span>
+              </div>
+              {p.description && <p class="muted small">{p.description}</p>}
+            </div>
+            <div class="pf-tags">
+              <span class="pf-tag num">★ {shortCount(p.stars)}</span>
+              {p.gained > 0 && <span class="pf-tag num">+{shortCount(p.gained)} this month</span>}
+              {p.license && <span class="pf-tag">{p.license}</span>}
+              {p.pushedAt && <span class="pf-tag">Updated {updated(p.pushedAt, now)}</span>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="pf-empty"><p>No projects listed under this topic yet. The next GitHub sync may find some.</p></div>
+    )}
+  </section>
+
+  {
+    gaps.length > 0 && (
+      <section class="pf-band">
+        <div class="wrap pf-section">
+          <h2 class="pf-h2">Still wanted here</h2>
+          <ul class="pf-list">
+            {gaps.map((g) => <li class="pf-row-flat"><div><a href={`/ideas/${g.slug}`}>{g.title}</a></div><span class="muted num">{g.want} want it</span></li>)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+  <SignalScript />
+</Platform>
