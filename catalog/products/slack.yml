@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: slack
+name: Slack
+category: Team chat
+price:
+  cents: 875
+  period: month
+blurb: Chat with your team in channels, with threads, calls and file sharing.
+words:
+  - team chat
+  - channels
+  - messaging
+  - workplace chat
+  - group chat
+topics:
+  - team-chat
+  - chat
+  - messaging
+  - slack-alternative
+search_terms:
+  - slack alternative
+  - team chat
+aliases: []
+excludes: []

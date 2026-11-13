@@ -27,11 +27,11 @@ const SUFFIX = ' archived:false fork:false';
 
 /** The repository searches that find a paid product's open-source alternatives. */
 export function searchQueries(p: { slug: string; topics: readonly string[]; search_terms: readonly string[] }): string[] {
-  return [
-    ...p.topics.map((t) => `topic:${t}${SUFFIX}`),
+  return [...new Set([
+    ...p.topics.filter((t) => t !== `${p.slug}-alternative`).map((t) => `topic:${t}${SUFFIX}`),
     ...p.search_terms.map((t) => `"${t.replace(/"/g, '')}" in:name,description${SUFFIX}`),
     `topic:${p.slug}-alternative${SUFFIX}`,
-  ];
+  ])];
 }
 
 const REPO_FIELDS = `

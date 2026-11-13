@@ -1,0 +1,26 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: datadog
+name: Datadog
+category: Developer tools
+price:
+  cents: 1500
+  period: month
+blurb: "Watch your servers and apps: metrics, logs and alerts."
+words:
+  - monitoring
+  - observability
+  - metrics
+  - logs
+  - alerts
+  - dashboards
+  - tracing
+topics:
+  - monitoring
+  - observability
+  - apm
+  - logging
+search_terms:
+  - datadog alternative
+  - open source observability
+aliases: []
+excludes: []

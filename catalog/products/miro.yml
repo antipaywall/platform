@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: miro
+name: Miro
+category: Design
+price:
+  cents: 800
+  period: month
+blurb: An online whiteboard for sticky notes, diagrams and workshops.
+words:
+  - whiteboard
+  - sticky notes
+  - diagrams
+  - brainstorming
+  - collaboration
+  - canvas
+topics:
+  - whiteboard
+  - diagrams
+  - collaboration
+search_terms:
+  - miro alternative
+  - online whiteboard
+aliases: []
+excludes: []

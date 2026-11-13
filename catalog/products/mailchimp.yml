@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: mailchimp
+name: Mailchimp
+category: Email and newsletters
+price:
+  cents: 1300
+  period: month
+blurb: Send email newsletters and campaigns to your list.
+words:
+  - newsletter
+  - email marketing
+  - mailing list
+  - campaigns
+  - subscribers
+topics:
+  - newsletter
+  - email-marketing
+  - mailing-list
+search_terms:
+  - mailchimp alternative
+  - self-hosted newsletter
+aliases: []
+excludes: []

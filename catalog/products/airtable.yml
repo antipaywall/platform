@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: airtable
+name: Airtable
+category: Office
+price:
+  cents: 2000
+  period: month
+blurb: A spreadsheet that works like a database, with forms and views.
+words:
+  - spreadsheet database
+  - no code database
+  - tables
+  - records
+  - forms
+  - views
+topics:
+  - no-code
+  - database
+  - spreadsheet
+  - airtable-alternative
+search_terms:
+  - airtable alternative
+aliases: []
+excludes: []

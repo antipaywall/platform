@@ -1,0 +1,20 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: matlab
+name: MATLAB
+category: Science and maths
+blurb: Numbers, matrices and charts for engineers and scientists.
+words:
+  - numerical computing
+  - matrices
+  - scientific computing
+  - simulation
+  - plots
+  - engineering
+topics:
+  - scientific-computing
+  - numerical-computation
+  - matlab
+search_terms:
+  - matlab alternative
+aliases: []
+excludes: []

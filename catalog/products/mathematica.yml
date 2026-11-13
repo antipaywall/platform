@@ -1,0 +1,21 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: mathematica
+name: Mathematica
+category: Science and maths
+blurb: Symbolic maths, calculations and notebooks.
+words:
+  - computer algebra
+  - symbolic math
+  - notebook
+  - calculus
+  - equations
+topics:
+  - computer-algebra-system
+  - symbolic-math
+  - mathematics
+search_terms:
+  - mathematica alternative
+  - computer algebra system
+aliases:
+  - wolfram mathematica
+excludes: []

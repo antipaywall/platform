@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: postman
+name: Postman
+category: Developer tools
+price:
+  cents: 1400
+  period: month
+blurb: Send requests to an API and see what comes back, for developers.
+words:
+  - api client
+  - rest
+  - http requests
+  - api testing
+  - graphql
+topics:
+  - api-client
+  - rest-client
+  - http-client
+  - api-testing
+search_terms:
+  - postman alternative
+  - api client
+aliases: []
+excludes: []

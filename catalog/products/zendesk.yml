@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: zendesk
+name: Zendesk
+category: Support and chat
+price:
+  cents: 1900
+  period: month
+blurb: A help desk for answering customer emails and tickets.
+words:
+  - help desk
+  - support tickets
+  - customer service
+  - knowledge base
+  - ticketing
+topics:
+  - helpdesk
+  - ticketing-system
+  - customer-support
+search_terms:
+  - zendesk alternative
+  - help desk
+aliases: []
+excludes: []

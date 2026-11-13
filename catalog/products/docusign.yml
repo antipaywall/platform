@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: docusign
+name: DocuSign
+category: Office
+price:
+  cents: 1000
+  period: month
+blurb: Send documents for people to sign online.
+words:
+  - e-signature
+  - sign documents
+  - contracts
+  - signing
+  - pdf signature
+topics:
+  - e-signature
+  - esignature
+  - digital-signature
+  - pdf
+search_terms:
+  - docusign alternative
+  - document signing
+aliases: []
+excludes: []

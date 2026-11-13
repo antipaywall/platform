@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: cursor
+name: Cursor
+category: AI tools
+price:
+  cents: 2000
+  period: month
+blurb: A code editor with AI built in.
+words:
+  - ai code editor
+  - coding agent
+  - code editor
+  - ai coding
+  - ide
+topics:
+  - ai-coding-assistant
+  - code-editor
+  - coding-agent
+search_terms:
+  - cursor alternative
+  - open source ai code editor
+aliases:
+  - cursor ide
+excludes: []

@@ -1,0 +1,22 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: evernote
+name: Evernote
+category: Docs and notes
+price:
+  cents: 1499
+  period: month
+blurb: Write and keep notes, clip web pages and search them.
+words:
+  - notes
+  - note taking
+  - web clipper
+  - notebooks
+  - to do
+topics:
+  - note-taking
+  - notes
+  - evernote-alternative
+search_terms:
+  - evernote alternative
+aliases: []
+excludes: []

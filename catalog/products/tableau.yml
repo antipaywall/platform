@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: tableau
+name: Tableau
+category: Analytics
+price:
+  cents: 7500
+  period: month
+blurb: Turn data into charts and dashboards.
+words:
+  - dashboards
+  - charts
+  - business intelligence
+  - data visualization
+  - reports
+topics:
+  - business-intelligence
+  - data-visualization
+  - dashboards
+  - analytics
+search_terms:
+  - tableau alternative
+  - open source business intelligence
+aliases: []
+excludes: []

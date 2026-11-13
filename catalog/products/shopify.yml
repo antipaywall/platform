@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: shopify
+name: Shopify
+category: Selling online
+price:
+  cents: 3900
+  period: month
+blurb: Run an online shop.
+words:
+  - online store
+  - ecommerce
+  - shop
+  - sell online
+  - checkout
+  - products
+topics:
+  - e-commerce
+  - ecommerce
+  - online-store
+  - shopping-cart
+search_terms:
+  - shopify alternative
+  - open source ecommerce
+aliases: []
+excludes: []

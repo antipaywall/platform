@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: intellij-idea
+name: IntelliJ IDEA
+category: Developer tools
+price:
+  cents: 16900
+  period: year
+blurb: A code editor for Java and Kotlin developers.
+words:
+  - ide
+  - code editor
+  - java
+  - kotlin
+  - refactoring
+topics:
+  - ide
+  - java
+  - code-editor
+search_terms:
+  - intellij alternative
+  - java ide
+aliases:
+  - intellij
+  - jetbrains
+excludes: []

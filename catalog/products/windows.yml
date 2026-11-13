@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: windows
+name: Windows
+category: Other
+price:
+  cents: 13900
+  period: once
+blurb: The operating system most PCs come with.
+words:
+  - operating system
+  - desktop
+  - pc
+  - laptop
+  - os
+topics:
+  - operating-system
+  - linux-distribution
+  - desktop-environment
+search_terms:
+  - windows alternative operating system
+aliases:
+  - microsoft windows
+excludes: []

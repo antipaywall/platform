@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: salesforce
+name: Salesforce
+category: Sales and CRM
+price:
+  cents: 2500
+  period: month
+blurb: Keep track of customers, leads and deals.
+words:
+  - crm
+  - customers
+  - leads
+  - sales pipeline
+  - contacts
+  - deals
+topics:
+  - crm
+  - sales
+  - customer-relationship-management
+search_terms:
+  - salesforce alternative
+  - open source crm
+aliases: []
+excludes: []

@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: unity
+name: Unity
+category: Games
+price:
+  cents: 220000
+  period: year
+blurb: A game engine for making 2D and 3D games.
+words:
+  - game engine
+  - make games
+  - 2d games
+  - 3d games
+  - game development
+topics:
+  - game-engine
+  - gamedev
+  - game-development
+search_terms:
+  - unity alternative
+  - open source game engine
+aliases:
+  - unity3d
+excludes: []

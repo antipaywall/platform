@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: todoist
+name: Todoist
+category: Project management
+price:
+  cents: 400
+  period: month
+blurb: A to-do list app for tasks and projects.
+words:
+  - to do list
+  - tasks
+  - todo
+  - reminders
+  - checklist
+topics:
+  - todo
+  - task-manager
+  - todo-app
+search_terms:
+  - todoist alternative
+  - todo app
+aliases: []
+excludes: []
