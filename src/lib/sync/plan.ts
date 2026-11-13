@@ -21,3 +21,16 @@ export async function fetchAllRows<T>(page: (from: number, to: number) => Promis
     if (!data || data.length < size) return out;
   }
 }
+
+type LinkRow = { project_id: string; product_id: string; source: string; score: number };
+
+/** One link per project and product, so a batch write never names the same pair twice. Hand-made links win. */
+export function dedupeLinks(rows: LinkRow[]): LinkRow[] {
+  const out = new Map<string, LinkRow>();
+  for (const r of rows) {
+    const key = `${r.project_id}|${r.product_id}`;
+    const prev = out.get(key);
+    if (!prev || (r.source === 'catalog' && prev.source !== 'catalog') || (prev.source !== 'catalog' && r.score > prev.score)) out.set(key, r);
+  }
+  return [...out.values()];
+}

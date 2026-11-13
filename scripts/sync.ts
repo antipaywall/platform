@@ -15,7 +15,7 @@ import { loadCatalog, type Product } from '../src/lib/catalog';
 import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
 import { factsFromSearchItem, fetchReposResilient, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
-import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
+import { dedupeLinks, fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 
 const DRY = process.argv.includes('--dry-run');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
@@ -203,9 +203,9 @@ async function main() {
 
     const products = must(await db.from('products').select('id, slug'), 'products read') as { id: string; slug: string }[];
     const productId = new Map(products.map((p) => [p.slug, p.id]));
-    const linkRows = links
+    const linkRows = dedupeLinks(links
       .filter((l) => productId.has(l.product) && ids.has(l.repo))
-      .map((l) => ({ project_id: ids.get(l.repo)!, product_id: productId.get(l.product)!, source: l.source, score: l.score }));
+      .map((l) => ({ project_id: ids.get(l.repo)!, product_id: productId.get(l.product)!, source: l.source, score: l.score })));
     // Links are rebuilt from this run's searches and links.yml, which is the source of truth for
     // hand-made ones. A product whose searches didn't all answer keeps yesterday's links.
     const fresh = new Set(relinkable(catalog.products.map((p) => p.slug), failed).map((s) => productId.get(s)).filter(Boolean) as string[]);
