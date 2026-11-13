@@ -13,6 +13,9 @@ import { listProducts, type ProductSummary } from '../lib/products';
 import { tileBadges } from '../lib/social';
 import { adminClient } from '../lib/supabase';
 import { listTopics } from '../lib/topics';
+import { getHappening } from '../lib/happening';
+import { timeAgo } from '../lib/format';
+import ProjectCard from '../components/pf/ProjectCard.astro';
 import { visitorId } from '../lib/visitor';
 
 const db = adminClient();
@@ -54,10 +57,13 @@ if (db) {
     .from('help_issues')
     .select('title, url, labels, updated_at, projects!inner(full_name, listed, stars)')
     .eq('projects.listed', true)
-    .gte('projects.stars', 500)
+    .gte('projects.stars', 2000)
     .order('updated_at', { ascending: false })
-    .limit(6);
-  help = ((data ?? []) as any[]).map((i) => ({ title: i.title, url: i.url, repo: i.projects.full_name, label: (i.labels ?? []).find((l: string) => /help|first/i.test(l)) ?? 'help wanted' }));
+    .limit(40);
+  // Titles written mostly in the Latin alphabet, one per project, so the list reads as one list.
+  const latin = (t: string) => { const letters = t.match(/\p{L}/gu) ?? []; return letters.length > 0 && letters.filter((c) => /[A-Za-z]/.test(c)).length / letters.length > 0.9; };
+  const seenRepo = new Set<string>();
+  help = ((data ?? []) as any[]).filter((i) => latin(i.title) && !seenRepo.has(i.projects.full_name) && seenRepo.add(i.projects.full_name)).slice(0, 6).map((i) => ({ title: i.title, url: i.url, repo: i.projects.full_name, label: (i.labels ?? []).find((l: string) => /help|first/i.test(l)) ?? 'help wanted' }));
 }
 // Projects and ideas whose builders are looking for someone to carry them on.
 let handoffs: { href: string; title: string; by: string }[] = [];
@@ -81,6 +87,27 @@ if (db) {
     return [];
   });
 }
+// What's happening now, and the most used free alternatives, with their GitHub pictures.
+const happening = db ? await getHappening(db, 12).catch(() => []) : [];
+let topProjects: { fullName: string; description: string | null; stars: number; license: string | null; pushedAt: string | null; replaces: string[] }[] = [];
+if (db) {
+  const { data } = await db
+    .from('project_products')
+    .select('source, products(name), projects!inner(full_name, description, stars, license_spdx, license_name, pushed_at, listed)')
+    .eq('projects.listed', true)
+    .eq('source', 'catalog')
+    .limit(400);
+  const byRepo = new Map<string, (typeof topProjects)[number]>();
+  for (const r of (data ?? []) as any[]) {
+    const p = r.projects;
+    const cur = byRepo.get(p.full_name) ?? { fullName: p.full_name, description: p.description, stars: p.stars, license: p.license_spdx ?? (p.license_name ? 'Own license' : null), pushedAt: p.pushed_at, replaces: [] as string[] };
+    if (r.products?.name && !cur.replaces.includes(r.products.name)) cur.replaces.push(r.products.name);
+    byRepo.set(p.full_name, cur);
+  }
+  topProjects = [...byRepo.values()].sort((a, b) => b.stars - a.stars).slice(0, 8);
+}
+const now = new Date();
+const paint: Record<string, string> = { idea: 'var(--marigold)', backed: 'var(--tomato)', signal: 'var(--marigold)', switched: 'var(--mint)', joined: 'var(--sky)', claimed: 'var(--lilac)', posted: 'var(--pink)', pushed: 'var(--mint)' };
 const topTopics = [...topics].sort((a, b) => b.count - a.count).slice(0, 14);
 const paints = ['p4', 'p6', 'p3', 'p2', 'p5', 'p1'];
 const builderCount = stats?.builders ?? null;
@@ -115,7 +142,66 @@ const builderCount = stats?.builders ?? null;
   </section>
 
   <div>
-    <section class="wrap pf-section-tight">
+    <section class="wrap" style="padding-top:clamp(24px,3vw,36px)">
+      <nav class="pf-numbers" aria-label="What's on Antipaywall">
+        {platform && <a href="/explore"><b>{platform.projects.toLocaleString('en-US')}</b><span>open-source projects</span></a>}
+        {platform && <a href="/free-alternatives"><b>{platform.products}</b><span>paid tools mapped</span></a>}
+        <a href="/topics"><b>{topics.length}</b><span>topics</span></a>
+        {platform && <a href="/ideas"><b>{platform.gaps}</b><span>things wanted</span></a>}
+        {builderCount !== null && <a href="/builders"><b>{builderCount}</b><span>builders</span></a>}
+      </nav>
+    </section>
+
+    <section class="wrap pf-section">
+      <div class="pf-two">
+        <div class="pf-panel">
+          <div class="pf-head-row">
+            <h2 class="pf-h3">Happening now</h2>
+            <a class="link small" href="/feed">The feed</a>
+          </div>
+          {happening.length ? (
+            <ol class="pf-now">
+              {happening.map((h) => (
+                <li>
+                  <a href={h.href}>
+                    <span class="dot" style={`--p:${paint[h.kind]}`} aria-hidden="true"></span>
+                    <span class="t">{h.text}</span>
+                    <time datetime={h.at}>{timeAgo(h.at, now)}</time>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="muted">Quiet right now. Be the first: search for something you pay for.</p>
+          )}
+        </div>
+        <div class="pf-panel">
+          <div class="pf-head-row">
+            <h2 class="pf-h3">Wanted, but nobody has built it</h2>
+            <a class="link small" href="/ideas">All</a>
+          </div>
+          {nobody.length ? (
+            <ol class="pf-list" style="gap:8px">
+              {nobody.map((g) => (
+                <li class="pf-row-flat pf-gap-row" style="padding:12px 14px">
+                  <div style="display:grid;gap:6px">
+                    <a href={`/ideas/${g.slug}`}>{g.title}</a>
+                    <span class="muted small num">{g.want} want it{g.pay > 0 ? ` · ${g.pay} would pay` : ''}</span>
+                    <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${Math.max(3, Math.round((g.want / most) * 100))}%;--p:var(--tomato)`}></span></div>
+                  </div>
+                  <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="muted">Nothing posted yet.</p>
+          )}
+          <a class="key key-marigold key-sm" href="/ideas/new" style="justify-self:start">Post something you want</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap pf-section-tight" style="padding-top:0">
       <a class="pf-season" href="/hackathon" style="text-decoration:none">
         <div style="display:grid;gap:10px;max-width:760px">
           <span class="chip" style="justify-self:start;background:rgb(255 255 255 / 0.1);color:#fff;box-shadow:none">The {site.name} Hackathon · Season 1</span>
@@ -134,26 +220,13 @@ const builderCount = stats?.builders ?? null;
       </a>
     </section>
 
-    {
-      platform && (
-        <section class="wrap pf-section pf-section-tight">
-          <div class="pf-stats">
-            <div class="card pf-stat"><b>{platform.projects.toLocaleString('en-US')}</b><span class="muted">open-source projects found on GitHub</span></div>
-            <div class="card pf-stat"><b>{platform.products.toLocaleString('en-US')}</b><span class="muted">paid tools mapped to free ones</span></div>
-            <div class="card pf-stat"><b>{platform.gaps.toLocaleString('en-US')}</b><span class="muted">things people want that don't exist yet</span></div>
-            {builderCount !== null && <div class="card pf-stat"><b>{builderCount.toLocaleString('en-US')}</b><span class="muted">builders signed up for Season 1</span></div>}
-          </div>
-        </section>
-      )
-    }
-
     <section class="wrap pf-section">
       <div class="pf-head-row">
         <div style="display:grid;gap:10px">
-          <h2 class="pf-h2">Paid tools, and what's free instead.</h2>
-          <p class="lede">Each page is built from public repos. People mark what they use and what's still missing.</p>
+          <h2 class="pf-h2">What do you pay for?</h2>
+          <p class="lede">Each page lists the free, open-source projects that replace it, and what people say is still missing.</p>
         </div>
-        <a class="key key-milk key-sm" href="/free-alternatives">See all {products.length}</a>
+        <a class="key key-milk key-sm" href="/free-alternatives">All {products.length} paid tools</a>
       </div>
       {featured.length ? (
         <div class="pf-grid">
@@ -165,37 +238,28 @@ const builderCount = stats?.builders ?? null;
           ))}
         </div>
       ) : (
-        <div class="pf-empty"><p>The directory is filling up from GitHub. Search for anything in the meantime.</p></div>
+        <div class="pf-empty"><p>The directory is filling up from GitHub.</p></div>
       )}
     </section>
 
-    <section class="pf-band">
-      <div class="wrap pf-section">
-        <div class="pf-split">
-          <div>
-            <h2 class="pf-h2">Wanted, but nobody has built it.</h2>
-            <p class="lede">Gaps people asked for. Tap the ones you'd use. The most wanted become the next hackathon's briefs, and builders find each other on them.</p>
-            <a class="key key-marigold" href="/ideas/new" style="justify-self:start">Post something you want</a>
+    {
+      topProjects.length > 0 && (
+        <section class="pf-band">
+          <div class="wrap pf-section">
+            <div class="pf-head-row">
+              <div style="display:grid;gap:10px">
+                <h2 class="pf-h2">The free alternatives people use most.</h2>
+                <p class="lede">Open source, free to use, and standing in for tools people pay for every month.</p>
+              </div>
+              <a class="key key-milk key-sm" href="/explore">Explore all {platform?.projects.toLocaleString('en-US') ?? ''} projects</a>
+            </div>
+            <div class="pf-grid">
+              {topProjects.map((p) => <ProjectCard {...p} />)}
+            </div>
           </div>
-          {nobody.length ? (
-            <ol class="pf-list">
-              {nobody.map((g) => (
-                <li class="pf-row-flat pf-gap-row">
-                  <div style="display:grid;gap:6px">
-                    <a href={`/ideas/${g.slug}`} style="font-size:1.0625rem">{g.title}</a>
-                    <span class="muted small num">{g.want} want it{g.pay > 0 ? ` · ${g.pay} would pay` : ''}</span>
-                    <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${Math.max(3, Math.round((g.want / most) * 100))}%;--p:var(--tomato)`}></span></div>
-                  </div>
-                  <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <div class="pf-empty"><p>Nothing posted yet. Be the first to say what you wish was free.</p></div>
-          )}
-        </div>
-      </div>
-    </section>
+        </section>
+      )
+    }
 
     {
       help.length > 0 && (
