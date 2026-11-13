@@ -4,6 +4,10 @@ Antipaywall is meant to be carried by the people who use it. Everything that dec
 site shows is in this repository or in its public data, so you can change it the same way you
 would change any open-source project: with a pull request.
 
+## Run it yourself
+
+`docs/run-locally.md` walks through running the whole platform on your own machine from the open data.
+
 ## The catalog
 
 `catalog/` holds the paid products, the GitHub topics we track, hand-made links between projects
