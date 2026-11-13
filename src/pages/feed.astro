@@ -70,7 +70,7 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
             <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/hackathon/join/build">See yours</a></p>
           )
         ) : (
-          <p class="feed-in-line"><a class="key key-sm" href="/auth/signin?next=%2Ffeed">Sign in to post</a><span class="muted small">Then follow builders and back their ideas.</span></p>
+          <p class="feed-in-line"><a class="key key-sm" href="/signin?next=%2Ffeed">Sign in to post</a><span class="muted small">Then follow builders and back their ideas.</span></p>
         )
       }
 

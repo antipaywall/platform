@@ -6,7 +6,7 @@ import { sessionClient } from '../../lib/supabase';
 // Needs "Allow manual linking" on in Supabase's Auth settings.
 export const GET: APIRoute = async ({ request, cookies, url, redirect, locals }) => {
   const next = safeNext(url.searchParams.get('next'), '/');
-  if (!locals.person) return back('/auth/signin', 'need_signin');
+  if (!locals.person) return back('/signin', 'need_signin');
   const supabase = sessionClient(request, cookies);
   if (!supabase) return back(next, 'signin_unavailable');
   const { data, error } = await supabase.auth.linkIdentity({

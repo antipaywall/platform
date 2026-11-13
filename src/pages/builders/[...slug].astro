@@ -105,7 +105,7 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
               <button class:list={['key', follows && 'key-milk']} type="submit">{follows ? 'Following' : 'Follow'}</button>
             </form>
           ) : (
-            <a class="key" href={`/auth/signin?next=/builders`}>Sign in to follow</a>
+            <a class="key" href={`/signin?next=/builders`}>Sign in to follow</a>
           )
         }
       </div>

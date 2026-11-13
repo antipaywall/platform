@@ -1,0 +1,32 @@
+---
+// The way in. One page says what signing in does (and what it never reads) before the click.
+import Platform from '../layouts/Platform.astro';
+import SignIn from '../components/SignIn.astro';
+import { safeNext } from '../lib/respond';
+
+const next = safeNext(Astro.url.searchParams.get('next'), '/');
+if (Astro.locals.person) return Astro.redirect(next);
+---
+
+<Platform title="Sign in" description="Sign in to Antipaywall with GitHub or GitLab." noindex>
+  <section class="wrap pf-section si">
+    <div class="si-card">
+      <h1 class="pf-h2">Sign in to Antipaywall</h1>
+      <p class="lede">One account for the whole site. No password to make: you use the GitHub account you already have.</p>
+      <SignIn next={encodeURIComponent(next)} gitlab />
+    </div>
+    <ul class="si-why">
+      <li class="pf-brick p3"><b>Back what you want</b><span>Your "me too" counts once, under your name, and you hear when someone builds it.</span></li>
+      <li class="pf-brick p2"><b>Post and follow</b><span>Post ideas, follow projects and builders, and suggest improvements.</span></li>
+      <li class="pf-brick p5"><b>Build</b><span>Claim an idea, join the hackathon, and get a profile at /builders/your-name.</span></li>
+    </ul>
+  </section>
+</Platform>
+
+<style>
+  .si { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding-block: clamp(48px, 7vw, 104px); }
+  .si-card { display: grid; gap: 18px; padding: clamp(24px, 3.4vw, 44px); border-radius: 28px; background: var(--card); box-shadow: 0 0 0 1px var(--line), 0 30px 60px -44px oklch(0.23 0.045 310 / 0.6); }
+  .si-card .lede { margin: 0; }
+  .si-why { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  @media (max-width: 860px) { .si { grid-template-columns: minmax(0, 1fr); } }
+</style>

@@ -79,7 +79,7 @@ const results = checked
                   ))}
                 </ul>
               ) : (
-                <p class="lede">{providerName(providerOf(person))} did not answer when you signed in. <a class="link" href={`/auth/signin?provider=${providerOf(person)}&next=/join/build`}>Sign in again</a> to run the check.</p>
+                <p class="lede">{providerName(providerOf(person))} did not answer when you signed in. <a class="link" href={`/signin?provider=${providerOf(person)}&next=/join/build`}>Sign in again</a> to run the check.</p>
               )
             }
             {
