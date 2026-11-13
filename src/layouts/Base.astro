@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/page.css';
-import Analytics from '@vercel/analytics/astro';
+import VercelAnalytics from '../components/VercelAnalytics.astro';
 import Head from '../components/Head.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -35,6 +35,6 @@ const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : nu
     <footer class="foot">
       <SiteFooter />
     </footer>
-    <Analytics />
+    <VercelAnalytics />
   </body>
 </html>

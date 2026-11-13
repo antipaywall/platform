@@ -1,0 +1,11 @@
+---
+// Vercel Web Analytics: cookieless page-view counting by our host, next to our own count.
+// Written as our own script so the build lists its hash in the security policy; the package's
+// own Astro component inlines a script the policy would block.
+---
+
+<script>
+  import { inject } from '@vercel/analytics';
+
+  inject({ framework: 'astro' });
+</script>
