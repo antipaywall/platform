@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: wave
+name: Wave
+category: Money and invoicing
+price:
+  cents: 1600
+  period: month
+blurb: Invoices and accounting for freelancers.
+words:
+  - invoicing
+  - accounting
+  - receipts
+topics:
+  - invoicing
+  - accounting
+  - wave-alternative
+search_terms:
+  - wave alternative
+  - open source invoicing
+aliases: []
+excludes: []

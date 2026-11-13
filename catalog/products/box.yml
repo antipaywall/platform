@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: box
+name: Box
+category: Files and storage
+price:
+  cents: 1500
+  period: month
+blurb: File storage and sharing for companies.
+words:
+  - cloud storage
+  - file sharing
+  - document management
+topics:
+  - file-sharing
+  - cloud-storage
+  - document-management
+  - box-alternative
+search_terms:
+  - box alternative
+  - open source cloud storage
+aliases: []
+excludes: []

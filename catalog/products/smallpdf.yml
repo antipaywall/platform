@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: smallpdf
+name: Smallpdf
+category: Office
+price:
+  cents: 1200
+  period: month
+blurb: Compress, merge and convert PDFs in the browser.
+words:
+  - compress pdf
+  - merge pdf
+  - pdf converter
+topics:
+  - pdf
+  - pdf-tools
+  - pdf-converter
+  - smallpdf-alternative
+search_terms:
+  - smallpdf alternative
+  - open source compress pdf
+aliases: []
+excludes: []

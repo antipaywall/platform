@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: acuity-scheduling
+name: Acuity Scheduling
+category: Scheduling
+price:
+  cents: 2000
+  period: month
+blurb: Appointment booking for people who take clients, with payments and reminders.
+words:
+  - appointment booking
+  - client scheduling
+  - booking page
+  - reminders
+topics:
+  - scheduling
+  - appointment-booking
+  - booking
+  - acuity-scheduling-alternative
+search_terms:
+  - acuity scheduling alternative
+  - open source appointment booking
+aliases: []
+excludes: []

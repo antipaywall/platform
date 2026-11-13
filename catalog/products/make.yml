@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: make
+name: Make
+category: Automation
+price:
+  cents: 900
+  period: month
+blurb: Visual automations that connect your apps.
+words:
+  - automation
+  - workflow builder
+  - integrations
+topics:
+  - automation
+  - workflow
+  - workflow-automation
+  - make-alternative
+search_terms:
+  - make alternative
+  - open source automation
+aliases: []
+excludes: []

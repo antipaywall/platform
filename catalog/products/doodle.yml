@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: doodle
+name: Doodle
+category: Scheduling
+price:
+  cents: 1495
+  period: month
+blurb: Polls to find a meeting time that works for a group.
+words:
+  - meeting poll
+  - find a time
+  - group scheduling
+topics:
+  - scheduling
+  - meeting-scheduler
+  - poll
+  - doodle-alternative
+search_terms:
+  - doodle alternative
+  - open source meeting poll
+aliases: []
+excludes: []

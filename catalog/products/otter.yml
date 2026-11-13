@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: otter
+name: Otter.ai
+category: AI tools
+price:
+  cents: 1699
+  period: month
+blurb: Records meetings and writes the notes and transcript.
+words:
+  - meeting notes
+  - transcription
+  - meeting recorder
+  - speech to text
+topics:
+  - transcription
+  - speech-to-text
+  - meeting-notes
+  - otter-alternative
+search_terms:
+  - otter.ai alternative
+  - open source meeting notes
+aliases: []
+excludes: []

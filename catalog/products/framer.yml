@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: framer
+name: Framer
+category: Websites
+price:
+  cents: 500
+  period: month
+blurb: Design and publish websites without code.
+words:
+  - website builder
+  - landing page
+  - no-code site
+topics:
+  - website-builder
+  - landing-page
+  - no-code
+  - framer-alternative
+search_terms:
+  - framer alternative
+  - open source website builder
+aliases: []
+excludes: []

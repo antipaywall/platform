@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: help-scout
+name: Help Scout
+category: Support and chat
+price:
+  cents: 2200
+  period: month
+blurb: A shared inbox and help centre for support teams.
+words:
+  - shared inbox
+  - help desk
+  - customer support
+topics:
+  - helpdesk
+  - customer-support
+  - ticketing
+  - help-scout-alternative
+search_terms:
+  - help scout alternative
+  - open source shared inbox
+aliases: []
+excludes: []

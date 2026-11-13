@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: bubble
+name: Bubble
+category: Websites
+price:
+  cents: 2900
+  period: month
+blurb: Build web apps without code.
+words:
+  - no-code app builder
+  - web app builder
+topics:
+  - no-code
+  - low-code
+  - app-builder
+  - bubble-alternative
+search_terms:
+  - bubble alternative
+  - open source no-code app builder
+aliases: []
+excludes: []

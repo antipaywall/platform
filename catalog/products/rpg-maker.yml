@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: rpg-maker
+name: RPG Maker
+category: Games
+price:
+  cents: 7999
+  period: once
+blurb: Make role-playing games without code.
+words:
+  - rpg maker
+  - game creator
+topics:
+  - game-engine
+  - rpg
+  - gamedev
+  - rpg-maker-alternative
+search_terms:
+  - rpg maker alternative
+  - open source rpg maker
+aliases: []
+excludes: []

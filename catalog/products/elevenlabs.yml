@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: elevenlabs
+name: ElevenLabs
+category: AI tools
+price:
+  cents: 500
+  period: month
+blurb: Realistic AI voices from text.
+words:
+  - text to speech
+  - voice cloning
+  - ai voice
+topics:
+  - text-to-speech
+  - tts
+  - voice-cloning
+  - elevenlabs-alternative
+search_terms:
+  - elevenlabs alternative
+  - open source text to speech
+aliases: []
+excludes: []

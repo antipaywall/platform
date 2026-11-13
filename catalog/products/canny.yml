@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: canny
+name: Canny
+category: Support and chat
+price:
+  cents: 7900
+  period: month
+blurb: A public board for feature requests and votes.
+words:
+  - feature requests
+  - feedback board
+  - roadmap
+  - changelog
+topics:
+  - feedback
+  - feature-requests
+  - roadmap
+  - canny-alternative
+search_terms:
+  - canny alternative
+  - open source feature requests
+aliases: []
+excludes: []

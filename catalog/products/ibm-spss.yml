@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: ibm-spss
+name: IBM SPSS
+category: Science and maths
+price:
+  cents: 9900
+  period: month
+blurb: Statistics for research.
+words:
+  - statistics
+  - data analysis
+  - regression
+topics:
+  - statistics
+  - data-analysis
+  - statistical-analysis
+  - ibm-spss-alternative
+search_terms:
+  - ibm spss alternative
+  - open source statistics
+aliases: []
+excludes: []

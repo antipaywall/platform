@@ -9,7 +9,7 @@ import { site } from '../config/site';
 import { attempt, getStats, heartedBy, listBuilders, usd } from '../lib/db';
 import { shortCount } from '../lib/format';
 import { demandFor } from '../lib/gaps';
-import { listProducts, priceLabel, type ProductSummary } from '../lib/products';
+import { findOpenGaps, listProducts, priceLabel, type ProductSummary } from '../lib/products';
 import { tileBadges } from '../lib/social';
 import { adminClient } from '../lib/supabase';
 import { listTopics } from '../lib/topics';
@@ -28,6 +28,8 @@ const [stats, platform, products, topics, builders] = await Promise.all([
 const builderBadges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
 // The paid products people care about most first, then the ones with the most free options.
 const ranked = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions);
+// Gaps the platform finds itself: paid tools with no free alternative many people rely on.
+const openGaps = findOpenGaps(products);
 // The tools most people know from their own card statement, in this order; anything the catalog
 // doesn't have yet is skipped, and the list is topped up from the rest.
 const EVERYDAY = ['calendly', 'loom', 'notion', 'formspree', 'typeform', 'semrush', 'mailchimp', 'zapier', 'slack', 'dropbox', 'photoshop', 'docusign', 'linktree', 'zoom', 'trello', 'lastpass', 'grammarly'];
@@ -150,7 +152,7 @@ const builderCount = stats?.builders ?? null;
         <p class="hm-say">
           <a href="/explore?show=all">{platform.projects.toLocaleString('en-US')} open-source projects</a> already do the job of{' '}
           <a href="/free-alternatives">{platform.products} tools people pay for</a>.{' '}
-          {platform.gaps > 0 && <><a href="/ideas">{platform.gaps} {platform.gaps === 1 ? 'thing is' : 'things are'} still missing</a>.</>}
+          {platform.gaps + openGaps.length > 0 && <><a href="#gaps-h">{platform.gaps + openGaps.length} {platform.gaps + openGaps.length === 1 ? 'thing is' : 'things are'} still missing</a>.</>}
         </p>
       )}
     </section>
@@ -159,9 +161,9 @@ const builderCount = stats?.builders ?? null;
       <div class="pf-head-row">
         <div style="display:grid;gap:10px">
           <h2 id="gaps-h" class="pf-h2">Holes in the wall.</h2>
-          <p class="lede">Things people want that nobody has built yet. Back one and it moves up. The most wanted become hackathon briefs.</p>
+          <p class="lede">What nobody has built yet: the things people asked for, and the paid tools we found with no free version people rely on. Back one and it moves up. The most wanted become hackathon briefs.</p>
         </div>
-        <a class="key key-milk key-sm" href="/ideas">See all {platform?.gaps ?? ''} wanted</a>
+        <a class="key key-milk key-sm" href="/ideas">See everything wanted</a>
       </div>
       <ul class="hm-slots">
         {nobody.map((g) => (
@@ -170,6 +172,14 @@ const builderCount = stats?.builders ?? null;
             <div class="hm-slot-foot">
               <span class="num">{g.want > 0 ? `${g.want} want it` : 'Be the first to want it'}{g.pay > 0 ? `, ${g.pay} would pay` : ''}</span>
               <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
+            </div>
+          </li>
+        ))}
+        {openGaps.slice(0, Math.max(2, 8 - nobody.length)).map((g) => (
+          <li class="hm-slot">
+            <a href={`/free-alternatives/${g.slug}`}>A free {g.name}</a>
+            <div class="hm-slot-foot">
+              <span>{g.freeOptions === 0 ? 'No free version found' : 'No free version many people use yet'}{priceLabel(g.price) ? `. Costs ${priceLabel(g.price)}` : ''}</span>
             </div>
           </li>
         ))}

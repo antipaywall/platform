@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: netlify
+name: Netlify
+category: Hosting and cloud
+price:
+  cents: 1900
+  period: month
+blurb: Hosting for websites that deploys from git.
+words:
+  - static hosting
+  - deploy
+  - serverless
+topics:
+  - paas
+  - deployment
+  - static-site
+  - netlify-alternative
+search_terms:
+  - netlify alternative
+  - open source static hosting
+aliases: []
+excludes: []

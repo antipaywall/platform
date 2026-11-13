@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: microsoft-excel
+name: Microsoft Excel
+category: Office
+price:
+  cents: 699
+  period: month
+blurb: Spreadsheets.
+words:
+  - spreadsheet
+  - formulas
+  - pivot table
+  - charts
+topics:
+  - spreadsheet
+  - spreadsheets
+  - excel
+  - microsoft-excel-alternative
+search_terms:
+  - microsoft excel alternative
+  - open source spreadsheet
+aliases: []
+excludes: []

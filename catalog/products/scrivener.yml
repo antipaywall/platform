@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: scrivener
+name: Scrivener
+category: Writing
+price:
+  cents: 5999
+  period: once
+blurb: A writing app for long manuscripts.
+words:
+  - novel writing
+  - manuscript
+  - long-form writing
+topics:
+  - writing
+  - novel
+  - markdown-editor
+  - scrivener-alternative
+search_terms:
+  - scrivener alternative
+  - open source novel writing
+aliases: []
+excludes: []

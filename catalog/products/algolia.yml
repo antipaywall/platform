@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: algolia
+name: Algolia
+category: Developer tools
+price:
+  cents: 5000
+  period: month
+blurb: Fast search for websites and apps.
+words:
+  - site search
+  - search api
+  - instant search
+topics:
+  - search-engine
+  - search
+  - full-text-search
+  - algolia-alternative
+search_terms:
+  - algolia alternative
+  - open source site search
+aliases: []
+excludes: []

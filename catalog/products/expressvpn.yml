@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: expressvpn
+name: ExpressVPN
+category: Passwords and security
+price:
+  cents: 1295
+  period: month
+blurb: A VPN for private browsing.
+words:
+  - vpn
+  - private browsing
+topics:
+  - vpn
+  - wireguard
+  - openvpn
+  - expressvpn-alternative
+search_terms:
+  - expressvpn alternative
+  - open source vpn
+aliases: []
+excludes: []

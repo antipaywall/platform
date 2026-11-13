@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: basecamp
+name: Basecamp
+category: Project management
+price:
+  cents: 1500
+  period: month
+blurb: Projects, messages and to-dos for a team.
+words:
+  - project management
+  - team communication
+  - to-dos
+topics:
+  - project-management
+  - collaboration
+  - basecamp-alternative
+search_terms:
+  - basecamp alternative
+  - open source project management
+aliases: []
+excludes: []

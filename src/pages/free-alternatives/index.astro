@@ -1,6 +1,6 @@
 ---
 import Platform from '../../layouts/Platform.astro';
-import { listProducts, priceLabel, type ProductSummary } from '../../lib/products';
+import { findOpenGaps, listProducts, priceLabel, type ProductSummary } from '../../lib/products';
 import { adminClient } from '../../lib/supabase';
 
 let products: ProductSummary[] = [];
@@ -15,6 +15,7 @@ const byCategory = new Map<string, ProductSummary[]>();
 for (const p of products) byCategory.set(p.category, [...(byCategory.get(p.category) ?? []), p]);
 const categories = [...byCategory.keys()].sort((a, b) => (a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)));
 for (const list of byCategory.values()) list.sort((a, b) => b.freeOptions - a.freeOptions || a.name.localeCompare(b.name));
+const openGaps = findOpenGaps(products);
 const total = products.reduce((n, p) => n + p.freeOptions, 0);
 const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
 ---
@@ -30,6 +31,19 @@ const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
     </form>
     {failed && <p class="flash flash-error" role="alert">The list isn't loading right now. Try again in a minute.</p>}
   </section>
+  {openGaps.length > 0 && (
+    <section class="wrap pf-section pf-section-tight" id="gaps" aria-labelledby="gaps-h">
+      <div style="display:grid;gap:8px;max-width:760px">
+        <h2 id="gaps-h" class="pf-h3">No free version people rely on yet</h2>
+        <p class="muted">We looked across GitHub for each of these and found nothing free with real use behind it. That makes them the clearest things to build. {openGaps.length} right now, the most asked-about and most expensive first.</p>
+      </div>
+      <ul class="fa-gaps">
+        {openGaps.slice(0, 24).map((p) => (
+          <li><a href={`/free-alternatives/${p.slug}`}><b>{p.name}</b><span>{priceLabel(p.price) ?? p.category}</span></a></li>
+        ))}
+      </ul>
+    </section>
+  )}
   <section class="wrap pf-section pf-section-tight">
     <nav class="pf-chips fa-jump" aria-label="Categories">
       {categories.map((c) => <a class="chip" href={`#${anchor(c)}`}>{c} <span class="num muted">{byCategory.get(c)!.length}</span></a>)}
@@ -65,6 +79,11 @@ const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
 </Platform>
 
 <style>
+  .fa-gaps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+  .fa-gaps a { display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; border: 2px dashed oklch(0.23 0.045 310 / 0.32); text-decoration: none; color: var(--ink); }
+  .fa-gaps a:hover { border-style: solid; border-color: var(--ink); background: var(--card); }
+  .fa-gaps b { font: 800 1.15rem/1.1 var(--display); letter-spacing: -0.02em; }
+  .fa-gaps span { font-size: 0.8125rem; font-weight: 700; color: var(--ink-2); }
   .fa-jump { margin-bottom: 8px; }
   .fa-jump .chip { text-decoration: none; }
   .fa-cats { columns: 3 300px; column-gap: 16px; }

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: heygen
+name: HeyGen
+category: AI tools
+price:
+  cents: 2900
+  period: month
+blurb: AI avatars that speak your script on video.
+words:
+  - ai avatar
+  - talking head
+  - video avatar
+topics:
+  - talking-head
+  - lip-sync
+  - avatar
+  - heygen-alternative
+search_terms:
+  - heygen alternative
+  - open source ai avatar
+aliases: []
+excludes: []

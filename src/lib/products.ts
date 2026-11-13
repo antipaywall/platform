@@ -33,23 +33,43 @@ export function priceLabel(p: Price): string | null {
 export const priceOf = (row: { price_cents: number | null; price_period: string | null }): Price =>
   row.price_cents != null && row.price_period ? { cents: row.price_cents, period: row.price_period as 'month' | 'year' | 'once' } : null;
 
-export type ProductSummary = { id: string; slug: string; name: string; category: string; blurb: string; price: Price; freeOptions: number; signals: number };
+export type ProductSummary = { id: string; slug: string; name: string; category: string; blurb: string; price: Price; freeOptions: number; signals: number; /** Stars of the most-starred free alternative; 0 when there is none. */ bestStars: number };
+
+/** Below this many stars, a free alternative exists but few people rely on it yet. */
+export const SOLID_STARS = 1000;
+
+/** A rough monthly cost for ranking, counting a one-time price as spread over two years. */
+const rankCents = (p: Price): number => (!p ? 0 : p.period === 'once' ? Math.round(p.cents / 24) : monthlyCents(p));
+
+/**
+ * The gaps the platform finds by itself: paid tools with no free alternative that many people
+ * rely on. The ones people ask about lead, then the most expensive.
+ */
+export function findOpenGaps<T extends Pick<ProductSummary, 'bestStars' | 'signals' | 'price'>>(products: T[]): T[] {
+  return products
+    .filter((p) => p.bestStars < SOLID_STARS)
+    .sort((a, b) => b.signals - a.signals || rankCents(b.price) - rankCents(a.price));
+}
 
 /** Every product with how many free options are listed for it and how many signals it has. */
 export async function listProducts(db: SupabaseClient): Promise<ProductSummary[]> {
   const [products, links, sigs] = await Promise.all([
     db.from('products').select('id, slug, name, category, blurb, price_cents, price_period').order('name'),
-    fetchAllRows<{ product_id: string }>((a, b) => db.from('project_products').select('product_id, projects!inner(listed)').eq('projects.listed', true).order('product_id').order('project_id').range(a, b)),
+    fetchAllRows<{ product_id: string; projects: unknown }>((a, b) => db.from('project_products').select('product_id, projects!inner(listed, stars)').eq('projects.listed', true).order('product_id').order('project_id').range(a, b)),
     fetchAllRows<{ subject_id: string }>((a, b) => db.from('signals').select('subject_id').eq('subject_kind', 'product').order('id').range(a, b)),
   ]);
   if (products.error) throw new Error(products.error.message);
   const free = new Map<string, number>();
-  for (const l of links) free.set(l.product_id, (free.get(l.product_id) ?? 0) + 1);
+  const best = new Map<string, number>();
+  for (const l of links) {
+    free.set(l.product_id, (free.get(l.product_id) ?? 0) + 1);
+    best.set(l.product_id, Math.max(best.get(l.product_id) ?? 0, Number((l.projects as any)?.stars ?? (l.projects as any)?.[0]?.stars ?? 0)));
+  }
   const sig = new Map<string, number>();
   for (const s of sigs) sig.set(s.subject_id, (sig.get(s.subject_id) ?? 0) + 1);
   return (products.data ?? []).map((p: any) => ({
     id: p.id, slug: p.slug, name: p.name, category: p.category, blurb: p.blurb, price: priceOf(p),
-    freeOptions: free.get(p.id) ?? 0, signals: sig.get(p.id) ?? 0,
+    freeOptions: free.get(p.id) ?? 0, signals: sig.get(p.id) ?? 0, bestStars: best.get(p.id) ?? 0,
   }));
 }
 

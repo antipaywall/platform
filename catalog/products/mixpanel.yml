@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: mixpanel
+name: Mixpanel
+category: Analytics
+price:
+  cents: 2800
+  period: month
+blurb: "Product analytics: what people do inside your app."
+words:
+  - product analytics
+  - funnels
+  - retention
+  - event tracking
+topics:
+  - product-analytics
+  - analytics
+  - event-tracking
+  - mixpanel-alternative
+search_terms:
+  - mixpanel alternative
+  - open source product analytics
+aliases: []
+excludes: []

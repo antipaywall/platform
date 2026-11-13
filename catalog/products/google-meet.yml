@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: google-meet
+name: Google Meet
+category: Video and calls
+price:
+  cents: 600
+  period: month
+blurb: Video meetings in the browser.
+words:
+  - video meeting
+  - video call
+  - conference call
+  - screen share
+topics:
+  - video-conferencing
+  - webrtc
+  - video-chat
+  - google-meet-alternative
+search_terms:
+  - google meet alternative
+  - open source video meeting
+aliases: []
+excludes: []

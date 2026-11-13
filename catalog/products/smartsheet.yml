@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: smartsheet
+name: Smartsheet
+category: Office
+price:
+  cents: 900
+  period: month
+blurb: Spreadsheets for managing projects and work.
+words:
+  - project spreadsheet
+  - work management
+  - gantt
+topics:
+  - spreadsheet
+  - project-management
+  - no-code
+  - smartsheet-alternative
+search_terms:
+  - smartsheet alternative
+  - open source project spreadsheet
+aliases: []
+excludes: []

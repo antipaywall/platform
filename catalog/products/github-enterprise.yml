@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: github-enterprise
+name: GitHub Enterprise
+category: Developer tools
+price:
+  cents: 2100
+  period: month
+blurb: Code hosting, reviews and CI for companies.
+words:
+  - git hosting
+  - code review
+  - ci
+  - repository
+topics:
+  - git
+  - git-server
+  - code-review
+  - github-enterprise-alternative
+search_terms:
+  - github enterprise alternative
+  - open source git hosting
+aliases: []
+excludes: []

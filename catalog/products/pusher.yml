@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: pusher
+name: Pusher
+category: Developer tools
+price:
+  cents: 4900
+  period: month
+blurb: Realtime messages for apps.
+words:
+  - websockets
+  - realtime
+  - pub sub
+topics:
+  - websocket
+  - realtime
+  - pubsub
+  - pusher-alternative
+search_terms:
+  - pusher alternative
+  - open source websockets
+aliases: []
+excludes: []

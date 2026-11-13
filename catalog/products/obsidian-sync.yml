@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: obsidian-sync
+name: Obsidian Sync
+category: Docs and notes
+price:
+  cents: 500
+  period: month
+blurb: Syncs your Obsidian notes between devices.
+words:
+  - note sync
+  - markdown notes
+  - sync notes
+topics:
+  - note-taking
+  - markdown
+  - sync
+  - obsidian-sync-alternative
+search_terms:
+  - obsidian sync alternative
+  - open source note sync
+aliases: []
+excludes: []

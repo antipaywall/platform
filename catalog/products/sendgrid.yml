@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: sendgrid
+name: SendGrid
+category: Email and newsletters
+price:
+  cents: 1995
+  period: month
+blurb: Sends your app's email, with delivery tracking.
+words:
+  - transactional email
+  - email api
+  - smtp
+topics:
+  - email
+  - smtp
+  - transactional-email
+  - sendgrid-alternative
+search_terms:
+  - sendgrid alternative
+  - open source transactional email
+aliases: []
+excludes: []

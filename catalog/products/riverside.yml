@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: riverside
+name: Riverside
+category: Video and calls
+price:
+  cents: 1900
+  period: month
+blurb: Record podcasts and video interviews remotely in studio quality.
+words:
+  - podcast recording
+  - remote recording
+  - video interview
+topics:
+  - podcast
+  - recording
+  - webrtc
+  - riverside-alternative
+search_terms:
+  - riverside alternative
+  - open source podcast recording
+aliases: []
+excludes: []

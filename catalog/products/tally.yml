@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: tally
+name: Tally
+category: Forms and surveys
+price:
+  cents: 2900
+  period: month
+blurb: A form builder that works like a document.
+words:
+  - form builder
+  - simple forms
+  - no-code forms
+topics:
+  - form-builder
+  - forms
+  - tally-alternative
+search_terms:
+  - tally alternative
+  - open source form builder
+aliases: []
+excludes: []

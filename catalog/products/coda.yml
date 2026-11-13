@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: coda
+name: Coda
+category: Docs and notes
+price:
+  cents: 1200
+  period: month
+blurb: Documents that work like apps, with tables and buttons.
+words:
+  - docs
+  - tables
+  - wiki
+  - team docs
+topics:
+  - knowledge-base
+  - wiki
+  - documents
+  - coda-alternative
+search_terms:
+  - coda alternative
+  - open source docs
+aliases: []
+excludes: []

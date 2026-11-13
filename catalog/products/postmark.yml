@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: postmark
+name: Postmark
+category: Email and newsletters
+price:
+  cents: 1500
+  period: month
+blurb: Fast delivery for transactional email.
+words:
+  - transactional email
+  - email api
+  - smtp
+topics:
+  - email
+  - smtp
+  - transactional-email
+  - postmark-alternative
+search_terms:
+  - postmark alternative
+  - open source transactional email
+aliases: []
+excludes: []
