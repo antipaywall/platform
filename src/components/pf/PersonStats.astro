@@ -1,0 +1,27 @@
+---
+// What someone backs, would pay, tests and saves. For people who don't write code, this is
+// their profile. Would-pay is always labeled a signal.
+import { dollars } from '../../lib/format';
+import { personWants } from '../../lib/personWants';
+import { adminClient } from '../../lib/supabase';
+
+interface Props {
+  personId: string;
+  name?: string;
+}
+const { personId, name = 'They' } = Astro.props;
+const db = adminClient();
+const data = db ? await personWants(db, personId).catch(() => null) : null;
+const s = data?.stats;
+---
+
+{
+  s && s.backed > 0 && (
+    <section class="pf-stats" aria-label="What they back">
+      <div class="card pf-stat"><b>{s.backed}</b><span class="muted">{s.backed === 1 ? 'thing backed' : 'things backed'}</span></div>
+      <div class="card pf-stat"><b>{dollars(s.payMonthCents)}</b><span class="muted">a month {name.toLowerCase() === 'they' ? 'they' : name} would pay, if it worked. A signal, not money.</span></div>
+      <div class="card pf-stat"><b>{s.tested}</b><span class="muted">{s.tested === 1 ? 'build' : 'builds'} they'll test early</span></div>
+      <div class="card pf-stat pf-brick p3" style="box-shadow:inset 0 -6px 0 var(--pe)"><b>{dollars(s.savedMonthCents)}</b><span>a month saved by switching, at list prices</span></div>
+    </section>
+  )
+}
