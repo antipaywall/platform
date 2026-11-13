@@ -5,7 +5,7 @@
 -- Every table is locked (row level security on, no policies); only the server's key reads them.
 
 alter table public.people
-  -- Daily counts for the last year: {"public": [[day, n], ...], "all": [[day, n], ...]}.
+  -- Daily counts for the last year, days with nothing left out: {"public": {"2026-11-12": 4, ...}, "all": {...}}.
   add column contributions jsonb not null default '{}'::jsonb check (jsonb_typeof(contributions) = 'object'),
   add column contributions_fetched_at timestamptz,
   -- The organizer can take away someone's ability to post.
