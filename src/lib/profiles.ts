@@ -12,7 +12,13 @@ export const isPublic = (p: Pick<Person, 'is_builder' | 'profile_public'>) => p.
 
 /** The profile's address on this site. GitLab accounts live under /builders/gitlab/ so names never collide. */
 /** A builder's address: /builders/<username>, one namespace for GitHub and GitLab sign-ins alike. */
-export const profilePath = (p: { username?: string | null; handle: string }) => (p.username ? `/builders/${encodeURIComponent(p.username)}` : '/builders');
+// Someone who signed up through the live site before the release has no username yet (only the
+// release's sign-in sets one). A GitHub account's username is its login, so the handle stands in.
+const nameOf = (p: { username?: string | null; handle: string; provider?: string | null }) => p.username || (p.provider === 'gitlab' ? null : p.handle);
+export const profilePath = (p: { username?: string | null; handle: string; provider?: string | null }) => {
+  const name = nameOf(p);
+  return name ? `/builders/${encodeURIComponent(name)}` : '/builders';
+};
 
 /**
  * Reads /builders/<username>, and the old /builders/gitlab/<handle> addresses (kept so they can
@@ -53,6 +59,10 @@ export async function findProfile(where: NonNullable<ReturnType<typeof parseProf
   const { data, error } = await db().from('people').select('*').ilike('username', like(where.name)).limit(1).maybeSingle();
   if (error) throw new DataUnavailableError(error.message);
   if (data) return data as Person;
+  // No username saved yet (see nameOf): a GitHub account is found by its login.
+  const unnamed = await db().from('people').select('*').is('username', null).neq('provider', 'gitlab').ilike('handle', like(where.name)).limit(1).maybeSingle();
+  if (unnamed.error) throw new DataUnavailableError(unnamed.error.message);
+  if (unnamed.data) return unnamed.data as Person;
   const old = await db().from('username_redirects').select('people:person_id(username, handle)').ilike('old_username', like(where.name)).maybeSingle();
   const to: any = old.data?.people;
   return to ? { redirect: profilePath(to) } : null;
