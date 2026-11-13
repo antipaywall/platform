@@ -17,11 +17,13 @@
     "@astrojs/vercel": "^11.0.21",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.0",
-    "astro": "^7.4.11"
+    "astro": "^7.4.11",
+    "yaml": "2.8.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@types/node": "^22.20.5",
+    "tsx": "4.20.6",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   }
