@@ -41,8 +41,9 @@ const pickedValue = pay?.picked ? `${pay.period}:${pay.picked}` : pay ? `${pay.p
   >
     {variant === 'opt' ? (
       <>
-        <b class="num" data-count-text>{big ?? count}</b>
-        <span data-label-text>{label}</span>
+        <span class="pf-opt-box" aria-hidden="true"></span>
+        <span class="pf-opt-label" data-label-text>{label}</span>
+        <span class="pf-opt-n num">{big ?? <><b data-count-text>{count}</b> said so</>}</span>
       </>
     ) : (
       <span data-label-text>{on ? onLabel ?? label : label}</span>
