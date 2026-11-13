@@ -1,0 +1,195 @@
+---
+// Explore: browse every open-source project Antipaywall tracks, by what it replaces, topic,
+// license and activity. Filters live in the address so every view can be shared.
+import Platform from '../layouts/Platform.astro';
+import ProjectCard from '../components/pf/ProjectCard.astro';
+import { explore, exploreHref, parseExplore, LICENSES, PER_PAGE, SORTS, type ExploreQuery } from '../lib/explore';
+import { listTopics, topicName } from '../lib/topics';
+import { adminClient } from '../lib/supabase';
+
+const f = parseExplore(Astro.url.searchParams);
+const db = adminClient();
+const [result, categories, topics] = db
+  ? await Promise.all([
+      explore(db, f).catch(() => ({ total: 0, items: [] })),
+      db.from('products').select('category').then(({ data }) => [...new Set(((data ?? []) as any[]).map((r) => r.category as string))].sort((a, b) => (a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)))),
+      listTopics(db).catch(() => []),
+    ])
+  : [{ total: 0, items: [] }, [] as string[], [] as Awaited<ReturnType<typeof listTopics>>];
+
+const pages = Math.max(1, Math.ceil(result.total / PER_PAGE));
+const topicLabel = f.topic ? (topics.find((t) => t.slug === f.topic)?.name ?? topicName(f.topic)) : '';
+const what = f.category || topicLabel || (f.all ? 'Every project we track' : 'Free alternatives to paid software');
+const filtered = Boolean(f.q || f.category || f.topic || f.license !== 'any');
+const href = (change: Partial<ExploreQuery>) => exploreHref(f, change);
+const title = f.category ? `Free, open-source ${f.category.toLowerCase()} software` : topicLabel ? `Open-source ${topicLabel.toLowerCase()} projects` : 'Explore free, open-source software';
+const range = result.items.length ? `${((f.page - 1) * PER_PAGE + 1).toLocaleString()}–${((f.page - 1) * PER_PAGE + result.items.length).toLocaleString()} of ${result.total.toLocaleString()}` : '';
+// Neighbouring pages, so a long list stays easy to step through.
+const nearby = [...new Set([1, f.page - 1, f.page, f.page + 1, pages])].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
+---
+
+<Platform title={title} description="Browse the free, open-source projects that replace paid software, by category, topic, license and how actively they are built." noindex={f.page > 1 || Boolean(f.q)}>
+  <section class="wrap pf-section ex">
+    <header class="ex-head">
+      <p class="pf-crumbs"><a href="/explore">Explore</a>{(f.category || topicLabel) && <span aria-hidden="true">/</span>}{(f.category || topicLabel) && <span>{what}</span>}</p>
+      <h1 class="pf-title">{f.category || topicLabel ? what : 'Explore'}</h1>
+      <p class="lede">
+        {f.all
+          ? 'Every public GitHub project Antipaywall follows, including the ones not yet matched to a paid tool.'
+          : 'Open-source projects that do the job of software people pay for. Each one links to its code, license, contributors and star history.'}
+      </p>
+      <form class="ex-search" method="get" action="/explore" role="search">
+        {f.all && <input type="hidden" name="show" value="all" />}
+        {f.category && <input type="hidden" name="category" value={f.category} />}
+        {f.topic && <input type="hidden" name="topic" value={f.topic} />}
+        {f.license !== 'any' && <input type="hidden" name="license" value={f.license} />}
+        {f.sort !== 'stars' && <input type="hidden" name="sort" value={f.sort} />}
+        <label class="sr-only" for="ex-q">Search projects</label>
+        <input id="ex-q" name="q" type="search" value={f.q} placeholder="Search by name or what it does" autocomplete="off" />
+        <button class="key key-sm" type="submit">Search</button>
+      </form>
+    </header>
+
+    <div class="ex-body">
+      <aside class="ex-side" aria-label="Filters">
+        <details class="ex-filters" open>
+          <summary>Filters{filtered && <span class="ex-count">on</span>}</summary>
+          <div class="ex-group">
+            <h2>Show</h2>
+            <a href={href({ all: false, category: '' })} aria-current={!f.all && !f.category ? 'true' : undefined}>Free alternatives</a>
+            <a href={href({ all: true, category: '' })} aria-current={f.all && !f.category ? 'true' : undefined}>Every project</a>
+          </div>
+          <div class="ex-group">
+            <h2>Replaces software for</h2>
+            <div class="ex-scroll">
+              <a href={href({ category: '' })} aria-current={!f.category ? 'true' : undefined}>Anything</a>
+              {categories.map((c) => <a href={href({ category: c, all: false })} aria-current={f.category === c ? 'true' : undefined}>{c}</a>)}
+            </div>
+          </div>
+          <div class="ex-group">
+            <h2>License</h2>
+            {(Object.keys(LICENSES) as (keyof typeof LICENSES)[]).map((k) => <a href={href({ license: k })} aria-current={f.license === k ? 'true' : undefined}>{LICENSES[k]}</a>)}
+          </div>
+          <div class="ex-group">
+            <h2>Topic</h2>
+            <div class="ex-scroll">
+              <a href={href({ topic: '' })} aria-current={!f.topic ? 'true' : undefined}>Any topic</a>
+              {f.topic && !topics.some((t) => t.slug === f.topic) && <a href={href({ topic: f.topic })} aria-current="true">{topicLabel}</a>}
+              {topics.slice(0, 40).map((t) => <a href={href({ topic: t.slug })} aria-current={f.topic === t.slug ? 'true' : undefined}>{t.name} <span class="num">{t.count}</span></a>)}
+            </div>
+            <a class="ex-more" href="/topics">All topics</a>
+          </div>
+        </details>
+      </aside>
+
+      <div class="ex-main">
+        <div class="ex-bar">
+          <p class="pf-sub" aria-live="polite">{result.total ? `${range} ${f.all ? 'projects' : 'free alternatives'}` : 'Nothing matches'}{f.q && <> for “{f.q}”</>}</p>
+          <nav class="ex-sort" aria-label="Sort">
+            {(Object.keys(SORTS) as (keyof typeof SORTS)[]).map((k) => <a href={href({ sort: k })} aria-current={f.sort === k ? 'true' : undefined}>{SORTS[k]}</a>)}
+          </nav>
+        </div>
+
+        {filtered && (
+          <div class="pf-chips ex-active">
+            {f.q && <a class="ex-chip" href={href({ q: '' })}>“{f.q}” <span aria-hidden="true">×</span><span class="sr-only">Remove search</span></a>}
+            {f.category && <a class="ex-chip" href={href({ category: '' })}>{f.category} <span aria-hidden="true">×</span><span class="sr-only">Remove</span></a>}
+            {f.topic && <a class="ex-chip" href={href({ topic: '' })}>{topicLabel} <span aria-hidden="true">×</span><span class="sr-only">Remove</span></a>}
+            {f.license !== 'any' && <a class="ex-chip" href={href({ license: 'any' })}>{LICENSES[f.license]} <span aria-hidden="true">×</span><span class="sr-only">Remove</span></a>}
+            <a class="ex-clear" href={exploreHref({ ...f, q: '', category: '', topic: '', license: 'any', page: 1 })}>Clear all</a>
+          </div>
+        )}
+
+        {result.items.length > 0 ? (
+          <div class="pf-grid">
+            {result.items.map((p) => <ProjectCard {...p} />)}
+          </div>
+        ) : (
+          <div class="pf-panel ex-empty">
+            <h2 class="pf-h3">{f.page > 1 && result.total === 0 ? 'This page is past the end of the list.' : 'No projects match all of that.'}</h2>
+            <p>Try fewer filters{f.q ? ', or search the whole site' : ''}. If what you want doesn’t exist yet, say so: people who want the same thing find each other, and builders see it.</p>
+            <div class="pf-chips">
+              <a class="key key-sm" href={exploreHref({ ...f, q: '', category: '', topic: '', license: 'any', page: 1 })}>Show everything</a>
+              {f.q && <a class="key key-sm key-mint" href={`/search?q=${encodeURIComponent(f.q)}`}>Search the whole site</a>}
+              <a class="key key-sm key-sky" href={f.q ? `/ideas/new?title=${encodeURIComponent(f.q)}` : '/ideas/new'}>Post something you want</a>
+            </div>
+          </div>
+        )}
+
+        {pages > 1 && result.items.length > 0 && (
+          <nav class="ex-pages" aria-label="Pages">
+            {f.page > 1 && <a href={href({ page: f.page - 1 })} rel="prev">← Previous</a>}
+            {nearby.map((n, i) => (
+              <>
+                {i > 0 && n - nearby[i - 1] > 1 && <span aria-hidden="true">…</span>}
+                <a href={href({ page: n })} aria-current={n === f.page ? 'page' : undefined}>{n}</a>
+              </>
+            ))}
+            {f.page < pages && <a href={href({ page: f.page + 1 })} rel="next">Next →</a>}
+          </nav>
+        )}
+      </div>
+    </div>
+  </section>
+</Platform>
+
+<script>
+  // On a phone the filters start folded away, so the projects come first.
+  const d = document.querySelector<HTMLDetailsElement>('.ex-filters');
+  if (d && matchMedia('(max-width: 900px)').matches) d.open = false;
+</script>
+
+<style>
+  .ex { display: grid; gap: 28px; }
+  .ex-head { display: grid; gap: 14px; max-width: 820px; }
+  .ex-search { display: flex; gap: 10px; flex-wrap: wrap; }
+  .ex-search { flex-wrap: nowrap; }
+  .ex-search input {
+    flex: 1 1 0; min-width: 0; min-height: 52px; padding: 0 18px; border-radius: 14px; border: 0; font: inherit; font-size: 1.0625rem;
+    background: var(--card); color: var(--ink); box-shadow: 0 0 0 1.5px var(--line);
+  }
+  .ex-search input:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink); }
+  .ex-search .key { min-height: 52px; }
+  .ex-body { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .ex-side { position: sticky; top: 88px; max-height: calc(100dvh - 104px); overflow: auto; overscroll-behavior: contain; padding-right: 8px; scrollbar-width: thin; }
+  .ex-filters > summary { list-style: none; font: 800 1.25rem/1 var(--display); letter-spacing: -0.02em; padding: 4px 0 14px; cursor: default; display: flex; align-items: center; gap: 8px; }
+  .ex-filters > summary::-webkit-details-marker { display: none; }
+  .ex-count { font: 700 0.75rem/1 var(--body, inherit); padding: 4px 8px; border-radius: 999px; background: var(--marigold); }
+  .ex-group { display: grid; gap: 2px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .ex-group h2 { font-size: 0.8125rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin: 0 0 6px; }
+  .ex-group a {
+    display: flex; justify-content: space-between; gap: 8px; padding: 7px 10px; border-radius: 10px;
+    text-decoration: none; color: var(--ink); font-weight: 500; font-size: 0.9375rem;
+  }
+  .ex-group a:hover { background: var(--milk-2); }
+  .ex-group a[aria-current='true'] { background: var(--ink); color: var(--milk); font-weight: 700; }
+  .ex-group a .num { color: inherit; opacity: 0.6; font-size: 0.8125rem; }
+  .ex-scroll { display: grid; gap: 2px; }
+  .ex-more { font-weight: 700 !important; font-size: 0.875rem !important; }
+  .ex-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; min-width: 0; }
+  .ex-bar > * { min-width: 0; }
+  .ex-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+  .ex-bar p { margin: 0; }
+  .ex-sort { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 14px; background: var(--milk-2); }
+  .ex-sort a { padding: 7px 12px; border-radius: 10px; text-decoration: none; color: var(--ink-2); font-weight: 700; font-size: 0.875rem; }
+  .ex-sort a:hover { color: var(--ink); }
+  .ex-sort a[aria-current='true'] { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+  .ex-chip { display: inline-flex; gap: 8px; align-items: center; padding: 6px 12px; border-radius: 999px; background: var(--marigold); color: var(--ink); font-weight: 700; font-size: 0.875rem; text-decoration: none; }
+  .ex-chip:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .ex-clear { align-self: center; font-weight: 700; font-size: 0.875rem; padding: 6px 4px; }
+  .ex-empty p { margin: 0; color: var(--ink-2); max-width: 60ch; }
+  .ex-pages { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; padding-top: 8px; }
+  .ex-pages a { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; padding: 0 12px; border-radius: 12px; text-decoration: none; font-weight: 700; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--line); font-variant-numeric: tabular-nums; }
+  .ex-pages a:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .ex-pages a[aria-current='page'] { background: var(--ink); color: var(--milk); box-shadow: none; }
+  @media (max-width: 900px) {
+    .ex-body { grid-template-columns: 1fr; gap: 16px; }
+    .ex-side { position: static; max-height: none; overflow: visible; padding: 0; }
+    .ex-filters { background: var(--card); border-radius: 18px; box-shadow: 0 0 0 1px var(--line); padding: 4px 16px; }
+    .ex-filters > summary { padding: 14px 0; cursor: pointer; }
+    .ex-filters > summary::after { content: '+'; margin-left: auto; font-size: 1.4rem; }
+    .ex-filters[open] > summary::after { content: '–'; }
+    .ex-sort { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+    .ex-sort a { white-space: nowrap; }
+  }
+</style>
