@@ -1,9 +1,9 @@
 ---
-import Base from '../layouts/Base.astro';
-import PledgeForm from '../components/PledgeForm.astro';
-import PledgeWho from '../components/PledgeWho.astro';
-import { site } from '../config/site';
-import { attempt, listPledges, usd } from '../lib/db';
+import Base from '../../layouts/Base.astro';
+import PledgeForm from '../../components/PledgeForm.astro';
+import PledgeWho from '../../components/PledgeWho.astro';
+import { site } from '../../config/site';
+import { attempt, listPledges, usd } from '../../lib/db';
 
 const pledges = await attempt(() => listPledges());
 // With no collective configured there is nowhere to send anyone, so the page falls back to pledging.
@@ -25,7 +25,7 @@ const payUrl = `https://opencollective.com/${encodeURIComponent(slug)}/donate`;
       {pending ? <PledgeForm company={Astro.url.searchParams.get('as') === 'company'} /> : <a class="key key-big key-tomato" href={payUrl} style="justify-self:start">Pay by card on Open Collective</a>}
       <p class="muted">
         Need an invoice, a bounty, or a conversation first?{' '}
-        <a class="link" href="/sponsor#inquiry">Ask about sponsoring</a> and a person replies.
+        <a class="link" href="/hackathon/sponsor#inquiry">Ask about sponsoring</a> and a person replies.
       </p>
     </div>
     <div class="stack">

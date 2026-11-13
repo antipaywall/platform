@@ -9,14 +9,14 @@ export const POST: APIRoute = async (context) => {
   const { request, locals } = context;
   const person = locals.person;
   const db = adminClient();
-  if (!person || !db) return back('/fund', 'need_signin');
+  if (!person || !db) return back('/hackathon/fund', 'need_signin');
   const form = await request.formData();
   const parsed = parsePledge({
     amount: form.get('amount'), displayName: form.get('display_name'), kind: form.get('kind'),
     companyUrl: form.get('company_url'), xHandle: form.get('x_handle'), email: form.get('email'), anonymous: form.get('anonymous'),
     githubHandle: person.handle,
   });
-  const here = form.get('kind') === 'company' ? '/fund?as=company' : '/fund';
+  const here = form.get('kind') === 'company' ? '/hackathon/fund?as=company' : '/hackathon/fund';
   if (!parsed.ok) return back(here, parsed.error);
 
   const { data: id, error } = await db.rpc('replace_pledge', {
@@ -24,7 +24,7 @@ export const POST: APIRoute = async (context) => {
     p_kind: parsed.kind, p_company_url: parsed.companyUrl, p_x_handle: parsed.xHandle,
     p_email: parsed.email, p_anonymous: parsed.anonymous,
   });
-  if (error) return back('/fund', 'save_failed');
+  if (error) return back('/hackathon/fund', 'save_failed');
   await recordEvent(db, context, { kind: 'pledged', personId: person.id, subject: typeof id === 'string' ? id : null });
-  return back('/fund', parsed.status === 'held' ? 'pledge_held' : 'pledge_listed');
+  return back('/hackathon/fund', parsed.status === 'held' ? 'pledge_held' : 'pledge_listed');
 };

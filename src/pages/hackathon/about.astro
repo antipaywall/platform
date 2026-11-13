@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import { bountyRules, insiderRules, money, rulesVersion, shape, site } from '../config/site';
-import { attempt, getOrganizerPledge } from '../lib/db';
-import { WAYS } from '../lib/ways';
+import Base from '../../layouts/Base.astro';
+import { bountyRules, insiderRules, money, rulesVersion, shape, site } from '../../config/site';
+import { attempt, getOrganizerPledge } from '../../lib/db';
+import { WAYS } from '../../lib/ways';
 
 const e = site.eligibility;
 const dollars = (n: number) => '$' + n.toLocaleString('en-US');
@@ -84,7 +84,7 @@ const held = `A pledge is listed straight away only when it is from an individua
     <ul>
       {WAYS.map((w) => <li><strong>{w.label}.</strong> {w.blurb}</li>)}
     </ul>
-    <p><a class="link" href="/join">Pick one on the join page.</a></p>
+    <p><a class="link" href="/hackathon/join">Pick one on the join page.</a></p>
 
     <h2>How it works</h2>
 
@@ -161,7 +161,7 @@ const held = `A pledge is listed straight away only when it is from an individua
     <h2>How you can check it</h2>
     <ul>
       <li><strong>The numbers on this site</strong> (builders, pledges, hearts, ideas) are counted from its database when the page loads. If they can't be read, the page says so instead of showing a zero. The one exception is sponsors: each sponsor's amount, and whether it is pledged or paid, is entered by me from what that sponsor has committed or paid.</li>
-      <li><strong>The rules</strong> are <a class="link" href="/rules">published on this site</a>, version {rulesVersion}. Every change is listed there with its date, and because this site's code is public, the full history of the page is too.</li>
+      <li><strong>The rules</strong> are <a class="link" href="/hackathon/rules">published on this site</a>, version {rulesVersion}. Every change is listed there with its date, and because this site's code is public, the full history of the page is too.</li>
       <li><strong>The money</strong> will sit on a public ledger kept by the holder, showing every contribution and every payout.</li>
       <li><strong>The ballots</strong> will be published in full.</li>
       <li><strong>What the site records about you</strong> is listed on the <a class="link" href="/privacy">privacy page</a>.</li>
@@ -172,7 +172,7 @@ const held = `A pledge is listed straight away only when it is from an individua
     <ul>
       <li><strong>The dates.</strong> {shape.when}</li>
       <li><strong>The pool holder.</strong> {money.holder}</li>
-      <li><strong>The review panel.</strong> Applications are open. If you'd do it, <a class="link" href="/join/panel">apply</a>.</li>
+      <li><strong>The review panel.</strong> Applications are open. If you'd do it, <a class="link" href="/hackathon/join/panel">apply</a>.</li>
       <li><strong>The rest of the site.</strong> Submitting an entry, the checks on entries, voting and payouts get built before build week starts.</li>
     </ul>
 

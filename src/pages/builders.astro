@@ -19,7 +19,7 @@ const count = builders?.length ?? 0;
         {builders.map((b) => <BuilderTile builder={b} badge={badges.get(b.id)} />)}
       </ul>
     ) : (
-      <p class="empty">Nobody has joined yet. <a class="link" href="/join/build">Join as a builder.</a></p>
+      <p class="empty">Nobody has joined yet. <a class="link" href="/hackathon/join/build">Join as a builder.</a></p>
     )
   }
 </Base>

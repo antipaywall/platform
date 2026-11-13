@@ -95,6 +95,6 @@ export function safeBack(v: unknown, fallback = '/feed'): string {
 }
 
 /** Only our own paths: one leading slash, then letters, digits, dashes and slashes. Never `//host`. */
-export function safeNext(v: string | null, fallback = '/join'): string {
+export function safeNext(v: string | null, fallback = '/hackathon/join'): string {
   return v && /^\/(?!\/)[\w\-/]*$/.test(v) ? v : fallback;
 }

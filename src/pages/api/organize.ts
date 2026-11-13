@@ -7,7 +7,7 @@ import { MAX_NOTES_PER_HOUR, takeSlot } from '../../lib/ratelimit';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
-const HERE = '/join/organize';
+const HERE = '/hackathon/join/organize';
 
 // An offer to help run it. Signed-in people only; sending it again replaces the earlier one.
 export const POST: APIRoute = async (context) => {

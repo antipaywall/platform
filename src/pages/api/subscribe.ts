@@ -8,7 +8,7 @@ import { senderKey } from '../../lib/requester';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
-const HERE = '/join#follow';
+const HERE = '/hackathon/join#follow';
 
 // "Follow along": an email address joins the list. No account needed.
 //

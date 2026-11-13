@@ -1,7 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
-import SignIn from '../../components/SignIn.astro';
-import { adminClient } from '../../lib/supabase';
+import Base from '../../../layouts/Base.astro';
+import SignIn from '../../../components/SignIn.astro';
+import { adminClient } from '../../../lib/supabase';
 
 const person = Astro.locals.person;
 let mine: { note: string } | null = null;
@@ -12,7 +12,7 @@ if (person) {
 ---
 
 <Base title="Help organize" description="Offer to help run Antipaywall: rules, outreach, moderation and more.">
-  <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
+  <p class="muted small"><a class="link" href="/hackathon/join">All the ways to join</a></p>
   <h1 class="page-title" style="margin-top:12px">Help run it.</h1>
   <p class="lede">
     Right now one person is organizing this. It needs more: people to tighten the rules, find
@@ -45,7 +45,7 @@ if (person) {
         <div class="card stack">
           <p class="h2">Offer to help</p>
           <p>Offering needs a GitHub or GitLab sign-in, so the organizer knows who he is talking to.</p>
-          <SignIn next="/join/organize" label="Sign in to offer" />
+          <SignIn next="/hackathon/join/organize" label="Sign in to offer" />
         </div>
       )
     }

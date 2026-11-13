@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import Sponsors from '../components/Sponsors.astro';
-import { attempt, listSponsors } from '../lib/db';
-import { bountyRules, money, site } from '../config/site';
+import Base from '../../layouts/Base.astro';
+import Sponsors from '../../components/Sponsors.astro';
+import { attempt, listSponsors } from '../../lib/db';
+import { bountyRules, money, site } from '../../config/site';
 const sponsors = await attempt(() => listSponsors());
 const [t1, t2, t3] = site.sponsorTiersUsd;
 const f = (n: number) => '$' + n.toLocaleString('en-US');
@@ -47,7 +47,7 @@ const f = (n: number) => '$' + n.toLocaleString('en-US');
       </p>
       <div style="display:flex;flex-wrap:wrap;gap:12px">
         <a class="key key-big key-tomato" href="#inquiry">Ask about sponsoring</a>
-        <a class="key key-big key-milk" href="/fund?as=company">Pledge as a company</a>
+        <a class="key key-big key-milk" href="/hackathon/fund?as=company">Pledge as a company</a>
       </div>
     </div>
   </div>

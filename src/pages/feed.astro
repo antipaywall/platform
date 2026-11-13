@@ -57,7 +57,7 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
           canPost ? (
             <PostComposer back={here} />
           ) : (
-            <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/join/build">See yours</a></p>
+            <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/hackathon/join/build">See yours</a></p>
           )
         ) : (
           <div class="feed-in">
@@ -100,7 +100,7 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
       <div class="prof-box">
         <h2 class="pcard-h">Season 1</h2>
         <p>{stats ? `${stats.builders} of ${site.launch.buildersNeeded} builders are in.` : 'The builder count is unavailable right now.'} The dates are set at {site.launch.buildersNeeded}.</p>
-        <p style="margin-top:10px"><a class="key key-milk" href="/join/build">Join as a builder</a></p>
+        <p style="margin-top:10px"><a class="key key-milk" href="/hackathon/join/build">Join as a builder</a></p>
       </div>
       {
         people && people.length > 0 && (

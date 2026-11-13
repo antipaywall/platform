@@ -8,7 +8,7 @@ import { senderKey } from '../../lib/requester';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
-const HERE = '/sponsor#inquiry';
+const HERE = '/hackathon/sponsor#inquiry';
 
 // A company asking about sponsoring. No account needed. It is stored for the organizer and he is told by email.
 export const POST: APIRoute = async (context) => {

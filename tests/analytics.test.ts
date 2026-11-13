@@ -39,7 +39,7 @@ describe('looksLikeBot', () => {
 describe('trackablePath', () => {
   it('keeps the public pages and drops a trailing slash', () => {
     expect(trackablePath('/')).toBe('/');
-    expect(trackablePath('/join/')).toBe('/join');
+    expect(trackablePath('/hackathon/join/')).toBe('/hackathon/join');
     expect(trackablePath('/ideas/brand-kit')).toBe('/ideas/brand-kit');
     expect(trackablePath('/privacy')).toBe('/privacy');
   });

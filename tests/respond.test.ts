@@ -7,7 +7,7 @@ describe('safeNext', () => {
     expect(safeNext('/fund')).toBe('/fund');
   });
   it.each(['//evil.example', '//1746049812', 'https://evil.example', '/\\evil', '/a?b=c', '', null])('refuses %s', (v) => {
-    expect(safeNext(v as string | null)).toBe('/join');
+    expect(safeNext(v as string | null)).toBe('/hackathon/join');
   });
 });
 

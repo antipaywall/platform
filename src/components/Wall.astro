@@ -119,7 +119,7 @@ const { ideas = [] } = Astro.props;
           slot.className = yours ? 'slot yours' : `slot p${1 + Math.floor(rand() * 6)}`;
           slot.style.cssText = pos;
           if (yours) {
-            (slot as HTMLAnchorElement).href = '/join';
+            (slot as HTMLAnchorElement).href = '/hackathon/join';
             slot.tabIndex = -1;
             slot.innerHTML = '<span class="name">Your idea here</span><span class="tag">+</span>';
             yoursPlaced = true;

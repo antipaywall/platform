@@ -1,9 +1,9 @@
 ---
-import Base from '../../layouts/Base.astro';
-import SignIn from '../../components/SignIn.astro';
-import { shape, site } from '../../config/site';
-import { providerName, providerOf } from '../../lib/accounts';
-import { checkEligibility } from '../../lib/eligibility';
+import Base from '../../../layouts/Base.astro';
+import SignIn from '../../../components/SignIn.astro';
+import { shape, site } from '../../../config/site';
+import { providerName, providerOf } from '../../../lib/accounts';
+import { checkEligibility } from '../../../lib/eligibility';
 
 const person = Astro.locals.person;
 const checked = person?.checked_at && person.account_created_at;
@@ -20,7 +20,7 @@ const results = checked
 ---
 
 <Base title="Build" description="Create your builder account with GitHub or GitLab and hold your place. Free, no essay, nothing to buy.">
-  <p class="muted small"><a class="link" href="/join">All the ways to join</a></p>
+  <p class="muted small"><a class="link" href="/hackathon/join">All the ways to join</a></p>
   {
     !person && (
       <>
@@ -31,7 +31,7 @@ const results = checked
           no fee, and nothing to buy afterwards.
         </p>
         <div class="cols">
-          <SignIn next="/join/build" label="Join with GitHub" gitlab />
+          <SignIn next="/hackathon/join/build" label="Join with GitHub" gitlab />
           <div class="card stack">
             <p class="h2">What we check</p>
             <ul class="rows">
@@ -86,7 +86,7 @@ const results = checked
               checked && !person.verified && (
                 <p class="muted">
                   You can still <a class="link" href="/ideas">post and heart ideas</a>, pledge to the pool,
-                  and <a class="link" href="/join">join in other ways</a>.
+                  and <a class="link" href="/hackathon/join">join in other ways</a>.
                   {' '}Manual reviews open once the review panel is named.
                 </p>
               )
@@ -107,7 +107,7 @@ const results = checked
                 </div>
                 <label class="check">
                   <input type="checkbox" name="rules" required />
-                  <span>I accept the <a class="link" href="/rules">rules</a>, version {site.rules.version}, and the <a class="link" href="/terms">terms</a>.</span>
+                  <span>I accept the <a class="link" href="/hackathon/rules">rules</a>, version {site.rules.version}, and the <a class="link" href="/terms">terms</a>.</span>
                 </label>
                 <button class="key key-big" type="submit">Join as a builder</button>
               </form>

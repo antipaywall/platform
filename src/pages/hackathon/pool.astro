@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import PledgeWho from '../components/PledgeWho.astro';
-import { money, organizerPledge, site } from '../config/site';
-import { attempt, getOrganizerPledge, getStats, listPledges, usd } from '../lib/db';
+import Base from '../../layouts/Base.astro';
+import PledgeWho from '../../components/PledgeWho.astro';
+import { money, organizerPledge, site } from '../../config/site';
+import { attempt, getOrganizerPledge, getStats, listPledges, usd } from '../../lib/db';
 
 const [stats, pledges, organizer] = await Promise.all([
   attempt(getStats),
@@ -40,7 +40,7 @@ const pending = site.collective.pending;
         <li><span>Ideas posted</span><span class="amt num">{show(stats?.ideas, String)}</span></li>
         {organizer ? <li><span>Organizer's pledge</span><span class="pledge-text">{organizerPledge(organizer)}</span></li> : null}
       </ul>
-      <a class="key key-big key-tomato" href="/fund" style="justify-self:start">{pending ? 'Make a pledge' : 'Back the pool'}</a>
+      <a class="key key-big key-tomato" href="/hackathon/fund" style="justify-self:start">{pending ? 'Make a pledge' : 'Back the pool'}</a>
     </div>
 
     <div class="stack">
@@ -78,7 +78,7 @@ const pending = site.collective.pending;
           ))}
         </ul>
       ) : (
-        <p class="empty">No pledges yet. <a class="link" href="/fund">Make the first one.</a></p>
+        <p class="empty">No pledges yet. <a class="link" href="/hackathon/fund">Make the first one.</a></p>
       )
     }
   </div>
