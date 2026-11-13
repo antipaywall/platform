@@ -5,7 +5,8 @@
 .pf-main { min-height: 70svh; }
 .pf-flash { margin-top: 24px; }
 
-.pf-section { padding-block: clamp(40px, 6vw, 72px); display: grid; gap: 20px; }
+.pf-section { padding-block: clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.pf-head-row > * { min-width: 0; }
 .pf-section-tight { padding-block: clamp(28px, 4vw, 48px); }
 .pf-band { background: var(--card); box-shadow: 0 0 0 1px var(--line); }
 .pf-wall { background: var(--wall); color: #fff; }

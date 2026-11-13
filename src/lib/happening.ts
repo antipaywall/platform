@@ -80,7 +80,8 @@ export async function getHappening(db: SupabaseClient, limit = 12): Promise<Happ
     ((posts.data ?? []) as any[]).filter((p) => handle(p.people)).map((p) => ({
       kind: 'posted', at: p.created_at, key: `post:${p.id}`, who: handle(p.people), text: `@${handle(p.people)}: ${quote(String(p.body ?? ''))}`, href: '/feed',
     })),
-    ((pushed.data ?? []) as any[]).filter((p) => p.pushed_at).map((p) => ({
+    // Projects push code all day; a few of those are news, more would drown out the people.
+    ((pushed.data ?? []) as any[]).filter((p) => p.pushed_at).slice(0, 3).map((p) => ({
       kind: 'pushed', at: p.pushed_at, key: `push:${p.full_name}`, text: `${p.full_name} shipped an update`, href: `/projects/${p.full_name}`,
     })),
   ] as Happening[][];
