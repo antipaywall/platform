@@ -1,0 +1,92 @@
+---
+// "Looking for a new owner": the original builder's terms, who'd take it over, and the controls for
+// whoever is looking at it. Antipaywall shows the terms; it never enforces them or handles money.
+import { ADOPTION_TERMS, canOffer, openAdoption, termLabel, type Subject } from '../../lib/adoptions';
+import { adminClient } from '../../lib/supabase';
+
+interface Props {
+  kind: 'project' | 'gap';
+  id: string;
+  subject: Subject;
+  next: string;
+  noun: string;
+}
+const { kind, id, subject, next, noun } = Astro.props;
+const db = adminClient();
+const adoption = db ? await openAdoption(db, kind, id).catch(() => null) : null;
+const person = Astro.locals.person;
+const login = person ? person.username ?? person.handle : null;
+const mine = Boolean(person && adoption && adoption.offeredBy.username.toLowerCase() === login!.toLowerCase());
+const mayOffer = Boolean(person && !adoption && canOffer(subject, { login: login!, personId: person.id }));
+const interested = Boolean(person && adoption?.interest.some((i) => i.personId === person.id));
+---
+
+{
+  adoption ? (
+    <section id="adopt" class="wrap pf-section pf-section-tight">
+      <div class="card" style="display:grid;gap:14px;background:var(--marigold);box-shadow:inset 0 -6px 0 oklch(0.72 0.14 78)">
+        <span class="chip" style="justify-self:start">Looking for a new owner</span>
+        <h2 class="pf-h3">@{adoption.offeredBy.username} is handing this {noun} off.</h2>
+        {adoption.note && <p>{adoption.note}</p>}
+        {adoption.terms.length > 0 && (
+          <ul class="pf-chips" style="list-style:none;padding:0;margin:0">
+            {adoption.terms.map((t) => <li class="chip">{termLabel(t)}</li>)}
+          </ul>
+        )}
+        <p class="small">These are their terms. Antipaywall shows them; it doesn't enforce them, and anything about money stays between the two of you.</p>
+        {adoption.interest.length > 0 && <p class="small"><b>{adoption.interest.length}</b> {adoption.interest.length === 1 ? 'builder would' : 'builders would'} take it over{mine ? ':' : '.'}</p>}
+        {mine && adoption.interest.length > 0 && (
+          <ul class="pf-list" style="gap:6px">
+            {adoption.interest.map((i) => (
+              <li class="pf-row-flat" style="background:#fff">
+                <div><a href={`/builders/${i.username}`}>@{i.username}</a>{i.note && <div class="small muted">{i.note}</div>}</div>
+                <form method="post" action="/api/adoptions/close">
+                  <input type="hidden" name="adoption_id" value={adoption.id} />
+                  <input type="hidden" name="taken_by" value={i.personId} />
+                  <input type="hidden" name="next" value={next} />
+                  <button class="key key-sm" name="action" value="taken" type="submit">Hand it to them</button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        )}
+        {mine ? (
+          <form method="post" action="/api/adoptions/close">
+            <input type="hidden" name="adoption_id" value={adoption.id} />
+            <input type="hidden" name="next" value={next} />
+            <button class="link-button" name="action" value="withdrawn" type="submit">Withdraw the offer</button>
+          </form>
+        ) : person ? (
+          <form method="post" action="/api/adoptions/interest" class="stack" style="gap:8px;max-width:520px">
+            <input type="hidden" name="adoption_id" value={adoption.id} />
+            <input type="hidden" name="next" value={next} />
+            <input type="hidden" name="on" value={interested ? '0' : '1'} />
+            {!interested && <input class="input" name="note" maxlength="300" placeholder="A line about why you're a good fit (optional)" aria-label="Why you'd take it over" />}
+            <button class="key key-sm" type="submit" style="justify-self:start">{interested ? "I'm not taking it after all" : "I'd take it over"}</button>
+          </form>
+        ) : (
+          <a class="key key-sm" href={`/auth/signin?next=${encodeURIComponent(next)}`} style="justify-self:start">Sign in with GitHub to take it over</a>
+        )}
+      </div>
+    </section>
+  ) : mayOffer ? (
+    <section class="wrap pf-section pf-section-tight">
+      <details class="card">
+        <summary class="pf-h3" style="font-size:1.2rem;cursor:pointer">Moving on from this {noun}? Hand it off</summary>
+        <form method="post" action="/api/adoptions/offer" class="stack" style="gap:10px;margin-top:14px">
+          <input type="hidden" name="subject_kind" value={kind} />
+          <input type="hidden" name="subject_id" value={id} />
+          <input type="hidden" name="next" value={next} />
+          <p class="muted small">It'll show as "Looking for a new owner", with your terms. Pick the builder you trust from whoever offers.</p>
+          <fieldset class="pf-chips" style="border:0;padding:0;margin:0">
+            <legend class="small" style="font-weight:700;margin-bottom:6px">Your terms</legend>
+            {ADOPTION_TERMS.map((t) => <label class="chip"><input type="checkbox" name="terms" value={t.key} checked={t.key === 'open_source'} /> {t.label}</label>)}
+          </fieldset>
+          <label class="small" for={`adopt-note-${id}`} style="font-weight:700">Anything else they should know (optional)</label>
+          <textarea class="input" id={`adopt-note-${id}`} name="note" maxlength="500" rows="3"></textarea>
+          <button class="key key-sm key-marigold" type="submit" style="justify-self:start">Look for a new owner</button>
+        </form>
+      </details>
+    </section>
+  ) : null
+}
