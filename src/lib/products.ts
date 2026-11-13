@@ -56,6 +56,7 @@ export async function listProducts(db: SupabaseClient): Promise<ProductSummary[]
 export type ProjectCard = {
   id: string; fullName: string; name: string; url: string; description: string | null; stars: number;
   license: string | null; pushedAt: string | null; helpWanted: number; users: number; mineUse: boolean; handPicked: boolean;
+  contributors: number | null;
 };
 
 export type ProductPage = {
@@ -80,7 +81,7 @@ export async function getProductPage(
   if (!p) return null;
 
   const [links, gapLinks, demandRow, sync, follow, followers] = await Promise.all([
-    db.from('project_products').select('source, projects!inner(id, full_name, name, url, description, stars, license_spdx, license_name, pushed_at, help_wanted, listed)').eq('product_id', p.id).eq('projects.listed', true).limit(500),
+    db.from('project_products').select('source, projects!inner(id, full_name, name, url, description, stars, license_spdx, license_name, pushed_at, help_wanted, contributors, listed)').eq('product_id', p.id).eq('projects.listed', true).limit(500),
     db.from('gap_products').select('ideas!inner(id, slug, title, status, merged_into)').eq('product_id', p.id).eq('ideas.status', 'listed').is('ideas.merged_into', null),
     db.rpc('product_demand', { p_id: p.id }),
     db.from('sync_log').select('finished_at').eq('ok', true).order('finished_at', { ascending: false }).limit(1).maybeSingle(),
@@ -107,7 +108,7 @@ export async function getProductPage(
     .map((r) => ({
       id: r.id, fullName: r.full_name, name: r.name, url: r.url, description: r.description, stars: r.stars,
       license: r.license_spdx ?? (r.license_name ? 'Own license' : null), pushedAt: r.pushed_at, helpWanted: r.help_wanted, users: users.get(r.id)?.size ?? 0,
-      mineUse: mineProjects.get(r.id)?.has('use') ?? false, handPicked: Boolean(r.handPicked),
+      mineUse: mineProjects.get(r.id)?.has('use') ?? false, handPicked: Boolean(r.handPicked), contributors: r.contributors ?? null,
     }))
     // People who use it first, then the well-known alternatives from the catalog, then stars.
     .sort((a, b) => b.users - a.users || Number(b.handPicked) - Number(a.handPicked) || b.stars - a.stars)

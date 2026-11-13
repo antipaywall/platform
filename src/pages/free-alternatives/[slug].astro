@@ -43,11 +43,13 @@ const jsonLd = {
 <Platform title={title} description={productDescription(product.name, projects.length)} jsonLd={jsonLd} noindex={projects.length === 0 && missing.length === 0}>
   <section class="wrap pf-hero">
     <div class="pf-hero-main">
-      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><a href={`/free-alternatives#${product.category.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{product.category}</a><span aria-hidden="true">/</span><span>{product.name}</span></nav>
+      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><a href={`/explore?category=${encodeURIComponent(product.category)}`}>{product.category}</a><span aria-hidden="true">/</span><span>{product.name}</span></nav>
       <h1 class="pf-title">{title}</h1>
       <p class="lede">
-        {product.name}: {product.blurb.charAt(0).toLowerCase() + product.blurb.slice(1)}{price && ` It costs ${price}.`} Below are open-source projects pulled from public GitHub repos.
-        Nobody listed them: we found them, and the people below told us what's still missing.
+        {product.name} is {product.blurb.charAt(0).toLowerCase() + product.blurb.slice(1).replace(/\.$/, '')}{price ? `, and it costs ${price}` : ''}.
+        {projects.length > 0
+          ? ` Here ${projects.length === 1 ? 'is 1 free, open-source project that does' : `are ${projects.length} free, open-source projects that do`} the same job, with their stars, license and activity straight from GitHub.`
+          : ' Nobody has built a free, open-source version yet.'}
       </p>
       <div class="pf-chips">
         <span class="chip"><span class="pf-dot" aria-hidden="true"></span>{syncedAt ? `Synced from GitHub ${timeAgo(syncedAt, now)}` : 'Not synced from GitHub yet'}</span>
@@ -74,12 +76,36 @@ const jsonLd = {
       <h2 class="pf-h2">What exists today</h2>
       {projects.length > 1 && <span class="pf-sub">Sorted by people who use it, then stars</span>}
     </div>
+    {projects.length > 1 && (
+      <div class="cmp-wrap" role="region" aria-label={`Free ${product.name} alternatives side by side`} tabindex="0">
+        <table class="cmp">
+          <thead>
+            <tr><th scope="col">Project</th><th scope="col">Stars</th><th scope="col">License</th><th scope="col">Last update</th><th scope="col">Contributors</th><th scope="col">Help wanted</th><th scope="col">Used here</th></tr>
+          </thead>
+          <tbody>
+            {projects.slice(0, 12).map((p) => (
+              <tr>
+                <th scope="row"><a href={`/projects/${p.fullName}`}><img src={`https://github.com/${p.fullName.split('/')[0]}.png?size=56`} alt="" width="28" height="28" loading="lazy" decoding="async" /><span>{p.name}</span></a></th>
+                <td class="num">{shortCount(p.stars)}</td>
+                <td>{p.license ?? '–'}</td>
+                <td>{p.pushedAt ? updated(p.pushedAt, now) : '–'}</td>
+                <td class="num">{p.contributors != null ? shortCount(p.contributors) : '–'}</td>
+                <td class="num">{p.helpWanted > 0 ? <a href={`/projects/${p.fullName}#help`}>{p.helpWanted} {p.helpWanted === 1 ? "issue" : "issues"}</a> : '–'}</td>
+                <td class="num">{p.users > 0 ? p.users : '–'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {projects.length > 1 && <h3 class="pf-h3" style="margin-top:12px">Each one up close</h3>}
     {projects.length ? (
       <ul class="pf-list">
         {projects.map((p) => (
           <li class="pf-row">
             <div class="pf-row-main">
               <div class="pf-row-title">
+                <img class="pf-row-logo" src={`https://github.com/${p.fullName.split('/')[0]}.png?size=88`} alt="" width="40" height="40" loading="lazy" decoding="async" />
                 <h3 class="pf-h3"><a href={`/projects/${p.fullName}`}>{p.name}</a></h3>
                 <span class="muted small" style="font-weight:700">{p.fullName}</span>
               </div>
@@ -94,7 +120,9 @@ const jsonLd = {
             <div class="pf-row-side">
               <span class="num" style="font-weight:700;font-size:0.9375rem">{p.users} {p.users === 1 ? 'person uses' : 'people use'} this</span>
               <SignalButton subjectKind="project" subjectId={p.id} kind="use" on={p.mineUse} count={p.users} label="I use this" onLabel="You use this" variant="toggle" next={here} />
-              <a class="key key-milk key-sm" href={`/projects/${p.fullName}#help`}>See what it needs</a>
+              {p.helpWanted > 0
+                ? <a class="key key-milk key-sm" href={`/projects/${p.fullName}#help`}>See what it needs</a>
+                : <a class="key key-milk key-sm" href={`/projects/${p.fullName}`}>Open the project</a>}
             </div>
           </li>
         ))}
@@ -105,6 +133,7 @@ const jsonLd = {
         <a class="key key-marigold key-sm" href={`/ideas/new?product=${product.slug}`}>Say what you'd want instead</a>
       </div>
     )}
+    <p class="pf-more"><a class="link" href={`/explore?category=${encodeURIComponent(product.category)}`}>More free {product.category.toLowerCase()} software</a></p>
     <p class="muted small">Projects can add the <b>antipaywall</b> topic on GitHub to show up here. Spot a wrong match or a missing project? <a class="link" href={`${site.repo}/blob/main/catalog/products/${product.slug}.yml`} rel="noopener">Fix it in the open catalog</a>.</p>
   </section>
 
@@ -153,3 +182,20 @@ const jsonLd = {
   }
   <SignalScript />
 </Platform>
+
+<style>
+  .cmp-wrap { overflow-x: auto; border-radius: 20px; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+  .cmp-wrap:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .cmp { width: 100%; border-collapse: collapse; font-size: 0.9375rem; min-width: 720px; }
+  .cmp th, .cmp td { padding: 12px 16px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  .cmp tbody tr:last-child > * { border-bottom: 0; }
+  .cmp thead th { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); background: var(--milk-2); }
+  .cmp td.num, .cmp thead th:nth-child(n + 2):not(:nth-child(3)):not(:nth-child(4)) { text-align: right; }
+  .cmp tbody th a { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); text-decoration: none; }
+  .cmp tbody th a:hover span { text-decoration: underline; text-underline-offset: 0.18em; }
+  .cmp tbody th img { width: 28px; height: 28px; border-radius: 8px; background: var(--milk-2); }
+  .cmp tbody th { position: sticky; left: 0; background: var(--card); }
+  .cmp td a { font-weight: 700; }
+  .pf-row-logo { width: 40px; height: 40px; border-radius: 11px; background: var(--milk-2); align-self: center; }
+  .pf-more { margin: 0; font-weight: 700; }
+</style>
