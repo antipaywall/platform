@@ -2,7 +2,6 @@ import { defineMiddleware } from 'astro:middleware';
 import { ADMIN_HEADERS, isAdminPath } from './lib/admin';
 import { isProduction, pageViewFor } from './lib/analytics';
 import { attempt, getPerson, isAdmin } from './lib/db';
-import { getBacker } from './lib/backers';
 import { allowedRequest } from './lib/origin';
 import { clientIp, VISITOR_KEY } from './lib/requester';
 import { adminClient, sessionClient } from './lib/supabase';
@@ -31,7 +30,6 @@ function countView(context: Context): Promise<void> {
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.person = null;
   context.locals.userId = null;
-  context.locals.backer = null;
   // Anything that changes something must come from one of our own pages.
   if (!allowedRequest({ method: context.request.method, origin: context.request.headers.get('origin'), self: context.url.origin, path: context.url.pathname })) {
     return new Response('Cross-site requests are not accepted.', { status: 403 });
@@ -44,8 +42,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (user) {
       context.locals.userId = user.id;
       context.locals.person = await attempt(() => getPerson(user.id));
-      // Someone who signed in with an email link has no person row; they are a backer.
-      if (!context.locals.person) context.locals.backer = await attempt(() => getBacker(user.id));
     }
   }
   // Counted after the session is read, so an organizer's own visits are left out.
