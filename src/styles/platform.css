@@ -435,6 +435,32 @@ textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
 }
 
 /* The home headline is a full sentence now, so it runs a little smaller and wider than the old one. */
-.pf .hero-title { font-size: clamp(2.5rem, 5.1vw, 5.25rem); max-width: 15ch; line-height: 0.98; }
-.pf .hero-title { max-width: none; }
-@media (min-width: 900px) { .pf .hero-title span { display: block; white-space: nowrap; } }
+.pf .hero-title { font-size: clamp(2.9rem, 6vw, 6rem); max-width: 11ch; line-height: 0.94; margin-top: 0; text-wrap: balance; }
+
+/* The home hero: three things only (headline, one line, the search), with open space before the bricks start. */
+.pf .hero-content { max-width: min(100%, 640px); }
+.pf .hero-body { padding-top: clamp(40px, 6vw, 96px); }
+.pf .hero-lede { max-width: 34ch; }
+.pf .hero-find { max-width: 560px; }
+
+/* ---- Home: why there is a hackathon, and who is in ---- */
+.hm-why-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.hm-why-say { display: grid; gap: 16px; justify-items: start; }
+.hm-why-say .lede { margin: 0; max-width: 52ch; }
+.hm-why-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: why; }
+.hm-why-steps li { counter-increment: why; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 14px; padding: 14px 16px; border-radius: 16px; background: var(--milk); box-shadow: 0 0 0 1px var(--line); }
+.hm-why-steps li::before { content: counter(why); grid-row: span 2; align-self: center; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--ink); color: var(--milk); font: 900 1.3rem/1 var(--display); }
+.hm-why-steps b { font: 800 1.0625rem/1.2 var(--display); letter-spacing: -0.01em; }
+.hm-why-steps span { font-size: 0.9375rem; color: var(--ink-2); }
+/* Always two full rows: the last square is the way to everyone else. */
+.hm-crew-grid { margin-top: 4px; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.hm-crew-more { display: grid; }
+@media (max-width: 1100px) {
+  .hm-crew-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hm-crew-grid > li:nth-child(n + 8):not(.hm-crew-more) { display: none; }
+}
+@media (max-width: 860px) { .hm-why-top { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .hm-crew-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-crew-grid > li:nth-child(n + 4):not(.hm-crew-more) { display: none; }
+}

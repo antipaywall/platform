@@ -23,7 +23,7 @@ const [stats, platform, products, topics, builders] = await Promise.all([
   db ? db.rpc('site_platform_stats').then((r) => (r.error ? null : (r.data as { products: number; projects: number; gaps: number; signals: number })), () => null) : Promise.resolve(null),
   db ? listProducts(db).catch(() => [] as ProductSummary[]) : Promise.resolve([] as ProductSummary[]),
   db ? listTopics(db).catch(() => []) : Promise.resolve([]),
-  attempt(() => listBuilders(8)),
+  attempt(() => listBuilders(11)),
 ]);
 const builderBadges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
 // The paid products people care about most first, then the ones with the most free options.
@@ -34,7 +34,6 @@ const EVERYDAY = ['calendly', 'loom', 'notion', 'formspree', 'typeform', 'semrus
 const bySlug = new Map(products.map((p) => [p.slug, p]));
 const everyday = EVERYDAY.map((s) => bySlug.get(s)).filter((p): p is ProductSummary => Boolean(p) && p!.freeOptions > 0);
 const featured = [...everyday, ...ranked.filter((p) => !EVERYDAY.includes(p.slug) && p.category !== 'AI tools' && p.category !== 'Developer tools')].slice(0, 12);
-const searching = featured.slice(0, 5);
 // The best-known free alternative to each, to name on its brick.
 const leadFree = new Map<string, string>();
 if (db && featured.length) {
@@ -125,29 +124,20 @@ const builderCount = stats?.builders ?? null;
 ---
 
 <Platform
-  title={`${site.name}: find it open source, or build what doesn't exist`}
+  title={`${site.name}: take down the paywall, brick by brick`}
   bareTitle
-  description="Antipaywall finds the free, open-source version of the software people pay for. When there isn't one, the people who want it and the people who can build it meet here."
+  description="Find the free, open-source version of the software you pay for. If it doesn't exist yet, help build it."
 >
   <script slot="head" is:inline src="/wall-boot.js"></script>
 
   <section class="hero">
-    <Wall ideas={wallIdeas} products={wallProducts} yoursHref="/ideas/new" />
+    <Wall ideas={wallIdeas} products={wallProducts} yoursHref="/ideas/new" roomy />
     <div class="wrap hero-body">
       <div class="hero-content" data-clear>
-        <a class="chip" href="/hackathon" style="text-decoration:none"><span class="pulse"></span>Season 1 hackathon: builders wanted</a>
-        <h1 class="display hero-title"><span>Find it open source.</span> <span>Or build what doesn’t exist.</span></h1>
-        <p class="lede hero-lede">
-          Antipaywall finds the free, open-source version of the software people pay for. When there isn’t one, the people who want it and the people who can build it meet here.
-        </p>
+        <h1 class="display hero-title">Take down the paywall, brick by brick.</h1>
+        <p class="lede hero-lede">Find the free, open-source version of the software you pay for. If it doesn’t exist yet, help build it.</p>
         <div class="hero-find">
-          <InstantSearch id="q" big placeholder="Calendly, Notion, Photoshop…" button="Find it free" />
-          {searching.length > 0 && (
-            <p class="hero-try">
-              <span>Try</span>
-              {searching.map((p) => <a href={`/free-alternatives/${p.slug}`}>{p.name}</a>)}
-            </p>
-          )}
+          <InstantSearch id="q" big placeholder="What do you pay for?" button="Find it free" />
         </div>
       </div>
     </div>
@@ -310,24 +300,39 @@ const builderCount = stats?.builders ?? null;
       )
     }
 
-    {
-      builders && builders.length > 0 && (
-        <section class="pf-band">
-          <div class="wrap pf-section">
-            <div class="pf-head-row">
-              <div style="display:grid;gap:10px">
-                <h2 class="pf-h2">In for Season 1.</h2>
-                <p class="lede">The first people who signed up to build in the hackathon. Each profile shows what they're working on.</p>
-              </div>
-              <a class="key key-milk key-sm" href="/hackathon/builders">Everyone who's joined</a>
+    <section class="pf-band hm-why" aria-labelledby="why-h">
+      <div class="wrap pf-section">
+        <div class="hm-why-top">
+          <div class="hm-why-say">
+            <h2 id="why-h" class="pf-h2">Finding the gap is half of it. The hackathon builds it.</h2>
+            <p class="lede">
+              Antipaywall exists to find software people pay for that has no good free version. The hackathon is how those gaps get filled:
+              each season the most wanted ideas become the briefs, builders get one week, and the builders themselves vote on who wins the prize pool.
+            </p>
+            <p class="lede">Season 1 is the first. Its dates are set once {need} builders are in.</p>
+            <div class="pf-chips">
+              <a class="key key-marigold" href="/hackathon/join">Join Season 1</a>
+              <a class="key key-milk" href="/hackathon">How the hackathon works</a>
             </div>
-            <ul class="crew-list">
-              {builders.map((b) => <BuilderTile builder={b} badge={builderBadges.get(b.id)} />)}
-            </ul>
           </div>
-        </section>
-      )
-    }
+          <ol class="hm-why-steps">
+            <li><b>People say what's missing</b><span>Ideas and "me too"s show what's wanted most.</span></li>
+            <li><b>The top ideas become briefs</b><span>Each season takes on the most wanted gaps.</span></li>
+            <li><b>Builders get one week</b><span>Free to enter. Everything built is open source.</span></li>
+            <li><b>Builders vote, winners are paid in public</b><span>The community funds the pool. Antipaywall takes nothing.</span></li>
+          </ol>
+        </div>
+        {builders && builders.length > 0 && (
+          <>
+            <h3 class="pf-h3" style="margin-top:18px">{builderCount ?? builders.length} builders are in for Season 1</h3>
+            <ul class="crew-list hm-crew-grid">
+              {builders.map((b) => <BuilderTile builder={b} badge={builderBadges.get(b.id)} />)}
+              <li class="hm-crew-more"><a class="tile tile-more" href="/hackathon/builders"><span>{builderCount ?? ''}</span>See every builder</a></li>
+            </ul>
+          </>
+        )}
+      </div>
+    </section>
 
     <section class="wrap hm-how" aria-labelledby="how-h">
       <div class="hm-how-head">
