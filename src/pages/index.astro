@@ -4,6 +4,7 @@ import Platform from '../layouts/Platform.astro';
 import BuilderTile from '../components/BuilderTile.astro';
 import Heart from '../components/Heart.astro';
 import Wall from '../components/Wall.astro';
+import InstantSearch from '../components/pf/InstantSearch.astro';
 import { site } from '../config/site';
 import { attempt, getStats, heartedBy, listBuilders } from '../lib/db';
 import { shortCount } from '../lib/format';
@@ -86,9 +87,9 @@ const builderCount = stats?.builders ?? null;
 ---
 
 <Platform
-  title={`${site.name}: find the free version of anything you pay for`}
+  title={`${site.name}: stop paying for software`}
   bareTitle
-  description="Free, open-source alternatives to the tools you pay for, pulled from GitHub. If it doesn't exist yet, find the builders who want to make it."
+  description="Find the free, open-source version of anything you pay for. If it doesn't exist yet, build it with the people who want it too."
 >
   <script slot="head" is:inline src="/wall-boot.js"></script>
 
@@ -97,16 +98,11 @@ const builderCount = stats?.builders ?? null;
     <div class="wrap hero-body">
       <div class="hero-content" data-clear>
         <a class="chip" href="/hackathon" style="text-decoration:none"><span class="pulse"></span>Season 1 hackathon: builders wanted</a>
-        <h1 class="display hero-title">Find the free version of anything you pay for.</h1>
+        <h1 class="display hero-title">Stop paying for software.</h1>
         <p class="lede hero-lede">
-          If it doesn't exist yet, find the builders who want to make it. Open-source projects come straight from GitHub,
-          people say what's still missing, and the most wanted gaps get built together.
+          Find the free, open-source version of anything you pay for. If it doesn't exist yet, build it with the people who want it too.
         </p>
-        <form class="pf-search" action="/search" method="get" role="search">
-          <label for="q" class="pf-sr">A paid tool, or what you need it to do</label>
-          <input id="q" name="q" type="search" placeholder="Calendly, or “book appointments with a deposit”" autocomplete="off" maxlength="200" />
-          <button class="key key-tomato" type="submit">Find it free</button>
-        </form>
+        <InstantSearch id="q" big placeholder="Calendly, Notion, or “book appointments with a deposit”" button="Find it free" />
         {searching.length > 0 && (
           <div class="pf-chips" style="align-items:center">
             <span class="muted small" style="font-weight:700">Try:</span>

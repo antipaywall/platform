@@ -1,0 +1,148 @@
+---
+// The search box with results as you type: paid tools, wanted ideas, projects and topics, from the
+// site's own free matching. Enter (or the button) still goes to the full results page, so it works
+// without scripts.
+interface Props {
+  id: string;
+  placeholder?: string;
+  button?: string;
+  value?: string;
+  big?: boolean;
+}
+const { id, placeholder = 'A tool you pay for, or what you need it to do', button = 'Search', value = '', big = false } = Astro.props;
+---
+
+<form class:list={['pf-search', 'pf-isearch', big && 'pf-isearch-big']} action="/search" method="get" role="search" data-isearch>
+  <label for={id} class="pf-sr">A paid tool, or what you need it to do</label>
+  <input
+    id={id}
+    name="q"
+    type="search"
+    value={value}
+    placeholder={placeholder}
+    autocomplete="off"
+    maxlength="200"
+    aria-controls={`${id}-results`}
+    aria-expanded="false"
+    aria-autocomplete="list"
+  />
+  <button class="key key-tomato" type="submit">{button}</button>
+  <div class="pf-isearch-panel" id={`${id}-results`} hidden data-panel></div>
+  <p class="pf-sr" aria-live="polite" data-status></p>
+</form>
+
+<script>
+  type Result = { products: { slug: string; name: string }[]; gaps: { slug: string; title: string }[]; projects: { fullName: string; description: string | null; stars: number }[]; topics: { slug: string; name: string }[] };
+  const short = (n: number) => (n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n));
+
+  function setup(form: HTMLFormElement) {
+    const input = form.querySelector<HTMLInputElement>('input[name=q]')!;
+    const panel = form.querySelector<HTMLElement>('[data-panel]')!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const cache = new Map<string, Result>();
+    let timer = 0;
+    let latest = '';
+
+    const open = (yes: boolean) => {
+      panel.hidden = !yes;
+      input.setAttribute('aria-expanded', yes ? 'true' : 'false');
+    };
+    const group = (title: string, items: HTMLElement[]) => {
+      if (!items.length) return null;
+      const g = document.createElement('div');
+      g.className = 'pf-isearch-group';
+      const h = document.createElement('p');
+      h.className = 'pf-isearch-h';
+      h.textContent = title;
+      g.append(h, ...items);
+      return g;
+    };
+    const row = (href: string, main: string, sub: string, img?: string) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.className = 'pf-isearch-row';
+      if (img) {
+        const i = document.createElement('img');
+        i.src = img;
+        i.alt = '';
+        i.width = 28;
+        i.height = 28;
+        i.loading = 'lazy';
+        a.append(i);
+      }
+      const t = document.createElement('span');
+      t.className = 'pf-isearch-t';
+      const b = document.createElement('b');
+      b.textContent = main;
+      t.append(b);
+      if (sub) {
+        const s = document.createElement('span');
+        s.textContent = sub;
+        t.append(s);
+      }
+      a.append(t);
+      return a;
+    };
+    const render = (q: string, r: Result) => {
+      panel.replaceChildren();
+      const groups = [
+        group('Paid tools', r.products.slice(0, 4).map((p) => row(`/free-alternatives/${p.slug}`, `Free alternatives to ${p.name}`, ''))),
+        group('Wanted', r.gaps.slice(0, 3).map((g) => row(`/ideas/${g.slug}`, g.title, 'Something people want built'))),
+        group('Open-source projects', r.projects.slice(0, 5).map((p) => row(`/projects/${p.fullName}`, p.fullName, `★ ${short(p.stars)}${p.description ? ` · ${p.description}` : ''}`, `https://github.com/${p.fullName.split('/')[0]}.png?size=56`))),
+        group('Topics', r.topics.slice(0, 3).map((t) => row(`/topics/${t.slug}`, t.name, 'Topic'))),
+      ].filter(Boolean) as HTMLElement[];
+      const total = r.products.length + r.gaps.length + r.projects.length + r.topics.length;
+      const foot = document.createElement('div');
+      foot.className = 'pf-isearch-foot';
+      const all = document.createElement('a');
+      all.href = `/search?q=${encodeURIComponent(q)}`;
+      all.textContent = total ? `See all results for “${q}”` : `Nothing yet for “${q}”. Post it as something you want`;
+      if (!total) all.href = `/ideas/new?title=${encodeURIComponent(q.slice(0, 80))}`;
+      foot.append(all);
+      panel.append(...groups, foot);
+      status.textContent = total ? `${total} results` : 'No results';
+      open(true);
+    };
+    const run = async (q: string) => {
+      latest = q;
+      if (cache.has(q)) return render(q, cache.get(q)!);
+      try {
+        const res = await fetch(`/api/match?q=${encodeURIComponent(q)}`);
+        const body = (await res.json()) as Result;
+        cache.set(q, body);
+        if (latest === q && input.value.trim() === q) render(q, body);
+      } catch {
+        open(false);
+      }
+    };
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length < 2) return open(false);
+      timer = window.setTimeout(() => run(q), 140);
+    });
+    input.addEventListener('focus', () => {
+      if (input.value.trim().length >= 2 && panel.childElementCount) open(true);
+    });
+    // Arrow keys move through the results; Escape closes them.
+    form.addEventListener('keydown', (e) => {
+      const links = [...panel.querySelectorAll<HTMLAnchorElement>('a')];
+      const at = links.indexOf(document.activeElement as HTMLAnchorElement);
+      if (e.key === 'ArrowDown' && !panel.hidden && links.length) {
+        e.preventDefault();
+        links[Math.min(at + 1, links.length - 1)].focus();
+      } else if (e.key === 'ArrowUp' && at >= 0) {
+        e.preventDefault();
+        if (at === 0) input.focus();
+        else links[at - 1].focus();
+      } else if (e.key === 'Escape') {
+        open(false);
+        input.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!form.contains(e.target as Node)) open(false);
+    });
+  }
+  document.querySelectorAll<HTMLFormElement>('form[data-isearch]').forEach(setup);
+</script>

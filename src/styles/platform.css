@@ -188,3 +188,34 @@ a.pf-brick:hover { transform: translateY(-3px); }
 @media (max-width: 760px) {
   .pf .hero .hint { display: none; }
 }
+
+/* Search with results as you type. */
+.pf-isearch { position: relative; }
+.pf-isearch-big input { min-height: 68px; font-size: 1.1875rem; }
+.pf-isearch-big .key { min-height: 68px; }
+.pf-isearch-panel {
+  position: absolute; z-index: 20; top: calc(100% + 8px); left: 0; right: 0;
+  max-height: min(70vh, 560px); overflow-y: auto; padding: 8px;
+  background: var(--card); border-radius: 18px;
+  box-shadow: 0 30px 60px -20px oklch(0.23 0.045 310 / 0.45), 0 0 0 1px var(--line);
+  text-align: left;
+}
+.pf-isearch-group { display: grid; gap: 2px; padding: 4px 0; }
+.pf-isearch-group + .pf-isearch-group { border-top: 1px solid var(--line); }
+.pf-isearch-h { margin: 6px 10px 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.pf-isearch-row {
+  display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 12px;
+  text-decoration: none; color: var(--ink); min-height: 44px;
+}
+.pf-isearch-row:hover, .pf-isearch-row:focus-visible { background: var(--milk-2); outline: none; }
+.pf-isearch-row img { width: 28px; height: 28px; border-radius: 8px; flex: none; background: var(--milk-2); }
+.pf-isearch-t { display: grid; min-width: 0; }
+.pf-isearch-t b { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-isearch-t span { font-size: 0.875rem; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-isearch-foot { border-top: 1px solid var(--line); padding: 8px 4px 2px; }
+.pf-isearch-foot a { display: block; padding: 8px 10px; border-radius: 10px; font-weight: 700; text-decoration: none; }
+.pf-isearch-foot a:hover, .pf-isearch-foot a:focus-visible { background: var(--marigold); outline: none; }
+
+/* While someone is searching in the hero, its results sit above the brick wall and may spill below it. */
+.pf .hero:has(.pf-isearch [aria-expanded='true']) { overflow: visible; z-index: 30; }
+.pf .hero-body:has(.pf-isearch [aria-expanded='true']) { z-index: 6; }
