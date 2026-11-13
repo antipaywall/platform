@@ -1,4 +1,5 @@
 import type { AccountFacts } from './eligibility';
+import { text } from './github';
 
 export class GitlabUnavailableError extends Error {}
 
@@ -30,6 +31,10 @@ export async function fetchGitlabFacts(token: string, now: Date, fetchImpl: type
     avatarUrl: typeof u.avatar_url === 'string' ? u.avatar_url : '',
     accountCreatedAt: u.created_at,
     contributions12mo: await countContributions(u.username, now, fetchImpl),
+    name: text(u.name, 120),
+    bio: text(u.bio, 400),
+    location: text(u.location, 120),
+    repoCount: null,
   };
 }
 

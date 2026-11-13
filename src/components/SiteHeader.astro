@@ -3,7 +3,9 @@
 // screen on every page. On a phone the page links move into a menu that works with or
 // without scripts (it is a <details> element).
 import { site } from '../config/site';
+import { providerName, providerOf } from '../lib/accounts';
 import { isAdmin } from '../lib/db';
+import { isPublic, profilePath } from '../lib/profiles';
 
 const person = Astro.locals.person;
 const here = Astro.url.pathname;
@@ -20,6 +22,15 @@ const more = [
   { href: '/faq', label: 'Questions', on: here === '/faq' },
 ];
 const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
+// Everything that is yours, in the account menu and at the bottom of the phone menu.
+const mine = person
+  ? [
+      ...(isPublic(person) ? [{ href: profilePath(providerOf(person), person.handle), label: 'Your profile' }] : []),
+      { href: '/account', label: 'Edit profile' },
+      { href: '/account#activity', label: 'Your pledge and ideas' },
+      { href: '/account#email', label: 'Email' },
+    ]
+  : [];
 ---
 
 <header class="site-head" data-site-head>
@@ -30,11 +41,27 @@ const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === 
     </nav>
     {
       person ? (
-        <form class="who" method="post" action="/auth/signout">
-          {person.avatar_url && <img src={person.avatar_url} alt="" width="32" height="32" />}
-          <span>{person.handle}</span>
-          <button type="submit">Sign out</button>
-        </form>
+        <details class="me" data-pop>
+          <summary aria-label={`Your account, signed in as ${person.handle}`}>
+            {person.avatar_url && <img src={person.avatar_url} alt="" width="32" height="32" />}
+            <span>{person.handle}</span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          </summary>
+          <div class="me-panel">
+            <div class="me-head">
+              {person.avatar_url && <img src={person.avatar_url} alt="" width="44" height="44" />}
+              <div>
+                <b>{person.name ?? person.handle}</b>
+                <span>@{person.handle} on {providerName(providerOf(person))}</span>
+                {person.is_builder && <span class="me-badge">Builder</span>}
+              </div>
+            </div>
+            <nav aria-label="Your account">
+              {mine.map((l) => <a href={l.href}>{l.label}</a>)}
+            </nav>
+            <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
+          </div>
+        </details>
       ) : (
         <a class="key top-join" href="/join">Join</a>
       )
@@ -47,10 +74,11 @@ const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === 
         {[...links, ...more, ...admin].map((l) => <a href={l.href} aria-current={cur(l.on)}>{l.label}</a>)}
         {
           person && (
-            <form class="menu-who" method="post" action="/auth/signout">
+            <div class="menu-who">
               <span>Signed in as {person.handle}</span>
-              <button type="submit">Sign out</button>
-            </form>
+              {mine.map((l) => <a href={l.href}>{l.label}</a>)}
+              <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
+            </div>
           )
         }
       </nav>
@@ -61,22 +89,23 @@ const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === 
 <script>
   // Extras only: the header and the menu work without any of this.
   const head = document.querySelector<HTMLElement>('[data-site-head]');
-  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+  const pops = document.querySelectorAll<HTMLDetailsElement>('[data-menu], [data-pop]');
   if (head) {
     const mark = () => head.classList.toggle('is-scrolled', window.scrollY > 4);
     mark();
     addEventListener('scroll', mark, { passive: true });
   }
-  if (menu) {
+  // Both the phone menu and the account menu close on Escape, on a click outside, and after a link is picked.
+  for (const pop of pops) {
     addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menu.open) {
-        menu.open = false;
-        menu.querySelector('summary')?.focus();
+      if (e.key === 'Escape' && pop.open) {
+        pop.open = false;
+        pop.querySelector('summary')?.focus();
       }
     });
     document.addEventListener('click', (e) => {
       const t = e.target as Node;
-      if (menu.open && (!menu.contains(t) || (t as HTMLElement).closest?.('.menu-panel a'))) menu.open = false;
+      if (pop.open && (!pop.contains(t) || (t as HTMLElement).closest?.('a'))) pop.open = false;
     });
   }
 </script>

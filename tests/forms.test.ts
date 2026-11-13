@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { httpsLink, parseIdea, parsePledge, parseProfile, parseXHandle, slugify } from '../src/lib/forms';
+import { httpsLink, parseAccountProfile, parseFeatured, parseIdea, parsePledge, parseProfile, parseXHandle, slugify } from '../src/lib/forms';
 import { publicPledge } from '../src/lib/db';
 
 describe('parsePledge', () => {
@@ -167,5 +167,41 @@ describe('publicPledge', () => {
     expect(publicPledge(row)).toEqual({ id: '1', display_name: 'Anonymous', handle: '', provider: 'github', amount_cents: 500, status: 'listed', created_at: '', kind: 'company', company_url: null, x_handle: null, anonymous: true });
     expect(publicPledge({ ...row, anonymous: false })).not.toHaveProperty('email');
     expect(publicPledge({ ...row, anonymous: false })).toMatchObject({ handle: 'ada', x_handle: 'ada' });
+  });
+});
+
+describe('parseAccountProfile', () => {
+  const ok = (input: Parameters<typeof parseAccountProfile>[0]) => {
+    const r = parseAccountProfile(input);
+    if (!r.ok) throw new Error(r.error);
+    return r.profile;
+  };
+  it('saves what was typed, tidied', () => {
+    expect(ok({ about: '  I build\n agents. ', skills: 'TypeScript, AI agents,typescript, ,React', xHandle: '@NikemaCodes', siteUrl: 'nikema.dev', openToTeam: 'on', teamNote: ' Need a designer ', profilePublic: 'on' })).toEqual({
+      about: 'I build agents.', skills: ['TypeScript', 'AI agents', 'React'], xHandle: 'NikemaCodes', siteUrl: 'https://nikema.dev/',
+      openToTeam: true, teamNote: 'Need a designer', profilePublic: true,
+    });
+  });
+  it('treats blanks as nothing and unticked boxes as off', () => {
+    expect(ok({})).toEqual({ about: null, skills: [], xHandle: null, siteUrl: null, openToTeam: false, teamNote: null, profilePublic: false });
+  });
+  it('refuses text over the limits and bad links', () => {
+    expect(parseAccountProfile({ about: 'x'.repeat(401) })).toEqual({ ok: false, error: 'bad_about' });
+    expect(parseAccountProfile({ skills: 'a,b,c,d,e,f,g,h,i' })).toEqual({ ok: false, error: 'bad_skills' });
+    expect(parseAccountProfile({ skills: 'x'.repeat(31) })).toEqual({ ok: false, error: 'bad_skills' });
+    expect(parseAccountProfile({ teamNote: 'x'.repeat(141) })).toEqual({ ok: false, error: 'bad_team_note' });
+    expect(parseAccountProfile({ siteUrl: 'http://example.com' })).toEqual({ ok: false, error: 'bad_site' });
+    expect(parseAccountProfile({ siteUrl: 'javascript:alert(1)' })).toEqual({ ok: false, error: 'bad_site' });
+    expect(parseAccountProfile({ xHandle: 'not a handle!' })).toEqual({ ok: false, error: 'bad_x' });
+  });
+});
+
+describe('parseFeatured', () => {
+  const mine = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+  it('keeps only the person\'s own repositories, once each, in order', () => {
+    expect(parseFeatured(['c', 'zzz', 'a', 'c', 7], mine)).toEqual({ ok: true, featured: ['c', 'a'] });
+  });
+  it('refuses more than six', () => {
+    expect(parseFeatured(mine, mine)).toEqual({ ok: false, error: 'too_many_repos' });
   });
 });

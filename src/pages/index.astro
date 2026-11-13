@@ -6,18 +6,20 @@ import Head from '../components/Head.astro';
 import PledgeWho from '../components/PledgeWho.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import BuilderTile from '../components/BuilderTile.astro';
 import Sponsors from '../components/Sponsors.astro';
 import Wall from '../components/Wall.astro';
 import { money as fee, organizerPledge, shape, site } from '../config/site';
 import { WAYS } from '../lib/ways';
-import { attempt, getOrganizerPledge, getStats, listIdeas, listPledges, listSponsors, usd as usdCents } from '../lib/db';
+import { attempt, getOrganizerPledge, getStats, listBuilders, listIdeas, listPledges, listSponsors, usd as usdCents } from '../lib/db';
 
 // If the database can't be read, the page says so. It never shows a zero it could not verify.
-const [stats, recent, sponsors, organizer] = await Promise.all([
+const [stats, recent, sponsors, organizer, newest] = await Promise.all([
   attempt(getStats),
   attempt(() => listPledges({ limit: 5 })),
   attempt(() => listSponsors()),
   attempt(getOrganizerPledge),
+  attempt(() => listBuilders(12)),
 ]);
 const show = (n: number | undefined, f: (n: number) => string) => (n === undefined ? 'unavailable' : f(n));
 // The headline figure: what is pledged while the pool is closed, what is held once it opens.
@@ -26,6 +28,9 @@ const headline = stats ? usdCents(site.collective.pending ? stats.pledgedCents :
 const wallIdeas = ((await attempt(() => listIdeas(12))) ?? []).map((i) => ({ slug: i.slug, title: i.title, hearts: i.hearts }));
 
 const need = site.launch.buildersNeeded;
+// The newest builders, then empty "your spot" tiles so the row reads as an invitation.
+const builderCount = stats?.builders;
+const spots = newest ? Math.min(3, 12 - newest.length, Math.max(0, need - (builderCount ?? 0))) : 0;
 
 const pending = site.collective.pending;
 
@@ -169,6 +174,41 @@ const gh =
           </ul>
         </div>
       </section>
+
+      {
+        newest && newest.length > 0 && (
+          <section class="crew" aria-labelledby="crew-h">
+            <div class="wrap crew-grid">
+              <div>
+                <h2 id="crew-h" class="section-title">
+                  {builderCount === undefined ? 'The builders so far.' : `${builderCount} ${builderCount === 1 ? 'builder is' : 'builders are'} in. The dates wait on ${need}.`}
+                </h2>
+                <p class="lede">Everyone here signed in, passed the two checks and is holding a spot for build week. Pick anyone to see what they build.</p>
+                {
+                  builderCount !== undefined && (
+                    <div class="crew-meter">
+                      <span class="crew-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(builderCount, need)} aria-label="Builders joined">
+                        <i style={`width:${Math.max(2, Math.min(100, (builderCount / need) * 100))}%`}></i>
+                      </span>
+                      <p><strong>{builderCount}</strong> of {need} builders.{builderCount < need && ` ${need - builderCount} to go.`}</p>
+                    </div>
+                  )
+                }
+                <div class="actions">
+                  <a class="key key-big" href="/join/build">Join with GitHub</a>
+                  <a class="key key-big key-milk" href="/builders">See all builders</a>
+                </div>
+              </div>
+              <ul class="crew-list crew-tiles">
+                {newest.map((b) => <BuilderTile builder={b} />)}
+                {Array.from({ length: spots }, () => (
+                  <li><a class="tile tile-spot" href="/join/build"><span aria-hidden="true">+</span>Your spot</a></li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )
+      }
 
       <section class="ask" aria-labelledby="ask-h">
         <div class="wrap">

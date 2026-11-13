@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { profileUrl } from '../lib/accounts';
+import BuilderTile from '../components/BuilderTile.astro';
 import { attempt, listBuilders } from '../lib/db';
 const builders = await attempt(listBuilders);
 const count = builders?.length ?? 0;
@@ -8,26 +8,13 @@ const count = builders?.length ?? 0;
 
 <Base title="Builders" description="Everyone who has joined as a verified builder.">
   <h1 class="page-title">{!builders ? 'Builders.' : count === 0 ? 'Be the first builder.' : count === 1 ? '1 builder so far.' : `${count} builders so far.`}</h1>
-  <p class="lede">Everyone listed here signed in with GitHub or GitLab and passed the two automatic checks.</p>
+  <p class="lede">Everyone listed here signed in with GitHub or GitLab and passed the two automatic checks. Pick anyone to see their profile.</p>
   {
     !builders ? (
       <p class="empty">The list is unavailable right now.</p>
     ) : builders.length ? (
-      <ul class="faces">
-        {builders.map((b) => (
-          <li>
-            <a href={profileUrl(b.provider, b.handle)} rel="noopener">
-              {b.avatar_url && <img src={b.avatar_url} alt="" width="36" height="36" loading="lazy" />}
-              <span>{b.handle}</span>
-            </a>
-            {(b.x_handle || b.site_url) && (
-              <p class="face-links">
-                {b.x_handle && <a href={`https://x.com/${b.x_handle}`} rel="noopener nofollow">@{b.x_handle}</a>}
-                {b.site_url && <a href={b.site_url} rel="noopener nofollow">site</a>}
-              </p>
-            )}
-          </li>
-        ))}
+      <ul class="crew-list">
+        {builders.map((b) => <BuilderTile builder={b} />)}
       </ul>
     ) : (
       <p class="empty">Nobody has joined yet. <a class="link" href="/join/build">Join as a builder.</a></p>

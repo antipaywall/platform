@@ -8,6 +8,7 @@ import type { AccountFacts } from '../../lib/eligibility';
 import { fetchGithubFacts, GithubUnavailableError } from '../../lib/github';
 import { fetchGitlabFacts, GitlabUnavailableError } from '../../lib/gitlab';
 import { accountIdentity } from '../../lib/identity';
+import { refreshRepos } from '../../lib/profiles';
 import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
@@ -75,11 +76,21 @@ export const GET: APIRoute = async (context) => {
     country,
     account_created_at: facts.accountCreatedAt,
     contributions_12mo: facts.contributions12mo,
+    name: facts.name ?? null,
+    bio: facts.bio ?? null,
+    location: facts.location ?? null,
+    repo_count: facts.repoCount ?? null,
     verified,
     failed_rules: results.filter((r) => !r.pass).map((r) => r.rule),
     checked_at: new Date().toISOString(),
   });
   if (saved.error) return giveUp();
+
+  // Their public repositories, for their profile. A slow provider never holds up the sign-in.
+  await refreshRepos(
+    { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person,
+    { force: true, timeoutMs: 1500 },
+  );
 
   // Signing in joins the email list, as the sign-in button says, using the address the provider gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.

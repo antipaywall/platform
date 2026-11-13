@@ -1,0 +1,197 @@
+---
+// Your account: what your public profile says, which repositories it features, where your
+// pledge, ideas and email stand, and deleting it all.
+import Base from '../layouts/Base.astro';
+import SignIn from '../components/SignIn.astro';
+import { providerName, providerOf } from '../lib/accounts';
+import { attempt, isAdmin, usd } from '../lib/db';
+import { ABOUT_MAX, SKILLS_MAX, TEAM_NOTE_MAX } from '../lib/forms';
+import { ideasBy, isPublic, onList, pledgeOf, profilePath, refreshRepos } from '../lib/profiles';
+import { pickFeatured, savedRepos, type Repo } from '../lib/repos';
+
+const person = Astro.locals.person;
+let repos: Repo[] = [];
+let ideas: { slug: string; title: string }[] | null = null;
+let pledge: Awaited<ReturnType<typeof pledgeOf>> | undefined;
+let listed: boolean | null = null;
+if (person) {
+  [repos, ideas, pledge, listed] = await Promise.all([
+    refreshRepos(person, { timeoutMs: 2000 }),
+    attempt(() => ideasBy(person.id)),
+    attempt(() => pledgeOf(person.id)),
+    onList(person.id),
+  ]);
+  if (!repos.length) repos = savedRepos(person.repos);
+}
+const provider = person ? providerOf(person) : 'github';
+const featured = new Set(person ? pickFeatured(repos, person.featured_repos ?? []).map((r) => r.name) : []);
+const picked = (person?.featured_repos ?? []).length > 0;
+const isPub = person ? isPublic(person) : false;
+---
+
+<Base title="Your account" description="Your Antipaywall profile and account." noindex>
+  {
+    !person ? (
+      <>
+        <h1 class="page-title">Your account.</h1>
+        <p class="lede">Sign in to edit your profile, see your pledge and ideas, or delete your account.</p>
+        <div style="margin-top:28px"><SignIn next="/account" gitlab /></div>
+      </>
+    ) : (
+      <div class="acct">
+        <nav class="acct-nav" aria-label="Account sections">
+          <a href="#profile">Profile</a>
+          <a href="#repos">Repositories</a>
+          <a href="#activity">Pledge and ideas</a>
+          <a href="#email">Email</a>
+          <a href="#delete">Account</a>
+        </nav>
+        <div class="acct-main">
+          <h1 class="acct-title">Your account</h1>
+
+          <section class="acct-panel acct-who">
+            <span class="tile-pic acct-pic" aria-hidden="true">
+              <span>{(person.handle[0] ?? '?').toUpperCase()}</span>
+              {person.avatar_url && <img src={person.avatar_url} alt="" width="64" height="64" />}
+            </span>
+            <div>
+              <b>{person.name ?? person.handle}</b>
+              <span class="muted small">@{person.handle} on {providerName(provider)}. Your picture and name come from {providerName(provider)} and update each time you sign in.</span>
+            </div>
+            {isPub ? (
+              <a class="key key-milk" href={profilePath(provider, person.handle)}>See your profile</a>
+            ) : (
+              <span class="acct-state">Profile not public</span>
+            )}
+          </section>
+
+          <form class="acct-panel stack" id="profile" method="post" action="/api/account/profile">
+            <h2 class="acct-h">Profile</h2>
+            <p class="muted small">
+              {person.is_builder ? 'Your profile is public because you joined as a builder.' : 'Your profile is private unless you switch it on below.'} Changes show as soon as you save. Your email is never shown.
+            </p>
+            <div class="field">
+              <label for="about">About <span class="muted">(optional)</span></label>
+              <textarea class="input" id="about" name="about" maxlength={ABOUT_MAX} rows="4">{person.about ?? ''}</textarea>
+              <span class="help">Up to {ABOUT_MAX} characters.{person.bio ? ' Your bio from ' + providerName(provider) + ' already shows at the top of your profile.' : ''}</span>
+            </div>
+            <div class="field">
+              <label for="skills">Skills <span class="muted">(optional)</span></label>
+              <input class="input" id="skills" name="skills" value={(person.skills ?? []).join(', ')} autocomplete="off" />
+              <span class="help">Up to {SKILLS_MAX}, separated by commas. For example: TypeScript, design, Postgres.</span>
+            </div>
+            <div class="acct-two">
+              <div class="field">
+                <label for="x_handle">X username <span class="muted">(optional)</span></label>
+                <input class="input" id="x_handle" name="x_handle" value={person.x_handle ?? ''} autocomplete="off" maxlength="40" placeholder="@name" />
+              </div>
+              <div class="field">
+                <label for="site_url">Website <span class="muted">(optional)</span></label>
+                <input class="input" id="site_url" name="site_url" value={person.site_url ?? ''} inputmode="url" maxlength="200" placeholder="yoursite.com" />
+              </div>
+            </div>
+            <label class="check">
+              <input type="checkbox" name="open_to_team" checked={person.open_to_team === true} />
+              <span>I'm open to joining a team for build week</span>
+            </label>
+            <div class="field">
+              <label for="team_note">Team note <span class="muted">(optional)</span></label>
+              <input class="input" id="team_note" name="team_note" value={person.team_note ?? ''} maxlength={TEAM_NOTE_MAX} placeholder="Looking for a designer and one backend dev" />
+              <span class="help">Shown on your profile while the box above is ticked. Up to {TEAM_NOTE_MAX} characters.</span>
+            </div>
+            {
+              !person.is_builder && (
+                <label class="check">
+                  <input type="checkbox" name="profile_public" checked={person.profile_public === true} />
+                  <span>Make my profile public</span>
+                </label>
+              )
+            }
+            <div><button class="key" type="submit">Save profile</button></div>
+          </form>
+
+          <form class="acct-panel stack" id="repos" method="post" action="/api/account/repos">
+            <h2 class="acct-h">Repositories</h2>
+            <p class="muted small">
+              Tick up to 6 to feature on your profile. {picked ? 'These are your picks.' : 'Until you pick, your 6 most-starred are shown.'} Only your own public repositories are listed, and nothing private is ever read.
+            </p>
+            {
+              repos.length ? (
+                <ul class="acct-repos">
+                  {repos.map((r) => (
+                    <li>
+                      <label class="check">
+                        <input type="checkbox" name="repo" value={r.name} checked={featured.has(r.name)} />
+                        <span><b>{r.name}</b>{r.description && <small>{r.description}</small>}</span>
+                        <span class="acct-stars">★ {r.stars}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="empty">We couldn't load your public repositories yet. They load the next time you sign in.</p>
+              )
+            }
+            {repos.length > 0 && <div><button class="key key-milk" type="submit">Save choices</button></div>}
+          </form>
+
+          <section class="acct-panel" id="activity">
+            <h2 class="acct-h">Pledge and ideas</h2>
+            <ul class="acct-rows">
+              <li>
+                <span>
+                  {pledge === undefined ? 'Your pledge is unavailable right now.' : pledge ? <>Your pledge: <b>{usd(pledge.amount_cents)}</b>, {pledge.status === 'listed' ? (pledge.anonymous ? 'listed as Anonymous' : 'listed') : 'waiting to be checked'}</> : 'No pledge yet.'}
+                </span>
+                <a class="link" href="/fund">{pledge ? 'Change it' : 'Pledge'}</a>
+              </li>
+              <li>
+                <span>{ideas === null ? 'Your ideas are unavailable right now.' : ideas.length ? <>Ideas you posted: <b>{ideas.length}</b></> : 'No ideas posted yet.'}</span>
+                <a class="link" href={ideas && ideas.length ? `/ideas/${ideas[0].slug}` : '/ideas/new'}>{ideas && ideas.length ? 'See the latest' : 'Post one'}</a>
+              </li>
+              <li>
+                <span>{person.is_builder ? <>You're a builder. <b>Spot held.</b></> : person.verified ? 'You pass the checks but have not joined as a builder.' : 'Not a builder yet.'}</span>
+                {!person.is_builder && <a class="link" href="/join/build">Join as a builder</a>}
+              </li>
+            </ul>
+          </section>
+
+          <section class="acct-panel" id="email">
+            <h2 class="acct-h">Email</h2>
+            <ul class="acct-rows">
+              <li>
+                <span>
+                  {listed === null ? 'Your email status is unavailable right now.' : listed ? <>On the email list, at the address on your {providerName(provider)} account.</> : 'Not on the email list. To rejoin, use the link in any earlier email from us.'}
+                </span>
+                {listed && (
+                  <form method="post" action="/api/account/email"><button class="link-button" type="submit">Unsubscribe</button></form>
+                )}
+              </li>
+            </ul>
+          </section>
+
+          <section class="acct-panel" id="delete">
+            <h2 class="acct-h">Account</h2>
+            <ul class="acct-rows">
+              <li>
+                <span>Signed in with <b>{providerName(provider)}</b> as @{person.handle}.</span>
+                <form method="post" action="/auth/signout"><button class="link-button" type="submit">Sign out</button></form>
+              </li>
+            </ul>
+            {
+              isAdmin(person) ? (
+                <p class="muted small">The organizer's account can't be deleted from here.</p>
+              ) : (
+                <form class="acct-delete stack" method="post" action="/api/account/delete">
+                  <p class="small">Deleting your account removes your profile, your ideas, your pledge, your builder spot, anything you sent the organizer, and the record of what you did on the site. It can't be undone.</p>
+                  <label class="check"><input type="checkbox" name="leave_list" checked /> <span>Also take my email off the list</span></label>
+                  <label class="check"><input type="checkbox" name="confirm" required /> <span>I understand. Delete my account.</span></label>
+                  <div><button class="key acct-danger" type="submit">Delete my account</button></div>
+                </form>
+              )
+            }
+          </section>
+        </div>
+      </div>
+    )
+  }
+</Base>

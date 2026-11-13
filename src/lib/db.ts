@@ -20,6 +20,22 @@ export type Person = {
   contributions_12mo: number | null;
   x_handle: string | null;
   site_url: string | null;
+  joined_at?: string | null;
+  created_at?: string;
+  /** From the provider at sign-in. */
+  name?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  repo_count?: number | null;
+  /** Written by the person on their account page. */
+  about?: string | null;
+  skills?: string[];
+  open_to_team?: boolean;
+  team_note?: string | null;
+  profile_public?: boolean;
+  featured_repos?: string[];
+  repos?: unknown;
+  repos_fetched_at?: string | null;
 };
 
 export type Idea = {
@@ -147,8 +163,11 @@ export async function getStats(): Promise<Stats> {
   };
 }
 
-export async function listBuilders(): Promise<{ handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null }[]> {
-  const { data, error } = await db().from('people').select('handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(1000);
+export type BuilderTile = { handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
+
+/** Builders, newest first. */
+export async function listBuilders(limit = 1000): Promise<BuilderTile[]> {
+  const { data, error } = await db().from('people').select('handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
   if (error) throw new DataUnavailableError(error.message);
   return (data ?? []).map((b: any) => ({ ...b, provider: providerOf(b) }));
 }

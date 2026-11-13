@@ -10,6 +10,11 @@ export type AccountFacts = {
   avatarUrl: string;
   accountCreatedAt: string;
   contributions12mo: number;
+  /** Shown on the profile. Not used by the rules. */
+  name?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  repoCount?: number | null;
 };
 
 export type RuleId = 'account_age' | 'contributions';
