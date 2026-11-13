@@ -1,0 +1,67 @@
+---
+// One signal as a button in its own form. A plain post works without scripts; SignalScript
+// upgrades it so the page doesn't reload. Pressing it again takes the signal back.
+import { PAY_CHOICES, payLabel, type PayPeriod, type SignalKind, type SubjectKind } from '../../lib/signals';
+
+interface Props {
+  subjectKind: SubjectKind;
+  subjectId: string;
+  kind: SignalKind;
+  on: boolean;
+  count: number;
+  /** The words after the count, e.g. "use a free one already". */
+  label: string;
+  /** Show the count big, or just the label (for "Me too"-style buttons). */
+  big?: string;
+  variant?: 'opt' | 'toggle';
+  next: string;
+  /** For "would pay": the amount picker, and what this person picked. */
+  pay?: { period: PayPeriod; picked: number | null; periodLocked?: boolean };
+  onLabel?: string;
+}
+const { subjectKind, subjectId, kind, on, count, label, big, variant = 'opt', next, pay, onLabel } = Astro.props;
+const selectId = `pay-${subjectKind}-${subjectId.slice(0, 8)}-${kind}`;
+const choices = pay ? (pay.periodLocked ? (['month', 'once'] as const).filter((p) => p === pay.period) : (['month', 'once'] as const)) : [];
+const pickedValue = pay?.picked ? `${pay.period}:${pay.picked}` : pay ? `${pay.period}:${PAY_CHOICES[pay.period][1]}` : '';
+---
+
+<form method="post" action="/api/signal" class:list={['pf-signal-form', pay && 'pf-pay-row']} data-signal>
+  <input type="hidden" name="subject_kind" value={subjectKind} />
+  <input type="hidden" name="subject_id" value={subjectId} />
+  <input type="hidden" name="kind" value={kind} />
+  <input type="hidden" name="on" value={on ? '0' : '1'} />
+  <input type="hidden" name="next" value={next} />
+  <button
+    type="submit"
+    class={variant === 'opt' ? 'pf-opt' : 'pf-toggle'}
+    aria-pressed={on ? 'true' : 'false'}
+    data-count={count}
+    data-label={label}
+    data-on-label={onLabel ?? label}
+  >
+    {variant === 'opt' ? (
+      <>
+        <b class="num" data-count-text>{big ?? count}</b>
+        <span data-label-text>{label}</span>
+      </>
+    ) : (
+      <span data-label-text>{on ? onLabel ?? label : label}</span>
+    )}
+  </button>
+  {
+    pay && (
+      <>
+        <label for={selectId} class="pf-sr">How much you would pay, if it worked</label>
+        <select id={selectId} class="pf-select" name="pay">
+          {choices.map((period) =>
+            PAY_CHOICES[period].map((c) => (
+              <option value={`${period}:${c}`} selected={`${period}:${c}` === pickedValue}>
+                {payLabel(c, period)}
+              </option>
+            )),
+          )}
+        </select>
+      </>
+    )
+  }
+</form>

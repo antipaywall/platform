@@ -1,0 +1,44 @@
+---
+// The layout for the directory's pages: the same head, header and footer as every other page,
+// but no single narrow column, so a page can run full-width bands like the mockup's.
+import '../styles/global.css';
+import '../styles/page.css';
+import '../styles/platform.css';
+import Head from '../components/Head.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { site } from '../config/site';
+import { MESSAGES, type MessageCode } from '../lib/respond';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  /** Structured data for search engines, already shaped as schema.org JSON. */
+  jsonLd?: unknown;
+  /** The page's own title in full, without " | Antipaywall" added. */
+  bareTitle?: boolean;
+}
+const { title, description, noindex = false, jsonLd, bareTitle = false } = Astro.props;
+const code = Astro.url.searchParams.get('m') ?? '';
+const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
+// Escaped so text from a repo description can never close the script tag.
+const ld = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : null;
+---
+
+<html lang="en">
+  <head>
+    <Head title={bareTitle ? title : `${title} | ${site.name}`} description={description} noindex={noindex} />
+    {ld && <script type="application/ld+json" set:html={ld} />}
+  </head>
+  <body class="paged pf">
+    <SiteHeader />
+    <main class="pf-main">
+      {flash && <div class="wrap"><p class={`flash flash-${flash.kind} pf-flash`} role={flash.kind === 'error' ? 'alert' : 'status'}>{flash.text}</p></div>}
+      <slot />
+    </main>
+    <footer class="foot">
+      <SiteFooter />
+    </footer>
+  </body>
+</html>

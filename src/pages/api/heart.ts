@@ -23,7 +23,8 @@ export const POST: APIRoute = async (context) => {
     const { error } = await db.from('idea_hearts').delete().match(key);
     if (error) return back(from, 'save_failed');
   } else {
-    const { data, error } = await db.from('idea_hearts').upsert(key, { ignoreDuplicates: true }).select('idea_id');
+    // A signed-in heart also records who, so the same person on two browsers counts once.
+    const { data, error } = await db.from('idea_hearts').upsert({ ...key, ...(context.locals.userId ? { user_id: context.locals.userId } : {}) }, { ignoreDuplicates: true }).select('idea_id');
     if (error) return back(from, 'save_failed');
     // Only a heart that was not already there counts as something done.
     if (data?.length) await recordEvent(db, context, { kind: 'hearted', subject: slug });
