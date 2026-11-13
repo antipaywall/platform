@@ -13,7 +13,7 @@ interface Props {
   /** Keep this page out of search results. */
   noindex?: boolean;
 }
-const { title, description = 'A free, one-week open-source hackathon. Community-funded prize pool, builders vote.', noindex = false } = Astro.props;
+const { title, description = 'Find the free, open-source version of anything you pay for, and see what is still missing.', noindex = false } = Astro.props;
 // Messages arrive as a code and are looked up here, so a link can't make the site say something.
 const code = Astro.url.searchParams.get('m') ?? '';
 const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;

@@ -11,16 +11,21 @@ const person = Astro.locals.person;
 const here = Astro.url.pathname;
 const cur = (on: boolean) => (on ? 'page' : undefined);
 const links = [
+  { href: '/', label: 'Find', on: here === '/' || here.startsWith('/free-alternatives') || here.startsWith('/projects') || here.startsWith('/topics') || here === '/search' },
+  { href: '/ideas', label: 'Wanted', on: here.startsWith('/ideas') },
+  { href: '/hackathon', label: 'Hackathon', on: here === '/hackathon' || here === '/pool' || here === '/rules' },
+  { href: '/builders', label: 'People', on: here.startsWith('/builders') || here.startsWith('/people') },
+];
+const more = [
   { href: '/about', label: 'About', on: here === '/about' },
-  { href: '/ideas', label: 'Ideas', on: here.startsWith('/ideas') },
   { href: '/pool', label: 'Pool', on: here === '/pool' },
   { href: '/rules', label: 'Rules', on: here === '/rules' },
   { href: '/sponsor', label: 'Sponsor', on: here === '/sponsor' },
-];
-const more = [
   { href: '/join', label: 'Join', on: here.startsWith('/join') },
   { href: '/faq', label: 'Questions', on: here === '/faq' },
 ];
+// Someone signed in with an email link: a backer, with a smaller menu.
+const backer = person ? null : Astro.locals.backer;
 const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
 // Everything that is yours, in the account menu and at the bottom of the phone menu.
 const mine = person
@@ -62,6 +67,20 @@ const mine = person
             <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
           </div>
         </details>
+      ) : backer ? (
+        <details class="me" data-pop>
+          <summary aria-label="Your account, signed in by email">
+            <span>{backer.name ?? 'Signed in'}</span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          </summary>
+          <div class="me-panel">
+            <div class="me-head"><div><b>{backer.name ?? 'Backer'}</b><span>Signed in by email</span></div></div>
+            <nav aria-label="Your account">
+              <a href={`/people/${backer.id}`}>Your page</a>
+            </nav>
+            <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
+          </div>
+        </details>
       ) : (
         <a class="key top-join" href="/join">Join</a>
       )
@@ -72,6 +91,15 @@ const mine = person
       </summary>
       <nav class="menu-panel" aria-label="All pages">
         {[...links, ...more, ...admin].map((l) => <a href={l.href} aria-current={cur(l.on)}>{l.label}</a>)}
+        {
+          backer && (
+            <div class="menu-who">
+              <span>Signed in by email</span>
+              <a href={`/people/${backer.id}`}>Your page</a>
+              <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
+            </div>
+          )
+        }
         {
           person && (
             <div class="menu-who">

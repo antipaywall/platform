@@ -1,0 +1,6 @@
+---
+// /seasons/1 is the season page at /hackathon. Later seasons get their own pages when they exist.
+const id = String(Astro.params.id);
+if (id === '1') return Astro.redirect('/hackathon', 301);
+return new Response(null, { status: 404 });
+---
