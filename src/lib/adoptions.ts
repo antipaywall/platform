@@ -17,17 +17,20 @@ export function parseTerms(form: FormData): TermKey[] {
   return ADOPTION_TERMS.map((t) => t.key).filter((k) => chosen.has(k));
 }
 
-export type Subject = { kind: 'project'; fullName: string } | { kind: 'gap'; startedBy: string | null; claimers: string[] };
+export type Subject = { kind: 'project'; fullName: string } | { kind: 'gap'; authorId?: string | null; startedBy: string | null; claimers: string[] };
 
 /** A repo's owner can hand off their project; a gap's starter or a builder on it can hand off the gap. */
 export function canOffer(s: Subject, who: { login: string; personId: string }): boolean {
   const me = who.login.toLowerCase();
   if (s.kind === 'project') return s.fullName.split('/')[0].toLowerCase() === me;
-  return (s.startedBy?.toLowerCase() === me) || s.claimers.includes(who.personId);
+  if (s.claimers.includes(who.personId)) return true;
+  // The person who posted it, by account; the login only for ideas added straight on GitHub.
+  if (s.authorId) return s.authorId === who.personId;
+  return s.startedBy?.toLowerCase() === me;
 }
 
 export type Adoption = {
-  id: string; offeredBy: { username: string; name: string | null }; terms: string[]; note: string | null;
+  id: string; offeredById: string; offeredBy: { username: string; name: string | null }; terms: string[]; note: string | null;
   interest: { username: string; name: string | null; note: string | null; personId: string }[];
 };
 
@@ -44,6 +47,7 @@ export async function openAdoption(db: SupabaseClient, kind: 'project' | 'gap', 
   const d: any = data;
   return {
     id: d.id,
+    offeredById: d.offered_by,
     offeredBy: { username: d.people?.username ?? d.people?.handle ?? 'someone', name: d.people?.name ?? null },
     terms: d.terms ?? [],
     note: d.note,

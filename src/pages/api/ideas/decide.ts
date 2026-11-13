@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro';
 import { isAdmin } from '../../../lib/db';
-import { appConfigured, closeSuggestion, mergeSuggestion, readIdeaFile } from '../../../lib/githubApp';
+import { appConfigured, closeSuggestion, getSuggestion, mergeSuggestion, readIdeaFile } from '../../../lib/githubApp';
 import { ideaPath, parseIdeaFile } from '../../../lib/ideaFile';
 import { applyIdeaFile } from '../../../lib/ideasSync';
 import { back } from '../../../lib/respond';
-import { canDecide } from '../../../lib/suggestions';
+import { canDecide, validSuggestionPr } from '../../../lib/suggestions';
 import { adminClient } from '../../../lib/supabase';
 
 // Accept (merge) or decline (close) a suggested improvement. Only the idea's starter, or a
@@ -21,10 +21,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!appConfigured()) return back(page, 'app_not_connected');
   const db = adminClient();
   if (!db) return back(page, 'save_failed');
-  const { data: idea } = await db.from('ideas').select('id, started_by_login').eq('slug', slug).maybeSingle();
+  const { data: idea } = await db.from('ideas').select('id, author_id, started_by_login').eq('slug', slug).maybeSingle();
   if (!idea) return back('/ideas', 'idea_gone');
-  const login = person.username ?? person.handle;
-  if (!canDecide({ startedBy: idea.started_by_login }, login, isAdmin(person) ? [login] : [])) return back(page, 'not_yours_to_decide');
+  const login = person.username;
+  if (!login) return back('/auth/username', 'need_username');
+  if (!canDecide({ authorId: idea.author_id, startedBy: idea.started_by_login }, { personId: person.id, login }, isAdmin(person) ? [login] : [])) return back(page, 'not_yours_to_decide');
+  // Only an open suggestion for this idea, opened by the App on its own branch and changing this one
+  // idea's file, can be accepted or declined here.
+  const { data: listed } = await db.from('idea_suggestions').select('pr_number').eq('idea_id', idea.id).eq('pr_number', number).eq('state', 'open').maybeSingle();
+  if (!listed) return back(page, 'not_a_suggestion');
+  const checked = await getSuggestion(number).catch(() => null);
+  if (!checked || checked.pr.state !== 'open' || !validSuggestionPr(checked.pr, checked.files, slug)) return back(page, 'not_a_suggestion');
   try {
     if (action === 'accept') {
       await mergeSuggestion(number);

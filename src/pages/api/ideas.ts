@@ -28,6 +28,6 @@ export const POST: APIRoute = async (context) => {
   const { slug, code } = await storeIdea(db, parsed, person.id, undefined, { productIds });
   if (slug) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
   // The idea also becomes a file in the public ideas repo, credited to the person who posted it.
-  if (slug) await pushNewIdea(db, slug, { login: person.username ?? person.handle, githubId: person.github_id }).catch(() => false);
+  if (slug) await pushNewIdea(db, slug, { login: person.username!, githubId: person.github_id }).catch(() => false);
   return back(slug ? `/ideas/${slug}` : '/ideas/new', code);
 };

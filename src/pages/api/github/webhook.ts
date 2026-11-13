@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { readIdeaFile, verifyWebhook } from '../../../lib/githubApp';
 import { parseIdeaFile } from '../../../lib/ideaFile';
 import { applyIdeaFile, removeIdea } from '../../../lib/ideasSync';
-import { changedIdeaPaths } from '../../../lib/suggestions';
+import { changedIdeaPaths, suggestionFromEvent } from '../../../lib/suggestions';
 import { adminClient } from '../../../lib/supabase';
 
 // Events from the Antipaywall GitHub App: pushes to the ideas repo's main branch update the site's
@@ -32,19 +32,17 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('ok');
   }
 
-  if (event === 'pull_request' && (payload.repository?.full_name ?? '').toLowerCase() === 'antipaywall/ideas') {
+  if (event === 'pull_request') {
+    // Only suggestions the App opened, on its own branch in the ideas repo. The branch names the person.
+    const found = suggestionFromEvent(payload);
+    if (!found) return new Response('ignored');
     const pr = payload.pull_request;
-    // Branches are suggest/<idea>/<login>-<time>: the App opens the PR, so the branch names the person.
-    const m = /^suggest\/([a-z0-9-]+)\/([a-z0-9-]+)-[a-z0-9]+$/.exec(pr?.head?.ref ?? '');
-    const slug = m?.[1];
-    if (!slug) return new Response('ignored');
-    const { data: idea } = await db.from('ideas').select('id').eq('slug', slug).maybeSingle();
+    const { data: idea } = await db.from('ideas').select('id').eq('slug', found.slug).maybeSingle();
     if (!idea) return new Response('ignored');
-    const login = m![2];
-    const person = (await db.from('people').select('id').ilike('username', login).maybeSingle()).data?.id ?? null;
+    const person = (await db.from('people').select('id').ilike('username', found.login).maybeSingle()).data?.id ?? null;
     const state = pr.merged ? 'merged' : pr.state === 'open' ? 'open' : 'closed';
     await db.from('idea_suggestions').upsert(
-      { idea_id: idea.id, pr_number: pr.number, author_login: login, person_id: person, title: String(pr.title ?? '').slice(0, 200), state, mergeable: pr.mergeable ?? null, updated_at: new Date().toISOString() },
+      { idea_id: idea.id, pr_number: found.number, author_login: found.login, person_id: person, title: String(pr.title ?? '').slice(0, 200), state, mergeable: pr.mergeable ?? null, updated_at: new Date().toISOString() },
       { onConflict: 'idea_id,pr_number', ignoreDuplicates: false },
     );
     return new Response('ok');

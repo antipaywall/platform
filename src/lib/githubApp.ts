@@ -100,8 +100,22 @@ export async function closeSuggestion(n: number, note: string) {
   await gh(`/pulls/${n}`, { method: 'PATCH', body: JSON.stringify({ state: 'closed' }) });
 }
 
-/** Who changed a file, newest first: the idea's history. */
-export async function fileHistory(path: string): Promise<{ login: string; message: string; date: string; url: string }[]> {
+const memo = new Map<string, { at: number; value: unknown }>();
+
+/** Answers from GitHub kept for a while, so page views don't spend the App's hourly allowance. */
+export async function remembered<T>(key: string, ttlMs: number, get: () => Promise<T>): Promise<T> {
+  const hit = memo.get(key);
+  if (hit && Date.now() - hit.at < ttlMs) return hit.value as T;
+  const value = await get();
+  if (memo.size > 500) memo.clear();
+  memo.set(key, { at: Date.now(), value });
+  return value;
+}
+
+/** Who changed a file, newest first: the idea's history. Kept for ten minutes. */
+export const fileHistory = (path: string) => remembered(`history:${path}`, 10 * 60_000, () => readHistory(path));
+
+async function readHistory(path: string): Promise<{ login: string; message: string; date: string; url: string }[]> {
   const list = (await gh(`/commits?path=${encodeURIComponent(path)}&per_page=30`)) as any[];
   return list.map((c) => ({ login: c.author?.login ?? c.commit?.author?.name ?? 'someone', message: String(c.commit?.message ?? '').split('\n')[0], date: c.commit?.author?.date ?? '', url: c.html_url }));
 }
@@ -110,4 +124,10 @@ export async function fileHistory(path: string): Promise<{ login: string; messag
 export async function suggestionFiles(n: number): Promise<{ patch: string }[]> {
   const files = (await gh(`/pulls/${n}/files`)) as any[];
   return files.map((x) => ({ patch: String(x.patch ?? '') }));
+}
+
+/** A pull request on the ideas repo, and the files it changes, to check before deciding on it. */
+export async function getSuggestion(n: number): Promise<{ pr: any; files: string[] }> {
+  const [pr, files] = await Promise.all([gh(`/pulls/${n}`), gh(`/pulls/${n}/files`)]);
+  return { pr, files: (files as any[]).map((f) => String(f.filename)) };
 }

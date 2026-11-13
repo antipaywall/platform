@@ -61,6 +61,8 @@ export const MESSAGES = {
   post_deleted: { kind: 'ok', text: 'Post deleted.' },
   no_such_person: { kind: 'error', text: 'Nobody with that username has signed in.' },
   done: { kind: 'ok', text: 'Done.' },
+  not_a_suggestion: { kind: 'error', text: "That isn't an open suggestion for this idea." },
+  need_username: { kind: 'error', text: 'Choose your username first.' },
   offered: { kind: 'ok', text: 'It now shows as looking for a new owner, with your terms.' },
   already_offered: { kind: 'error', text: 'This is already looking for a new owner.' },
   not_yours_to_offer: { kind: 'error', text: 'Only the person who started this can hand it off.' },

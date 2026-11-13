@@ -4,11 +4,40 @@
 import { IDEAS_REPO } from './githubApp';
 import { ideaPath, type IdeaFile, type IdeaStatus } from './ideaFile';
 
-/** The idea's starter decides; maintainers decide for ideas Antipaywall posted, and can always step in. */
-export function canDecide(idea: { startedBy: string | null }, login: string, maintainers: readonly string[]): boolean {
-  const me = login.toLowerCase();
+/**
+ * The person who posted the idea decides (matched by their account, so a username changing hands
+ * never hands over their ideas). For an idea added straight on GitHub, its starter's login decides.
+ * Maintainers decide for ideas Antipaywall posted, and can always step in.
+ */
+export function canDecide(idea: { authorId?: string | null; startedBy: string | null }, viewer: { personId: string; login: string }, maintainers: readonly string[]): boolean {
+  const me = viewer.login.toLowerCase();
   if (maintainers.some((m) => m.toLowerCase() === me)) return true;
+  if (idea.authorId) return idea.authorId === viewer.personId;
   return Boolean(idea.startedBy && idea.startedBy.toLowerCase() === me);
+}
+
+type PrLike = { head?: { ref?: string; repo?: { full_name?: string } | null }; base?: { repo?: { full_name?: string } }; user?: { type?: string }; number?: number };
+const REPO = `${IDEAS_REPO.owner}/${IDEAS_REPO.name}`;
+const BRANCH = /^suggest\/([a-z0-9-]+)\/([a-z0-9-]+)-[a-z0-9]+$/;
+
+/**
+ * A pull request that may be accepted as a suggestion for this idea: opened by the App, from its own
+ * branch for this idea in the ideas repo itself, changing that one idea's file and nothing else.
+ */
+export function validSuggestionPr(pr: PrLike, files: string[], slug: string): boolean {
+  if ((pr.head?.repo?.full_name ?? '').toLowerCase() !== REPO || (pr.base?.repo?.full_name ?? REPO).toLowerCase() !== REPO) return false;
+  if (pr.user?.type !== 'Bot') return false;
+  if (BRANCH.exec(pr.head?.ref ?? '')?.[1] !== slug) return false;
+  return files.length === 1 && files[0] === ideaPath(slug);
+}
+
+/** The suggestion a pull request event is about, if the App opened it on its own branch. */
+export function suggestionFromEvent(e: { repository?: { full_name?: string }; pull_request?: PrLike }): { slug: string; login: string; number: number } | null {
+  const pr = e.pull_request;
+  if (!pr || (e.repository?.full_name ?? '').toLowerCase() !== REPO) return null;
+  if ((pr.head?.repo?.full_name ?? '').toLowerCase() !== REPO || pr.user?.type !== 'Bot') return null;
+  const m = BRANCH.exec(pr.head?.ref ?? '');
+  return m && typeof pr.number === 'number' ? { slug: m[1], login: m[2], number: pr.number } : null;
 }
 
 /** Each suggestion gets its own branch, so two people suggesting at once never collide. */

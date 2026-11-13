@@ -30,11 +30,11 @@ if ('redirect' in page) return Astro.redirect(page.redirect, 301);
 const { idea, demand, merged, products, closest, claims, season, mine } = page;
 
 // The idea's life on GitHub: open suggestions, who may decide on them, and who shaped it.
-const { data: repoRow } = await db.from('ideas').select('repo_path, started_by_login').eq('id', idea.id).maybeSingle();
+const { data: repoRow } = await db.from('ideas').select('repo_path, started_by_login, author_id').eq('id', idea.id).maybeSingle();
 const onGithub = Boolean(repoRow?.repo_path);
 const { data: openSuggestions } = await db.from('idea_suggestions').select('pr_number, author_login, title, created_at, mergeable').eq('idea_id', idea.id).eq('state', 'open').order('created_at');
-const viewerLogin = person ? person.username ?? person.handle : null;
-const deciding = Boolean(viewerLogin && canDecide({ startedBy: repoRow?.started_by_login ?? null }, viewerLogin, isAdmin(person) ? [viewerLogin] : []));
+const viewerLogin = person?.username ?? null;
+const deciding = Boolean(person && viewerLogin && canDecide({ authorId: repoRow?.author_id ?? null, startedBy: repoRow?.started_by_login ?? null }, { personId: person.id, login: viewerLogin }, isAdmin(person) ? [viewerLogin] : []));
 const diffs = new Map<number, string>();
 if (deciding && appConfigured()) {
   for (const s of (openSuggestions ?? []).slice(0, 5)) {
@@ -43,7 +43,7 @@ if (deciding && appConfigured()) {
   }
 }
 const { data: claimRows } = await db.from('gap_claims').select('person_id').eq('idea_id', idea.id);
-const starter = repoRow?.started_by_login ?? (idea.poster.kind === 'person' ? idea.poster.username ?? idea.poster.handle : null);
+const starter = repoRow?.started_by_login ?? (idea.poster.kind === 'person' ? idea.poster.username : null);
 const history = onGithub && appConfigured() ? await fileHistory(repoRow!.repo_path!).catch(() => []) : [];
 const here = `/ideas/${idea.slug}`;
 const status = BUILD_STATUS[idea.status];
@@ -124,7 +124,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
     )
   }
 
-  <AdoptBox kind="gap" id={idea.id} subject={{ kind: 'gap', startedBy: starter, claimers: (claimRows ?? []).map((c) => c.person_id) }} next={here} noun="idea" />
+  <AdoptBox kind="gap" id={idea.id} subject={{ kind: 'gap', authorId: repoRow?.author_id ?? null, startedBy: starter, claimers: (claimRows ?? []).map((c) => c.person_id) }} next={here} noun="idea" />
 
   <section id="suggestions" class="wrap pf-section pf-section-tight">
     <div class="pf-split">
