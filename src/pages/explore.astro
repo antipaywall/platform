@@ -31,7 +31,7 @@ const nearby = [...new Set([1, f.page - 1, f.page, f.page + 1, pages])].filter((
 <Platform title={title} description="Browse the free, open-source projects that replace paid software, by category, topic, license and how actively they are built." noindex={f.page > 1 || Boolean(f.q)}>
   <section class="wrap pf-section ex">
     <header class="ex-head">
-      <p class="pf-crumbs"><a href="/explore">Explore</a>{(f.category || topicLabel) && <span aria-hidden="true">/</span>}{(f.category || topicLabel) && <span>{what}</span>}</p>
+      {(f.category || topicLabel) && <p class="pf-crumbs"><a href="/explore">Explore</a><span aria-hidden="true">/</span><span>{what}</span></p>}
       <h1 class="pf-title">{f.category || topicLabel ? what : 'Explore'}</h1>
       <p class="lede">
         {f.all
@@ -45,7 +45,7 @@ const nearby = [...new Set([1, f.page - 1, f.page, f.page + 1, pages])].filter((
         {f.license !== 'any' && <input type="hidden" name="license" value={f.license} />}
         {f.sort !== 'stars' && <input type="hidden" name="sort" value={f.sort} />}
         <label class="sr-only" for="ex-q">Search projects</label>
-        <input id="ex-q" name="q" type="search" value={f.q} placeholder="Search by name or what it does" autocomplete="off" />
+        <input id="ex-q" name="q" type="search" value={f.q} placeholder="Search projects" autocomplete="off" />
         <button class="key key-sm" type="submit">Search</button>
       </form>
     </header>
@@ -151,7 +151,7 @@ const nearby = [...new Set([1, f.page - 1, f.page, f.page + 1, pages])].filter((
   .ex-search input:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink); }
   .ex-search .key { min-height: 52px; }
   .ex-body { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
-  .ex-side { position: sticky; top: 88px; max-height: calc(100dvh - 104px); overflow: auto; overscroll-behavior: contain; padding-right: 8px; scrollbar-width: thin; }
+  .ex-side { min-width: 0; }
   .ex-filters > summary { list-style: none; font: 800 1.25rem/1 var(--display); letter-spacing: -0.02em; padding: 4px 0 14px; cursor: default; display: flex; align-items: center; gap: 8px; }
   .ex-filters > summary::-webkit-details-marker { display: none; }
   .ex-count { font: 700 0.75rem/1 var(--body, inherit); padding: 4px 8px; border-radius: 999px; background: var(--marigold); }
