@@ -49,7 +49,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
       <h1 class="pf-title">{idea.title}</h1>
       {idea.pitch && <p class="pf-quote">{idea.pitch}</p>}
       <p class="muted small">
-        Posted by {idea.poster.kind === 'person' ? <a class="link" href={profilePath(idea.poster.provider, idea.poster.handle)}>@{idea.poster.handle}</a> : idea.poster.kind === 'backer' ? idea.poster.name : 'Antipaywall'}
+        Posted by {idea.poster.kind === 'person' ? <a class="link" href={profilePath(idea.poster)}>@{idea.poster.handle}</a> : idea.poster.kind === 'backer' ? idea.poster.name : 'Antipaywall'}
         {' · '}{timeAgo(idea.createdAt, now)}
         {products.length > 0 && <>{' · '}Replaces: {products.map((p, i) => <>{i > 0 && ', '}<a class="link" href={`/free-alternatives/${p.slug}`}>{p.name}</a></>)}</>}
       </p>
@@ -171,7 +171,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
       {claims.length ? (
         <div class="pf-grid">
           {claims.map((c, i) => (
-            <a class={`pf-brick p${((i + 1) % 6) + 1}`} href={profilePath(c.provider, c.handle)}>
+            <a class={`pf-brick p${((i + 1) % 6) + 1}`} href={profilePath(c)}>
               <b>{c.name || `@${c.handle}`}</b>
               {c.note && <span>{c.note}</span>}
               {c.repoUrl && <small>{c.repoUrl.replace(/^https:\/\//, '')}</small>}

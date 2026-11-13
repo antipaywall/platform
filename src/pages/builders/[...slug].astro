@@ -32,10 +32,13 @@ let follows = false;
 let posts: PostView[] = [];
 const viewer = Astro.locals.person;
 try {
-  person = await findProfile(where.provider, where.handle);
+  const found = await findProfile(where);
+  // An old username or an old /builders/gitlab/ address goes to the current one.
+  if (found && 'redirect' in found) return Astro.redirect(found.redirect, 301);
+  person = found;
   if (!person || !isPublic(person)) return new Response(null, { status: 404 });
   // One address per profile: a different capitalisation goes to the real one.
-  const canonical = profilePath(where.provider, person.handle);
+  const canonical = profilePath(person);
   if (canonical !== Astro.url.pathname) return Astro.redirect(canonical, 301);
   const id = person.id;
   // The profile itself must load; the social parts each fall back to nothing if they can't.
@@ -65,7 +68,7 @@ const provider = providerOf(p);
 const name = providerName(provider);
 const own = viewer?.id === p.id;
 const top = topBadge(badges);
-const here = profilePath(provider, p.handle);
+const here = profilePath(p);
 const featured = pickFeatured(repos.length ? repos : savedRepos(p.repos), p.featured_repos ?? []);
 const month = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : null);
 const joined = month(p.joined_at ?? p.created_at);

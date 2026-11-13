@@ -1,0 +1,41 @@
+---
+// For a GitLab builder whose name is taken here or belongs to someone on GitHub: connect GitHub to
+// prove the name is theirs, or pick another. GitHub owners can always claim their own name.
+import Base from '../../layouts/Base.astro';
+import { safeNext } from '../../lib/respond';
+import { githubHasUser } from '../../lib/usernames';
+
+const person = Astro.locals.person;
+if (!person) return Astro.redirect('/auth/signin');
+const next = safeNext(Astro.url.searchParams.get('next'), '/');
+const wanted = person.handle;
+const onGithub = await githubHasUser(wanted);
+const why =
+  onGithub === 'yes'
+    ? `“${wanted}” is someone's username on GitHub. Usernames here match GitHub's, so its owner can always claim it.`
+    : onGithub === 'unknown'
+      ? `We couldn't check “${wanted}” with GitHub just now.`
+      : `“${wanted}” is already someone's username here.`;
+---
+
+<Base title="Choose your username" description="Pick your Antipaywall username." noindex>
+  <h1 class="page-title">Choose your username</h1>
+  <p class="lede">{why} You'll be at antipaywall.org/builders/&lt;username&gt;.</p>
+  <div class="cols">
+    <div class="card stack">
+      <p class="h2">Is “{wanted}” yours on GitHub?</p>
+      <p>Connect that GitHub account to prove it, and the name is yours.</p>
+      <a class="key key-big" href={`/auth/link-github?next=${encodeURIComponent(next)}`} style="justify-self:start">Connect GitHub</a>
+    </div>
+    <form class="card stack" method="post" action="/api/account/username">
+      <p class="h2">Or pick a username</p>
+      <input type="hidden" name="next" value={next} />
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" name="username" required maxlength="39" pattern="[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}" autocomplete="username" />
+        <span class="help">Letters, numbers and single dashes, up to 39 characters. It can't be anyone's username on GitHub.</span>
+      </div>
+      <button class="key" type="submit" style="justify-self:start">Use this username</button>
+    </form>
+  </div>
+</Base>

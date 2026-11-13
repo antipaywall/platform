@@ -14,6 +14,7 @@ import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
 import { claimSignals } from '../../lib/signals';
+import { assignUsername } from '../../lib/usernames';
 import { visitorId } from '../../lib/visitor';
 
 export const GET: APIRoute = async (context) => {
@@ -62,7 +63,7 @@ export const GET: APIRoute = async (context) => {
   if (facts.accountId !== identity.accountId) return giveUp();
 
   // Whether this account has been here before, so a first sign-in can be told from a return.
-  const before = await db.from('people').select('verified, provider').eq('id', user.id).maybeSingle();
+  const before = await db.from('people').select('verified, provider, username, github_login').eq('id', user.id).maybeSingle();
   if (before.error) return giveUp();
   // One account per person: someone who joined with one provider keeps signing in with it.
   if (before.data && providerOf(before.data) !== provider) return giveUp(provider === 'gitlab' ? 'signin_use_github' : 'signin_use_gitlab');
@@ -90,6 +91,11 @@ export const GET: APIRoute = async (context) => {
   });
   if (saved.error) return giveUp();
 
+  // Their username: the GitHub login, or for GitLab the handle unless it collides. On a collision
+  // they choose, after the rest of sign-in has finished.
+  const named = await assignUsername(db, { id: user.id, provider, handle: facts.handle, githubLogin: before.data?.github_login ?? null, current: before.data?.username ?? null }).catch(() => null);
+  const mustChoose = Boolean(named && 'choose' in named);
+
   // Their public repositories and activity, for their profile. A slow provider never holds up the sign-in.
   const fresh = { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person;
   await Promise.all([
@@ -110,5 +116,5 @@ export const GET: APIRoute = async (context) => {
   if (!before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
   if (before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
   if (listed?.status === 'new') await recordEvent(db, context, { ...who, kind: 'list_joined', subject: listed.id });
-  return redirect(next);
+  return redirect(mustChoose ? `/auth/username?next=${encodeURIComponent(next)}` : next);
 };

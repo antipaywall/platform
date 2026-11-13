@@ -11,21 +11,26 @@ import { adminClient } from './supabase';
 export const isPublic = (p: Pick<Person, 'is_builder' | 'profile_public'>) => p.is_builder || p.profile_public === true;
 
 /** The profile's address on this site. GitLab accounts live under /builders/gitlab/ so names never collide. */
-export const profilePath = (provider: Provider, handle: string) =>
-  provider === 'gitlab' ? `/builders/gitlab/${encodeURIComponent(handle)}` : `/builders/${encodeURIComponent(handle)}`;
+/** A builder's address: /builders/<username>, one namespace for GitHub and GitLab sign-ins alike. */
+export const profilePath = (p: { username?: string | null; handle: string }) => `/builders/${encodeURIComponent(p.username || p.handle)}`;
 
-/** Reads /builders/<handle> or /builders/gitlab/<handle>. Anything else is not a profile address. */
-export function parseProfilePath(slug: string | undefined): { provider: Provider; handle: string } | null {
+/**
+ * Reads /builders/<username>, and the old /builders/gitlab/<handle> addresses (kept so they can
+ * redirect). Anything else is not a profile address.
+ */
+export function parseProfilePath(slug: string | undefined): { kind: 'username'; name: string } | { kind: 'gitlab'; handle: string } | null {
   const parts = (slug ?? '').split('/').filter(Boolean);
-  const [provider, raw] = parts.length === 2 && parts[0] === 'gitlab' ? ['gitlab' as const, parts[1]] : parts.length === 1 ? ['github' as const, parts[0]] : [null, null];
-  if (!provider || !raw) return null;
-  let handle: string;
+  const gitlab = parts.length === 2 && parts[0] === 'gitlab';
+  const raw = gitlab ? parts[1] : parts.length === 1 ? parts[0] : null;
+  if (!raw) return null;
+  let name: string;
   try {
-    handle = decodeURIComponent(raw);
+    name = decodeURIComponent(raw);
   } catch {
     return null;
   }
-  return /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/.test(handle) ? { provider, handle } : null;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/.test(name)) return null;
+  return gitlab ? { kind: 'gitlab', handle: name } : { kind: 'username', name };
 }
 
 function db(): SupabaseClient {
@@ -34,12 +39,23 @@ function db(): SupabaseClient {
   return client;
 }
 
-/** The person behind a profile address, whether or not their profile is public. Matching ignores case. */
-export async function findProfile(provider: Provider, handle: string): Promise<Person | null> {
-  const pattern = handle.replace(/[\\%_]/g, (c) => `\\${c}`);
-  const { data, error } = await db().from('people').select('*').eq('provider', provider).ilike('handle', pattern).limit(1).maybeSingle();
+const like = (v: string) => v.replace(/[\\%_]/g, (c) => `\\${c}`);
+
+/**
+ * The person behind a profile address, whether or not their profile is public. Matching ignores case.
+ * An old username or an old GitLab address comes back as a redirect to the current one.
+ */
+export async function findProfile(where: NonNullable<ReturnType<typeof parseProfilePath>>): Promise<Person | { redirect: string } | null> {
+  if (where.kind === 'gitlab') {
+    const { data } = await db().from('people').select('username, handle').eq('provider', 'gitlab').ilike('handle', like(where.handle)).limit(1).maybeSingle();
+    return data ? { redirect: profilePath(data) } : null;
+  }
+  const { data, error } = await db().from('people').select('*').ilike('username', like(where.name)).limit(1).maybeSingle();
   if (error) throw new DataUnavailableError(error.message);
-  return (data as Person) ?? null;
+  if (data) return data as Person;
+  const old = await db().from('username_redirects').select('people:person_id(username, handle)').ilike('old_username', like(where.name)).maybeSingle();
+  const to: any = old.data?.people;
+  return to ? { redirect: profilePath(to) } : null;
 }
 
 export type ProfileIdea = { slug: string; title: string; pitch: string; hearts: number; similar: number; created_at: string };

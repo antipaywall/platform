@@ -1,12 +1,11 @@
 ---
 // An old address for a person page. Every builder's page is /builders/<username>.
-import { providerOf } from '../../lib/accounts';
 import { profilePath } from '../../lib/profiles';
 import { adminClient } from '../../lib/supabase';
 
 const id = String(Astro.params.id);
 if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) return new Response(null, { status: 404 });
-const { data } = (await adminClient()?.from('people').select('handle, provider').eq('id', id).maybeSingle()) ?? { data: null };
-if (data) return Astro.redirect(profilePath(providerOf(data), data.handle), 301);
+const { data } = (await adminClient()?.from('people').select('handle, username, provider').eq('id', id).maybeSingle()) ?? { data: null };
+if (data) return Astro.redirect(profilePath(data), 301);
 return new Response(null, { status: 404 });
 ---
