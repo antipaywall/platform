@@ -7,6 +7,7 @@ import PledgeWho from '../components/PledgeWho.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import BuilderTile from '../components/BuilderTile.astro';
+import GoalMeter from '../components/GoalMeter.astro';
 import { tileBadges } from '../lib/social';
 import Sponsors from '../components/Sponsors.astro';
 import Wall from '../components/Wall.astro';
@@ -196,13 +197,7 @@ const gh =
                 </p>
                 {
                   builderCount !== undefined && (
-                    <div class="crew-meter">
-                      <span class="crew-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(builderCount, need)} aria-label="Builders joined">
-                        <i style={`width:${Math.max(2, Math.min(100, (builderCount / need) * 100))}%`}></i>
-                      </span>
-                      {reached && <span class="crew-done">{need} builders reached</span>}
-                      <p>{reached ? <><strong>{builderCount}</strong> builders, {builderCount - need} past the goal.</> : <><strong>{builderCount}</strong> of {need} builders. {need - builderCount} to go.</>}</p>
-                    </div>
+                    <GoalMeter count={builderCount} goal={need} noun="builders" unlocks="The dates are set once we reach it." />
                   )
                 }
                 <div class="actions">
