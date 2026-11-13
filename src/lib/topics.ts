@@ -38,6 +38,8 @@ export type TopicSort = 'stars' | 'growth' | 'active';
 export type TopicPage = {
   topic: { id: string | null; slug: string; name: string; blurb: string; tracked: boolean };
   projects: { fullName: string; name: string; description: string | null; stars: number; gained: number; pushedAt: string | null; license: string | null }[];
+  /** Every listed project with the topic; the page shows the first 60. */
+  total: number;
   products: { slug: string; name: string }[];
   gaps: { slug: string; title: string; want: number }[];
 };
@@ -48,7 +50,7 @@ export const MIN_PROJECTS_UNTRACKED = 5;
 export async function getTopicPage(db: SupabaseClient, slug: string, sort: TopicSort, now: Date): Promise<TopicPage | null> {
   const [t, projects, products] = await Promise.all([
     db.from('topics').select('id, slug, name, blurb, tracked').eq('slug', slug).maybeSingle(),
-    db.from('projects').select('id, full_name, name, description, stars, pushed_at, license_spdx').eq('listed', true).contains('topics', [slug]).order('stars', { ascending: false }).limit(200),
+    db.from('projects').select('id, full_name, name, description, stars, pushed_at, license_spdx, license_name', { count: 'exact' }).eq('listed', true).contains('topics', [slug]).order('stars', { ascending: false }).limit(200),
     db.from('products').select('id, slug, name').contains('topics', [slug]),
   ]);
   const rows = (projects.data ?? []) as any[];
@@ -60,7 +62,7 @@ export async function getTopicPage(db: SupabaseClient, slug: string, sort: Topic
   const byProject = new Map<string, [string, number][]>();
   for (const s of snaps as { project_id: string; day: string; stars: number }[]) byProject.set(s.project_id, [...(byProject.get(s.project_id) ?? []), [s.day, s.stars]]);
   const list = rows.map((p) => ({
-    fullName: p.full_name, name: p.name, description: p.description, stars: p.stars, pushedAt: p.pushed_at, license: p.license_spdx,
+    fullName: p.full_name, name: p.name, description: p.description, stars: p.stars, pushedAt: p.pushed_at, license: p.license_spdx ?? (p.license_name ? 'Own license' : null),
     gained: starsGained(byProject.get(p.id) ?? [], 30, now),
   }));
   if (!t.data && list.length < MIN_PROJECTS_UNTRACKED) return null;
@@ -79,6 +81,7 @@ export async function getTopicPage(db: SupabaseClient, slug: string, sort: Topic
       ? { id: t.data.id, slug: t.data.slug, name: t.data.name, blurb: t.data.blurb, tracked: t.data.tracked }
       : { id: null, slug, name: topicName(slug), blurb: '', tracked: false },
     projects: list.slice(0, 60),
+    total: projects.count ?? list.length,
     products: productRows.map(({ slug, name }) => ({ slug, name })),
     gaps,
   };

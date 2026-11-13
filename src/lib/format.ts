@@ -35,3 +35,27 @@ export const updated = (iso: string | null | undefined, now: Date) => {
 
 /** Dollars from cents: $5, $5.50, $1,200. */
 export const dollars = (cents: number) => '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
+
+/** An issue title without the emoji and bracketed labels some projects put in front ("🐛 [Bug] …"). */
+export function cleanIssueTitle(t: string): string {
+  const out = t
+    .replace(/\p{Extended_Pictographic}️?/gu, ' ')
+    .replace(/^\s*(?:[[(][^\])]{1,24}[\])]\s*:?\s*)+/u, '')
+    .replace(/^\s*[A-Za-z]{2,12}:\s+/, (m) => (/^(bug|feat|feature|fix|docs|chore|enhancement|request|idea|question)/i.test(m) ? '' : m))
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!out) return t.trim();
+  // Only tidy the first letter when something was taken off the front.
+  return out === t.trim() ? out : out.charAt(0).toUpperCase() + out.slice(1);
+}
+
+/** A GitHub description as people read it: no :emoji: shortcodes, no words repeated three times over. */
+export function cleanDescription(d: string | null | undefined): string | null {
+  if (!d) return null;
+  const out = d
+    .replace(/:[a-z0-9_+-]{2,30}:/g, ' ')
+    .replace(/\b(\w+)(?:\s+\1\b){1,}/gi, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return out || null;
+}

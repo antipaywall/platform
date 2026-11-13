@@ -6,7 +6,9 @@ import SignalButton from '../../../components/pf/SignalButton.astro';
 import SignalScript from '../../../components/pf/SignalScript.astro';
 import { site } from '../../../config/site';
 import { PAINTS, starChartSvg, type Paint } from '../../../lib/chart';
-import { shortCount, timeAgo } from '../../../lib/format';
+import { cleanDescription, cleanIssueTitle, shortCount, timeAgo } from '../../../lib/format';
+import ProjectCard from '../../../components/pf/ProjectCard.astro';
+import { topicName } from '../../../lib/topics';
 import { getProjectPage, type ProjectPage } from '../../../lib/projects';
 import { plainLicense } from '../../../lib/sync/license';
 import { adminClient } from '../../../lib/supabase';
@@ -31,19 +33,21 @@ const { project: p, products, gaps, similar, issues } = page;
 const here = `/projects/${p.fullName}`;
 const now = new Date();
 const license = plainLicense(p.licenseSpdx, p.licenseName);
-const chart = starChartSvg(p.starPoints.length ? p.starPoints : [[p.syncedAt.slice(0, 10), p.stars]], { paint: 'tomato', width: 960, title: p.fullName });
+const chart = p.starPoints.length >= 2 ? starChartSvg(p.starPoints, { paint: 'tomato', width: 960, title: p.fullName }) : '';
 const chartUrl = (paint: Paint) => `${site.origin}/chart/${p.fullName}.svg?paint=${paint}`;
 const snippet = (paint: Paint) => `[![Star history on Antipaywall](${chartUrl(paint)})](${site.origin}${here})`;
 const replaces = products.map((x) => x.name);
 const description = (p.description ? `${p.description} ` : '') + (replaces.length ? `A free, open-source alternative to ${replaces.slice(0, 3).join(', ')}.` : 'A free, open-source project on GitHub.');
-const facts: [string, string][] = [
-  ['Stars', shortCount(p.stars)],
-  ['Contributors', p.contributors != null ? shortCount(p.contributors) : 'not counted yet'],
-  ['Last worked on', timeAgo(p.pushedAt, now)],
-  ['Latest release', p.latestReleaseTag ? `${p.latestReleaseTag}, ${timeAgo(p.latestReleaseAt, now)}` : 'none published'],
-  ['Open issues', shortCount(p.openIssues)],
-  ['Started', p.createdOnGithub ? new Date(p.createdOnGithub).getUTCFullYear().toString() : 'unknown'],
+// Each fact: the big value, what it is, and an optional detail line.
+const facts: [string, string, string?][] = [
+  [shortCount(p.stars), 'Stars on GitHub'],
+  [p.contributors != null ? shortCount(p.contributors) : '–', 'Contributors'],
+  [shortCount(p.openIssues), 'Open issues', p.helpWanted ? `${p.helpWanted} want help` : undefined],
+  [timeAgo(p.pushedAt, now) || '–', 'Last code change'],
+  [p.latestReleaseTag ? (p.latestReleaseTag.length > 12 ? p.latestReleaseTag.slice(0, 11) + '…' : p.latestReleaseTag) : '–', 'Latest release', p.latestReleaseTag ? timeAgo(p.latestReleaseAt, now) : 'None published'],
+  [p.createdOnGithub ? new Date(p.createdOnGithub).getUTCFullYear().toString() : '–', 'Started'],
 ];
+const hasCurve = p.starPoints.length >= 2;
 ---
 
 <Platform title={`${p.name}: ${replaces.length ? `free alternative to ${replaces[0]}` : 'open-source project'}`} description={description.slice(0, 160)} noindex={!p.indexable}>
@@ -54,22 +58,30 @@ const facts: [string, string][] = [
         {products[0] ? <><a href={`/free-alternatives/${products[0].slug}`}>{products[0].name}</a><span aria-hidden="true">/</span></> : null}
         <span>{p.name}</span>
       </nav>
-      <h1 class="pf-title">{p.name}</h1>
-      {p.description && <p class="lede">{p.description}</p>}
+      <div class="pj-name">
+        <img src={`https://github.com/${p.owner}.png?size=160`} alt="" width="72" height="72" decoding="async" />
+        <h1 class="pf-title">{p.name}</h1>
+      </div>
+      {cleanDescription(p.description) && <p class="lede">{cleanDescription(p.description)}</p>}
       <div class="pf-chips">
-        <a class="chip" href={p.url} rel="noopener">{p.fullName} on GitHub</a>
-        {p.homepage && <a class="chip" href={p.homepage} rel="noopener nofollow">Website</a>}
-        <span class="chip">{license.label}</span>
+        <a class="key key-sm" href={p.url} rel="noopener">Open on GitHub</a>
+        {p.homepage && <a class="key key-milk key-sm" href={p.homepage} rel="noopener nofollow">Website</a>}
         <FollowButton kind="project" id={p.id} following={page.following} next={here} label="Follow" signedIn={Boolean(Astro.locals.person)} />
       </div>
       {replaces.length > 0 && (
-        <p class="muted">Free, open-source alternative to {products.map((x, i) => <>{i > 0 && ', '}<a class="link" href={`/free-alternatives/${x.slug}`}>{x.name}</a></>)}.</p>
+        <p class="pj-replaces">Free alternative to {products.map((x, i) => <>{i > 0 && ', '}<a class="link" href={`/free-alternatives/${x.slug}`}>{x.name}</a></>)}</p>
+      )}
+      {p.topics.length > 0 && (
+        <div class="pf-tags" aria-label="Topics">
+          {p.topics.slice(0, 10).map((t) => <a class="pf-tag" href={`/explore?topic=${t}`}>{topicName(t)}</a>)}
+        </div>
       )}
     </div>
     <aside class="card pf-hero-side pf-signal">
-      <h2 class="pf-h3">{page.users} {page.users === 1 ? 'person uses' : 'people use'} this</h2>
+      <h2 class="pf-h3">{page.users > 0 ? `${page.users} ${page.users === 1 ? 'person uses' : 'people use'} this` : 'Do you use this?'}</h2>
+      <p class="muted small">{page.users > 0 ? 'Say so too: it tells others it works, and tells builders where to help.' : 'Be the first to say so. It tells others it works, and tells builders where to help.'}</p>
       <SignalButton subjectKind="project" subjectId={p.id} kind="use" on={page.mineUse} count={page.users} label="I use this" onLabel="You use this" variant="toggle" next={here} />
-      <p class="small"><b>The license, in plain words:</b> {license.words}</p>
+      <p class="small"><b>{license.label}.</b> {license.words}</p>
       <p class="pf-note">Antipaywall links to this project. It doesn't host, copy or change it.</p>
     </aside>
   </section>
@@ -77,12 +89,13 @@ const facts: [string, string][] = [
   <AdoptBox kind="project" id={p.id} subject={{ kind: 'project', fullName: p.fullName }} next={here} noun="project" />
 
   <section class="wrap pf-section pf-section-tight">
-    <div class="card" style="padding:clamp(12px,2vw,20px)">
-      <div class="pf-chart" set:html={chart} />
-      <p class="muted small" style="margin-top:10px">Stars counted every day since {p.starPoints[0]?.[0] ?? p.syncedAt.slice(0, 10)}. GitHub doesn't share older star history, so the curve grows from there.</p>
+    <div class="pj-facts">
+      {facts.map(([v, k, d]) => <div class="pj-fact"><b class="num">{v}</b><span>{k}</span>{d && <small>{d}</small>}</div>)}
     </div>
-    <div class="pf-stats">
-      {facts.map(([k, v]) => <div class="card pf-stat"><b>{v}</b><span class="muted">{k}</span></div>)}
+    <div class="card" style="padding:clamp(12px,2vw,20px)">
+      <h2 class="pf-h3" style="margin-bottom:10px">Star history</h2>
+      {hasCurve ? <div class="pf-chart" set:html={chart} /> : <p class="muted">Antipaywall started counting this project's stars on {p.starPoints[0]?.[0] ?? p.syncedAt.slice(0, 10)}. The curve appears after a few days of counts.</p>}
+      {hasCurve && <p class="muted small" style="margin-top:10px">Stars counted every day since {p.starPoints[0][0]}. GitHub doesn't share older star history, so the curve grows from there.</p>}
     </div>
   </section>
 
@@ -98,7 +111,7 @@ const facts: [string, string][] = [
                 {issues.map((i, n) => (
                   <a class={`pf-brick p${((n + 2) % 6) + 1}`} href={i.url} rel="noopener">
                     <small>#{i.number} · {i.labels.find((l) => /help|first/i.test(l)) ?? 'help wanted'}</small>
-                    <b style="font-size:1.2rem">{i.title}</b>
+                    <b style="font-size:1.2rem">{cleanIssueTitle(i.title)}</b>
                   </a>
                 ))}
               </div>
@@ -120,15 +133,9 @@ const facts: [string, string][] = [
   {
     similar.length > 0 && (
       <section class="wrap pf-section">
-        <h2 class="pf-h2">Similar projects</h2>
+        <h2 class="pf-h2">{replaces.length ? `Other free alternatives to ${replaces[0]}` : 'Similar projects'}</h2>
         <div class="pf-grid">
-          {similar.map((s, i) => (
-            <a class={`pf-brick p${(i % 6) + 1}`} href={`/projects/${s.fullName}`}>
-              <b>{s.fullName.split('/')[1]}</b>
-              {s.description && <span style="font-size:0.9375rem">{s.description.length > 120 ? s.description.slice(0, 117) + '…' : s.description}</span>}
-              <small class="num">★ {shortCount(s.stars)}</small>
-            </a>
-          ))}
+          {similar.map((s) => <ProjectCard {...s} />)}
         </div>
       </section>
     )
@@ -140,7 +147,7 @@ const facts: [string, string][] = [
       <p class="muted">Maintainer? Show your star growth, in any of the six paints. It updates every day and links back to this page.</p>
       <div class="pf-chips" role="group" aria-label="Paint">
         {(Object.keys(PAINTS) as Paint[]).map((paint, i) => (
-          <button type="button" class="pf-toggle" data-paint={paint} aria-pressed={i === 0 ? 'true' : 'false'}>
+          <button type="button" class="pf-toggle pj-paint" data-paint={paint} aria-pressed={i === 0 ? 'true' : 'false'}>
             <span aria-hidden="true" style={`width:12px;height:12px;border-radius:50%;background:${PAINTS[paint].fill};display:inline-block`}></span>{paint}
           </button>
         ))}
@@ -152,6 +159,21 @@ const facts: [string, string][] = [
   </section>
   <SignalScript />
 </Platform>
+
+<style>
+  .pj-name { display: flex; align-items: center; gap: 18px; min-width: 0; }
+  .pj-name img { width: clamp(52px, 7vw, 72px); height: auto; aspect-ratio: 1; border-radius: 18px; flex: none; background: var(--milk-2); box-shadow: 0 0 0 1px var(--line); }
+  .pj-name h1 { overflow-wrap: anywhere; }
+  .pj-replaces { margin: 0; font-weight: 700; }
+  .pf-tags a.pf-tag { text-decoration: none; }
+  .pf-tags a.pf-tag:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .pj-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 1px; background: var(--line); border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+  .pj-fact { background: var(--card); padding: 18px 20px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .pj-fact b { font: 800 clamp(1.6rem, 2.6vw, 2.2rem)/1 var(--display); letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pj-fact span { font-weight: 700; color: var(--ink-2); font-size: 0.9375rem; }
+  .pj-fact small { color: var(--ink-3); font-size: 0.8125rem; }
+  .pj-paint[aria-pressed='true'] { background: var(--ink); color: var(--milk); }
+</style>
 
 <script>
   const box = document.querySelector<HTMLTextAreaElement>('[data-embed]');
