@@ -6,7 +6,7 @@ import { checkChosen, githubHasUser, holderIn, setUsername } from '../../../lib/
 // A builder picks their own username (after a collision at sign-in).
 export const POST: APIRoute = async ({ request, locals }) => {
   const person = locals.person;
-  if (!person) return back('/auth/signin', 'need_signin');
+  if (!person) return back('/signin', 'need_signin');
   const form = await request.formData();
   const next = safeNext(String(form.get('next') ?? ''), '/');
   const page = `/auth/username?next=${encodeURIComponent(next)}`;

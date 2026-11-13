@@ -288,3 +288,122 @@ textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
   .pf-now .t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .pf-now time { grid-column: 2; }
 }
+
+/* ---- Home: the hero's search ---- */
+.hero-find { margin-top: clamp(28px, 3vw, 40px); display: grid; gap: 18px; max-width: 720px; }
+.hero-find .pf-search { max-width: none; flex-wrap: nowrap; gap: 10px; }
+.hero-find .pf-search input { flex: 1 1 0; }
+/* Focus shows as a lift, not a coloured ring. */
+.pf-isearch input:focus, .pf-isearch input:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink) inset, 0 0 0 4px oklch(0.23 0.045 310 / 0.12), 0 24px 44px -28px oklch(0.23 0.045 310 / 0.6); }
+.hero-try { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 0.9375rem; }
+.hero-try span { font-weight: 700; color: var(--ink-2); margin-right: 2px; }
+.hero-try a {
+  padding: 7px 14px 9px; border-radius: 10px; font-weight: 700; text-decoration: none; color: var(--ink);
+  background: var(--card); box-shadow: inset 0 0 0 1.5px var(--line), inset 0 -3px 0 var(--line);
+  transition: background 150ms var(--out);
+}
+.hero-try a:hover { background: var(--marigold); box-shadow: inset 0 -3px 0 oklch(0.72 0.14 78); }
+@media (max-width: 520px) {
+  .hero-find .pf-search { flex-wrap: wrap; }
+  .hero-find .pf-search input { flex: 1 1 100%; }
+  .hero-find .pf-search .key { width: 100%; }
+}
+
+/* ---- Home: one sentence that carries the numbers ---- */
+.hm-open { padding-block: clamp(48px, 7vw, 104px) clamp(20px, 3vw, 40px); }
+.hm-say {
+  margin: 0; max-width: 22ch; font-family: var(--display); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02;
+  font-size: clamp(2.1rem, 5.2vw, 4.6rem); text-wrap: balance;
+}
+.hm-say a { color: inherit; text-decoration: none; background: linear-gradient(var(--u), var(--u)) 0 92% / 100% 0.14em no-repeat; transition: background-size 180ms var(--out); }
+.hm-say a:nth-of-type(1) { --u: var(--mint); }
+.hm-say a:nth-of-type(2) { --u: var(--marigold); }
+.hm-say a:nth-of-type(3) { --u: var(--tomato); }
+.hm-say a:hover { background-size: 100% 100%; }
+
+/* ---- Home: holes in the wall (wanted, not built) ---- */
+.hm-gaps { padding-block: clamp(28px, 4vw, 56px) clamp(48px, 6vw, 88px); display: grid; gap: 28px; }
+.hm-slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.hm-slot {
+  position: relative; display: grid; gap: 18px; align-content: space-between; min-height: 148px; padding: 18px 18px 16px; border-radius: 16px;
+  background: transparent; border: 2px dashed oklch(0.23 0.045 310 / 0.32);
+  transition: background 160ms var(--out), border-color 160ms var(--out);
+}
+.hm-slot:hover { background: var(--card); border-color: var(--ink); border-style: solid; }
+.hm-slot > a { font: 800 1.3rem/1.15 var(--display); letter-spacing: -0.02em; color: var(--ink); text-decoration: none; text-wrap: balance; }
+.hm-slot > a::after { content: ''; position: absolute; inset: 0; border-radius: 14px; }
+.hm-slot > a:focus-visible { outline: none; }
+.hm-slot:has(> a:focus-visible) { border-color: var(--ink); border-style: solid; }
+.hm-slot-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 0.875rem; font-weight: 700; color: var(--ink-2); }
+.hm-slot-foot form, .hm-slot-foot .heart-form { position: relative; z-index: 1; }
+.hm-slot-yours { background: var(--card); border: 0; box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--ink); }
+.hm-slot-yours:hover { background: var(--marigold); border: 0; }
+.hm-plus { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--ink); color: #fff; font: 800 1.3rem/1 var(--display); }
+
+/* ---- Home: the hackathon, as loud as the wall ---- */
+.hm-season { background: var(--wall); color: #fff; position: relative; overflow: hidden; }
+.hm-season::before {
+  /* A course of bricks along the top edge, so the band reads as the wall coming back. */
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 26px; opacity: 0.55;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 118px, var(--wall) 118px 124px),
+    linear-gradient(oklch(0.31 0.05 310), oklch(0.31 0.05 310));
+  box-shadow: inset 0 -5px 0 var(--wall-edge);
+}
+.hm-season-in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; padding-block: clamp(72px, 9vw, 132px) clamp(64px, 8vw, 120px); position: relative; }
+.hm-season-main { display: grid; gap: 22px; justify-items: start; }
+.hm-season-kick { margin: 0; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: var(--marigold); }
+.hm-season h2 { margin: 0; font-family: var(--display); font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; font-size: clamp(2.6rem, 6vw, 5.4rem); text-wrap: balance; max-width: 12ch; }
+.hm-season-sub { margin: 0; color: var(--wall-ink); font-size: clamp(1.0625rem, 1.3vw, 1.25rem); line-height: 1.45; max-width: 46ch; }
+.hm-season-go { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 6px; }
+.hm-season-more { color: #fff; font-weight: 700; text-underline-offset: 0.2em; }
+.hm-season-side { display: grid; gap: 18px; }
+.hm-pool {
+  display: grid; gap: 8px; padding: clamp(22px, 3vw, 36px); border-radius: 24px; text-decoration: none; color: var(--ink);
+  background: var(--marigold); box-shadow: inset 0 -10px 0 oklch(0.72 0.14 78); transform: rotate(-1.5deg);
+  transition: transform 220ms var(--spring);
+}
+.hm-pool:hover { transform: rotate(0deg) translateY(-3px); }
+.hm-pool b { font: 900 clamp(3rem, 7vw, 6rem)/0.9 var(--display); letter-spacing: -0.045em; }
+.hm-pool span { font-weight: 700; font-size: 1.0625rem; padding-bottom: 6px; }
+.hm-crew { display: grid; gap: 12px; text-decoration: none; color: var(--wall-ink); }
+.hm-crew-bricks { display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px; }
+.hm-crew-bricks i { aspect-ratio: 2 / 1; border-radius: 3px; background: rgb(255 255 255 / 0.1); }
+.hm-crew-bricks i.on { background: var(--mint); box-shadow: inset 0 -2px 0 oklch(0.7 0.1 165); }
+.hm-crew-n { font-size: 0.9375rem; }
+.hm-crew-n b { color: #fff; font-size: 1.125rem; }
+.hm-crew:hover .hm-crew-n { text-decoration: underline; text-underline-offset: 0.2em; }
+@media (max-width: 860px) {
+  .hm-season-in { grid-template-columns: 1fr; }
+  .hm-pool { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .hm-pool, .hm-pool:hover { transform: none; transition: none; } }
+
+/* ---- Home: Explore, by category ---- */
+.hm-cats { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); }
+.hm-cats li { display: grid; }
+.hm-cats a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 14px 16px 18px; border-radius: 14px; text-decoration: none; color: var(--ink);
+  background: var(--p); box-shadow: inset 0 -5px 0 var(--pe); transition: transform 200ms var(--spring);
+}
+.hm-cats a:hover { transform: translateY(-3px); }
+.hm-cats b { font: 800 1.1rem/1.1 var(--display); letter-spacing: -0.02em; }
+.hm-cats span { font-size: 0.8125rem; font-weight: 700; white-space: nowrap; }
+
+/* ---- Home: the ending ---- */
+.hm-end { position: relative; padding-block: 0 clamp(72px, 9vw, 128px); overflow: hidden; }
+.hm-end-course { display: flex; gap: 7px; margin: 0 -40px clamp(56px, 7vw, 96px); }
+.hm-end-course i { flex: 1 0 120px; height: 46px; border-radius: 12px; background: var(--p); box-shadow: inset 0 -5px 0 var(--pe); }
+.hm-end-in { display: grid; gap: 22px; justify-items: center; text-align: center; }
+.hm-end h2 { margin: 0; font-family: var(--display); font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; font-size: clamp(2.6rem, 6.4vw, 5.6rem); text-wrap: balance; max-width: 14ch; }
+.hm-end .lede { max-width: 52ch; margin: 0; }
+.hm-end .pf-search { width: min(100%, 720px); max-width: none; flex-wrap: nowrap; text-align: left; margin-top: 8px; }
+.hm-end .pf-search input { flex: 1 1 0; }
+.hm-end-or { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.hm-end:has(.pf-isearch [aria-expanded='true']) { overflow: visible; z-index: 20; }
+@media (max-width: 520px) {
+  .hm-end .pf-search { flex-wrap: wrap; }
+  .hm-end .pf-search input { flex: 1 1 100%; }
+  .hm-end .pf-search .key { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .hm-cats a { transition: none; } .hm-cats a:hover { transform: none; } }

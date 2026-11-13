@@ -2374,3 +2374,11 @@ span.brick {
 
 /* A link the builder hasn't added is left out, not shown greyed. */
 .tile .plink-off { display: none; }
+
+/* The way in, in the header: the GitHub mark and "Sign in with GitHub" (just "Sign in" on a phone). */
+.top-join { gap: 9px; }
+.top-join-short { display: none; }
+@media (max-width: 1100px) {
+  .top-join-long { display: none; }
+  .top-join-short { display: inline; }
+}

@@ -258,7 +258,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
           </form>
         )
       ) : (
-        <a class="key key-marigold" href={`/auth/signin?next=${encodeURIComponent(here + '#builders')}`} style="justify-self:start">Sign in with GitHub to claim it</a>
+        <a class="key key-marigold" href={`/signin?next=${encodeURIComponent(here + '#builders')}`} style="justify-self:start">Sign in with GitHub to claim it</a>
       )}
     </div>
   </section>

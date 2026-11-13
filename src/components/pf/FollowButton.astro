@@ -24,6 +24,6 @@ const { kind, id, following, next, label, signedIn, dark = false } = Astro.props
       </button>
     </form>
   ) : (
-    <a class="pf-toggle" href={`/auth/signin?next=${encodeURIComponent(next)}`}><span aria-hidden="true">+</span> {label}</a>
+    <a class="pf-toggle" href={`/signin?next=${encodeURIComponent(next)}`}><span aria-hidden="true">+</span> {label}</a>
   )
 }

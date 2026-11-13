@@ -6,7 +6,7 @@ import { safeNext } from '../../lib/respond';
 import { githubHasUser } from '../../lib/usernames';
 
 const person = Astro.locals.person;
-if (!person) return Astro.redirect('/auth/signin');
+if (!person) return Astro.redirect('/signin');
 const next = safeNext(Astro.url.searchParams.get('next'), '/');
 const wanted = person.handle;
 const onGithub = await githubHasUser(wanted);

@@ -65,7 +65,7 @@ const interested = Boolean(person && adoption?.interest.some((i) => i.personId =
             <button class="key key-sm" type="submit" style="justify-self:start">{interested ? "I'm not taking it after all" : "I'd take it over"}</button>
           </form>
         ) : (
-          <a class="key key-sm" href={`/auth/signin?next=${encodeURIComponent(next)}`} style="justify-self:start">Sign in with GitHub to take it over</a>
+          <a class="key key-sm" href={`/signin?next=${encodeURIComponent(next)}`} style="justify-self:start">Sign in with GitHub to take it over</a>
         )}
       </div>
     </section>

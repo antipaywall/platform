@@ -33,7 +33,7 @@ const text = current?.text ?? renderIdeaFile(ideaFromRow({ ...(row as any), merg
   </p>
   {
     !person ? (
-      <p class="flash flash-error">Sign in with GitHub to suggest an improvement. <a class="link" href={`/auth/signin?next=/ideas/${slug}/suggest`}>Sign in</a></p>
+      <p class="flash flash-error">Sign in with GitHub to suggest an improvement. <a class="link" href={`/signin?next=/ideas/${slug}/suggest`}>Sign in</a></p>
     ) : !ready ? (
       <p class="flash flash-error">Suggesting changes needs the Antipaywall GitHub App, which isn't connected here yet.</p>
     ) : (
