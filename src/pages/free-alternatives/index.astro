@@ -1,6 +1,6 @@
 ---
 import Platform from '../../layouts/Platform.astro';
-import { listProducts, type ProductSummary } from '../../lib/products';
+import { listProducts, priceLabel, type ProductSummary } from '../../lib/products';
 import { adminClient } from '../../lib/supabase';
 
 let products: ProductSummary[] = [];
@@ -13,14 +13,16 @@ try {
 }
 const byCategory = new Map<string, ProductSummary[]>();
 for (const p of products) byCategory.set(p.category, [...(byCategory.get(p.category) ?? []), p]);
-const categories = [...byCategory.keys()].sort();
+const categories = [...byCategory.keys()].sort((a, b) => (a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)));
+for (const list of byCategory.values()) list.sort((a, b) => b.freeOptions - a.freeOptions || a.name.localeCompare(b.name));
+const total = products.reduce((n, p) => n + p.freeOptions, 0);
 const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
 ---
 
 <Platform title="Free, open-source alternatives to paid tools" description="Every paid product we track, with the free, open-source projects that replace it, pulled from GitHub.">
   <section class="wrap pf-section">
     <h1 class="pf-title">Free alternatives to things you pay for</h1>
-    <p class="lede">Every paid product we track, grouped by what it's for. Each page lists the open-source projects that replace it and what people say is still missing.</p>
+    <p class="lede">{products.length} paid tools, grouped by what they're for, with {total.toLocaleString('en-US')} free, open-source projects that replace them. Each one opens a side-by-side comparison.</p>
     <form class="pf-search" action="/search" method="get" role="search">
       <label for="q" class="pf-sr">A paid product, or what you need it to do</label>
       <input id="q" name="q" type="search" placeholder="Search a product or a need" autocomplete="off" />
@@ -28,22 +30,32 @@ const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
     </form>
     {failed && <p class="flash flash-error" role="alert">The list isn't loading right now. Try again in a minute.</p>}
   </section>
-  {
-    categories.map((c, ci) => (
-      <section class="wrap pf-section pf-section-tight" id={anchor(c)}>
-        <h2 class="pf-h3">{c}</h2>
-        <div class="pf-grid">
-          {byCategory.get(c)!.map((p, i) => (
-            <a class={`pf-brick p${((ci + i) % 6) + 1}`} href={`/free-alternatives/${p.slug}`}>
-              <b>{p.name}</b>
-              <span>{p.blurb}</span>
-              <small class="num">{p.freeOptions} free {p.freeOptions === 1 ? 'option' : 'options'}</small>
-            </a>
-          ))}
-        </div>
-      </section>
-    ))
-  }
+  <section class="wrap pf-section pf-section-tight">
+    <nav class="pf-chips fa-jump" aria-label="Categories">
+      {categories.map((c) => <a class="chip" href={`#${anchor(c)}`}>{c} <span class="num muted">{byCategory.get(c)!.length}</span></a>)}
+    </nav>
+    <div class="fa-cats">
+      {categories.map((c, ci) => (
+        <section class={`fa-cat p${(ci % 6) + 1}`} id={anchor(c)} aria-labelledby={`h-${anchor(c)}`}>
+          <header>
+            <h2 id={`h-${anchor(c)}`}>{c}</h2>
+            <a href={`/explore?category=${encodeURIComponent(c)}`}>Browse projects</a>
+          </header>
+          <ul>
+            {byCategory.get(c)!.map((p) => (
+              <li>
+                <a href={`/free-alternatives/${p.slug}`} title={p.blurb}>
+                  <b>{p.name}</b>
+                  {priceLabel(p.price) && <span class="fa-price">{priceLabel(p.price)}</span>}
+                  <span class:list={['fa-free', p.freeOptions === 0 && 'fa-none']}>{p.freeOptions > 0 ? `${p.freeOptions} free` : 'none yet'}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
   <section class="wrap pf-section">
     <div class="pf-empty">
       <p><b>Something missing?</b> The list lives in the open catalog on GitHub, and anyone can add a product with a pull request. Or tell us what you'd want instead.</p>
@@ -51,3 +63,20 @@ const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
     </div>
   </section>
 </Platform>
+
+<style>
+  .fa-jump { margin-bottom: 8px; }
+  .fa-jump .chip { text-decoration: none; }
+  .fa-cats { columns: 3 300px; column-gap: 16px; }
+  .fa-cat { break-inside: avoid; margin: 0 0 16px; background: var(--card); border-radius: 20px; box-shadow: 0 0 0 1px var(--line); overflow: hidden; scroll-margin-top: 90px; }
+  .fa-cat header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 14px 16px 12px; background: var(--p); box-shadow: inset 0 -4px 0 var(--pe); }
+  .fa-cat h2 { margin: 0; font: 800 1.2rem/1.1 var(--display); letter-spacing: -0.02em; }
+  .fa-cat header a { font-size: 0.8125rem; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .fa-cat ul { list-style: none; margin: 0; padding: 6px; display: grid; }
+  .fa-cat li a { display: flex; align-items: baseline; gap: 8px; padding: 9px 10px; border-radius: 10px; text-decoration: none; color: var(--ink); }
+  .fa-cat li a:hover { background: var(--milk-2); }
+  .fa-cat li b { font-weight: 800; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fa-price { font-size: 0.8125rem; color: var(--ink-3); white-space: nowrap; }
+  .fa-free { font-size: 0.8125rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--mint); white-space: nowrap; }
+  .fa-none { background: var(--milk-2); color: var(--ink-3); }
+</style>
