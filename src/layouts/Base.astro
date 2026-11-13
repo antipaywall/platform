@@ -23,7 +23,7 @@ const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : nu
   <head>
     <Head title={`${title} | ${site.name}`} description={description} noindex={noindex} />
   </head>
-  <body>
+  <body class="paged">
     <SiteHeader />
 
     <main class="wrap page">

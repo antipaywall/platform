@@ -2,9 +2,17 @@ import type { AccountFacts } from './eligibility';
 
 export class GithubUnavailableError extends Error {}
 
+/** A short piece of profile text, trimmed and cut to length, or null when there is none. */
+export function text(v: unknown, max: number): string | null {
+  if (typeof v !== 'string') return null;
+  const t = v.replace(/\s+/g, ' ').trim();
+  return t ? t.slice(0, max) : null;
+}
+
 const QUERY = `query {
   viewer {
-    databaseId login avatarUrl createdAt
+    databaseId login avatarUrl createdAt name bio location
+    repositories(privacy: PUBLIC, ownerAffiliations: OWNER) { totalCount }
     contributionsCollection { contributionCalendar { totalContributions } }
   }
 }`;
@@ -32,6 +40,10 @@ export async function fetchGithubFacts(token: string, fetchImpl: typeof fetch = 
     avatarUrl: v.avatarUrl,
     accountCreatedAt: v.createdAt,
     contributions12mo: v.contributionsCollection?.contributionCalendar?.totalContributions ?? 0,
+    name: text(v.name, 120),
+    bio: text(v.bio, 400),
+    location: text(v.location, 120),
+    repoCount: Number.isSafeInteger(v.repositories?.totalCount) ? v.repositories.totalCount : null,
   };
 }
 

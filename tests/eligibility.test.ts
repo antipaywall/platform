@@ -44,7 +44,7 @@ describe('fetchGithubFacts', () => {
     const got = await fetchGithubFacts('t', f);
     expect(got.accountCreatedAt).toBe('2020-01-01T00:00:00Z');
     expect(got.contributions12mo).toBe(12);
-    expect(got).toMatchObject({ provider: 'github', accountId: 7, handle: 'a' });
+    expect(got).toMatchObject({ provider: 'github', accountId: 7, handle: 'a', name: null, bio: null, repoCount: null });
   });
   it('has exactly two rules', () => {
     expect(checkEligibility(facts(), now).results.map((r) => r.rule)).toEqual(['account_age', 'contributions']);
@@ -65,7 +65,7 @@ describe('checkEligibility for GitLab', () => {
 });
 
 describe('fetchGitlabFacts', () => {
-  const user = { id: 42, username: 'tanuki.dev', avatar_url: 'https://gitlab.com/a.png', created_at: '2021-03-04T05:06:07Z' };
+  const user = { id: 42, username: 'tanuki.dev', avatar_url: 'https://gitlab.com/a.png', created_at: '2021-03-04T05:06:07Z', name: 'Tanu Ki', bio: '  builds\n  things ', location: '' };
   const calendar = { [daysAgo(1).slice(0, 10)]: 4, [daysAgo(200).slice(0, 10)]: 3, [daysAgo(400).slice(0, 10)]: 50, 'nonsense': 9, [daysAgo(2).slice(0, 10)]: -5 };
   const respond = (routes: Record<string, () => Response>) => {
     const seen: { url: string; auth: string | null }[] = [];
@@ -83,6 +83,7 @@ describe('fetchGitlabFacts', () => {
     expect(await fetchGitlabFacts('tok', now, f)).toEqual({
       provider: 'gitlab', accountId: 42, handle: 'tanuki.dev', avatarUrl: 'https://gitlab.com/a.png',
       accountCreatedAt: '2021-03-04T05:06:07Z', contributions12mo: 7,
+      name: 'Tanu Ki', bio: 'builds things', location: null, repoCount: null,
     });
     expect(seen[0]).toEqual({ url: 'https://gitlab.com/api/v4/user', auth: 'Bearer tok' });
     // The token is only ever sent to the account endpoint, never to the public calendar.

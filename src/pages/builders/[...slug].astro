@@ -1,0 +1,124 @@
+---
+// A builder's profile: what their GitHub or GitLab account says, the repositories they feature,
+// and what they wrote about themselves here. Builders are always public; anyone else only by choice.
+import Base from '../../layouts/Base.astro';
+import ProfileLinks from '../../components/ProfileLinks.astro';
+import { providerName, providerOf } from '../../lib/accounts';
+import { DataUnavailableError, type Person } from '../../lib/db';
+import { findProfile, ideasBy, isPublic, parseProfilePath, profilePath, refreshRepos } from '../../lib/profiles';
+import { languageColor, pickFeatured, savedRepos, type Repo } from '../../lib/repos';
+
+const where = parseProfilePath(Astro.params.slug);
+if (!where) return new Response(null, { status: 404 });
+
+let person: Person | null;
+let ideas: { slug: string; title: string }[] = [];
+let repos: Repo[] = [];
+try {
+  person = await findProfile(where.provider, where.handle);
+  if (!person || !isPublic(person)) return new Response(null, { status: 404 });
+  // One address per profile: a different capitalisation goes to the real one.
+  const canonical = profilePath(where.provider, person.handle);
+  if (canonical !== Astro.url.pathname) return Astro.redirect(canonical, 301);
+  [ideas, repos] = await Promise.all([ideasBy(person.id), refreshRepos(person)]);
+} catch (e) {
+  if (!(e instanceof DataUnavailableError)) throw e;
+  return new Response('Profiles are unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+}
+
+const p = person!;
+const provider = providerOf(p);
+const name = providerName(provider);
+const own = Astro.locals.person?.id === p.id;
+const featured = pickFeatured(repos.length ? repos : savedRepos(p.repos), p.featured_repos ?? []);
+const month = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : null);
+const since = p.account_created_at ? new Date(p.account_created_at).getUTCFullYear() : null;
+const joined = month(p.joined_at ?? p.created_at);
+const about = p.about ?? null;
+const skills = p.skills ?? [];
+const title = p.name ? `${p.name} (@${p.handle})` : `@${p.handle}`;
+const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n));
+---
+
+<Base title={title} description={about ?? p.bio ?? `${p.handle} is building on Antipaywall.`}>
+  <p class="crumb"><a class="link" href="/builders">All builders</a></p>
+  <section class="prof-head">
+    <span class="prof-pic" aria-hidden="true">
+      <span>{(p.handle[0] ?? '?').toUpperCase()}</span>
+      {p.avatar_url && <img src={p.avatar_url} alt="" width="112" height="112" />}
+    </span>
+    <div class="prof-id">
+      {p.is_builder && p.verified && <span class="prof-badge">Builder, passed both checks</span>}
+      <h1 class="prof-name">{p.name ?? p.handle}</h1>
+      <p class="prof-handle">@{p.handle} on {name}</p>
+      {p.bio && <p class="prof-bio">{p.bio}</p>}
+      <ul class="prof-meta">
+        {p.location && <li>{p.location}</li>}
+        {since && <li>On {name} since {since}</li>}
+        {p.is_builder && joined && <li>Joined Antipaywall {joined}</li>}
+      </ul>
+      <ProfileLinks provider={provider} handle={p.handle} xHandle={p.x_handle} siteUrl={p.site_url} size="big" />
+    </div>
+    {own && <a class="key key-milk prof-edit" href="/account">Edit profile</a>}
+  </section>
+
+  <div class="prof-cols">
+    <section aria-labelledby="repos-h">
+      <h2 class="prof-h" id="repos-h">
+        Public repositories
+        {(p.repo_count ?? repos.length) > featured.length && (
+          <a class="link" href={provider === 'gitlab' ? `https://gitlab.com/users/${p.handle}/projects` : `https://github.com/${p.handle}?tab=repositories`} rel="noopener">
+            {p.repo_count ? `All ${p.repo_count} on ${name}` : `All on ${name}`}
+          </a>
+        )}
+      </h2>
+      {
+        featured.length ? (
+          <ul class="prof-repos">
+            {featured.map((r) => (
+              <li class="repo">
+                <a class="repo-name" href={r.url} rel="noopener nofollow">{r.name}</a>
+                {r.description && <p>{r.description}</p>}
+                <span class="repo-row">
+                  {r.language && <span><i class="dot" style={`background:${languageColor(r.language)}`}></i>{r.language}</span>}
+                  <span>★ {stars(r.stars)}</span>
+                  {r.pushedAt && <span>Updated {month(r.pushedAt)}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">No public repositories to show yet.</p>
+        )
+      }
+    </section>
+    <aside class="prof-side">
+      {
+        (about || skills.length > 0) && (
+          <div class="prof-box">
+            <h2 class="prof-h prof-h-small">About</h2>
+            {about && <p>{about}</p>}
+            {skills.length > 0 && <ul class="prof-tags">{skills.map((s) => <li>{s}</li>)}</ul>}
+          </div>
+        )
+      }
+      {
+        p.open_to_team && (
+          <div class="prof-team">
+            <b>Open to a team</b>
+            {p.team_note && <p>{p.team_note}</p>}
+          </div>
+        )
+      }
+      <div class="prof-box">
+        <h2 class="prof-h prof-h-small">On Antipaywall</h2>
+        <ul class="prof-list">
+          {ideas.map((i) => <li>Posted <a class="link" href={`/ideas/${i.slug}`}>{i.title}</a></li>)}
+          {p.is_builder && <li class="muted">Their build week entry shows here once submissions open.</li>}
+          {!p.is_builder && ideas.length === 0 && <li class="muted">Nothing posted yet.</li>}
+        </ul>
+      </div>
+      {own && !about && skills.length === 0 && <p class="muted small">Your About and skills show here once you add them in <a class="link" href="/account">your account</a>.</p>}
+    </aside>
+  </div>
+</Base>

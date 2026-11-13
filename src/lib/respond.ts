@@ -38,6 +38,15 @@ export const MESSAGES = {
   organize_saved: { kind: 'ok', text: 'Thank you. The organizer will be in touch by email.' },
   bad_inquiry: { kind: 'error', text: 'Check the form: a company, your name, an optional whole-dollar amount, and a message under 1,000 characters.' },
   inquiry_saved: { kind: 'ok', text: 'Thank you. A person will reply to the address you gave.' },
+  bad_about: { kind: 'error', text: 'Keep "About" under 400 characters.' },
+  bad_skills: { kind: 'error', text: 'Add up to 8 skills, separated by commas, each under 30 characters.' },
+  bad_team_note: { kind: 'error', text: 'Keep the team note under 140 characters.' },
+  too_many_repos: { kind: 'error', text: 'Pick up to 6 repositories.' },
+  profile_saved: { kind: 'ok', text: 'Profile saved.' },
+  repos_saved: { kind: 'ok', text: 'Featured repositories saved.' },
+  need_delete_confirm: { kind: 'error', text: 'Tick the box to confirm you want your account deleted.' },
+  organizer_cannot_delete: { kind: 'error', text: "The organizer's account can't be deleted from here." },
+  account_deleted: { kind: 'ok', text: 'Your account and everything tied to it is deleted.' },
   done: { kind: 'ok', text: 'Done.' },
 } as const;
 
