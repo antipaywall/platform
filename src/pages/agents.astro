@@ -40,14 +40,15 @@ const now = new Date();
       Ask your agent "is there an open-source version of this?" and it checks Antipaywall. If nothing exists, it can post the idea for you, say
       "me too" on one that's already wanted, or follow it. It's the same site, the same rules and the same limits, through MCP.
     </p>
-    <div class="pf-grid pf-grid-wide">
-      {TOOLS.map((t, i) => (
-        <div class={`pf-brick p${(i % 6) + 1}`}>
-          <b style="font-size:1.15rem">{t.name}</b>
-          <span style="font-size:0.9375rem">{t.description}</span>
+    <h2 class="pf-h3" style="margin-top:8px">What your agent can do</h2>
+    <dl class="ag-tools">
+      {TOOLS.map((t) => (
+        <div>
+          <dt><code>{t.name}</code></dt>
+          <dd>{t.description}</dd>
         </div>
       ))}
-    </div>
+    </dl>
   </section>
 
   <section class="pf-band">
@@ -103,3 +104,10 @@ const now = new Date();
     </div>
   </section>
 </Platform>
+
+<style>
+  .ag-tools { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 1px; background: var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+  .ag-tools > div { background: var(--card); padding: 14px 18px; display: grid; gap: 6px; align-content: start; }
+  .ag-tools dt code { font: 700 0.9375rem ui-monospace, SFMono-Regular, Menlo, monospace; padding: 2px 8px; border-radius: 8px; background: var(--milk-2); }
+  .ag-tools dd { margin: 0; color: var(--ink-2); font-size: 0.9375rem; }
+</style>

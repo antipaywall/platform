@@ -16,7 +16,7 @@ const initial = (b.handle[0] ?? '?').toUpperCase();
 ---
 
 <li class="tile">
-  <a class="tile-main" href={profilePath(b)}>
+  <a class="tile-main" href={profilePath(b)} title={b.handle}>
     <span class="tile-pic" aria-hidden="true">
       <span>{initial}</span>
       {b.avatar_url && <img src={b.avatar_url} alt="" width="52" height="52" loading="lazy" decoding="async" />}

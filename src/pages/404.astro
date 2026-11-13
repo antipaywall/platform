@@ -1,14 +1,18 @@
 ---
-import Base from '../layouts/Base.astro';
+import Platform from '../layouts/Platform.astro';
+import InstantSearch from '../components/pf/InstantSearch.astro';
 ---
 
-<Base title="Not found" description="That page does not exist." noindex>
-  <h1 class="page-title">Nothing here. Not even a paywall.</h1>
-  <p class="lede">That page doesn't exist, or it was moved. These do:</p>
-  <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px">
-    <a class="key key-big" href="/">Home</a>
-    <a class="key key-big key-milk" href="/hackathon/about">About</a>
-    <a class="key key-big key-milk" href="/ideas">Ideas</a>
-    <a class="key key-big key-milk" href="/hackathon/join">Ways to join</a>
-  </div>
-</Base>
+<Platform title="Not found" description="That page does not exist." noindex>
+  <section class="wrap pf-section" style="display:grid;gap:22px;max-width:820px">
+    <h1 class="pf-title">Nothing here. Not even a paywall.</h1>
+    <p class="lede">That page doesn't exist, or it moved. Search for what you were after, or start from one of these.</p>
+    <InstantSearch id="nf-q" placeholder="Calendly, Notion, Photoshop…" button="Find it free" />
+    <div class="pf-chips">
+      <a class="key key-sm" href="/free-alternatives">Free alternatives</a>
+      <a class="key key-sm key-milk" href="/explore">Explore projects</a>
+      <a class="key key-sm key-milk" href="/ideas">What people want</a>
+      <a class="key key-sm key-milk" href="/hackathon">The hackathon</a>
+    </div>
+  </section>
+</Platform>

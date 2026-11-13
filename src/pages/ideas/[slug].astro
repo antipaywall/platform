@@ -48,8 +48,6 @@ const history = onGithub && appConfigured() ? await fileHistory(repoRow!.repo_pa
 const here = `/ideas/${idea.slug}`;
 const status = BUILD_STATUS[idea.status];
 const now = new Date();
-const top = Math.max(demand.want, demand.pay, demand.test, 1);
-const pct = (n: number) => `${Math.max(2, Math.round((n / top) * 100))}%`;
 const paidMonth = mine.signals.get('pay');
 const paras = (t: string) => t.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
 const writeup: [string, string][] = [['The problem', idea.problem], ['What to build', idea.build], ['A strong entry', idea.strong], ['What existing options are missing', idea.missing]];
@@ -81,16 +79,13 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
 
     <aside class="card pf-hero-side pf-signal" aria-labelledby="who-wants">
       <h2 id="who-wants" class="pf-h3">Who wants it</h2>
-      {[
-        ['Want it', demand.want, 'var(--tomato)'],
-        ['Would pay if it worked', demand.pay, 'var(--marigold)'],
-        ['Will test early builds', demand.test, 'var(--mint)'],
-      ].map(([label, n, paint]) => (
-        <div class="pf-meter">
-          <div class="pf-meter-top"><span>{label}</span><span class="num">{n}</span></div>
-          <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${pct(n as number)};--p:${paint}`}></span></div>
-        </div>
-      ))}
+      <dl class="id-nums">
+        {[
+          ['want it', demand.want],
+          ['would pay', demand.pay],
+          ['will test', demand.test],
+        ].map(([label, n]) => <div><dt class="num">{n}</dt><dd>{label}</dd></div>)}
+      </dl>
       <div class="pf-opts">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <Heart slug={idea.slug} hearts={demand.want} hearted={mine.hearted} big />
@@ -155,7 +150,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
             ))}
           </ul>
         ) : (
-          <p class="muted">No suggestions waiting.</p>
+          <div class="pf-empty"><p>No suggestions open right now. A sharper title, a missing feature, a link to something close: anything that makes it easier to build.</p></div>
         )}
         {history.length > 0 && (
           <div style="display:grid;gap:8px">
@@ -296,3 +291,10 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
   }
   <SignalScript />
 </Platform>
+
+<style>
+  .id-nums { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border-radius: 14px; overflow: hidden; }
+  .id-nums > div { background: var(--milk); padding: 12px 10px; text-align: center; }
+  .id-nums dt { font: 800 1.6rem/1 var(--display); letter-spacing: -0.02em; }
+  .id-nums dd { margin: 4px 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-2); }
+</style>
