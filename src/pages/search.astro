@@ -1,7 +1,7 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import { findMatches, isWeak, recordMiss, type Matches } from '../lib/match';
-import { shortCount } from '../lib/format';
+import ProjectCard from '../components/pf/ProjectCard.astro';
 import { adminClient } from '../lib/supabase';
 
 const q = (Astro.url.searchParams.get('q') ?? '').trim().slice(0, 200);
@@ -16,10 +16,28 @@ if (q && db) {
     failed = true;
   }
 }
+// The best paid-product match brings its free alternatives straight onto this page.
+const top = matches?.products[0] ?? null;
+let topAlts: { fullName: string; description: string | null; stars: number; license: string | null; pushedAt: string | null }[] = [];
+if (top && db) {
+  const { data } = await db
+    .from('project_products')
+    .select('projects!inner(full_name, description, stars, license_spdx, license_name, pushed_at, listed), products!inner(slug)')
+    .eq('products.slug', top.slug)
+    .eq('projects.listed', true)
+    .limit(60);
+  topAlts = ((data ?? []) as any[])
+    .map((r) => r.projects)
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 6)
+    .map((p) => ({ fullName: p.full_name, description: p.description, stars: p.stars, license: p.license_spdx ?? (p.license_name ? 'Own license' : null), pushedAt: p.pushed_at }));
+}
+const shown = new Set(topAlts.map((p) => p.fullName));
+const otherProjects = (matches?.projects ?? []).filter((p) => !shown.has(p.fullName)).sort((a, b) => b.stars - a.stars);
 const empty = matches && !matches.products.length && !matches.gaps.length && !matches.projects.length && !matches.topics.length;
 ---
 
-<Platform title={q ? `"${q}"` : 'Search'} description="Search for a free, open-source version of anything you pay for." noindex>
+<Platform title={q ? `Search: ${q}` : "Search"} description="Search for a free, open-source version of anything you pay for." noindex>
   <section class="wrap pf-section">
     <h1 class="pf-title">{q ? <>Results for “{q}”</> : 'Find the free version'}</h1>
     <form class="pf-search" action="/search" method="get" role="search">
@@ -33,11 +51,20 @@ const empty = matches && !matches.products.length && !matches.gaps.length && !ma
   {
     matches && !empty && (
       <section class="wrap pf-section pf-section-tight">
-        {matches.products.length > 0 && (
+        {top && topAlts.length > 0 && (
           <div class="pf-section-tight" style="display:grid;gap:14px">
-            <h2 class="pf-h3">Paid products</h2>
+            <div class="pf-head-row">
+              <h2 class="pf-h2">Free alternatives to {top.name}</h2>
+              <a class="key key-sm" href={`/free-alternatives/${top.slug}`}>Compare them all</a>
+            </div>
+            <div class="pf-grid">{topAlts.map((p) => <ProjectCard {...p} />)}</div>
+          </div>
+        )}
+        {matches.products.length > (topAlts.length ? 1 : 0) && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">{topAlts.length ? 'Other paid tools that match' : 'Paid tools that match'}</h2>
             <div class="pf-grid">
-              {matches.products.map((p, i) => (
+              {matches.products.slice(topAlts.length ? 1 : 0).map((p, i) => (
                 <a class={`pf-brick p${(i % 6) + 1}`} href={`/free-alternatives/${p.slug}`}>
                   <small>Free alternatives to</small>
                   <b>{p.name}</b>
@@ -56,20 +83,13 @@ const empty = matches && !matches.products.length && !matches.gaps.length && !ma
             </ul>
           </div>
         )}
-        {matches.projects.length > 0 && (
+        {otherProjects.length > 0 && (
           <div class="pf-section-tight" style="display:grid;gap:14px">
-            <h2 class="pf-h3">Open-source projects</h2>
-            <ul class="pf-list">
-              {matches.projects.map((p) => (
-                <li class="pf-row-flat">
-                  <div>
-                    <a href={`/projects/${p.fullName}`}>{p.fullName}</a>
-                    {p.description && <div class="muted small">{p.description}</div>}
-                  </div>
-                  <span class="pf-tag num">★ {shortCount(p.stars)}</span>
-                </li>
-              ))}
-            </ul>
+            <div class="pf-head-row">
+              <h2 class="pf-h3">Open-source projects that mention it</h2>
+              <a class="link" href={`/explore?show=all&q=${encodeURIComponent(q.slice(0, 60))}`}>Search all projects in Explore</a>
+            </div>
+            <div class="pf-grid">{otherProjects.map((p) => <ProjectCard fullName={p.fullName} description={p.description} stars={p.stars} />)}</div>
           </div>
         )}
         {matches.topics.length > 0 && (

@@ -1,7 +1,7 @@
 ---
 // One open-source project as a card: its GitHub owner's picture, name, what it does, stars, license
 // and when it was last worked on. Used on the home page, Explore and topic pages.
-import { shortCount, updated } from '../../lib/format';
+import { cleanDescription, shortCount, updated } from '../../lib/format';
 
 interface Props {
   fullName: string;
@@ -10,8 +10,11 @@ interface Props {
   license?: string | null;
   pushedAt?: string | null;
   replaces?: string[];
+  /** Stars gained this month, when known. */
+  gained?: number;
 }
-const { fullName, description, stars, license, pushedAt, replaces = [] } = Astro.props;
+const { fullName, stars, license, pushedAt, replaces = [], gained = 0 } = Astro.props;
+const description = cleanDescription(Astro.props.description);
 const [owner, name] = fullName.split('/');
 const now = new Date();
 ---
@@ -24,6 +27,7 @@ const now = new Date();
   {description && <span class="pf-pcard-desc">{description}</span>}
   <span class="pf-pcard-meta">
     <span class="num">★ {shortCount(stars)}</span>
+    {gained > 0 && <span class="num pf-pcard-up">+{shortCount(gained)} this month</span>}
     {license && <span>{license}</span>}
     {pushedAt && <span>Updated {updated(pushedAt, now)}</span>}
   </span>

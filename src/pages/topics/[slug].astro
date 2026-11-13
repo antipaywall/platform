@@ -3,7 +3,7 @@ import Platform from '../../layouts/Platform.astro';
 import FollowButton from '../../components/pf/FollowButton.astro';
 import SignalScript from '../../components/pf/SignalScript.astro';
 import { site } from '../../config/site';
-import { shortCount, updated } from '../../lib/format';
+import ProjectCard from '../../components/pf/ProjectCard.astro';
 import { getTopicPage, type TopicPage, type TopicSort } from '../../lib/topics';
 import { adminClient } from '../../lib/supabase';
 
@@ -20,17 +20,16 @@ try {
   return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
 }
 if (!page) return new Response(null, { status: 404 });
-const { topic, projects, products, gaps } = page;
+const { topic, projects, products, gaps, total } = page;
 const here = `/topics/${topic.slug}`;
-const now = new Date();
 let following = false;
 if (topic.id && Astro.locals.person) {
   const f = await db.from('follows').select('follower_id').eq('follower_id', Astro.locals.person.id).eq('subject_kind', 'topic').eq('subject_id', topic.id).limit(1);
   following = (f.data ?? []).length > 0;
 }
 const title = `Free, open-source ${topic.name.toLowerCase()} software`;
-const description = `${projects.length} open-source ${topic.name.toLowerCase()} projects from GitHub${products.length ? `, as free alternatives to ${products.slice(0, 3).map((p) => p.name).join(', ')}` : ''}.`;
-const sorts: [TopicSort, string][] = [['stars', 'Most stars'], ['growth', 'Growing fastest'], ['active', 'Recently worked on']];
+const description = `${total} open-source ${topic.name.toLowerCase()} projects from GitHub${products.length ? `, as free alternatives to ${products.slice(0, 3).map((p) => p.name).join(', ')}` : ''}.`;
+const sorts: [TopicSort, string][] = [['stars', 'Most stars'], ['growth', 'Growing fastest'], ['active', 'Recently updated']];
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -47,7 +46,7 @@ const jsonLd = {
       <h1 class="pf-title">{title}</h1>
       <p class="lede">{topic.blurb ? `${topic.blurb} ` : ''}Every project here is public, open source and pulled from GitHub, where it carries the "{topic.slug}" topic.</p>
       <div class="pf-chips">
-        <span class="chip num">{projects.length} projects</span>
+        <a class="chip num" href={`/explore?show=all&topic=${topic.slug}`}>{total.toLocaleString('en-US')} {total === 1 ? 'project' : 'projects'}</a>
         {topic.id && <FollowButton kind="topic" id={topic.id} following={following} next={here} label="Follow this topic" signedIn={Boolean(Astro.locals.person)} />}
       </div>
     </div>
@@ -55,36 +54,26 @@ const jsonLd = {
       <aside class="pf-hero-side" style="display:grid;gap:10px">
         <h2 class="pf-h3" style="font-size:1.25rem">Paid products these replace</h2>
         <div class="pf-grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))">
-          {products.map((p, i) => <a class={`pf-brick p${(i % 6) + 1}`} href={`/free-alternatives/${p.slug}`} style="padding:14px 14px 20px"><b style="font-size:1.15rem">{p.name}</b></a>)}
+          {products.map((p) => <a class="tp-product" href={`/free-alternatives/${p.slug}`}>Free {p.name}<span aria-hidden="true">→</span></a>)}
         </div>
       </aside>
     )}
   </section>
 
   <section class="wrap pf-section pf-section-tight">
-    <nav class="pf-filters" aria-label="Sort projects">
-      {sorts.map(([key, label]) => <a class="pf-toggle" href={key === 'stars' ? here : `${here}?sort=${key}`} aria-current={sort === key ? 'true' : undefined} aria-pressed={sort === key ? 'true' : 'false'}>{label}</a>)}
-    </nav>
+    <div class="pf-head-row">
+      <p class="pf-sub" style="margin:0">{total > projects.length ? `The top ${projects.length} of ${total.toLocaleString('en-US')}` : `${total} ${total === 1 ? 'project' : 'projects'}`}</p>
+      <nav class="tp-sort" aria-label="Sort projects">
+        {sorts.map(([key, label]) => <a href={key === 'stars' ? here : `${here}?sort=${key}`} aria-current={sort === key ? 'true' : undefined}>{label}</a>)}
+      </nav>
+    </div>
     {projects.length ? (
-      <ul class="pf-list">
-        {projects.map((p) => (
-          <li class="pf-row" style="padding:18px 22px">
-            <div class="pf-row-main">
-              <div class="pf-row-title">
-                <h2 class="pf-h3" style="font-size:1.4rem"><a href={`/projects/${p.fullName}`}>{p.name}</a></h2>
-                <span class="muted small" style="font-weight:700">{p.fullName}</span>
-              </div>
-              {p.description && <p class="muted small">{p.description}</p>}
-            </div>
-            <div class="pf-tags">
-              <span class="pf-tag num">★ {shortCount(p.stars)}</span>
-              {p.gained > 0 && <span class="pf-tag num">+{shortCount(p.gained)} this month</span>}
-              {p.license && <span class="pf-tag">{p.license}</span>}
-              {p.pushedAt && <span class="pf-tag">Updated {updated(p.pushedAt, now)}</span>}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <>
+      <div class="pf-grid">
+        {projects.map((p) => <ProjectCard fullName={p.fullName} description={p.description} stars={p.stars} license={p.license} pushedAt={p.pushedAt} gained={p.gained} />)}
+      </div>
+      {total > projects.length && <a class="key key-milk" style="justify-self:center" href={`/explore?show=all&topic=${topic.slug}`}>See all {total.toLocaleString('en-US')} in Explore</a>}
+      </>
     ) : (
       <div class="pf-empty"><p>No projects listed under this topic yet. The next GitHub sync may find some.</p></div>
     )}
@@ -104,3 +93,11 @@ const jsonLd = {
   }
   <SignalScript />
 </Platform>
+
+<style>
+  .tp-product { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--line); font-weight: 800; text-decoration: none; color: var(--ink); }
+  .tp-product:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .tp-sort { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--milk-2); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  .tp-sort a { padding: 7px 12px; border-radius: 10px; text-decoration: none; color: var(--ink-2); font-weight: 700; font-size: 0.875rem; white-space: nowrap; }
+  .tp-sort a[aria-current='true'] { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+</style>

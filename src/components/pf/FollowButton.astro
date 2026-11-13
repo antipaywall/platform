@@ -20,10 +20,10 @@ const { kind, id, following, next, label, signedIn, dark = false } = Astro.props
       <input type="hidden" name="on" value={following ? '0' : '1'} />
       <input type="hidden" name="next" value={next} />
       <button type="submit" class:list={['pf-toggle', dark && 'pf-toggle-dark']} aria-pressed={following ? 'true' : 'false'} data-label={label} data-on-label="Following">
-        <span data-label-text>{following ? 'Following' : label}</span>
+        {!following && <span aria-hidden="true">+</span>}<span data-label-text>{following ? 'Following' : label}</span>
       </button>
     </form>
   ) : (
-    <a class="pf-toggle" href={`/auth/signin?next=${encodeURIComponent(next)}`}>{label}</a>
+    <a class="pf-toggle" href={`/auth/signin?next=${encodeURIComponent(next)}`}><span aria-hidden="true">+</span> {label}</a>
   )
 }
