@@ -113,3 +113,15 @@ describe('needsSecure: session cookies', () => {
     expect(source).toMatch(/cookies\.set\(name, value, \{ \.\.\.options, path: '\/', httpOnly: true, sameSite: 'lax', secure: needsSecure\(request\.url\) \}\)/);
   });
 });
+
+describe('writes that come from outside a browser', () => {
+  const self = 'https://www.antipaywall.org';
+  it("accepts GitHub's events and agents' MCP calls, which carry no Origin and use no cookies", () => {
+    expect(allowedRequest({ method: 'POST', origin: null, self, path: '/api/github/webhook' })).toBe(true);
+    expect(allowedRequest({ method: 'POST', origin: null, self, path: '/mcp' })).toBe(true);
+  });
+  it('still refuses every other cross-site write', () => {
+    expect(allowedRequest({ method: 'POST', origin: null, self, path: '/api/signal' })).toBe(false);
+    expect(allowedRequest({ method: 'POST', origin: 'https://evil.example', self, path: '/mcp/other' })).toBe(false);
+  });
+});

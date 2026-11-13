@@ -1,0 +1,105 @@
+---
+// Use Antipaywall from a coding agent: what the MCP does, how to connect it, and your keys.
+import Platform from '../layouts/Platform.astro';
+import { newKey } from '../lib/mcp/keys';
+import { TOOLS } from '../lib/mcp/server';
+import { adminClient } from '../lib/supabase';
+import { timeAgo } from '../lib/format';
+
+const person = Astro.locals.person;
+const db = adminClient();
+let created: string | null = null;
+let problem: string | null = null;
+if (Astro.request.method === 'POST' && person && db) {
+  const form = await Astro.request.formData();
+  if (form.get('action') === 'create') {
+    const { count } = await db.from('mcp_keys').select('id', { count: 'exact', head: true }).eq('person_id', person.id).is('revoked_at', null);
+    if ((count ?? 0) >= 5) problem = 'You have five keys already. Revoke one first.';
+    else {
+      const k = newKey();
+      const name = String(form.get('name') ?? '').replace(/\s+/g, ' ').trim().slice(0, 60) || 'MCP key';
+      const { error } = await db.from('mcp_keys').insert({ person_id: person.id, name, key_hash: k.hash });
+      if (error) problem = "That didn't save. Try again.";
+      else created = k.plain;
+    }
+  } else if (form.get('action') === 'revoke') {
+    await db.from('mcp_keys').update({ revoked_at: new Date().toISOString() }).eq('id', String(form.get('id') ?? '')).eq('person_id', person.id);
+  }
+}
+const keys = person && db ? ((await db.from('mcp_keys').select('id, name, created_at, last_used_at').eq('person_id', person.id).is('revoked_at', null).order('created_at')).data ?? []) : [];
+const endpoint = new URL('/mcp', Astro.url.origin).href;
+const claudeCode = `claude mcp add --transport http antipaywall ${endpoint} --header "Authorization: Bearer ${created ?? 'YOUR_KEY'}"`;
+const jsonConfig = JSON.stringify({ mcpServers: { antipaywall: { type: 'http', url: endpoint, headers: { Authorization: `Bearer ${created ?? 'YOUR_KEY'}` } } } }, null, 2);
+const now = new Date();
+---
+
+<Platform title="Antipaywall for coding agents" description="Connect your coding agent to Antipaywall: find free, open-source alternatives, and post what's missing, without leaving your editor.">
+  <section class="wrap pf-section">
+    <h1 class="pf-title">Use Antipaywall from your coding agent</h1>
+    <p class="lede">
+      Ask your agent "is there an open-source version of this?" and it checks Antipaywall. If nothing exists, it can post the idea for you, say
+      "me too" on one that's already wanted, or follow it. It's the same site, the same rules and the same limits, through MCP.
+    </p>
+    <div class="pf-grid pf-grid-wide">
+      {TOOLS.map((t, i) => (
+        <div class={`pf-brick p${(i % 6) + 1}`}>
+          <b style="font-size:1.15rem">{t.name}</b>
+          <span style="font-size:0.9375rem">{t.description}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <h2 class="pf-h2">Connect it</h2>
+      {
+        !person ? (
+          <div class="pf-empty">
+            <p>Every agent connects with your own key, so posts and "me too"s count as yours. Sign in with GitHub to create one.</p>
+            <a class="key key-sm" href="/auth/signin?next=/agents">Sign in with GitHub</a>
+          </div>
+        ) : (
+          <div style="display:grid;gap:18px">
+            {created && (
+              <div class="flash flash-ok" role="status" style="display:grid;gap:8px">
+                <span>Here's your new key. Copy it now: it won't be shown again.</span>
+                <code class="pf-code">{created}</code>
+              </div>
+            )}
+            {problem && <p class="flash flash-error" role="alert">{problem}</p>}
+            <div style="display:grid;gap:8px">
+              <h3 class="pf-h3" style="font-size:1.2rem">Claude Code</h3>
+              <pre class="pf-code">{claudeCode}</pre>
+            </div>
+            <div style="display:grid;gap:8px">
+              <h3 class="pf-h3" style="font-size:1.2rem">Claude Desktop, Cursor and other MCP apps</h3>
+              <pre class="pf-code">{jsonConfig}</pre>
+            </div>
+            <div style="display:grid;gap:10px">
+              <h3 class="pf-h3" style="font-size:1.2rem">Your keys</h3>
+              {keys.length ? (
+                <ul class="pf-list">
+                  {keys.map((k) => (
+                    <li class="pf-row-flat">
+                      <div><b>{k.name}</b><div class="muted small">Made {timeAgo(k.created_at, now)} · {k.last_used_at ? `last used ${timeAgo(k.last_used_at, now)}` : 'not used yet'}</div></div>
+                      <form method="post"><input type="hidden" name="action" value="revoke" /><input type="hidden" name="id" value={k.id} /><button class="key key-milk key-sm" type="submit">Revoke</button></form>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="muted">No keys yet.</p>
+              )}
+              <form method="post" class="pf-chips" style="align-items:center">
+                <input type="hidden" name="action" value="create" />
+                <label for="key-name" class="pf-sr">Name for the key</label>
+                <input class="input" id="key-name" name="name" maxlength="60" placeholder="Laptop, Claude Code" style="max-width:280px" />
+                <button class="key key-sm" type="submit">Create a key</button>
+              </form>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Platform>

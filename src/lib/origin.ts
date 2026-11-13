@@ -5,6 +5,12 @@
 /** The one route another origin may post to. It only ever unsubscribes the address its token belongs to. */
 export const ONE_CLICK_PATH = '/api/list-unsubscribe';
 
+/**
+ * Routes that are called by programs, not browsers, and never use cookies: GitHub's events (checked
+ * against GitHub's signature) and the Antipaywall MCP (a builder's key in the Authorization header).
+ */
+export const MACHINE_PATHS = new Set(['/api/github/webhook', '/mcp']);
+
 const SAFE = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 /**
@@ -14,6 +20,6 @@ const SAFE = new Set(['GET', 'HEAD', 'OPTIONS']);
  */
 export function allowedRequest(input: { method: string; origin: string | null; self: string; path: string }): boolean {
   if (SAFE.has(input.method.toUpperCase())) return true;
-  if (input.path === ONE_CLICK_PATH) return true;
+  if (input.path === ONE_CLICK_PATH || MACHINE_PATHS.has(input.path)) return true;
   return input.origin !== null && input.origin === input.self;
 }
