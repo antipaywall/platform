@@ -64,12 +64,18 @@ a.pf-brick:hover { transform: translateY(-3px); }
 .pf-opts { display: grid; gap: 10px; }
 .pf-opt-form { display: contents; }
 .pf-opt {
-  display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left; width: 100%;
+  display: flex; gap: 12px; align-items: center; text-align: left; width: 100%;
   padding: 16px 18px; border-radius: 16px; border: 0; background: var(--milk);
   box-shadow: 0 0 0 1.5px var(--line) inset; color: var(--ink); font: 500 0.9375rem/1.35 var(--text);
   cursor: pointer; min-height: 44px; transition: transform 200ms var(--spring);
 }
-.pf-opt b { font: 800 1.4rem/1 var(--display); letter-spacing: -0.02em; }
+.pf-opt-box { width: 20px; height: 20px; flex: none; border-radius: 6px; box-shadow: 0 0 0 2px var(--ink-3) inset; display: grid; place-items: center; }
+.pf-opt[aria-pressed='true'] .pf-opt-box { background: var(--ink); box-shadow: none; }
+.pf-opt[aria-pressed='true'] .pf-opt-box::after { content: ''; width: 9px; height: 5px; border: solid var(--milk); border-width: 0 0 2.5px 2.5px; transform: translateY(-1px) rotate(-45deg); }
+.pf-opt-label { flex: 1; font-weight: 700; }
+.pf-opt-n { flex: none; font-size: 0.8125rem; color: var(--ink-2); white-space: nowrap; }
+.pf-opt-n b { font-weight: 800; color: var(--ink); }
+.pf-opt[data-count='0'] .pf-opt-n:has(b) { display: none; }
 .pf-opt:hover { transform: translateY(-2px); }
 .pf-opt[aria-pressed='true'] { background: var(--marigold); box-shadow: inset 0 -5px 0 oklch(0.72 0.14 78); }
 .pf-opt:focus-visible, .pf-toggle:focus-visible, .pf-select:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
@@ -268,3 +274,4 @@ a.pf-brick:hover { transform: translateY(-3px); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 textarea.pf-code { white-space: pre-wrap; word-break: break-all; }
 .pf-pcard-meta .pf-pcard-up { background: var(--mint); color: var(--ink); }
+.pf-chip-wrap { white-space: normal; flex-wrap: wrap; max-width: 100%; }
