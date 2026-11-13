@@ -1118,3 +1118,9 @@ main > section.sponsors {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* On a phone the goal note stays inside the screen. */
+@media (max-width: 600px) {
+  .target-meter:not(.target-meter-over) .target-tip { right: -2px; }
+  .target-meter:not(.target-meter-over) .target-tip::after { right: 2px; }
+}
