@@ -1,8 +1,10 @@
 ---
-// A slot on the person page, owned by the platform work: "What they want" (Switched / Being built /
-// Wanted), then "Builds and claims". Shows nothing until that work fills it in.
+// The person page's "What they want" slot: Switched / Being built / Wanted.
+import Wants from '../pf/PersonWants.astro';
 interface Props {
   personId: string;
 }
-const { personId: _personId } = Astro.props;
+const { personId } = Astro.props;
 ---
+
+<Wants personId={personId} />

@@ -11,6 +11,8 @@ import PersonWants from '../../components/person/PersonWants.astro';
 import ProfileLinks from '../../components/ProfileLinks.astro';
 import type { Activity } from '../../lib/activity';
 import { badgesFor, topBadge, type Badge } from '../../lib/badges';
+import { isBacker } from '../../lib/signals';
+import { adminClient } from '../../lib/supabase';
 import { providerName, providerOf } from '../../lib/accounts';
 import { attempt, DataUnavailableError, type Person } from '../../lib/db';
 import { findProfile, ideasBy, type ProfileIdea, isPublic, parseProfilePath, pledgeOf, profilePath, refreshActivity, refreshRepos } from '../../lib/profiles';
@@ -37,17 +39,19 @@ try {
   if (canonical !== Astro.url.pathname) return Astro.redirect(canonical, 301);
   const id = person.id;
   // The profile itself must load; the social parts each fall back to nothing if they can't.
-  const [i, r, act, granted, pledge, c, f, ps] = await Promise.all([
+  const db = adminClient();
+  const [i, r, act, granted, pledge, c, f, ps, backed] = await Promise.all([
     ideasBy(id), refreshRepos(person), refreshActivity(person),
     attempt(() => grantedBadges([id])), attempt(() => pledgeOf(id)), attempt(() => followCounts(id)),
     viewer && viewer.id !== id ? attempt(() => isFollowing(viewer.id, id)) : Promise.resolve(false),
     attempt(() => postsBy(id, viewer?.id ?? null)),
+    db ? isBacker(db, id).catch(() => false) : Promise.resolve(false),
   ]);
   ideas = i;
   repos = r;
   activity = act;
-  // Backer: a pledge for now. The platform's signals (isBacker in src/lib/signals.ts) join this when they exist.
-  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) });
+  // Backer: a pledge, or anything backed while signed in (a signal or a heart).
+  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) || backed });
   counts = c ?? counts;
   follows = f ?? false;
   posts = ps ?? [];
