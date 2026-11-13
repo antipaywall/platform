@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: livechat
+name: LiveChat
+category: Support and chat
+price:
+  cents: 2000
+  period: month
+blurb: Live chat with visitors on your website.
+words:
+  - live chat
+  - chat widget
+  - support chat
+topics:
+  - live-chat
+  - chat-widget
+  - livechat-alternative
+search_terms:
+  - livechat alternative
+  - open source live chat
+aliases: []
+excludes: []

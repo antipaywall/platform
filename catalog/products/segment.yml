@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: segment
+name: Segment
+category: Analytics
+price:
+  cents: 12000
+  period: month
+blurb: Collects customer events once and sends them to every tool.
+words:
+  - customer data
+  - event tracking
+  - data pipeline
+topics:
+  - customer-data-platform
+  - event-tracking
+  - analytics
+  - segment-alternative
+search_terms:
+  - segment alternative
+  - open source customer data
+aliases: []
+excludes: []

@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: drift
+name: Drift
+category: Support and chat
+price:
+  cents: 250000
+  period: month
+blurb: Chat on your site that qualifies sales leads.
+words:
+  - live chat
+  - chatbot
+  - lead qualification
+topics:
+  - live-chat
+  - chatbot
+  - drift-alternative
+search_terms:
+  - drift alternative
+  - open source live chat
+aliases: []
+excludes: []

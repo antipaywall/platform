@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: simulink
+name: Simulink
+category: Science and maths
+price:
+  cents: 86000
+  period: month
+blurb: Simulate and model systems with block diagrams.
+words:
+  - simulation
+  - modeling
+  - control systems
+topics:
+  - simulation
+  - modeling
+  - control-systems
+  - simulink-alternative
+search_terms:
+  - simulink alternative
+  - open source simulation
+aliases: []
+excludes: []

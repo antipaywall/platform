@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: dropbox-sign
+name: Dropbox Sign
+category: Office
+price:
+  cents: 1500
+  period: month
+blurb: Sign documents online.
+words:
+  - e-signature
+  - sign documents
+  - contract signing
+topics:
+  - e-signature
+  - document-signing
+  - digital-signature
+  - dropbox-sign-alternative
+search_terms:
+  - dropbox sign alternative
+  - open source e-signature
+aliases: []
+excludes: []

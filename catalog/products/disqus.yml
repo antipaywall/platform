@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: disqus
+name: Disqus
+category: Websites
+price:
+  cents: 1100
+  period: month
+blurb: Comments for websites.
+words:
+  - comments
+  - comment system
+  - blog comments
+topics:
+  - comments
+  - commenting-system
+  - comment-system
+  - disqus-alternative
+search_terms:
+  - disqus alternative
+  - open source comments
+aliases: []
+excludes: []

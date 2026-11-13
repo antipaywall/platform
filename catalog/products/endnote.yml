@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: endnote
+name: EndNote
+category: Science and maths
+price:
+  cents: 27495
+  period: once
+blurb: Manages references and citations.
+words:
+  - reference manager
+  - citations
+  - bibliography
+topics:
+  - reference-manager
+  - bibliography
+  - citations
+  - endnote-alternative
+search_terms:
+  - endnote alternative
+  - open source reference manager
+aliases: []
+excludes: []

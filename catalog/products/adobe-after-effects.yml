@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: adobe-after-effects
+name: Adobe After Effects
+category: Photos and video
+price:
+  cents: 2299
+  period: month
+blurb: Motion graphics and visual effects for video.
+words:
+  - motion graphics
+  - visual effects
+  - compositing
+  - animation
+topics:
+  - motion-graphics
+  - compositing
+  - vfx
+  - adobe-after-effects-alternative
+search_terms:
+  - adobe after effects alternative
+  - open source motion graphics
+aliases: []
+excludes: []

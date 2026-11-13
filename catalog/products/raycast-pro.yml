@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: raycast-pro
+name: Raycast Pro
+category: Other
+price:
+  cents: 800
+  period: month
+blurb: A launcher with extensions and AI.
+words:
+  - launcher
+  - command palette
+  - productivity
+topics:
+  - launcher
+  - productivity
+  - macos
+  - raycast-pro-alternative
+search_terms:
+  - raycast pro alternative
+  - open source launcher
+aliases: []
+excludes: []

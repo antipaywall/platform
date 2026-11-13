@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: quizlet-plus
+name: Quizlet Plus
+category: Other
+price:
+  cents: 799
+  period: month
+blurb: Flashcards and study sets.
+words:
+  - flashcards
+  - study
+  - spaced repetition
+topics:
+  - flashcards
+  - spaced-repetition
+  - learning
+  - quizlet-plus-alternative
+search_terms:
+  - quizlet plus alternative
+  - open source flashcards
+aliases: []
+excludes: []

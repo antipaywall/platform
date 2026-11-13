@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: superhuman
+name: Superhuman
+category: Email and newsletters
+price:
+  cents: 3000
+  period: month
+blurb: A fast email client built around the keyboard.
+words:
+  - email client
+  - inbox
+  - keyboard shortcuts
+topics:
+  - email-client
+  - email
+  - mail
+  - superhuman-alternative
+search_terms:
+  - superhuman alternative
+  - open source email client
+aliases: []
+excludes: []

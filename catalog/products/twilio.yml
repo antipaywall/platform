@@ -1,0 +1,19 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: twilio
+name: Twilio
+category: Developer tools
+blurb: Send texts and make calls from code.
+words:
+  - sms api
+  - voice api
+  - messaging
+topics:
+  - sms
+  - messaging
+  - voip
+  - twilio-alternative
+search_terms:
+  - twilio alternative
+  - open source sms api
+aliases: []
+excludes: []

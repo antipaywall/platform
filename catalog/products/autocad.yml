@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: autocad
+name: AutoCAD
+category: Design
+price:
+  cents: 24500
+  period: month
+blurb: Drafting and technical drawing in 2D and 3D.
+words:
+  - cad
+  - technical drawing
+  - drafting
+  - blueprints
+topics:
+  - cad
+  - 3d-modeling
+  - drafting
+  - autocad-alternative
+search_terms:
+  - autocad alternative
+  - open source cad
+aliases: []
+excludes: []

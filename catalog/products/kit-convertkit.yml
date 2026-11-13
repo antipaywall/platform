@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: kit-convertkit
+name: Kit (ConvertKit)
+category: Email and newsletters
+price:
+  cents: 2900
+  period: month
+blurb: Email newsletters and automations for creators.
+words:
+  - newsletter
+  - email marketing
+  - email automation
+  - subscribers
+topics:
+  - newsletter
+  - email-marketing
+  - email
+  - kit-convertkit-alternative
+search_terms:
+  - kit alternative
+  - open source newsletter
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: perplexity-pro
+name: Perplexity Pro
+category: AI tools
+price:
+  cents: 2000
+  period: month
+blurb: An AI search engine that cites its sources.
+words:
+  - ai search
+  - answer engine
+  - research assistant
+topics:
+  - ai-search
+  - search-engine
+  - llm
+  - perplexity-pro-alternative
+search_terms:
+  - perplexity pro alternative
+  - open source ai search
+aliases: []
+excludes: []

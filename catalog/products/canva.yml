@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: canva
+name: Canva
+category: Design
+price:
+  cents: 1500
+  period: month
+blurb: Templates for social posts, slides, posters and more.
+words:
+  - graphic design
+  - social media graphics
+  - templates
+  - poster maker
+topics:
+  - graphic-design
+  - design-tool
+  - image-editor
+  - canva-alternative
+search_terms:
+  - canva alternative
+  - open source graphic design
+aliases: []
+excludes: []

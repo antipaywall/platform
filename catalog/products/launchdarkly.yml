@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: launchdarkly
+name: LaunchDarkly
+category: Developer tools
+price:
+  cents: 1200
+  period: month
+blurb: Feature flags to turn features on and off without deploying.
+words:
+  - feature flags
+  - feature toggles
+  - rollouts
+topics:
+  - feature-flags
+  - feature-toggles
+  - launchdarkly-alternative
+search_terms:
+  - launchdarkly alternative
+  - open source feature flags
+aliases: []
+excludes: []

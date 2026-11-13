@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: crisp
+name: Crisp
+category: Support and chat
+price:
+  cents: 2500
+  period: month
+blurb: Live chat for your website.
+words:
+  - live chat
+  - chat widget
+  - customer messaging
+topics:
+  - live-chat
+  - chat-widget
+  - customer-support
+  - crisp-alternative
+search_terms:
+  - crisp alternative
+  - open source live chat
+aliases: []
+excludes: []

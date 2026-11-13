@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: circleci
+name: CircleCI
+category: Developer tools
+price:
+  cents: 1500
+  period: month
+blurb: Runs your tests and deploys on every push.
+words:
+  - ci
+  - continuous integration
+  - build pipeline
+topics:
+  - ci-cd
+  - continuous-integration
+  - ci
+  - circleci-alternative
+search_terms:
+  - circleci alternative
+  - open source ci
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: gumroad
+name: Gumroad
+category: Selling online
+price:
+  cents: 1000
+  period: month
+blurb: Sell digital products and take a cut per sale.
+words:
+  - sell digital products
+  - creator store
+  - checkout
+topics:
+  - ecommerce
+  - digital-products
+  - payments
+  - gumroad-alternative
+search_terms:
+  - gumroad alternative
+  - open source sell digital products
+aliases: []
+excludes: []

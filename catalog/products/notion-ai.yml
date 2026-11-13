@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: notion-ai
+name: Notion AI
+category: AI tools
+price:
+  cents: 1000
+  period: month
+blurb: AI writing and answers inside your notes.
+words:
+  - ai notes
+  - summarize
+  - ai writing
+topics:
+  - ai-assistant
+  - llm
+  - note-taking
+  - notion-ai-alternative
+search_terms:
+  - notion ai alternative
+  - open source ai notes
+aliases: []
+excludes: []

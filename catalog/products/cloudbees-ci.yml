@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: cloudbees-ci
+name: CloudBees CI
+category: Developer tools
+price:
+  cents: 10000
+  period: month
+blurb: Managed continuous integration.
+words:
+  - ci
+  - build server
+  - pipelines
+topics:
+  - ci-cd
+  - continuous-integration
+  - cloudbees-ci-alternative
+search_terms:
+  - cloudbees ci alternative
+  - open source ci
+aliases: []
+excludes: []

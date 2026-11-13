@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: claude-pro
+name: Claude Pro
+category: AI tools
+price:
+  cents: 2000
+  period: month
+blurb: An AI assistant for writing, analysis and code.
+words:
+  - ai assistant
+  - chatbot
+  - llm chat
+topics:
+  - llm
+  - chatbot
+  - ai-assistant
+  - claude-pro-alternative
+search_terms:
+  - claude pro alternative
+  - open source ai assistant
+aliases: []
+excludes: []

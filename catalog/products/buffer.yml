@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: buffer
+name: Buffer
+category: Social media
+price:
+  cents: 600
+  period: month
+blurb: Schedule social posts and see how they did.
+words:
+  - social scheduler
+  - post scheduling
+  - social analytics
+topics:
+  - social-media
+  - scheduler
+  - social-media-management
+  - buffer-alternative
+search_terms:
+  - buffer alternative
+  - open source social scheduler
+aliases: []
+excludes: []

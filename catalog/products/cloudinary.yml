@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: cloudinary
+name: Cloudinary
+category: Hosting and cloud
+price:
+  cents: 8900
+  period: month
+blurb: Stores, resizes and delivers images and video.
+words:
+  - image hosting
+  - image optimization
+  - media api
+topics:
+  - image-processing
+  - image-optimization
+  - media
+  - cloudinary-alternative
+search_terms:
+  - cloudinary alternative
+  - open source image hosting
+aliases: []
+excludes: []

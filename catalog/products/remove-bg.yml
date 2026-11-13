@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: remove-bg
+name: remove.bg
+category: AI tools
+price:
+  cents: 900
+  period: month
+blurb: Removes the background from a photo.
+words:
+  - background remover
+  - remove background
+  - cutout
+topics:
+  - background-removal
+  - image-segmentation
+  - image-processing
+  - remove-bg-alternative
+search_terms:
+  - remove.bg alternative
+  - open source background remover
+aliases: []
+excludes: []

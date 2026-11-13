@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: chargebee
+name: Chargebee
+category: Money and invoicing
+price:
+  cents: 59900
+  period: month
+blurb: Subscription billing and invoices.
+words:
+  - subscription billing
+  - recurring billing
+  - invoices
+topics:
+  - billing
+  - subscriptions
+  - invoicing
+  - chargebee-alternative
+search_terms:
+  - chargebee alternative
+  - open source subscription billing
+aliases: []
+excludes: []

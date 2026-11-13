@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: bitbucket
+name: Bitbucket
+category: Developer tools
+price:
+  cents: 300
+  period: month
+blurb: Git code hosting with pipelines.
+words:
+  - git hosting
+  - code hosting
+  - pull requests
+topics:
+  - git
+  - git-server
+  - ci-cd
+  - bitbucket-alternative
+search_terms:
+  - bitbucket alternative
+  - open source git hosting
+aliases: []
+excludes: []

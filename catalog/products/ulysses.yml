@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: ulysses
+name: Ulysses
+category: Writing
+price:
+  cents: 599
+  period: month
+blurb: A distraction-free writing app.
+words:
+  - writing app
+  - markdown editor
+  - distraction free
+topics:
+  - markdown-editor
+  - writing
+  - editor
+  - ulysses-alternative
+search_terms:
+  - ulysses alternative
+  - open source writing app
+aliases: []
+excludes: []

@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: sketch
+name: Sketch
+category: Design
+price:
+  cents: 1200
+  period: month
+blurb: Interface design for the Mac.
+words:
+  - ui design
+  - interface design
+  - prototyping
+  - mockups
+topics:
+  - ui-design
+  - design-tool
+  - prototyping
+  - sketch-alternative
+search_terms:
+  - sketch alternative
+  - open source ui design
+aliases: []
+excludes: []

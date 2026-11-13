@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: capcut-pro
+name: CapCut Pro
+category: Photos and video
+price:
+  cents: 799
+  period: month
+blurb: Quick video editing for social clips.
+words:
+  - short video editor
+  - tiktok editor
+  - reels
+  - captions
+topics:
+  - video-editor
+  - video-editing
+  - subtitles
+  - capcut-pro-alternative
+search_terms:
+  - capcut pro alternative
+  - open source short video editor
+aliases: []
+excludes: []

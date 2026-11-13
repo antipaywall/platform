@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: rescuetime
+name: RescueTime
+category: Project management
+price:
+  cents: 1200
+  period: month
+blurb: Tracks how you spend time on your computer.
+words:
+  - time tracking
+  - productivity tracking
+  - focus
+topics:
+  - time-tracking
+  - productivity
+  - activity-tracker
+  - rescuetime-alternative
+search_terms:
+  - rescuetime alternative
+  - open source time tracking
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: ticktick
+name: TickTick
+category: Project management
+price:
+  cents: 299
+  period: month
+blurb: To-dos, habits and a calendar.
+words:
+  - to-do list
+  - habit tracker
+  - calendar
+topics:
+  - todo
+  - task-manager
+  - habit-tracker
+  - ticktick-alternative
+search_terms:
+  - ticktick alternative
+  - open source to-do list
+aliases: []
+excludes: []

@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: ableton-live
+name: Ableton Live
+category: Music and media
+price:
+  cents: 9900
+  period: once
+blurb: Music production and live performance.
+words:
+  - music production
+  - daw
+  - beat making
+  - recording
+topics:
+  - daw
+  - music-production
+  - audio
+  - ableton-live-alternative
+search_terms:
+  - ableton live alternative
+  - open source music production
+aliases: []
+excludes: []

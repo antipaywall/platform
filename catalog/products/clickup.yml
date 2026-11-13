@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: clickup
+name: ClickUp
+category: Project management
+price:
+  cents: 700
+  period: month
+blurb: Tasks, docs and goals in one place.
+words:
+  - task management
+  - project management
+  - docs
+topics:
+  - project-management
+  - task-manager
+  - productivity
+  - clickup-alternative
+search_terms:
+  - clickup alternative
+  - open source task management
+aliases: []
+excludes: []

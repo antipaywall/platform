@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: fl-studio
+name: FL Studio
+category: Music and media
+price:
+  cents: 9900
+  period: once
+blurb: Music production with a pattern-based workflow.
+words:
+  - beat maker
+  - music production
+  - daw
+topics:
+  - daw
+  - music-production
+  - sequencer
+  - fl-studio-alternative
+search_terms:
+  - fl studio alternative
+  - open source beat maker
+aliases: []
+excludes: []

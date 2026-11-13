@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: zoho-crm
+name: Zoho CRM
+category: Sales and CRM
+price:
+  cents: 1400
+  period: month
+blurb: A CRM for sales teams.
+words:
+  - crm
+  - leads
+  - contacts
+topics:
+  - crm
+  - sales
+  - zoho-crm-alternative
+search_terms:
+  - zoho crm alternative
+  - open source crm
+aliases: []
+excludes: []

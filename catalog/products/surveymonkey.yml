@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: surveymonkey
+name: SurveyMonkey
+category: Forms and surveys
+price:
+  cents: 2500
+  period: month
+blurb: Surveys and questionnaires with reports on the answers.
+words:
+  - survey
+  - questionnaire
+  - poll
+  - feedback survey
+topics:
+  - survey
+  - surveys
+  - questionnaire
+  - surveymonkey-alternative
+search_terms:
+  - surveymonkey alternative
+  - open source survey
+aliases: []
+excludes: []

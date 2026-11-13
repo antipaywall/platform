@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: jasper
+name: Jasper
+category: AI tools
+price:
+  cents: 4900
+  period: month
+blurb: AI that writes marketing copy.
+words:
+  - ai writing
+  - copywriting
+  - content generator
+topics:
+  - ai-writing
+  - text-generation
+  - llm
+  - jasper-alternative
+search_terms:
+  - jasper alternative
+  - open source ai writing
+aliases: []
+excludes: []

@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: okta
+name: Okta
+category: Passwords and security
+price:
+  cents: 200
+  period: month
+blurb: Single sign-on and user management for companies.
+words:
+  - single sign-on
+  - sso
+  - identity
+  - login
+topics:
+  - sso
+  - identity
+  - authentication
+  - okta-alternative
+search_terms:
+  - okta alternative
+  - open source single sign-on
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: cinema-4d
+name: Cinema 4D
+category: Design
+price:
+  cents: 9400
+  period: month
+blurb: 3D motion graphics and rendering.
+words:
+  - motion graphics
+  - 3d animation
+  - rendering
+topics:
+  - 3d
+  - motion-graphics
+  - rendering
+  - cinema-4d-alternative
+search_terms:
+  - cinema 4d alternative
+  - open source motion graphics
+aliases: []
+excludes: []

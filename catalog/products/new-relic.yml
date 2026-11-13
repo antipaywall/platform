@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: new-relic
+name: New Relic
+category: Developer tools
+price:
+  cents: 4900
+  period: month
+blurb: Performance monitoring for apps and servers.
+words:
+  - apm
+  - performance monitoring
+  - observability
+  - tracing
+topics:
+  - observability
+  - apm
+  - monitoring
+  - new-relic-alternative
+search_terms:
+  - new relic alternative
+  - open source apm
+aliases: []
+excludes: []

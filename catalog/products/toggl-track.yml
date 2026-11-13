@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: toggl-track
+name: Toggl Track
+category: Project management
+price:
+  cents: 900
+  period: month
+blurb: Time tracking with reports.
+words:
+  - time tracking
+  - timer
+  - timesheets
+topics:
+  - time-tracking
+  - time-tracker
+  - toggl-track-alternative
+search_terms:
+  - toggl track alternative
+  - open source time tracking
+aliases: []
+excludes: []

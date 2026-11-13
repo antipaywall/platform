@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: topaz-photo-ai
+name: Topaz Photo AI
+category: AI tools
+price:
+  cents: 19900
+  period: once
+blurb: Sharpens, denoises and upscales photos.
+words:
+  - image upscaler
+  - denoise
+  - photo enhance
+topics:
+  - super-resolution
+  - image-upscaling
+  - image-enhancement
+  - topaz-photo-ai-alternative
+search_terms:
+  - topaz photo ai alternative
+  - open source image upscaler
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: alfred-powerpack
+name: Alfred Powerpack
+category: Other
+price:
+  cents: 3400
+  period: month
+blurb: A launcher and shortcuts for the Mac.
+words:
+  - launcher
+  - spotlight replacement
+  - shortcuts
+topics:
+  - launcher
+  - macos
+  - productivity
+  - alfred-powerpack-alternative
+search_terms:
+  - alfred powerpack alternative
+  - open source launcher
+aliases: []
+excludes: []

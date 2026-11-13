@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: wolfram-alpha-pro
+name: Wolfram Alpha Pro
+category: Science and maths
+price:
+  cents: 725
+  period: month
+blurb: Answers maths and science questions step by step.
+words:
+  - math solver
+  - step by step
+  - computation
+topics:
+  - math
+  - computer-algebra
+  - symbolic-math
+  - wolfram-alpha-pro-alternative
+search_terms:
+  - wolfram alpha pro alternative
+  - open source math solver
+aliases: []
+excludes: []

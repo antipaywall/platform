@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: parallels-desktop
+name: Parallels Desktop
+category: Other
+price:
+  cents: 9999
+  period: once
+blurb: Run Windows on a Mac.
+words:
+  - virtual machine
+  - run windows on mac
+  - virtualization
+topics:
+  - virtualization
+  - virtual-machine
+  - emulator
+  - parallels-desktop-alternative
+search_terms:
+  - parallels desktop alternative
+  - open source virtual machine
+aliases: []
+excludes: []

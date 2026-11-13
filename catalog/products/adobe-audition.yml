@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: adobe-audition
+name: Adobe Audition
+category: Music and media
+price:
+  cents: 2299
+  period: month
+blurb: Recording, mixing and cleaning up audio.
+words:
+  - audio editor
+  - podcast editing
+  - noise removal
+  - mixing
+topics:
+  - audio-editor
+  - audio
+  - daw
+  - adobe-audition-alternative
+search_terms:
+  - adobe audition alternative
+  - open source audio editor
+aliases: []
+excludes: []

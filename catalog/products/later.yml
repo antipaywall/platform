@@ -1,0 +1,20 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: later
+name: Later
+category: Social media
+price:
+  cents: 2500
+  period: month
+blurb: Plan and schedule Instagram and other social posts.
+words:
+  - instagram scheduler
+  - social planner
+topics:
+  - social-media
+  - scheduler
+  - later-alternative
+search_terms:
+  - later alternative
+  - open source instagram scheduler
+aliases: []
+excludes: []

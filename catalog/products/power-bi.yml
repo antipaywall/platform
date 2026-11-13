@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: power-bi
+name: Power BI
+category: Analytics
+price:
+  cents: 1400
+  period: month
+blurb: Dashboards and reports from your business data.
+words:
+  - dashboards
+  - business intelligence
+  - reports
+  - data visualization
+topics:
+  - business-intelligence
+  - dashboard
+  - data-visualization
+  - power-bi-alternative
+search_terms:
+  - power bi alternative
+  - open source dashboards
+aliases: []
+excludes: []

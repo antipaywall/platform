@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: wix
+name: Wix
+category: Websites
+price:
+  cents: 1700
+  period: month
+blurb: A drag-and-drop website builder.
+words:
+  - website builder
+  - drag and drop
+  - landing page
+topics:
+  - website-builder
+  - page-builder
+  - wix-alternative
+search_terms:
+  - wix alternative
+  - open source website builder
+aliases: []
+excludes: []

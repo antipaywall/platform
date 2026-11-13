@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: apollo
+name: Apollo.io
+category: Sales and CRM
+price:
+  cents: 4900
+  period: month
+blurb: Find contacts and send sales outreach.
+words:
+  - lead generation
+  - contact database
+  - cold email
+topics:
+  - lead-generation
+  - cold-email
+  - sales
+  - apollo-alternative
+search_terms:
+  - apollo.io alternative
+  - open source lead generation
+aliases: []
+excludes: []

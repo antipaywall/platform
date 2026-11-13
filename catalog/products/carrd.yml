@@ -1,0 +1,21 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: carrd
+name: Carrd
+category: Websites
+price:
+  cents: 1900
+  period: month
+blurb: Simple one-page websites.
+words:
+  - one page site
+  - landing page
+  - personal site
+topics:
+  - landing-page
+  - website-builder
+  - carrd-alternative
+search_terms:
+  - carrd alternative
+  - open source one page site
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: gusto
+name: Gusto
+category: Money and invoicing
+price:
+  cents: 4000
+  period: month
+blurb: Payroll and benefits for small companies.
+words:
+  - payroll
+  - hr
+  - benefits
+topics:
+  - payroll
+  - hr
+  - hrms
+  - gusto-alternative
+search_terms:
+  - gusto alternative
+  - open source payroll
+aliases: []
+excludes: []

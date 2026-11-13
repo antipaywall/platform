@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: teamviewer
+name: TeamViewer
+category: Other
+price:
+  cents: 2490
+  period: month
+blurb: Control another computer from afar.
+words:
+  - remote desktop
+  - remote support
+  - screen sharing
+topics:
+  - remote-desktop
+  - remote-control
+  - remote-access
+  - teamviewer-alternative
+search_terms:
+  - teamviewer alternative
+  - open source remote desktop
+aliases: []
+excludes: []
