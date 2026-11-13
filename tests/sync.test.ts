@@ -196,3 +196,22 @@ describe('review fixes: sync', () => {
     expect(await fetchAllRows(page, 1000)).toHaveLength(2500);
   });
 });
+
+import { factsFromSearchItem } from '../src/lib/sync/github';
+
+describe('factsFromSearchItem', () => {
+  it('reads a search result into repo facts the filter can judge without another request', () => {
+    const f = factsFromSearchItem({
+      id: 7, full_name: 'calcom/cal.com', html_url: 'https://github.com/calcom/cal.com', description: 'Scheduling', homepage: '',
+      topics: ['scheduling'], license: { spdx_id: 'AGPL-3.0', name: 'GNU AGPL v3' }, stargazers_count: 38000, forks_count: 9000,
+      open_issues_count: 400, archived: false, fork: false, pushed_at: '2026-11-11T00:00:00Z', created_at: '2021-04-01T00:00:00Z',
+    });
+    expect(f).toMatchObject({ githubId: 7, fullName: 'calcom/cal.com', licenseSpdx: 'AGPL-3.0', stars: 38000, topics: ['scheduling'], homepage: null, archived: false });
+  });
+  it('treats NOASSERTION as no license', () => {
+    expect(factsFromSearchItem({ id: 1, full_name: 'a/b', html_url: 'https://github.com/a/b', license: { spdx_id: 'NOASSERTION', name: 'Other' } } as any)?.licenseSpdx).toBeNull();
+  });
+  it('drops an item that is not a GitHub repo', () => {
+    expect(factsFromSearchItem({ id: 1, full_name: 'a/b', html_url: 'https://evil.example/a/b' } as any)).toBeNull();
+  });
+});

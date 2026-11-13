@@ -13,7 +13,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { loadCatalog, type Product } from '../src/lib/catalog';
 import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
-import { fetchRepoBatch, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue } from '../src/lib/sync/github';
+import { factsFromSearchItem, fetchRepoBatch, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
 import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 import { samplePages, starPointsFromSamples } from '../src/lib/sync/stars';
@@ -21,6 +21,8 @@ import { samplePages, starPointsFromSamples } from '../src/lib/sync/stars';
 const DRY = process.argv.includes('--dry-run');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
 const SEARCH_PER_QUERY = 50;
+/** At most this many projects per paid product, most-starred first. */
+const MAX_PER_PRODUCT = 40;
 const STAR_REFRESH_DAYS = 30;
 const STAR_PROJECTS_PER_RUN = 200;
 const CONTRIBUTOR_REFRESH_DAYS = 7;
@@ -57,7 +59,9 @@ async function upsertCatalog(db: SupabaseClient, products: Product[], topics: { 
   must(await db.from('topics').upsert(topics.map((t) => ({ ...t, tracked: true })), { onConflict: 'slug' }), 'topics');
 }
 
-async function findCandidates(products: Product[]): Promise<{ found: Map<string, Map<string, Set<FoundBy>>>; failed: Set<string> }> {
+async function findCandidates(products: Product[]): Promise<{ found: Map<string, Map<string, Set<FoundBy>>>; failed: Set<string>; seen: Map<string, RepoFacts> }> {
+  // What each search result already says about a repo, so junk is dropped without more requests.
+  const seen = new Map<string, RepoFacts>();
   // product slug → repo full name → how it was found
   const found = new Map<string, Map<string, Set<FoundBy>>>();
   // Products with a search that didn't answer: their existing links are left alone this run.
@@ -67,8 +71,15 @@ async function findCandidates(products: Product[]): Promise<{ found: Map<string,
     const res = await gh(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${SEARCH_PER_QUERY}`, undefined, search);
     await sleep(2200); // 30 searches a minute
     if (!res.ok) return null;
-    const body = (await res.json()) as { items?: { full_name: string }[] };
-    return (body.items ?? []).map((i) => i.full_name);
+    const body = (await res.json()) as { items?: SearchItem[] };
+    const names: string[] = [];
+    for (const item of body.items ?? []) {
+      const f = factsFromSearchItem(item);
+      if (!f) continue;
+      seen.set(f.fullName.toLowerCase(), f);
+      names.push(f.fullName);
+    }
+    return names;
   };
   for (const p of products) {
     const byRepo = new Map<string, Set<FoundBy>>();
@@ -87,7 +98,7 @@ async function findCandidates(products: Product[]): Promise<{ found: Map<string,
   }
   for (const name of (await runSearch('topic:antipaywall archived:false fork:false')) ?? []) tagged.add(name);
   found.set('', new Map([...tagged].map((n) => [n, new Set<FoundBy>(['tag'])])));
-  return { found, failed };
+  return { found, failed, seen };
 }
 
 async function contributorsOf(fullName: string): Promise<number | null> {
@@ -126,13 +137,27 @@ async function main() {
   try {
     if (db) await upsertCatalog(db, catalog.products, catalog.topics);
 
-    const { found, failed } = await findCandidates(catalog.products);
+    const { found, failed, seen } = await findCandidates(catalog.products);
     // Hand-made links from the catalog count as found, and so do every repo they name.
     const removed = new Set(catalog.links.filter((l) => l.action === 'remove').map((l) => `${l.product}|${l.project.toLowerCase()}`));
     const manual = catalog.links.filter((l) => l.action === 'add');
 
+    // Judge each search result on what the search already said: the junk filter, then whether it
+    // really stands in for the product. Only repos that pass are read in full.
     const names = new Set<string>(manual.map((l) => l.project));
-    for (const byRepo of found.values()) for (const n of byRepo.keys()) names.add(n);
+    const productBySlug = new Map(catalog.products.map((p) => [p.slug, p]));
+    for (const [slug, byRepo] of found) {
+      const p = productBySlug.get(slug);
+      const ok = [...byRepo.entries()]
+        .map(([n, how]) => ({ n, how, f: seen.get(n.toLowerCase()) }))
+        .filter(({ f }) => f && passesFilter(f, catalog.blocklist, now).ok)
+        .filter(({ f, how }) => !p || linkSource(f!, p, [...how]) !== null)
+        .sort((a, b) => b.f!.stars - a.f!.stars)
+        .slice(0, MAX_PER_PRODUCT);
+      for (const { n } of ok) names.add(n);
+      // Keep only what passed, so links below are built from the same short list.
+      found.set(slug, new Map(ok.map(({ n, how }) => [n, how])));
+    }
     // Every repo already listed is read again too, so one that was archived or deleted since gets unlisted.
     const alreadyListed = db
       ? (await fetchAllRows<{ full_name: string }>((a, b) => db.from('projects').select('full_name').eq('listed', true).order('full_name').range(a, b))).map((r) => r.full_name)
