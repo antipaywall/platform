@@ -38,7 +38,7 @@ const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === 
 // Everything that is yours, in the account menu and at the bottom of the phone menu.
 const mine = person
   ? [
-      ...(isPublic(person) ? [{ href: profilePath(providerOf(person), person.handle), label: 'Your profile' }] : []),
+      ...(isPublic(person) ? [{ href: profilePath(person), label: 'Your profile' }] : []),
       { href: '/account', label: 'Edit profile' },
       { href: '/account#activity', label: 'Your pledge and ideas' },
       { href: '/account#email', label: 'Email' },

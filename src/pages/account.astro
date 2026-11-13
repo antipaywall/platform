@@ -59,7 +59,7 @@ const isPub = person ? isPublic(person) : false;
               <span class="muted small">@{person.handle} on {providerName(provider)}. Your picture and name come from {providerName(provider)} and update each time you sign in.</span>
             </div>
             {isPub ? (
-              <a class="key key-milk" href={profilePath(provider, person.handle)}>See your profile</a>
+              <a class="key key-milk" href={profilePath(person)}>See your profile</a>
             ) : (
               <span class="acct-state">Profile not public</span>
             )}

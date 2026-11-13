@@ -16,7 +16,7 @@ export const GET: APIRoute = async () => {
   ]);
   const paths = [
     ...sitemapPaths(data ?? { products: [], topics: [], projects: [], gaps: [] }),
-    ...(builders ?? []).map((b) => profilePath(b.provider, b.handle)),
+    ...(builders ?? []).map((b) => profilePath(b)),
   ];
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const urls = [...new Set(paths)].map((p) => `  <url><loc>${esc(new URL(p, site.origin).href)}</loc></url>`).join('\n');

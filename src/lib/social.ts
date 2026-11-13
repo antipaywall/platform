@@ -19,7 +19,7 @@ export const REPLIES_PER_DAY = 50;
 /** Links from accounts younger than this are shown as text, not links. */
 export const NEW_ACCOUNT_MS = 7 * 24 * 60 * 60 * 1000;
 
-export type Author = { id: string; handle: string; provider: Provider; name: string | null; avatar_url: string | null; badge: Badge | null; newAccount: boolean };
+export type Author = { id: string; handle: string; username?: string | null; provider: Provider; name: string | null; avatar_url: string | null; badge: Badge | null; newAccount: boolean };
 export type ReplyView = { id: string; body: string; created_at: string; author: Author };
 export type PostView = {
   id: string; kind: PostKind; body: string; link_url: string | null; created_at: string;
@@ -47,13 +47,13 @@ async function authors(ids: string[], now: Date): Promise<Map<string, Author>> {
   const out = new Map<string, Author>();
   if (!unique.length) return out;
   const [{ data, error }, granted] = await Promise.all([
-    db().from('people').select('id, handle, provider, name, avatar_url, verified, is_builder, created_at').in('id', unique),
+    db().from('people').select('id, handle, username, provider, name, avatar_url, verified, is_builder, created_at').in('id', unique),
     grantedBadges(unique),
   ]);
   if (error) throw new DataUnavailableError(error.message);
   for (const p of data ?? []) {
     out.set(p.id, {
-      id: p.id, handle: p.handle, provider: providerOf(p), name: p.name ?? null, avatar_url: p.avatar_url ?? null,
+      id: p.id, handle: p.handle, username: p.username ?? null, provider: providerOf(p), name: p.name ?? null, avatar_url: p.avatar_url ?? null,
       badge: topBadge(badgesFor(p, granted.get(p.id) ?? [])),
       newAccount: now.getTime() - Date.parse(p.created_at) < NEW_ACCOUNT_MS,
     });

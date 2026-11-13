@@ -64,12 +64,12 @@ export async function demandFor(db: SupabaseClient, ids: string[]): Promise<Map<
 }
 
 export type ClosestProject = { fullName: string; url: string; stars: number; does: string; missing: string | null; onSite: boolean };
-export type Claim = { handle: string; provider: Provider; name: string | null; avatarUrl: string | null; note: string | null; repoUrl: string | null };
+export type Claim = { handle: string; username: string | null; provider: Provider; name: string | null; avatarUrl: string | null; note: string | null; repoUrl: string | null };
 export type GapPage = {
   idea: {
     id: string; slug: string; title: string; pitch: string; missing: string; problem: string; build: string; strong: string;
     sourceUrl: string | null; createdAt: string; status: BuildStatus;
-    poster: { kind: 'person'; handle: string; provider: Provider } | { kind: 'backer'; name: string } | { kind: 'platform' };
+    poster: { kind: 'person'; handle: string; username: string | null; provider: Provider } | { kind: 'backer'; name: string } | { kind: 'platform' };
   };
   demand: Demand;
   merged: { slug: string; title: string; want: number; reason: string; id: string }[];
@@ -88,7 +88,7 @@ export async function getGapPage(
 ): Promise<GapPage | { redirect: string } | null> {
   const { data: row, error } = await db
     .from('ideas')
-    .select('id, slug, title, pitch, missing, existing_repos, status, created_at, build_status, merged_into, author_id, backer_id, problem, build, strong, source_url, people:author_id(handle, provider), backers:backer_id(name)')
+    .select('id, slug, title, pitch, missing, existing_repos, status, created_at, build_status, merged_into, author_id, backer_id, problem, build, strong, source_url, people:author_id(handle, username, provider), backers:backer_id(name)')
     .eq('slug', slug)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -105,7 +105,7 @@ export async function getGapPage(
   const [mergedRows, productRows, claimRows, briefRow, followerCount] = await Promise.all([
     db.from('ideas').select('id, slug, title').eq('merged_into', row.id),
     db.from('gap_products').select('products(slug, name)').eq('idea_id', row.id),
-    db.from('gap_claims').select('person_id, note, repo_url, created_at, people:person_id(handle, provider, name, avatar_url)').eq('idea_id', row.id).order('created_at'),
+    db.from('gap_claims').select('person_id, note, repo_url, created_at, people:person_id(handle, username, provider, name, avatar_url)').eq('idea_id', row.id).order('created_at'),
     db.from('season_briefs').select('seasons(id, name)').eq('idea_id', row.id).limit(1).maybeSingle(),
     db.from('follows').select('follower_id', { count: 'exact', head: true }).eq('subject_kind', 'gap').eq('subject_id', row.id),
   ]);
@@ -151,7 +151,7 @@ export async function getGapPage(
   const people: any = row.people;
   const backer: any = row.backers;
   const claims: Claim[] = ((claimRows.data ?? []) as any[]).filter((c) => c.people).map((c) => ({
-    handle: c.people.handle, provider: providerOf(c.people), name: c.people.name ?? null, avatarUrl: c.people.avatar_url ?? null, note: c.note, repoUrl: c.repo_url,
+    handle: c.people.handle, username: c.people.username ?? null, provider: providerOf(c.people), name: c.people.name ?? null, avatarUrl: c.people.avatar_url ?? null, note: c.note, repoUrl: c.repo_url,
   }));
   const season: any = (briefRow.data as any)?.seasons ?? null;
 
@@ -161,7 +161,7 @@ export async function getGapPage(
       problem: row.problem ?? '', build: row.build ?? '', strong: row.strong ?? '',
       sourceUrl: typeof row.source_url === 'string' && row.source_url.startsWith('https://') ? row.source_url : null,
       createdAt: row.created_at, status: (row.build_status ?? 'wanted') as BuildStatus,
-      poster: people?.handle ? { kind: 'person', handle: people.handle, provider: providerOf(people) } : backer ? { kind: 'backer', name: backer.name?.trim() || 'A backer' } : { kind: 'platform' },
+      poster: people?.handle ? { kind: 'person', handle: people.handle, username: people.username ?? null, provider: providerOf(people) } : backer ? { kind: 'backer', name: backer.name?.trim() || 'A backer' } : { kind: 'platform' },
     },
     demand: demand.get(row.id) ?? noDemand,
     merged: mergedList.map((m) => ({ ...m, want: mergedDemand.get(m.id)?.want ?? 0, reason: String(reasonOf.get(m.id) ?? '') })),

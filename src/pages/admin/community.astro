@@ -7,15 +7,14 @@ import { BADGE_INFO } from '../../lib/badges';
 import { isAdmin } from '../../lib/db';
 import { profilePath } from '../../lib/profiles';
 import { adminClient } from '../../lib/supabase';
-import { providerOf } from '../../lib/accounts';
 
 if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
 const db = adminClient()!;
 const [reports, recent, silenced, badges] = await Promise.all([
-  db.from('post_reports').select('post_id, reason, created_at, posts(id, body, hidden_at, people:person_id(handle, provider))').eq('handled', false).order('created_at', { ascending: false }).limit(200),
-  db.from('posts').select('id, body, kind, parent_id, hidden_at, created_at, people:person_id(id, handle, provider, can_post)').order('created_at', { ascending: false }).limit(100),
+  db.from('post_reports').select('post_id, reason, created_at, posts(id, body, hidden_at, people:person_id(handle, username, provider))').eq('handled', false).order('created_at', { ascending: false }).limit(200),
+  db.from('posts').select('id, body, kind, parent_id, hidden_at, created_at, people:person_id(id, handle, username, provider, can_post)').order('created_at', { ascending: false }).limit(100),
   db.from('people').select('id, handle, provider').eq('can_post', false).limit(200),
-  db.from('badges').select('id, kind, season, place, note, granted_at, people:person_id(handle, provider)').order('granted_at', { ascending: false }).limit(500),
+  db.from('badges').select('id, kind, season, place, note, granted_at, people:person_id(handle, username, provider)').order('granted_at', { ascending: false }).limit(500),
 ]);
 // One row per reported post, with every reason given.
 const byPost = new Map<string, { post: any; reasons: string[]; count: number }>();
@@ -26,7 +25,7 @@ for (const r of (reports.data ?? []) as any[]) {
   byPost.set(r.post_id, e);
 }
 const reported = [...byPost.values()].filter((e) => e.post);
-const who = (p: any) => (p ? profilePath(providerOf(p), p.handle) : '#');
+const who = (p: any) => (p ? profilePath(p) : '#');
 const grantable = (['founder', 'organizer', 'panel', 'sponsor', 'winner'] as const).map((k) => ({ key: k, label: BADGE_INFO[k].label }));
 ---
 

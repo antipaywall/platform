@@ -11,6 +11,8 @@ export type Person = {
   github_id: number | null;
   gitlab_id: number | null;
   handle: string;
+  /** The address of their profile: /builders/<username>. */
+  username?: string | null;
   avatar_url: string | null;
   verified: boolean;
   failed_rules: string[];
@@ -167,11 +169,11 @@ export async function getStats(): Promise<Stats> {
   };
 }
 
-export type BuilderTile = { id: string; handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
+export type BuilderTile = { id: string; handle: string; username?: string | null; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
 
 /** Builders, newest first. */
 export async function listBuilders(limit = 1000): Promise<BuilderTile[]> {
-  const { data, error } = await db().from('people').select('id, handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
+  const { data, error } = await db().from('people').select('id, handle, username, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
   if (error) throw new DataUnavailableError(error.message);
   return (data ?? []).map((b: any) => ({ ...b, provider: providerOf(b) }));
 }

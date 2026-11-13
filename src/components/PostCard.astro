@@ -14,7 +14,7 @@ interface Props {
 const { post: p, viewerId, canReply, back } = Astro.props;
 const kind = POST_KINDS.find((k) => k.key === p.kind);
 const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
-const who = (a: Author) => profilePath(a.provider, a.handle);
+const who = (a: Author) => profilePath(a);
 const initial = (a: Author) => (a.handle[0] ?? '?').toUpperCase();
 ---
 

@@ -72,12 +72,15 @@ import { isPublic, parseProfilePath, profilePath } from '../src/lib/profiles';
 
 describe('profile addresses', () => {
   it('puts GitHub accounts at /builders/<name> and GitLab ones under /builders/gitlab/', () => {
-    expect(profilePath('github', 'prophen')).toBe('/builders/prophen');
-    expect(profilePath('gitlab', 'tanuki.dev')).toBe('/builders/gitlab/tanuki.dev');
+    expect(profilePath({ username: 'prophen', handle: 'prophen' })).toBe('/builders/prophen');
+    // One namespace: a GitLab builder's address is their username, not their GitLab handle.
+    expect(profilePath({ username: 'tanuki', handle: 'tanuki.dev' })).toBe('/builders/tanuki');
+    expect(profilePath({ username: null, handle: 'old-handle' })).toBe('/builders/old-handle');
   });
   it('reads them back, and nothing else', () => {
-    expect(parseProfilePath('prophen')).toEqual({ provider: 'github', handle: 'prophen' });
-    expect(parseProfilePath('gitlab/tanuki.dev')).toEqual({ provider: 'gitlab', handle: 'tanuki.dev' });
+    expect(parseProfilePath('prophen')).toEqual({ kind: 'username', name: 'prophen' });
+    // The old GitLab addresses are still understood, so they can redirect.
+    expect(parseProfilePath('gitlab/tanuki.dev')).toEqual({ kind: 'gitlab', handle: 'tanuki.dev' });
     for (const bad of ['', 'a/b', 'gitlab/a/b', '..', '%E0%A4%A', 'a%2Fb', '-x', 'x y']) expect(parseProfilePath(bad)).toBeNull();
   });
   it('shows builders always and anyone else only when they chose to', () => {

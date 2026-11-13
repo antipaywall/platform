@@ -109,11 +109,11 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
             <ul class="who-list">
               {people.map((a) => (
                 <li>
-                  <a class="post-pic" href={profilePath(a.provider, a.handle)} aria-hidden="true" tabindex="-1">
+                  <a class="post-pic" href={profilePath(a)} aria-hidden="true" tabindex="-1">
                     <span>{(a.handle[0] ?? '?').toUpperCase()}</span>
                     {a.avatar_url && <img src={a.avatar_url} alt="" width="34" height="34" loading="lazy" />}
                   </a>
-                  <a class="who-name" href={profilePath(a.provider, a.handle)}>{a.name ?? a.handle}</a>
+                  <a class="who-name" href={profilePath(a)}>{a.name ?? a.handle}</a>
                   {a.badge && <BadgeMark badge={a.badge} />}
                 </li>
               ))}
