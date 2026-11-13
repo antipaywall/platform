@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/page.css';
 import '../styles/home.css';
+import VercelAnalytics from '../components/VercelAnalytics.astro';
 import Head from '../components/Head.astro';
 import PledgeWho from '../components/PledgeWho.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -458,5 +459,6 @@ const gh =
         ).observe(bar);
       }
     </script>
+    <VercelAnalytics />
   </body>
 </html>
