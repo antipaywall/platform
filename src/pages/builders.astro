@@ -8,14 +8,22 @@ const badges = (builders && (await attempt(() => tileBadges(builders.map((b) => 
 const count = builders?.length ?? 0;
 ---
 
-<Base title="Builders" description="Everyone who has joined as a verified builder.">
-  <h1 class="page-title">{!builders ? 'Builders.' : count === 0 ? 'Be the first builder.' : count === 1 ? '1 builder so far.' : `${count} builders so far.`}</h1>
-  <p class="lede">Everyone listed here signed in with GitHub or GitLab and passed the two automatic checks. Pick anyone to see their profile.</p>
+<Base title="Builders" description="The people on Antipaywall: who they are and what they're building.">
+  <h1 class="page-title">Builders.</h1>
+  <p class="lede">
+    Everyone who signs in gets a profile here.
+    {count > 0 && ` So far that's the ${count} ${count === 1 ? 'person' : 'people'} who signed up to build in the Season 1 hackathon. They joined for the hackathon, so that is what their profiles show.`}
+  </p>
+  <p style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px">
+    {!Astro.locals.person && <a class="key" href="/signin?next=/builders">Sign in with GitHub</a>}
+    <a class="key key-milk" href="/hackathon/join/build">Join the Season 1 hackathon</a>
+  </p>
+  {count > 0 && <h2 class="pcard-h" style="margin-top:clamp(28px,4vw,48px)">Signed up for Season 1</h2>}
   {
     !builders ? (
       <p class="empty">The list is unavailable right now.</p>
     ) : builders.length ? (
-      <ul class="crew-list">
+      <ul class="crew-list" style="margin-top:14px">
         {builders.map((b) => <BuilderTile builder={b} badge={badges.get(b.id)} />)}
       </ul>
     ) : (
