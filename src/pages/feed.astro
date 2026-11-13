@@ -33,7 +33,7 @@ const [posts, people, stats] = await Promise.all([
   attempt(getStats),
 ]);
 const adb = adminClient();
-const happening = adb ? await getHappening(adb, 10).catch(() => []) : [];
+const happening = adb ? await getHappening(adb, 24).catch(() => []) : [];
 const paint: Record<string, string> = { idea: 'var(--marigold)', backed: 'var(--tomato)', signal: 'var(--marigold)', switched: 'var(--mint)', joined: 'var(--sky)', claimed: 'var(--lilac)', posted: 'var(--pink)', pushed: 'var(--mint)' };
 const now = new Date();
 
@@ -70,7 +70,7 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
             <p class="muted small">Posting is open to anyone who passes the two builder checks. <a class="link" href="/hackathon/join/build">See yours</a></p>
           )
         ) : (
-          <p class="feed-in-line"><a class="key key-sm" href="/signin?next=%2Ffeed">Sign in to post</a><span class="muted small">Then follow builders and back their ideas.</span></p>
+          <p class="feed-in-line"><a class="key key-sm" href="/signin?next=%2Ffeed">Sign in to post</a><span class="muted small">Anyone can read. Sign in to post, reply and follow.</span></p>
         )
       }
 
@@ -98,30 +98,31 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
         ) : tab === 'following' ? (
           <p class="empty">Nothing here yet. Follow builders to see their posts, or <a class="link" href={link({ tab: 'everyone' })}>see everyone's</a>.</p>
         ) : (
-          <p class="empty">No posts yet. {canPost ? 'Be the first.' : 'Builders post here once they’re in.'}</p>
+          <p class="empty">No builder has posted yet. {canPost ? 'Be the first.' : 'Until then, here is what is happening across the site.'}</p>
+        )
+      }
+
+      {
+        tab === 'everyone' && !kind && happening.length > 0 && (
+          <section class="fd-act" aria-labelledby="fd-act-h">
+            <h2 id="fd-act-h" class="pcard-h">{posts && posts.length ? 'Also happening' : 'Happening on Antipaywall'}</h2>
+            <ol>
+              {happening.map((h) => (
+                <li>
+                  <a href={h.href}>
+                    <span class="fd-dot" style={`--p:${paint[h.kind]}`} aria-hidden="true"></span>
+                    <span class="fd-t">{h.text}</span>
+                    <time datetime={h.at}>{timeAgo(h.at, now)}</time>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
         )
       }
     </div>
 
     <aside class="feed-side">
-      {
-        happening.length > 0 && (
-          <div class="prof-box">
-            <h2 class="pcard-h">Across Antipaywall</h2>
-            <ol class="pf-now">
-              {happening.map((h) => (
-                <li>
-                  <a href={h.href}>
-                    <span class="dot" style={`--p:${paint[h.kind]}`} aria-hidden="true"></span>
-                    <span class="t" style="white-space:normal">{h.text}</span>
-                    <time datetime={h.at} style="grid-column:2">{timeAgo(h.at, now)}</time>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )
-      }
       <div class="prof-box">
         <h2 class="pcard-h">Season 1</h2>
         <p>{stats ? `${stats.builders} of ${site.launch.buildersNeeded} builders are in.` : 'The builder count is unavailable right now.'} The dates are set at {site.launch.buildersNeeded}.</p>
@@ -152,5 +153,12 @@ const canPost = Boolean(viewer?.verified && viewer.can_post !== false);
 
 <style>
   .feed-in-line { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 4px 0 8px; }
-  .feed-side .pf-now li a { grid-template-columns: 12px 1fr; row-gap: 2px; padding: 9px 6px; }
+  .fd-act { margin-top: 26px; display: grid; gap: 12px; }
+  .fd-act ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .fd-act li a { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; background: var(--card); box-shadow: 0 0 0 1px var(--line); text-decoration: none; color: var(--ink); }
+  .fd-act li a:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .fd-dot { width: 12px; height: 12px; border-radius: 4px; background: var(--p); }
+  .fd-t { font-weight: 700; }
+  .fd-act time { font-size: 0.8125rem; color: var(--ink-3); white-space: nowrap; }
+  @media (max-width: 600px) { .fd-act li a { grid-template-columns: 14px minmax(0, 1fr); row-gap: 4px; } .fd-act time { grid-column: 2; } }
 </style>
