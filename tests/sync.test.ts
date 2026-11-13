@@ -289,3 +289,16 @@ describe('plainLicense for licenses GitHub cannot name', () => {
     expect(l.words).toMatch(/license file/);
   });
 });
+
+import { dedupeLinks } from '../src/lib/sync/plan';
+
+describe('dedupeLinks', () => {
+  it('keeps one link per project and product, preferring the hand-made one', () => {
+    const out = dedupeLinks([
+      { project_id: 'p', product_id: 'x', source: 'topic', score: 2 },
+      { project_id: 'p', product_id: 'x', source: 'catalog', score: 10 },
+      { project_id: 'q', product_id: 'x', source: 'search', score: 1 },
+    ]);
+    expect(out).toEqual([{ project_id: 'p', product_id: 'x', source: 'catalog', score: 10 }, { project_id: 'q', product_id: 'x', source: 'search', score: 1 }]);
+  });
+});
