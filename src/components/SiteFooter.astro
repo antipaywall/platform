@@ -12,8 +12,9 @@ const cols: { title: string; links: [string, string][] }[] = [
 ];
 ---
 
-<div class="sf">
+<div class="sf" data-footer>
   <div class="sf-course" aria-hidden="true">{Array.from({ length: 16 }, () => <i></i>)}</div>
+  <div class="sf-wall" data-footer-wall aria-hidden="true"></div>
   <div class="wrap sf-top">
     <div class="sf-lead">
       <a class="sf-brand" href="/" aria-label={`${site.name} home`}><span>anti</span>paywall</a>
@@ -35,7 +36,81 @@ const cols: { title: string; links: [string, string][] }[] = [
   <p class="sf-mark" aria-hidden="true"><span>anti</span>paywall</p>
 </div>
 
+<script>
+  // The footer starts bricked up. When it scrolls into view the bricks drop away, a few at a time,
+  // and what was behind them is the footer. Without scripts, or with reduced motion, there is no
+  // wall: the footer is simply there.
+  const foot = document.querySelector<HTMLElement>('[data-footer]');
+  const wall = document.querySelector<HTMLElement>('[data-footer-wall]');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (foot && wall && !calm && 'IntersectionObserver' in window) {
+    const paints = ['var(--marigold)', 'var(--mint)', 'var(--tomato)', 'var(--sky)', 'var(--lilac)', 'var(--pink)'];
+    let seed = 11;
+    const rand = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+    const build = () => {
+      const W = foot.clientWidth;
+      const H = foot.clientHeight;
+      const bw = W < 700 ? 104 : 130;
+      const bh = 44;
+      const gap = 7;
+      const top = bh + gap * 2; // under the course that stays
+      const rows = Math.ceil((H - top) / (bh + gap));
+      const cols = Math.ceil(W / (bw + gap)) + 2;
+      const frag = document.createDocumentFragment();
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const b = document.createElement('i');
+          const x = c * (bw + gap) - (r % 2 ? 0 : (bw + gap) / 2) - gap;
+          const y = top + r * (bh + gap);
+          const painted = rand() < 0.07;
+          // Lower courses go first, so the wall comes down from the bottom up, with some scatter.
+          const delay = Math.round((rows - 1 - r) * 55 + rand() * 260);
+          b.style.cssText = `left:${x}px;top:${y}px;width:${bw}px;height:${bh}px;--d:${delay}ms;--r:${Math.round(rand() * 50 - 25)}deg;--x:${Math.round(rand() * 80 - 40)}px;--fall:${H - y + 80}px;${painted ? `background:${paints[Math.floor(rand() * 6)]};` : `--t:${rand().toFixed(2)};`}`;
+          frag.append(b);
+        }
+      }
+      wall.replaceChildren(frag);
+    };
+    build();
+    foot.classList.add('sf-walled');
+    let done = false;
+    const drop = () => {
+      if (done) return;
+      done = true;
+      foot.classList.add('sf-open');
+      window.setTimeout(() => wall.remove(), 2600);
+    };
+    new IntersectionObserver(
+      (entries, io) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          window.setTimeout(drop, 180);
+        }
+      },
+      { threshold: 0.3 },
+    ).observe(foot);
+    let resize = 0;
+    window.addEventListener('resize', () => {
+      if (done) return;
+      clearTimeout(resize);
+      resize = window.setTimeout(build, 150);
+    });
+  }
+</script>
+
 <style>
+  /* The wall that covers the footer until it is scrolled into view. */
+  .sf-wall { position: absolute; inset: 0; z-index: 2; pointer-events: none; display: none; }
+  .sf-walled .sf-wall { display: block; background: var(--wall, var(--ink)); transition: background-color 500ms linear 250ms; }
+  .sf-wall :global(i) {
+    position: absolute; border-radius: 12px; background: oklch(calc(0.27 + var(--t, 0.5) * 0.04) 0.045 310);
+    box-shadow: inset 0 -5px 0 rgb(0 0 0 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.08);
+    transition: transform 900ms cubic-bezier(0.5, 0, 0.9, 0.4) var(--d), opacity 300ms linear calc(var(--d) + 650ms);
+    will-change: transform;
+  }
+  .sf-open .sf-wall { background-color: transparent; }
+  .sf-open .sf-wall :global(i) { transform: translate(var(--x), var(--fall)) rotate(var(--r)); opacity: 0; }
+
   .sf { position: relative; overflow: hidden; background: var(--wall, var(--ink)); color: oklch(0.8 0.03 310); }
   /* The top edge is a course of the wall's own bricks. */
   .sf-course { display: flex; gap: 7px; margin: 0 -60px; padding-top: 7px; }

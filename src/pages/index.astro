@@ -9,7 +9,7 @@ import { site } from '../config/site';
 import { attempt, getStats, heartedBy, listBuilders, usd } from '../lib/db';
 import { shortCount } from '../lib/format';
 import { demandFor } from '../lib/gaps';
-import { listProducts, type ProductSummary } from '../lib/products';
+import { listProducts, priceLabel, type ProductSummary } from '../lib/products';
 import { tileBadges } from '../lib/social';
 import { adminClient } from '../lib/supabase';
 import { listTopics } from '../lib/topics';
@@ -28,8 +28,20 @@ const [stats, platform, products, topics, builders] = await Promise.all([
 const builderBadges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
 // The paid products people care about most first, then the ones with the most free options.
 const ranked = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions);
-const featured = ranked.slice(0, 12);
-const searching = ranked.slice(0, 5);
+// The tools most people know from their own card statement, in this order; anything the catalog
+// doesn't have yet is skipped, and the list is topped up from the rest.
+const EVERYDAY = ['calendly', 'loom', 'notion', 'formspree', 'typeform', 'semrush', 'mailchimp', 'zapier', 'slack', 'dropbox', 'photoshop', 'docusign', 'linktree', 'zoom', 'trello', 'lastpass', 'grammarly'];
+const bySlug = new Map(products.map((p) => [p.slug, p]));
+const everyday = EVERYDAY.map((s) => bySlug.get(s)).filter((p): p is ProductSummary => Boolean(p) && p!.freeOptions > 0);
+const featured = [...everyday, ...ranked.filter((p) => !EVERYDAY.includes(p.slug) && p.category !== 'AI tools' && p.category !== 'Developer tools')].slice(0, 12);
+const searching = featured.slice(0, 5);
+// The best-known free alternative to each, to name on its brick.
+const leadFree = new Map<string, string>();
+if (db && featured.length) {
+  const { data } = await db.from('project_products').select('source, products!inner(slug), projects!inner(name, stars, listed)').in('products.slug', featured.map((p) => p.slug)).eq('source', 'catalog').eq('projects.listed', true).limit(200);
+  for (const r of ((data ?? []) as any[]).sort((a, b) => b.projects.stars - a.projects.stars)) if (!leadFree.has(r.products.slug)) leadFree.set(r.products.slug, r.projects.name);
+}
+
 
 // Every gap, with its demand: the wall's real bricks and "Wanted, but nobody has built it".
 let wanted: { id: string; slug: string; title: string; want: number; pay: number; status: string; hearted: boolean }[] = [];
@@ -113,9 +125,9 @@ const builderCount = stats?.builders ?? null;
 ---
 
 <Platform
-  title={`${site.name}: stop paying for software`}
+  title={`${site.name}: find it open source, or build what doesn't exist`}
   bareTitle
-  description="Find the free, open-source version of anything you pay for. If it doesn't exist yet, build it with the people who want it too."
+  description="Antipaywall finds the free, open-source version of the software people pay for. When there isn't one, the people who want it and the people who can build it meet here."
 >
   <script slot="head" is:inline src="/wall-boot.js"></script>
 
@@ -124,9 +136,9 @@ const builderCount = stats?.builders ?? null;
     <div class="wrap hero-body">
       <div class="hero-content" data-clear>
         <a class="chip" href="/hackathon" style="text-decoration:none"><span class="pulse"></span>Season 1 hackathon: builders wanted</a>
-        <h1 class="display hero-title">Stop paying for software.</h1>
+        <h1 class="display hero-title"><span>Find it open source.</span> <span>Or build what doesn’t exist.</span></h1>
         <p class="lede hero-lede">
-          Find the free, open-source version of anything you pay for. If it doesn't exist yet, build it with the people who want it too.
+          Antipaywall finds the free, open-source version of the software people pay for. When there isn’t one, the people who want it and the people who can build it meet here.
         </p>
         <div class="hero-find">
           <InstantSearch id="q" big placeholder="Calendly, Notion, Photoshop…" button="Find it free" />
@@ -212,16 +224,19 @@ const builderCount = stats?.builders ?? null;
       <div class="pf-head-row">
         <div style="display:grid;gap:10px">
           <h2 class="pf-h2">What do you pay for?</h2>
-          <p class="lede">Each page lists the free, open-source projects that replace it, and what people say is still missing.</p>
+          <p class="lede">The everyday subscriptions, and the open-source projects people use in their place.</p>
         </div>
         <a class="key key-milk key-sm" href="/free-alternatives">All {products.length} paid tools</a>
       </div>
       {featured.length ? (
-        <div class="pf-grid">
+        <div class="hm-pay">
           {featured.map((p, i) => (
-            <a class={`pf-brick ${paints[i % 6]}`} href={`/free-alternatives/${p.slug}`} style="gap:18px">
-              <div style="display:grid;gap:4px"><small>{p.category}</small><b style="font-size:1.8rem">{p.name}</b></div>
-              <small class="num">{p.freeOptions === 0 ? 'No good free option yet' : `${shortCount(p.freeOptions)} free ${p.freeOptions === 1 ? 'alternative' : 'alternatives'}`}</small>
+            <a class={`pf-brick ${paints[i % 6]}`} href={`/free-alternatives/${p.slug}`}>
+              <span class="hm-pay-top"><b>{p.name}</b>{priceLabel(p.price) && <s>{priceLabel(p.price)!.replace('about ', '')}</s>}</span>
+              <span class="hm-pay-what">{p.blurb}</span>
+              <span class="hm-pay-free">
+                {leadFree.get(p.slug) ? <>Free: <b>{leadFree.get(p.slug)}</b>{p.freeOptions > 1 && ` and ${p.freeOptions - 1} more`}</> : `${p.freeOptions} free ${p.freeOptions === 1 ? 'alternative' : 'alternatives'}`}
+              </span>
             </a>
           ))}
         </div>
@@ -314,21 +329,21 @@ const builderCount = stats?.builders ?? null;
       )
     }
 
-    <section class="wrap pf-section">
-      <h2 class="pf-h2">How it keeps growing.</h2>
-      <ol class="pf-steps">
-        <li class="pf-brick p4"><b class="pf-step-n">1</b><b>Find</b><span>Search a paid tool. See the free, open-source versions, pulled from GitHub.</span></li>
-        <li class="pf-brick p2"><b class="pf-step-n">2</b><b>Say what you want</b><span>Mark what you use, what's missing, and what you'd pay if it worked. No code needed.</span></li>
-        <li class="pf-brick p3"><b class="pf-step-n">3</b><b>Contribute</b><span>Every project shows what it needs help with. Pick an issue and open a pull request.</span></li>
-        <li class="pf-brick p1"><b class="pf-step-n">4</b><b>Build it together</b><span>The most wanted gaps become the briefs for each hackathon season.</span></li>
+    <section class="wrap hm-how" aria-labelledby="how-h">
+      <div class="hm-how-head">
+        <h2 id="how-h" class="pf-h2">Every search lays a brick.</h2>
+        <p class="lede">Nobody runs a queue or picks winners behind a door. What people look for, back and build is what moves.</p>
+      </div>
+      <ol class="hm-stairs">
+        <li class="p4"><div class="hm-step"><b>Find</b><span>Search a tool you pay for. The free, open-source versions come straight from GitHub.</span></div></li>
+        <li class="p2"><div class="hm-step"><b>Say what's missing</b><span>Mark what you use and what you still need. No code, no account to browse.</span></div><i></i></li>
+        <li class="p3"><div class="hm-step"><b>Help build it</b><span>Every project lists what it needs help with. The most wanted gaps become hackathon briefs.</span></div><i></i><i></i></li>
+        <li class="p1"><div class="hm-step"><b>It's free for everyone</b><span>What gets built is open source. One more thing nobody has to pay for.</span></div><i></i><i></i><i></i></li>
       </ol>
-      <p class="muted">Everything that decides what this site shows lives in the open: the catalog, the matching and the GitHub sync are in <a class="link" href={site.repo} rel="noopener">the public repo</a>, and the data is free to download.</p>
+      <p class="muted hm-how-note">The catalog, the matching and the GitHub sync are all in <a class="link" href={site.repo} rel="noopener">the public repo</a>, and the data is free to download.</p>
     </section>
 
     <section class="hm-end" aria-labelledby="end-h">
-      <div class="hm-end-course" aria-hidden="true">
-        {['p4', 'p2', 'p6', 'p3', 'p1', 'p5', 'p4', 'p2', 'p6', 'p3', 'p1', 'p5', 'p4', 'p2'].map((c) => <i class={c}></i>)}
-      </div>
       <div class="wrap hm-end-in">
         <h2 id="end-h">What are you still paying for?</h2>
         <p class="lede">Look it up. If a free version exists, it's here. If it doesn't, say so, and the people who can build it will see it.</p>
