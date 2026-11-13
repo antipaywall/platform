@@ -30,6 +30,7 @@ const ld = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : null;
   <head>
     <Head title={bareTitle ? title : `${title} | ${site.name}`} description={description} noindex={noindex} />
     {ld && <script type="application/ld+json" set:html={ld} />}
+    <slot name="head" />
   </head>
   <body class="paged pf">
     <SiteHeader />
