@@ -70,7 +70,9 @@ export async function fetchRepoBatch(
   budget.update(res.headers);
   if (res.status === 403 || res.status === 429) throw new RateLimited(`GitHub answered ${res.status}`);
   if (!res.ok) throw new Error(`GitHub GraphQL answered ${res.status}`);
-  const body = (await res.json()) as { data?: Record<string, any> };
+  const body = (await res.json()) as { data?: Record<string, any> | null; errors?: { message?: string }[] };
+  // An answer with errors and no data is a failure, not "none of these repos exist".
+  if (!body.data && body.errors?.length) throw new Error(`GitHub GraphQL: ${body.errors.map((e) => e.message).join('; ')}`);
   const repos: RepoFacts[] = [];
   const issues = new Map<string, HelpIssue[]>();
   for (const r of Object.values(body.data ?? {})) {

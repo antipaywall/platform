@@ -3,6 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { dollars } from './format';
 import { demandFor } from './gaps';
+import { fetchAllRows } from './sync/plan';
 import { demandKey, signalsOf, type PayPeriod, type SignalKind } from './signals';
 
 export type Price = { cents: number; period: 'month' | 'year' | 'once' } | null;
@@ -38,14 +39,14 @@ export type ProductSummary = { id: string; slug: string; name: string; category:
 export async function listProducts(db: SupabaseClient): Promise<ProductSummary[]> {
   const [products, links, sigs] = await Promise.all([
     db.from('products').select('id, slug, name, category, blurb, price_cents, price_period').order('name'),
-    db.from('project_products').select('product_id, projects!inner(listed)').eq('projects.listed', true).limit(20000),
-    db.from('signals').select('subject_id').eq('subject_kind', 'product').limit(50000),
+    fetchAllRows<{ product_id: string }>((a, b) => db.from('project_products').select('product_id, projects!inner(listed)').eq('projects.listed', true).order('product_id').order('project_id').range(a, b)),
+    fetchAllRows<{ subject_id: string }>((a, b) => db.from('signals').select('subject_id').eq('subject_kind', 'product').order('id').range(a, b)),
   ]);
   if (products.error) throw new Error(products.error.message);
   const free = new Map<string, number>();
-  for (const l of (links.data ?? []) as { product_id: string }[]) free.set(l.product_id, (free.get(l.product_id) ?? 0) + 1);
+  for (const l of links) free.set(l.product_id, (free.get(l.product_id) ?? 0) + 1);
   const sig = new Map<string, number>();
-  for (const s of (sigs.data ?? []) as { subject_id: string }[]) sig.set(s.subject_id, (sig.get(s.subject_id) ?? 0) + 1);
+  for (const s of sigs) sig.set(s.subject_id, (sig.get(s.subject_id) ?? 0) + 1);
   return (products.data ?? []).map((p: any) => ({
     id: p.id, slug: p.slug, name: p.name, category: p.category, blurb: p.blurb, price: priceOf(p),
     freeOptions: free.get(p.id) ?? 0, signals: sig.get(p.id) ?? 0,

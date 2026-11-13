@@ -55,7 +55,9 @@ export type Who = { userId: string | null; visitor: string };
 /** Sets or clears one signal. Setting replaces any earlier one of the same kind (a new amount, say). */
 export async function toggleSignal(db: SupabaseClient, s: ParsedSignal, who: Who): Promise<void> {
   let del = db.from('signals').delete().eq('subject_kind', s.subjectKind).eq('subject_id', s.subjectId).eq('kind', s.kind);
-  del = who.userId ? del.eq('user_id', who.userId) : del.eq('visitor', who.visitor).is('user_id', null);
+  // Signed out, the browser's own signals are its own, including ones it gave while signed in,
+  // so the same browser can never count twice.
+  del = who.userId ? del.eq('user_id', who.userId) : del.eq('visitor', who.visitor);
   const cleared = await del;
   if (cleared.error) throw new Error(cleared.error.message);
   if (!s.on) return;
@@ -71,7 +73,7 @@ export async function signalsOf(db: SupabaseClient, who: Partial<Who>, subjectKi
   const out = new Map<string, Map<SignalKind, { payCents: number | null; payPeriod: PayPeriod | null }>>();
   if (!ids.length || (!who.userId && !who.visitor)) return out;
   let q = db.from('signals').select('subject_id, kind, pay_cents, pay_period').eq('subject_kind', subjectKind).in('subject_id', ids);
-  q = who.userId ? q.eq('user_id', who.userId) : q.eq('visitor', who.visitor!).is('user_id', null);
+  q = who.userId ? q.eq('user_id', who.userId) : q.eq('visitor', who.visitor!);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   for (const r of data ?? []) {

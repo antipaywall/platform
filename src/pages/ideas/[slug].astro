@@ -145,7 +145,7 @@ const description = idea.pitch || `Something people want for free: ${idea.title}
                   {m.reason && <div class="muted small">{m.reason}</div>}
                 </div>
                 <span class="muted num">+{m.want} me too</span>
-                {Astro.locals.userId && (
+                {person && (
                   <form method="post" action="/api/gaps/unmerge">
                     <input type="hidden" name="from" value={m.slug} />
                     <input type="hidden" name="into" value={idea.slug} />

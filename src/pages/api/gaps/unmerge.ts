@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { isAdmin } from '../../../lib/db';
+import { canUnmerge } from '../../../lib/gaps';
 import { back } from '../../../lib/respond';
 import { takeSlot } from '../../../lib/ratelimit';
 import { adminClient } from '../../../lib/supabase';
@@ -13,7 +15,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const from = String(form.get('from') ?? '');
   const into = String(form.get('into') ?? '');
   const page = /^[a-z0-9-]{1,90}$/.test(into) ? `/ideas/${into}#merged` : '/ideas';
-  if (!locals.userId) return back(page, 'need_signin');
+  if (!locals.userId || !canUnmerge({ person: Boolean(locals.person), admin: isAdmin(locals.person) })) return back(page, 'need_signin');
   const db = adminClient();
   if (!db) return back(page, 'save_failed');
   if ((await takeSlot(db, 'unmerge', locals.userId, MAX_UNMERGES_PER_HOUR)) === 'limited') return back(page, 'too_many');

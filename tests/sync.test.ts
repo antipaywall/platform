@@ -176,3 +176,23 @@ describe('linkSource', () => {
     expect(linkSource(repo({ description: 'booking pages' }), product, ['search', 'topic'])).toBe('topic');
   });
 });
+
+import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
+
+describe('review fixes: sync', () => {
+  it('fetchRepoBatch throws when GitHub answers with errors and no data, instead of reading it as "no repos"', async () => {
+    const f = (async () => new Response(JSON.stringify({ errors: [{ message: 'something broke' }], data: null }), { headers: { 'x-ratelimit-remaining': '4000' } })) as unknown as typeof fetch;
+    await expect(fetchRepoBatch(['a/b'], 't', new GithubBudget(50), f)).rejects.toThrow(/something broke/);
+  });
+  it('only relinks products whose searches all answered', () => {
+    expect(relinkable(['calendly', 'notion'], new Set(['notion']))).toEqual(['calendly']);
+  });
+  it('unlists a listed repo that GitHub no longer returns or that now fails the filter', () => {
+    expect(toUnlist(['a/one', 'b/two', 'c/three'], new Set(['a/one', 'c/three']), new Set(['a/one']))).toEqual(['b/two', 'c/three']);
+  });
+  it('reads past the 1,000-row page limit', async () => {
+    const rows = Array.from({ length: 2500 }, (_, i) => i);
+    const page = async (from: number, to: number) => ({ data: rows.slice(from, to + 1), error: null });
+    expect(await fetchAllRows(page, 1000)).toHaveLength(2500);
+  });
+});

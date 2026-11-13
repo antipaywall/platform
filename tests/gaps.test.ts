@@ -57,3 +57,12 @@ describe('parseFollow', () => {
     expect(parseFollow(f({ subject_kind: 'person', subject_id: id, on: '1' }))).toEqual({ ok: false });
   });
 });
+
+import { canUnmerge } from '../src/lib/gaps';
+
+describe('review fixes: unmerge', () => {
+  it('lets builders and the organizer split merges, not email-only accounts', () => {
+    expect(canUnmerge({ person: true, admin: false })).toBe(true);
+    expect(canUnmerge({ person: false, admin: false })).toBe(false);
+  });
+});
