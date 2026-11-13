@@ -45,3 +45,15 @@ describe('searchRepos', () => {
     await expect(searchRepos('form backend', down)).rejects.toThrow();
   });
 });
+
+import { namedProducts } from '../src/lib/match';
+describe('namedProducts', () => {
+  const products = [{ name: 'Calendly' }, { name: 'Google Photos' }, { name: 'Cal' }];
+  it('finds the paid tools a search names outright', () => {
+    expect(namedProducts(products, 'A free replacement for Calendly with deposits')).toEqual([{ name: 'Calendly' }]);
+    expect(namedProducts(products, 'google photos but private')).toEqual([{ name: 'Google Photos' }]);
+  });
+  it('does not match part of a word', () => {
+    expect(namedProducts(products, 'calendar sync')).toEqual([]);
+  });
+});

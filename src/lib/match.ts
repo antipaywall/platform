@@ -37,7 +37,7 @@ export function toMatches(raw: any): Matches {
 
 // Words that say nothing about what someone wants.
 const FILLER = new Set(('a an and any app apps are as at be best but by can do does for free from get good have how i in is it like me my need ' +
-  'of on open or similar so software some something source that the this to tool tools want way what which with without you your alternative alternatives version').split(' '));
+  'of on open or similar so software some something source that the this to tool tools want way what which with without you your alternative alternatives version replacement replace instead').split(' '));
 
 /** The words of a search that carry meaning. */
 export const queryWords = (q: string) => normalizeQuery(q).split(' ').filter((w) => w.length > 1 && !FILLER.has(w));
@@ -63,6 +63,12 @@ export function rankByWords<T extends { text: string }>(items: T[], words: strin
     .map((m) => m.item);
 }
 
+/** The matched paid tools that the search names outright ("a free Calendly with deposits"). */
+export function namedProducts<T extends { name: string }>(products: T[], q: string): T[] {
+  const padded = ` ${normalizeQuery(q)} `;
+  return products.filter((p) => padded.includes(` ${normalizeQuery(p.name)} `));
+}
+
 export async function findMatches(db: SupabaseClient, q: string, limit = 8): Promise<Matches> {
   const clean = normalizeQuery(q);
   if (clean.length < 2) return { products: [], gaps: [], projects: [], topics: [] };
@@ -79,12 +85,32 @@ export async function findMatches(db: SupabaseClient, q: string, limit = 8): Pro
   }
   // A project must match two words of a longer search: one shared common word brings in noise.
   const projectMin = words.length >= 2 ? 2 : 1;
+  const products = rankByWords(raw.products.map((p) => ({ ...p, text: productText.get(p.slug) ?? p.name })), words, 1).slice(0, limit).map(({ slug, name }) => ({ slug, name }));
+  // A search that names a paid tool is asking for that tool's free alternatives: they lead.
+  const named = namedProducts(products, clean).slice(0, 2);
+  let alternatives: Matches['projects'] = [];
+  if (named.length) {
+    const { data: links } = await db
+      .from('project_products')
+      .select('products!inner(slug), projects!inner(full_name, description, stars, listed)')
+      .in('products.slug', named.map((p) => p.slug))
+      .eq('projects.listed', true)
+      .limit(120);
+    const seen = new Set<string>();
+    alternatives = ((links ?? []) as any[])
+      .map((l) => l.projects)
+      .sort((a, b) => b.stars - a.stars)
+      .filter((p) => !seen.has(p.full_name) && seen.add(p.full_name))
+      .slice(0, 5)
+      .map((p) => ({ fullName: p.full_name, description: p.description, stars: p.stars }));
+  }
+  const byWords = rankByWords(raw.projects.map((p) => ({ ...p, text: `${p.fullName.replace(/[/_.-]/g, ' ')} ${p.description ?? ''}` })), words, projectMin)
+    .map(({ fullName, description, stars }) => ({ fullName, description, stars }))
+    .filter((p) => !alternatives.some((a) => a.fullName === p.fullName));
   return {
-    products: rankByWords(raw.products.map((p) => ({ ...p, text: productText.get(p.slug) ?? p.name })), words, 1).slice(0, limit).map(({ slug, name }) => ({ slug, name })),
+    products,
     gaps: rankByWords(raw.gaps.map((g) => ({ ...g, text: g.title })), words, 1).slice(0, limit).map(({ slug, title }) => ({ slug, title })),
-    projects: rankByWords(raw.projects.map((p) => ({ ...p, text: `${p.fullName.replace(/[/_.-]/g, ' ')} ${p.description ?? ''}` })), words, projectMin)
-      .slice(0, limit)
-      .map(({ fullName, description, stars }) => ({ fullName, description, stars })),
+    projects: [...alternatives, ...byWords].slice(0, limit),
     topics: rankByWords(raw.topics.map((t) => ({ ...t, text: `${t.name} ${t.slug.replace(/-/g, ' ')}` })), words, 1).slice(0, limit).map(({ slug, name }) => ({ slug, name })),
   };
 }
