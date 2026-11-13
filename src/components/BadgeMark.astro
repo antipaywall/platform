@@ -1,0 +1,25 @@
+---
+// One badge as a little painted brick. Its meaning is in the title and, for screen readers, in text.
+import type { Badge } from '../lib/badges';
+
+interface Props {
+  badge: Badge;
+  size?: 'small' | 'big';
+}
+const { badge: b, size = 'small' } = Astro.props;
+const title = `${b.label}. ${b.detail}`;
+---
+
+<span class:list={['bdg', `bdg-${b.kind}`, size === 'big' && 'bdg-big']} title={title} role="img" aria-label={b.label}>
+  {
+    b.kind === 'season' ? (
+      <span class="bdg-s">S{b.season ?? 1}</span>
+    ) : b.kind === 'founder' || b.kind === 'winner' ? (
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.5l1.9 4 4.4.5-3.3 3 .9 4.4L8 11.2l-3.9 2.2.9-4.4-3.3-3 4.4-.5z"></path></svg>
+    ) : b.kind === 'backer' ? (
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 14s-5.5-3.3-5.5-7.2A3 3 0 0 1 8 4.6a3 3 0 0 1 5.5 2.2C13.5 10.7 8 14 8 14z"></path></svg>
+    ) : (
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    )
+  }
+</span>

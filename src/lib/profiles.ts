@@ -3,6 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { providerOf, type Provider } from './accounts';
 import { DataUnavailableError, type Person } from './db';
+import { fetchActivity, savedActivity, type Activity } from './activity';
 import { fetchRepos, isStale, savedRepos, type Repo } from './repos';
 import { adminClient } from './supabase';
 
@@ -83,5 +84,31 @@ export async function refreshRepos(person: Person, opts: { timeoutMs?: number; f
     }
   })();
   const timeout = new Promise<Repo[]>((done) => setTimeout(() => done(saved), opts.timeoutMs ?? 2500));
+  return Promise.race([work, timeout]);
+}
+
+/**
+ * Fetches their activity calendar and saves it. GitHub needs a token: the person's own at sign-in,
+ * or the site's `GITHUB_TOKEN` afterwards. Gives up after `timeoutMs` and returns the saved copy.
+ * Never throws.
+ */
+export async function refreshActivity(person: Person, opts: { token?: string; timeoutMs?: number; force?: boolean; now?: Date } = {}): Promise<Activity> {
+  const saved = savedActivity(person.contributions);
+  const now = opts.now ?? new Date();
+  if (!opts.force && !isStale(person.contributions_fetched_at, now)) return saved;
+  const provider = providerOf(person);
+  const token = opts.token ?? import.meta.env.GITHUB_TOKEN;
+  if (provider === 'github' && !token) return saved;
+  const work = (async () => {
+    try {
+      const fresh = await fetchActivity({ provider, handle: person.handle }, { token, now });
+      const client = adminClient();
+      if (client) await client.from('people').update({ contributions: fresh, contributions_fetched_at: now.toISOString() }).eq('id', person.id);
+      return fresh;
+    } catch {
+      return saved;
+    }
+  })();
+  const timeout = new Promise<Activity>((done) => setTimeout(() => done(saved), opts.timeoutMs ?? 2500));
   return Promise.race([work, timeout]);
 }

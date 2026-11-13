@@ -1,0 +1,53 @@
+---
+// A year of activity as a small brick wall. A switch shows public repositories only (the
+// default) or everything GitHub counts. The switch is two radio buttons, so it needs no script.
+import { buildWall, type Activity } from '../lib/activity';
+
+interface Props {
+  activity: Activity;
+  provider: 'github' | 'gitlab';
+  id: string;
+}
+const { activity, provider, id } = Astro.props;
+const now = new Date();
+const walls = [
+  { key: 'public', label: 'Public repos', wall: buildWall(activity.public, now), what: 'public contributions', sub: 'Commits, pull requests, issues and reviews on public repositories.' },
+  { key: 'all', label: 'All activity', wall: buildWall(activity.all, now), what: 'contributions', sub: 'Everything GitHub counts, including private work they chose to show.' },
+];
+// GitLab only shows public activity, so there is nothing to switch between.
+const shown = provider === 'gitlab' ? walls.slice(0, 1) : walls;
+const nice = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+const n = (x: number) => x.toLocaleString('en-US');
+---
+
+<section class="wallbox" aria-label="Activity in the last year">
+  {shown.length > 1 && shown.map((w, i) => <input class="wall-pick" type="radio" name={`wall-${id}`} id={`wall-${id}-${w.key}`} value={w.key} checked={i === 0} />)}
+  {
+    shown.map((w) => (
+      <div class={`wall-view wall-view-${w.key}`}>
+        <div class="wallhead">
+          <div>
+            <b>{n(w.wall.total)} {w.what} in the last year</b>
+            <span>{provider === 'gitlab' ? 'Public activity on GitLab.' : w.sub}</span>
+          </div>
+          {shown.length > 1 && (
+            <div class="seg" role="radiogroup" aria-label="Which activity to show">
+              {shown.map((o) => <label for={`wall-${id}-${o.key}`} aria-checked={o.key === w.key ? 'true' : 'false'}>{o.label}</label>)}
+            </div>
+          )}
+        </div>
+        <svg class="wall" viewBox={`0 0 ${w.wall.width} ${w.wall.height}`} role="img" aria-label={`${n(w.wall.total)} ${w.what} on ${w.wall.activeDays} of ${w.wall.days} days`}>
+          {w.wall.bricks.map((b) => <rect x={b.x} y={b.y} width="10" height="6" rx="1.5" class={`w${b.level}`}><title>{b.count} on {nice(b.day)}</title></rect>)}
+        </svg>
+        <div class="wallfoot">
+          <p class="wallstats">
+            <span>Longest streak <b>{w.wall.longestStreak} {w.wall.longestStreak === 1 ? 'day' : 'days'}</b></span>
+            {w.wall.busiest && <span>Busiest day <b>{n(w.wall.busiest.count)}</b> on {nice(w.wall.busiest.day)}</span>}
+            <span>Built on <b>{w.wall.activeDays}</b> of {w.wall.days} days</span>
+          </p>
+          <p class="wall-key" aria-hidden="true"><i class="w0"></i> None <span></span> Less <i class="w1"></i><i class="w2"></i><i class="w3"></i><i class="w4"></i> More</p>
+        </div>
+      </div>
+    ))
+  }
+</section>

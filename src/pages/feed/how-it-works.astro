@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="How the feed is ranked" description="The rules behind the Top sort on the Antipaywall feed, in plain words.">
+  <h1 class="page-title">How the feed is ranked.</h1>
+  <p class="lede">The code that runs this site is public, so you can check every rule below.</p>
+  <div class="prose">
+    <h2>Following</h2>
+    <p>Posts from people you follow, newest first. It isn't ranked, so you never miss a post from someone you chose to follow.</p>
+    <h2>Everyone, sorted Latest</h2>
+    <p>Every builder's posts, newest first.</p>
+    <h2>Everyone, sorted Top</h2>
+    <ul>
+      <li>Each brick counts once and each reply counts twice. Replies count more because a conversation is worth more than a nod.</li>
+      <li>Time pulls a post back down. A post that gets a strong response stays near the top for a day or two, not forever. Posts older than 14 days aren't in Top at all.</li>
+      <li>Nobody has more than two posts in Top, so one person can't take it over.</li>
+      <li>A builder's first three posts count one and a half times, so new people get seen.</li>
+      <li>During build week, "Looking for a team" and "Shipped" posts count a little more.</li>
+      <li>Who you are doesn't change the ranking: badges, followers and sponsors carry no weight.</li>
+    </ul>
+    <h2>What's never shown</h2>
+    <p>Posts the organizer hid after a report, and posts from anyone whose posting was turned off.</p>
+  </div>
+</Base>

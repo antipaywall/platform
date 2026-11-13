@@ -7,6 +7,7 @@ import PledgeWho from '../components/PledgeWho.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import BuilderTile from '../components/BuilderTile.astro';
+import { tileBadges } from '../lib/social';
 import Sponsors from '../components/Sponsors.astro';
 import Wall from '../components/Wall.astro';
 import { money as fee, organizerPledge, shape, site } from '../config/site';
@@ -30,6 +31,7 @@ const wallIdeas = ((await attempt(() => listIdeas(12))) ?? []).map((i) => ({ slu
 const need = site.launch.buildersNeeded;
 // The newest builders, then empty "your spot" tiles so the row reads as an invitation.
 const builderCount = stats?.builders;
+const newestBadges = (newest && (await attempt(() => tileBadges(newest.map((b) => b.id))))) || new Map();
 const spots = newest ? Math.min(3, 12 - newest.length, Math.max(0, need - (builderCount ?? 0))) : 0;
 
 const pending = site.collective.pending;
@@ -200,7 +202,7 @@ const gh =
                 </div>
               </div>
               <ul class="crew-list crew-tiles">
-                {newest.map((b) => <BuilderTile builder={b} />)}
+                {newest.map((b) => <BuilderTile builder={b} badge={newestBadges.get(b.id)} />)}
                 {Array.from({ length: spots }, () => (
                   <li><a class="tile tile-spot" href="/join/build"><span aria-hidden="true">+</span>Your spot</a></li>
                 ))}

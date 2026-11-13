@@ -13,6 +13,7 @@ const cur = (on: boolean) => (on ? 'page' : undefined);
 const links = [
   { href: '/about', label: 'About', on: here === '/about' },
   { href: '/ideas', label: 'Ideas', on: here.startsWith('/ideas') },
+  { href: '/feed', label: 'Feed', on: here.startsWith('/feed') },
   { href: '/pool', label: 'Pool', on: here === '/pool' },
   { href: '/rules', label: 'Rules', on: here === '/rules' },
   { href: '/sponsor', label: 'Sponsor', on: here === '/sponsor' },

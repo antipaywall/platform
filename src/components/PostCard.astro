@@ -1,0 +1,106 @@
+---
+// One post with its replies. The author's top badge sits next to their name. Signed-in people
+// can lay a brick, reply, and report; the author can delete their own.
+import BadgeMark from './BadgeMark.astro';
+import { profilePath } from '../lib/profiles';
+import { ago, POST_KINDS, type Author, type PostView } from '../lib/social';
+
+interface Props {
+  post: PostView;
+  viewerId: string | null;
+  canReply: boolean;
+  back: string;
+}
+const { post: p, viewerId, canReply, back } = Astro.props;
+const kind = POST_KINDS.find((k) => k.key === p.kind);
+const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+const who = (a: Author) => profilePath(a.provider, a.handle);
+const initial = (a: Author) => (a.handle[0] ?? '?').toUpperCase();
+---
+
+<article class="post" id={`post-${p.id}`}>
+  <a class="post-pic" href={who(p.author)} aria-hidden="true" tabindex="-1">
+    <span>{initial(p.author)}</span>
+    {p.author.avatar_url && <img src={p.author.avatar_url} alt="" width="40" height="40" loading="lazy" decoding="async" />}
+  </a>
+  <div class="post-main">
+    <p class="post-who">
+      <a href={who(p.author)}><b>{p.author.name ?? p.author.handle}</b></a>
+      {p.author.badge && <BadgeMark badge={p.author.badge} />}
+      <span class="muted">@{p.author.handle}</span>
+      <time class="muted" datetime={p.created_at}>{ago(p.created_at)}</time>
+      {kind && <span class={`post-kind post-kind-${p.kind}`}>{kind.label}</span>}
+    </p>
+    <p class="post-body">{p.body}</p>
+    {
+      p.link_url && (p.author.newAccount ? (
+        <p class="post-link post-link-off" title="Links from accounts newer than a week aren't clickable.">{p.link_url}</p>
+      ) : (
+        <a class="post-link" href={p.link_url} rel="noopener nofollow ugc">{host(p.link_url)}<span>{p.link_url}</span></a>
+      ))
+    }
+    <div class="post-foot">
+      {
+        viewerId ? (
+          <form method="post" action="/api/posts/brick">
+            <input type="hidden" name="post" value={p.id} />
+            <input type="hidden" name="back" value={`${back}#post-${p.id}`} />
+            <input type="hidden" name="action" value={p.bricked ? 'unbrick' : 'brick'} />
+            <button class:list={['brick', p.bricked && 'brick-on']} type="submit" aria-pressed={p.bricked ? 'true' : 'false'} aria-label={p.bricked ? `Take back your brick. ${p.bricks} laid.` : `Lay a brick. ${p.bricks} laid.`}><i aria-hidden="true"></i>{p.bricks}</button>
+          </form>
+        ) : (
+          <span class="brick" title="Bricks laid"><i aria-hidden="true"></i>{p.bricks}</span>
+        )
+      }
+      <span>{p.replies.length} {p.replies.length === 1 ? 'reply' : 'replies'}</span>
+      {
+        viewerId && (
+          <details class="post-more">
+            <summary>{viewerId === p.author.id ? 'Delete' : 'Report'}</summary>
+            {viewerId === p.author.id ? (
+              <form method="post" action="/api/posts/delete" class="post-pop">
+                <input type="hidden" name="post" value={p.id} />
+                <input type="hidden" name="back" value={back} />
+                <span>Delete this post and its replies?</span>
+                <button class="link-button" type="submit">Delete</button>
+              </form>
+            ) : (
+              <form method="post" action="/api/posts/report" class="post-pop">
+                <input type="hidden" name="post" value={p.id} />
+                <input type="hidden" name="back" value={back} />
+                <label class="sr" for={`why-${p.id}`}>What's wrong with it?</label>
+                <input class="input" id={`why-${p.id}`} name="reason" maxlength="300" placeholder="What's wrong with it? (optional)" />
+                <button class="link-button" type="submit">Send report</button>
+              </form>
+            )}
+          </details>
+        )
+      }
+    </div>
+    {
+      (p.replies.length > 0 || canReply) && (
+        <div class="replies">
+          {p.replies.map((r) => (
+            <div class="reply" id={`post-${r.id}`}>
+              <p class="post-who">
+                <a href={who(r.author)}><b>{r.author.name ?? r.author.handle}</b></a>
+                {r.author.badge && <BadgeMark badge={r.author.badge} />}
+                <time class="muted" datetime={r.created_at}>{ago(r.created_at)}</time>
+              </p>
+              <p class="post-body">{r.body}</p>
+            </div>
+          ))}
+          {canReply && (
+            <form class="reply-form" method="post" action="/api/posts">
+              <input type="hidden" name="parent" value={p.id} />
+              <input type="hidden" name="back" value={`${back}#post-${p.id}`} />
+              <label class="sr" for={`reply-${p.id}`}>Reply to {p.author.handle}</label>
+              <input class="input" id={`reply-${p.id}`} name="body" maxlength="500" placeholder="Reply" required />
+              <button class="key key-milk" type="submit">Reply</button>
+            </form>
+          )}
+        </div>
+      )
+    }
+  </div>
+</article>
