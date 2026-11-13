@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import { shape, site } from '../config/site';
-import { attempt, getInvolvement } from '../lib/db';
-import { WAYS } from '../lib/ways';
+import Base from '../../../layouts/Base.astro';
+import { shape, site } from '../../../config/site';
+import { attempt, getInvolvement } from '../../../lib/db';
+import { WAYS } from '../../../lib/ways';
 
 const person = Astro.locals.person;
 const mine = person ? await attempt(() => getInvolvement(person.id)) : null;
@@ -77,6 +77,6 @@ const cta: Record<string, string> = {
   <p class="muted" style="margin-top:28px;max-width:70ch">
     Building, applying to the review panel and helping organize use a GitHub or GitLab sign-in, so everyone can see who is
     involved. At least {site.launch.buildersNeeded} builders is what the dates are waiting on, and there is no cap.{' '}
-    <a class="link" href="/about">How the whole thing works</a>
+    <a class="link" href="/hackathon/about">How the whole thing works</a>
   </p>
 </Base>

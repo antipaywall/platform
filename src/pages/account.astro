@@ -142,7 +142,7 @@ const isPub = person ? isPublic(person) : false;
                 <span>
                   {pledge === undefined ? 'Your pledge is unavailable right now.' : pledge ? <>Your pledge: <b>{usd(pledge.amount_cents)}</b>, {pledge.status === 'listed' ? (pledge.anonymous ? 'listed as Anonymous' : 'listed') : 'waiting to be checked'}</> : 'No pledge yet.'}
                 </span>
-                <a class="link" href="/fund">{pledge ? 'Change it' : 'Pledge'}</a>
+                <a class="link" href="/hackathon/fund">{pledge ? 'Change it' : 'Pledge'}</a>
               </li>
               <li>
                 <span>{ideas === null ? 'Your ideas are unavailable right now.' : ideas.length ? <>Ideas you posted: <b>{ideas.length}</b></> : 'No ideas posted yet.'}</span>
@@ -150,7 +150,7 @@ const isPub = person ? isPublic(person) : false;
               </li>
               <li>
                 <span>{person.is_builder ? <>You're a builder. <b>Spot held.</b></> : person.verified ? 'You pass the checks but have not joined as a builder.' : 'Not a builder yet.'}</span>
-                {!person.is_builder && <a class="link" href="/join/build">Join as a builder</a>}
+                {!person.is_builder && <a class="link" href="/hackathon/join/build">Join as a builder</a>}
               </li>
             </ul>
           </section>

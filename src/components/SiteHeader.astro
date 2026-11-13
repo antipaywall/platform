@@ -14,16 +14,24 @@ const links = [
   { href: '/', label: 'Find', on: here === '/' || here.startsWith('/free-alternatives') || here.startsWith('/projects') || here.startsWith('/topics') || here === '/search' },
   { href: '/ideas', label: 'Wanted', on: here.startsWith('/ideas') },
   { href: '/feed', label: 'Feed', on: here.startsWith('/feed') },
-  { href: '/hackathon', label: 'Hackathon', on: here === '/hackathon' || here === '/pool' || here === '/rules' },
-  { href: '/builders', label: 'People', on: here.startsWith('/builders') || here.startsWith('/people') },
+  { href: '/builders', label: 'Builders', on: here.startsWith('/builders') },
+  { href: '/hackathon', label: 'Hackathon', on: here.startsWith('/hackathon') },
+];
+// The hackathon is its own section: inside it, a second, smaller menu.
+const inHackathon = here === '/hackathon' || here.startsWith('/hackathon/');
+const section = [
+  { href: '/hackathon', label: 'Season 1', on: here === '/hackathon' },
+  { href: '/hackathon/rules', label: 'Rules', on: here === '/hackathon/rules' },
+  { href: '/hackathon/pool', label: 'Pool', on: here === '/hackathon/pool' },
+  { href: '/hackathon/fund', label: 'Pledge', on: here === '/hackathon/fund' },
+  { href: '/hackathon/sponsor', label: 'Sponsor', on: here === '/hackathon/sponsor' },
+  { href: '/hackathon/builders', label: 'Builders', on: here === '/hackathon/builders' },
+  { href: '/hackathon/about', label: 'About', on: here === '/hackathon/about' },
+  { href: '/hackathon/faq', label: 'Questions', on: here === '/hackathon/faq' },
 ];
 const more = [
-  { href: '/about', label: 'About', on: here === '/about' },
-  { href: '/pool', label: 'Pool', on: here === '/pool' },
-  { href: '/rules', label: 'Rules', on: here === '/rules' },
-  { href: '/sponsor', label: 'Sponsor', on: here === '/sponsor' },
-  { href: '/join', label: 'Join', on: here.startsWith('/join') },
-  { href: '/faq', label: 'Questions', on: here === '/faq' },
+  ...section.filter((l) => l.href !== '/hackathon'),
+  { href: '/hackathon/join', label: 'Join the hackathon', on: here.startsWith('/hackathon/join') },
 ];
 
 const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
@@ -68,7 +76,7 @@ const mine = person
           </div>
         </details>
       ) : (
-        <a class="key top-join" href="/join">Join</a>
+        <a class="key top-join" href="/hackathon/join">Join</a>
       )
     }
     <details class="menu" data-menu>
@@ -89,6 +97,14 @@ const mine = person
       </nav>
     </details>
   </div>
+  {
+    inHackathon && (
+      <nav class="wrap hack-nav" aria-label="Hackathon">
+        {section.map((l) => <a href={l.href} aria-current={cur(l.on)}>{l.label}</a>)}
+        <a class="hack-join" href="/hackathon/join" aria-current={cur(here.startsWith('/hackathon/join'))}>Join</a>
+      </nav>
+    )
+  }
 </header>
 
 <script>

@@ -2333,3 +2333,38 @@ span.brick {
     transition: none;
   }
 }
+
+/* The hackathon section's own menu, under the main one. */
+.hack-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 18px;
+  padding-block: 8px 12px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink-2);
+  border-top: 1px solid var(--line);
+  overflow-x: auto;
+}
+.hack-nav a {
+  text-decoration: none;
+  padding: 6px 0;
+  white-space: nowrap;
+}
+.hack-nav a:hover,
+.hack-nav a[aria-current='page'] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+.hack-nav .hack-join {
+  margin-left: auto;
+  padding: 6px 14px 8px;
+  border-radius: 999px;
+  background: var(--tomato);
+  color: var(--ink);
+  box-shadow: inset 0 -3px 0 oklch(0.56 0.17 30);
+}
+.hack-nav .hack-join:hover { text-decoration: none; }

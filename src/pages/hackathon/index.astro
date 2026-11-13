@@ -1,22 +1,22 @@
 ---
-import '../styles/global.css';
-import '../styles/page.css';
-import '../styles/home.css';
-import Head from '../components/Head.astro';
-import PledgeWho from '../components/PledgeWho.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import BuilderTile from '../components/BuilderTile.astro';
-import GoalMeter from '../components/GoalMeter.astro';
-import { tileBadges } from '../lib/social';
-import Sponsors from '../components/Sponsors.astro';
-import Wall from '../components/Wall.astro';
-import { money as fee, organizerPledge, shape, site } from '../config/site';
-import { WAYS } from '../lib/ways';
-import { attempt, getOrganizerPledge, getStats, listBuilders, listIdeas, listPledges, listSponsors, usd as usdCents } from '../lib/db';
-import { getSeason } from '../lib/seasons';
-import { adminClient } from '../lib/supabase';
-import '../styles/platform.css';
+import '../../styles/global.css';
+import '../../styles/page.css';
+import '../../styles/home.css';
+import Head from '../../components/Head.astro';
+import PledgeWho from '../../components/PledgeWho.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import BuilderTile from '../../components/BuilderTile.astro';
+import GoalMeter from '../../components/GoalMeter.astro';
+import { tileBadges } from '../../lib/social';
+import Sponsors from '../../components/Sponsors.astro';
+import Wall from '../../components/Wall.astro';
+import { money as fee, organizerPledge, shape, site } from '../../config/site';
+import { WAYS } from '../../lib/ways';
+import { attempt, getOrganizerPledge, getStats, listBuilders, listIdeas, listPledges, listSponsors, usd as usdCents } from '../../lib/db';
+import { getSeason } from '../../lib/seasons';
+import { adminClient } from '../../lib/supabase';
+import '../../styles/platform.css';
 
 // If the database can't be read, the page says so. It never shows a zero it could not verify.
 const [stats, recent, sponsors, organizer, newest] = await Promise.all([
@@ -132,11 +132,11 @@ const gh =
             take nothing.
           </p>
           <div class="actions">
-            <a class="key key-big" href="/join/build">
+            <a class="key key-big" href="/hackathon/join/build">
               <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d={gh}></path></svg>
               Join with GitHub
             </a>
-            <a class="key key-big key-milk" href="/join">Other ways to join</a>
+            <a class="key key-big key-milk" href="/hackathon/join">Other ways to join</a>
           </div>
           <div class="goal">
             {
@@ -242,7 +242,7 @@ const gh =
                   )
                 }
                 <div class="actions">
-                  <a class="key key-big" href="/join/build">Join with GitHub</a>
+                  <a class="key key-big" href="/hackathon/join/build">Join with GitHub</a>
                   <a class="key key-big key-milk" href="/builders">{builderCount !== undefined ? `See all ${builderCount} builders` : 'See all builders'}</a>
                 </div>
               </div>
@@ -250,7 +250,7 @@ const gh =
                 {shownBuilders.map((b) => <BuilderTile builder={b} badge={newestBadges.get(b.id)} />)}
                 {more > 0 && <li><a class="tile tile-more" href="/builders"><span>+{more}</span>more builders</a></li>}
                 {Array.from({ length: spots }, () => (
-                  <li><a class="tile tile-spot" href="/join/build"><span aria-hidden="true">+</span>Your spot</a></li>
+                  <li><a class="tile tile-spot" href="/hackathon/join/build"><span aria-hidden="true">+</span>Your spot</a></li>
                 ))}
               </ul>
             </div>
@@ -333,7 +333,7 @@ const gh =
                       <span class="amt num">{usdCents(p.amount_cents)}</span>
                     </li>
                   ))}
-                  <li class="ledger-more"><a href="/pool">See everything</a><a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a></li>
+                  <li class="ledger-more"><a href="/hackathon/pool">See everything</a><a class="key" href="/hackathon/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a></li>
                 </ul>
               ) : (
                 <>
@@ -347,13 +347,13 @@ const gh =
                         ? 'The pool is not open for payments yet. Until it is, you can pledge. Pledges are listed publicly and never counted as money in the pool.'
                         : 'Pledges are public promises. They are listed here and never counted as money in the pool.'}
                     </p>
-                    <a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a>
+                    <a class="key" href="/hackathon/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a>
                   </div>
                 </>
               )
             }
             <p class="ledger-foot">
-              {fee.none} <a href="/pool">Who will hold the money</a>
+              {fee.none} <a href="/hackathon/pool">Who will hold the money</a>
             </p>
           </div>
         </div>
@@ -369,7 +369,7 @@ const gh =
               is a fair scope.
             </p>
             <div class="actions">
-              <a class="key key-big" href="/rules">Read the rules</a>
+              <a class="key key-big" href="/hackathon/rules">Read the rules</a>
               <a class="key key-big key-milk" href="/ideas">See what people want built</a>
             </div>
           </div>
@@ -518,8 +518,8 @@ const gh =
         <div class="wrap">
           <h2 class="display closer-title">Pick a paywall. Take a brick out.</h2>
           <div class="actions">
-            <a class="key key-big key-marigold" href="/join/build">Join with GitHub</a>
-            <a class="key key-big key-milk" href="/fund">Back the pool</a>
+            <a class="key key-big key-marigold" href="/hackathon/join/build">Join with GitHub</a>
+            <a class="key key-big key-milk" href="/hackathon/fund">Back the pool</a>
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 ---
-import Base from '../layouts/Base.astro';
-import { bountyRules, insiderRules, money, organizerPledgeFull, shape, site } from '../config/site';
-import { attempt, getOrganizerPledge } from '../lib/db';
+import Base from '../../layouts/Base.astro';
+import { bountyRules, insiderRules, money, organizerPledgeFull, shape, site } from '../../config/site';
+import { attempt, getOrganizerPledge } from '../../lib/db';
 const pending = site.collective.pending;
 // The organizer's pledge is read from the database. If it can't be, the question is left out.
 const pledged = await attempt(getOrganizerPledge);

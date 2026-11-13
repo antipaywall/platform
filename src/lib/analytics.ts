@@ -23,7 +23,17 @@ import { createHmac } from 'node:crypto';
 //   - it is not a page being fetched ahead of time.
 
 /** Pages worth counting. Anything else (scans, typos, private or internal routes) is not recorded at all. */
-const PAGE = /^\/(?:|join(?:\/(?:build|panel|organize))?|fund|pool|sponsor|builders|rules|faq|privacy|terms|about|ideas(?:\/[a-z0-9-]{1,70})?)$/;
+const PAGE = new RegExp(
+  '^/(?:' +
+    [
+      '', 'privacy', 'terms', 'builders', 'search', 'ideas(?:/[a-z0-9-]{1,70})?',
+      // The hackathon section.
+      'hackathon(?:/(?:rules|about|faq|pool|fund|sponsor|builders|join(?:/(?:build|panel|organize))?))?',
+      // The directory.
+      'free-alternatives(?:/[a-z0-9-]{1,60})?', 'topics(?:/[a-z0-9-]{1,60})?', 'projects/[\\w.-]{1,100}/[\\w.-]{1,100}',
+    ].join('|') +
+    ')$',
+);
 
 /** The path as it is stored, or null if this request should not be counted. Never includes a query string. */
 export function trackablePath(pathname: string): string | null {
