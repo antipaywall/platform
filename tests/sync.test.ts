@@ -215,3 +215,32 @@ describe('factsFromSearchItem', () => {
     expect(factsFromSearchItem({ id: 1, full_name: 'a/b', html_url: 'https://evil.example/a/b' } as any)).toBeNull();
   });
 });
+
+import { fetchReposResilient } from '../src/lib/sync/github';
+
+describe('fetchReposResilient', () => {
+  const ok = (names: string[]) => ({ data: Object.fromEntries(names.map((n, i) => [`r${i}`, { databaseId: i + 1, nameWithOwner: n, url: `https://github.com/${n}`, createdAt: '2024-01-01T00:00:00Z', pushedAt: '2026-11-01T00:00:00Z' }])) });
+  it('splits a batch GitHub times out on, and still reads every repo', async () => {
+    let calls = 0;
+    const f = (async (_u: string, init: any) => {
+      calls++;
+      const n = (JSON.parse(init.body).query.match(/repository\(/g) ?? []).length;
+      if (n > 2) return new Response('bad gateway', { status: 502 });
+      const names = [...JSON.parse(init.body).query.matchAll(/owner: "([^"]+)", name: "([^"]+)"/g)].map((m) => `${m[1]}/${m[2]}`);
+      return new Response(JSON.stringify(ok(names)), { headers: { 'x-ratelimit-remaining': '4000' } });
+    }) as unknown as typeof fetch;
+    const out = await fetchReposResilient(['a/1', 'a/2', 'a/3', 'a/4', 'a/5'], 't', new GithubBudget(50), f, 0);
+    expect(out.repos.map((r) => r.fullName).sort()).toEqual(['a/1', 'a/2', 'a/3', 'a/4', 'a/5']);
+    expect(calls).toBeGreaterThan(1);
+  });
+  it('gives up on a single repo that keeps failing, without stopping the rest', async () => {
+    const f = (async (_u: string, init: any) => {
+      const names = [...JSON.parse(init.body).query.matchAll(/owner: "([^"]+)", name: "([^"]+)"/g)].map((m) => `${m[1]}/${m[2]}`);
+      if (names.includes('bad/one')) return new Response('bad gateway', { status: 502 });
+      return new Response(JSON.stringify(ok(names)), { headers: { 'x-ratelimit-remaining': '4000' } });
+    }) as unknown as typeof fetch;
+    const out = await fetchReposResilient(['bad/one', 'good/two'], 't', new GithubBudget(50), f, 0);
+    expect(out.repos.map((r) => r.fullName)).toEqual(['good/two']);
+    expect(out.failed).toEqual(['bad/one']);
+  });
+});

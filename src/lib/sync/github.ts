@@ -6,6 +6,8 @@ import type { RepoFacts } from './filter';
 export type HelpIssue = { number: number; title: string; url: string; labels: string[]; comments: number; updatedAt: string };
 
 export class RateLimited extends Error {}
+/** GitHub's own servers failed or timed out (5xx). Worth a retry with a smaller request. */
+export class GithubServerError extends Error {}
 
 /** Tracks how many requests GitHub says are left, keeping a reserve. */
 export class GithubBudget {
@@ -69,6 +71,7 @@ export async function fetchRepoBatch(
   });
   budget.update(res.headers);
   if (res.status === 403 || res.status === 429) throw new RateLimited(`GitHub answered ${res.status}`);
+  if (res.status >= 500) throw new GithubServerError(`GitHub GraphQL answered ${res.status}`);
   if (!res.ok) throw new Error(`GitHub GraphQL answered ${res.status}`);
   const body = (await res.json()) as { data?: Record<string, any> | null; errors?: { message?: string }[] };
   // An answer with errors and no data is a failure, not "none of these repos exist".
@@ -144,4 +147,41 @@ export function factsFromSearchItem(i: SearchItem): RepoFacts | null {
     pushedAt: String(i.pushed_at ?? i.created_at ?? ''), createdAt: String(i.created_at ?? ''),
     latestReleaseTag: null, latestReleaseAt: null,
   };
+}
+
+/**
+ * Reads repos in batches, tolerating GitHub timing out on a heavy query: a failed batch is tried
+ * once more, then split in half, down to single repos. A single repo that still fails is left out
+ * of this run and named in `failed`. Running out of allowance still stops everything.
+ */
+export async function fetchReposResilient(
+  names: string[],
+  token: string,
+  budget: GithubBudget,
+  f: typeof fetch = fetch,
+  pauseMs = 3000,
+): Promise<{ repos: RepoFacts[]; issues: Map<string, HelpIssue[]>; failed: string[] }> {
+  const out = { repos: [] as RepoFacts[], issues: new Map<string, HelpIssue[]>(), failed: [] as string[] };
+  const run = async (part: string[]): Promise<void> => {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const got = await fetchRepoBatch(part, token, budget, f);
+        out.repos.push(...got.repos);
+        for (const [k, v] of got.issues) out.issues.set(k, v);
+        return;
+      } catch (e) {
+        if (!(e instanceof GithubServerError)) throw e;
+        if (pauseMs) await new Promise((r) => setTimeout(r, pauseMs));
+      }
+    }
+    if (part.length === 1) {
+      out.failed.push(part[0]);
+      return;
+    }
+    const mid = Math.ceil(part.length / 2);
+    await run(part.slice(0, mid));
+    await run(part.slice(mid));
+  };
+  for (let i = 0; i < names.length; i += 25) await run(names.slice(i, i + 25));
+  return out;
 }

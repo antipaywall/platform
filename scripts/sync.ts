@@ -13,7 +13,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { loadCatalog, type Product } from '../src/lib/catalog';
 import { passesFilter, type RepoFacts } from '../src/lib/sync/filter';
-import { factsFromSearchItem, fetchRepoBatch, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
+import { factsFromSearchItem, fetchReposResilient, GithubBudget, isIndexable, RateLimited, searchQueries, type HelpIssue, type SearchItem } from '../src/lib/sync/github';
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
 import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
 import { samplePages, starPointsFromSamples } from '../src/lib/sync/stars';
@@ -167,12 +167,12 @@ async function main() {
 
     const facts = new Map<string, RepoFacts>();
     const issues = new Map<string, HelpIssue[]>();
-    const list = [...names];
-    for (let i = 0; i < list.length; i += 50) {
-      const batch = await fetchRepoBatch(list.slice(i, i + 50), TOKEN, graph);
-      for (const r of batch.repos) facts.set(r.fullName.toLowerCase(), r);
-      for (const [k, v] of batch.issues) issues.set(k.toLowerCase(), v);
-    }
+    const read = await fetchReposResilient([...names], TOKEN, graph);
+    for (const r of read.repos) facts.set(r.fullName.toLowerCase(), r);
+    for (const [k, v] of read.issues) issues.set(k.toLowerCase(), v);
+    if (read.failed.length) console.log(`GitHub couldn't answer for ${read.failed.length} repos; they're left as they were`);
+    // A repo GitHub failed to answer for this run is not "gone": it keeps its listing.
+    for (const n of read.failed) { const prev = seen.get(n.toLowerCase()); if (prev) facts.set(n.toLowerCase(), prev); }
 
     const listed = new Map<string, RepoFacts>();
     const rejected: { r: RepoFacts; reason: string }[] = [];
@@ -181,7 +181,7 @@ async function main() {
       if (verdict.ok) listed.set(r.fullName.toLowerCase(), r);
       else rejected.push({ r, reason: verdict.reason });
     }
-    const gone = toUnlist(alreadyListed.map((n) => n.toLowerCase()), new Set(facts.keys()), new Set(listed.keys())).filter((n) => !facts.has(n));
+    const gone = toUnlist(alreadyListed.map((n) => n.toLowerCase()), new Set(facts.keys()), new Set(listed.keys())).filter((n) => !facts.has(n) && !read.failed.some((f) => f.toLowerCase() === n));
 
     // product slug → [repo key, source]
     const links: { product: string; repo: string; source: 'topic' | 'search' | 'tag' | 'catalog'; score: number }[] = [];
