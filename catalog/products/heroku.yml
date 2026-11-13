@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: heroku
+name: Heroku
+category: Hosting and cloud
+price:
+  cents: 500
+  period: month
+blurb: Put a web app online without managing servers.
+words:
+  - hosting
+  - deploy
+  - web app
+  - platform as a service
+  - paas
+  - server
+topics:
+  - paas
+  - self-hosted
+  - deployment
+search_terms:
+  - heroku alternative
+  - self-hosted paas
+aliases: []
+excludes: []

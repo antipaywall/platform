@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: minecraft
+name: Minecraft
+category: Games
+price:
+  cents: 2999
+  period: once
+blurb: A game about building with blocks and surviving.
+words:
+  - voxel game
+  - block building
+  - sandbox game
+  - survival
+  - crafting
+topics:
+  - voxel
+  - voxel-game
+  - minecraft-clone
+  - sandbox-game
+search_terms:
+  - minecraft alternative
+  - open source voxel game
+aliases: []
+excludes: []

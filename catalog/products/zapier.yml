@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: zapier
+name: Zapier
+category: Automation
+price:
+  cents: 1999
+  period: month
+blurb: Connect your apps so things happen automatically.
+words:
+  - automation
+  - workflows
+  - integrations
+  - connect apps
+  - triggers
+  - no code
+topics:
+  - automation
+  - workflow-automation
+  - integrations
+  - zapier-alternative
+search_terms:
+  - zapier alternative
+  - workflow automation
+aliases: []
+excludes: []

@@ -13,6 +13,8 @@ import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
+import { claimSignals } from '../../lib/signals';
+import { visitorId } from '../../lib/visitor';
 
 export const GET: APIRoute = async (context) => {
   const { request, cookies, url, redirect } = context;
@@ -20,7 +22,22 @@ export const GET: APIRoute = async (context) => {
   const code = url.searchParams.get('code');
   const supabase = sessionClient(request, cookies);
   const db = adminClient();
-  if (!code || !supabase || !db) return back(next, 'signin_failed');
+  if (!supabase || !db) return back(next, 'signin_failed');
+
+  // A sign-in link from an email: a backer, never a builder row.
+  if (url.searchParams.get('provider') === 'email') {
+    const tokenHash = url.searchParams.get('token_hash');
+    if (!tokenHash || url.searchParams.get('type') !== 'magiclink') return back(next, 'signin_failed');
+    const { data: verified, error: verifyError } = await supabase.auth.verifyOtp({ type: 'magiclink', token_hash: tokenHash });
+    const userId = verified?.user?.id;
+    if (verifyError || !userId) return back(next, 'signin_failed');
+    // Someone who already has a GitHub or GitLab row keeps it; otherwise they are a backer.
+    const known = await db.from('people').select('id').eq('id', userId).maybeSingle();
+    if (!known.data) await db.from('backers').upsert({ id: userId }, { ignoreDuplicates: true });
+    await claimSignals(db, visitorId(cookies), userId);
+    return redirect(next);
+  }
+  if (!code) return back(next, 'signin_failed');
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error || !data.session) return back(next, 'signin_failed');
@@ -92,6 +109,9 @@ export const GET: APIRoute = async (context) => {
     refreshRepos(fresh, { force: true, timeoutMs: 1500 }),
     refreshActivity(fresh, { force: true, timeoutMs: 2500, token: provider === 'github' ? provider_token : undefined }),
   ]);
+
+  // What this browser backed before signing in becomes theirs.
+  await claimSignals(db, visitorId(cookies), user.id);
 
   // Signing in joins the email list, as the sign-in button says, using the address the provider gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.

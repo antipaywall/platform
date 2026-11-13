@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: pagerduty
+name: PagerDuty
+category: Developer tools
+price:
+  cents: 2100
+  period: month
+blurb: Wake the right person when something breaks.
+words:
+  - on call
+  - incident
+  - alerts
+  - paging
+  - status
+  - escalation
+topics:
+  - incident-management
+  - on-call
+  - alerting
+search_terms:
+  - pagerduty alternative
+  - on call scheduling
+aliases: []
+excludes: []

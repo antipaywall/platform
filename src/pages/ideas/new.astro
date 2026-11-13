@@ -1,21 +1,31 @@
 ---
 import SignIn from '../../components/SignIn.astro';
 import Base from '../../layouts/Base.astro';
+import { adminClient } from '../../lib/supabase';
 
 const person = Astro.locals.person;
+const signedIn = Boolean(person || Astro.locals.backer);
+// Coming from a search or a paid product's page, the form starts filled in.
+const startTitle = (Astro.url.searchParams.get('title') ?? '').slice(0, 80);
+const productSlug = (Astro.url.searchParams.get('product') ?? '').toLowerCase();
+let startProduct: { slug: string; name: string } | null = null;
+if (/^[a-z0-9-]{1,60}$/.test(productSlug)) {
+  const { data } = (await adminClient()?.from('products').select('slug, name').eq('slug', productSlug).maybeSingle()) ?? { data: null };
+  startProduct = data ?? null;
+}
 ---
 
-<Base title="Post an idea" description="Name something that should be free. We show you what already exists so you can say what is missing.">
+<Base title="Post something you want" description="Name something that should be free. We show you what already exists so you can say what is missing.">
   <h1 class="page-title">Name something that should be free.</h1>
   <p class="lede">
     As you type, we look for open-source projects that already do it. If one of them solves your
     problem, great. If not, say what is missing: that gap is the opportunity.
   </p>
   <div class="cols">
-    <form class="card stack" method="post" action="/api/ideas" data-idea-form data-signed-in={person ? "1" : undefined}>
+    <form id="idea-form" class="card stack" method="post" action="/api/ideas" data-idea-form data-signed-in={signedIn ? "1" : undefined}>
       <div class="field">
         <label for="title">The idea</label>
-        <input class="input" id="title" name="title" required minlength="3" maxlength="80" placeholder="A brand design skill that makes good logos" autocomplete="off" />
+        <input class="input" id="title" name="title" required minlength="3" maxlength="80" placeholder="A brand design skill that makes good logos" autocomplete="off" value={startTitle} />
       </div>
       <div class="field">
         <label for="pitch">What it should do <span class="muted">(optional)</span></label>
@@ -26,19 +36,35 @@ const person = Astro.locals.person;
         <textarea class="input" id="missing" name="missing" maxlength="600"></textarea>
         <span class="help">Needed if similar projects exist. We search again when you post, and that list is what gets saved. Be specific: too hard to set up, missing a feature, abandoned.</span>
       </div>
+      <fieldset class="stack" data-products style="border:0;padding:0;margin:0;gap:8px" hidden={!startProduct}>
+        <legend class="muted small" style="font-weight:700;padding:0">It replaces</legend>
+        <div class="pf-chips" data-product-list>
+          {startProduct && (
+            <label class="chip"><input type="checkbox" name="products" value={startProduct.slug} checked /> {startProduct.name}</label>
+          )}
+        </div>
+      </fieldset>
       {
-        person ? (
+        signedIn ? (
           <button class="key key-big key-tomato" type="submit">Post this idea</button>
           <p class="muted small">By sending this you agree to the <a class="link" href="/terms">terms</a>.</p>
         ) : (
-          <SignIn next="/ideas/new" label="Sign in with GitHub to post" />
+          <>
+            <SignIn next="/ideas/new" label="Sign in with GitHub to post" />
+            <a class="link small" href="/auth/email?next=/ideas/new">No GitHub? Sign in with your email</a>
+          </>
         )
       }
     </form>
 
     <div class="stack" aria-live="polite">
+      <div class="stack" data-wanted hidden>
+        <p class="h2">Is it one of these?</p>
+        <p class="muted">Someone may already want the same thing. Backing theirs puts everyone's support in one place, which is what builders look at.</p>
+        <ul class="pf-list" data-wanted-list></ul>
+      </div>
       <p class="h2" data-found-title>Already out there</p>
-      <p class="muted" data-found-note>{person ? 'Start typing the idea and we will search GitHub.' : 'Sign in and we will search GitHub as you type.'}</p>
+      <p class="muted" data-found-note>{signedIn ? 'Start typing the idea and we will search GitHub.' : 'Sign in and we will search GitHub as you type.'}</p>
       <ul class="repos" data-found></ul>
     </div>
   </div>
@@ -87,12 +113,55 @@ const person = Astro.locals.person;
       }
     };
 
+    const wanted = document.querySelector<HTMLElement>('[data-wanted]')!;
+    const wantedList = document.querySelector<HTMLElement>('[data-wanted-list]')!;
+    const productBox = document.querySelector<HTMLElement>('[data-products]')!;
+    const productList = document.querySelector<HTMLElement>('[data-product-list]')!;
+    type Match = { products: { slug: string; name: string }[]; gaps: { slug: string; title: string }[] };
+    const showMatches = (m: Match) => {
+      wantedList.replaceChildren();
+      for (const g of m.gaps.slice(0, 4)) {
+        const li = document.createElement('li');
+        li.className = 'pf-row-flat';
+        const div = document.createElement('div');
+        const a = document.createElement('a');
+        a.href = `/ideas/${g.slug}`;
+        a.textContent = g.title;
+        div.append(a);
+        const back = document.createElement('a');
+        back.className = 'key key-sm key-mint';
+        back.href = `/ideas/${g.slug}`;
+        back.textContent = 'Back this one instead';
+        li.append(div, back);
+        wantedList.append(li);
+      }
+      wanted.hidden = m.gaps.length === 0;
+      const kept = new Set([...productList.querySelectorAll<HTMLInputElement>('input:checked')].map((i) => i.value));
+      for (const label of [...productList.children]) {
+        const input = label.querySelector('input');
+        if (input && !input.checked) label.remove();
+      }
+      for (const p of m.products.slice(0, 4)) {
+        if (kept.has(p.slug)) continue;
+        const label = document.createElement('label');
+        label.className = 'chip';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = 'products';
+        input.value = p.slug;
+        label.append(input, ` ${p.name}`);
+        productList.append(label);
+      }
+      productBox.hidden = productList.children.length === 0;
+    };
+
     title.addEventListener('input', () => {
       clearTimeout(timer);
       const q = title.value.trim();
       if (q.length < 3) return;
       timer = window.setTimeout(async () => {
         latest = q;
+        fetch(`/api/match?q=${encodeURIComponent(q)}`).then((r) => r.json()).then((m) => { if (latest === q) showMatches(m); }).catch(() => undefined);
         note.textContent = 'Searching GitHub…';
         try {
           const res = await fetch(`/api/repo-search?q=${encodeURIComponent(q)}`);

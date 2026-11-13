@@ -1,95 +1,233 @@
 ---
-import Base from '../../layouts/Base.astro';
+import Platform from '../../layouts/Platform.astro';
 import Heart from '../../components/Heart.astro';
-import { DataUnavailableError, getIdea, heartedBy, type Idea } from '../../lib/db';
-import { postedBy } from '../../lib/ideas';
+import FollowButton from '../../components/pf/FollowButton.astro';
+import SignalButton from '../../components/pf/SignalButton.astro';
+import SignalScript from '../../components/pf/SignalScript.astro';
+import { isAdmin } from '../../lib/db';
+import { dollars, shortCount, timeAgo } from '../../lib/format';
+import { BUILD_STATUS, getGapPage, type GapPage } from '../../lib/gaps';
+import { profilePath } from '../../lib/profiles';
+import { adminClient } from '../../lib/supabase';
 import { visitorId } from '../../lib/visitor';
 
-let idea: Idea | null;
-let hearted = false;
+const slug = String(Astro.params.slug);
+const db = adminClient();
+if (!db) return new Response('Ideas are unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+const person = Astro.locals.person;
+let page: GapPage | { redirect: string } | null;
 try {
-  idea = await getIdea(String(Astro.params.slug));
-  if (idea) hearted = (await heartedBy(visitorId(Astro.cookies), [idea.id])).has(idea.id);
-} catch (e) {
-  if (!(e instanceof DataUnavailableError)) throw e;
-  // The database can't be read: say so, rather than claim the idea doesn't exist.
+  page = await getGapPage(db, slug, { userId: Astro.locals.userId, personId: person?.id ?? null, visitor: visitorId(Astro.cookies) });
+} catch {
   return new Response('Ideas are unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
 }
-if (!idea) return new Response(null, { status: 404 });
+if (!page) return new Response(null, { status: 404 });
+if ('redirect' in page) return Astro.redirect(page.redirect, 301);
+
+const { idea, demand, merged, products, closest, claims, season, mine } = page;
+const here = `/ideas/${idea.slug}`;
+const status = BUILD_STATUS[idea.status];
+const now = new Date();
+const top = Math.max(demand.want, demand.pay, demand.test, 1);
+const pct = (n: number) => `${Math.max(2, Math.round((n / top) * 100))}%`;
+const paidMonth = mine.signals.get('pay');
 const paras = (t: string) => t.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
-const writeup: [string, string][] = [
-  ['The problem', idea.problem],
-  ['What to build', idea.build],
-  ['A strong entry', idea.strong],
-];
+const writeup: [string, string][] = [['The problem', idea.problem], ['What to build', idea.build], ['A strong entry', idea.strong], ['What existing options are missing', idea.missing]];
 let sourceHost = '';
-try {
-  if (idea.sourceUrl) sourceHost = new URL(idea.sourceUrl).hostname.replace(/^www\./, '');
-} catch {}
-const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n));
+try { if (idea.sourceUrl) sourceHost = new URL(idea.sourceUrl).hostname.replace(/^www\./, ''); } catch {}
+const description = idea.pitch || `Something people want for free: ${idea.title}. ${demand.want} want it.`;
 ---
 
-<Base title={idea.title} description={idea.pitch || `An idea for something that should be free: ${idea.title}.`}>
-  <p class="muted small"><a class="link" href="/ideas">All ideas</a></p>
-  <h1 class="page-title" style="margin-top:12px">{idea.title}</h1>
-  {idea.pitch && <p class="lede">{idea.pitch}</p>}
-
-  <div class="idea-actions">
-    <Heart slug={idea.slug} hearts={idea.hearts} hearted={hearted} big />
-    <span class="muted">{hearted ? 'You want this.' : 'Want this to exist? Give it a heart. No account needed.'}</span>
-  </div>
-  <p class="muted small" style="margin-top:14px">Posted by {postedBy(idea)}</p>
-
-  <div class="cols">
-    <div class="stack" style="gap:28px">
-      {
-        writeup.filter(([, text]) => text).map(([heading, text]) => (
-          <div class="stack" style="gap:8px">
-            <p class="h2">{heading}</p>
-            {paras(text).map((p) => <p>{p}</p>)}
-          </div>
-        ))
-      }
-      {
-        idea.sourceUrl && sourceHost && (
-          <p class="muted small">
-            Source for the claims above:{' '}
-            <a class="link" href={idea.sourceUrl} rel="noopener nofollow">{sourceHost}</a>
-          </p>
-        )
-      }
-      {
-        idea.missing && (
-          <div class="stack" style="gap:8px">
-            <p class="h2">What is missing today</p>
-            <p>{idea.missing}</p>
-          </div>
-        )
-      }
-      {
-        idea.existing_repos.length > 0 && (
-          <div class="stack" style="gap:10px">
-            <p class="h2">Already out there</p>
-            <ul class="repos">
-              {idea.existing_repos.map((r) => (
-                <li>
-                  <a href={r.url} rel="noopener">{r.fullName}</a>
-                  <span class="stars">★ {stars(r.stars)}</span>
-                </li>
-              ))}
-            </ul>
-            <p class="muted small">Found by a GitHub search when this idea was posted. We have not reviewed them. Builders may fork one of these or start fresh.</p>
-          </div>
-        )
-      }
-    </div>
-    <div class="card stack">
-      <p class="h2">Going to build it?</p>
-      <p>
-        Ideas show what people want. They carry no money and no prize of their own: an entry that
-        builds one competes for the main prizes like any other.
+<Platform title={idea.title} description={description.slice(0, 160)}>
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/ideas">Wanted</a><span aria-hidden="true">/</span><span>{idea.title}</span></nav>
+      <div class="pf-chips">
+        <span class="chip"><span class:list={['pf-dot', status.dot]} aria-hidden="true"></span>{status.label}</span>
+        {season && <a class="chip" href="/hackathon" style="background:var(--ink);color:#fff;box-shadow:none">Picked for {season.name}</a>}
+      </div>
+      <h1 class="pf-title">{idea.title}</h1>
+      {idea.pitch && <p class="pf-quote">{idea.pitch}</p>}
+      <p class="muted small">
+        Posted by {idea.poster.kind === 'person' ? <a class="link" href={profilePath(idea.poster.provider, idea.poster.handle)}>@{idea.poster.handle}</a> : idea.poster.kind === 'backer' ? idea.poster.name : 'Antipaywall'}
+        {' · '}{timeAgo(idea.createdAt, now)}
+        {products.length > 0 && <>{' · '}Replaces: {products.map((p, i) => <>{i > 0 && ', '}<a class="link" href={`/free-alternatives/${p.slug}`}>{p.name}</a></>)}</>}
       </p>
-      <a class="key key-big" href="/join/build" style="justify-self:start">Join as a builder</a>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <FollowButton kind="gap" id={idea.id} following={mine.following} next={here} label="Follow this" signedIn={Boolean(person)} />
+        <a class="key key-milk key-sm" href="#builders">I'd build this</a>
+      </div>
     </div>
-  </div>
-</Base>
+
+    <aside class="card pf-hero-side pf-signal" aria-labelledby="who-wants">
+      <h2 id="who-wants" class="pf-h3">Who wants it</h2>
+      {[
+        ['Want it', demand.want, 'var(--tomato)'],
+        ['Would pay if it worked', demand.pay, 'var(--marigold)'],
+        ['Will test early builds', demand.test, 'var(--mint)'],
+      ].map(([label, n, paint]) => (
+        <div class="pf-meter">
+          <div class="pf-meter-top"><span>{label}</span><span class="num">{n}</span></div>
+          <div class="pf-meter-bar" aria-hidden="true"><span style={`width:${pct(n as number)};--p:${paint}`}></span></div>
+        </div>
+      ))}
+      <div class="pf-opts">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <Heart slug={idea.slug} hearts={demand.want} hearted={mine.hearted} big />
+          <span class="muted small">{mine.hearted ? 'You want this.' : 'Me too: I want this.'}</span>
+        </div>
+        <SignalButton subjectKind="gap" subjectId={idea.id} kind="pay" on={Boolean(paidMonth)} count={demand.pay} big={paidMonth?.payCents ? dollars(paidMonth.payCents) : undefined} label="I'd pay this if it worked" next={here} pay={{ period: paidMonth?.payPeriod ?? 'once', picked: paidMonth?.payCents ?? null }} />
+        <SignalButton subjectKind="gap" subjectId={idea.id} kind="test" on={mine.signals.has('test')} count={demand.test} label="Send me early builds" next={here} />
+      </div>
+      <p class="pf-note num">
+        {demand.payMonthCents + demand.payOnceCents > 0
+          ? <>Would-pay adds up to {demand.payMonthCents > 0 && <>{dollars(demand.payMonthCents)} a month</>}{demand.payMonthCents > 0 && demand.payOnceCents > 0 && ' and '}{demand.payOnceCents > 0 && <>{dollars(demand.payOnceCents)} once</>} if every one came true. </>
+          : null}
+        A signal, not money. Nobody is charged.
+      </p>
+    </aside>
+  </section>
+
+  {
+    writeup.some(([, t]) => t) && (
+      <section class="wrap pf-section pf-section-tight">
+        <div class="pf-writeup">
+          {writeup.filter(([, t]) => t).map(([h, t]) => (
+            <div style="display:grid;gap:8px">
+              <h2 class="pf-h3">{h}</h2>
+              {paras(t).map((p) => <p>{p}</p>)}
+            </div>
+          ))}
+          {idea.sourceUrl && sourceHost && <p class="muted small">Source for the claims above: <a class="link" href={idea.sourceUrl} rel="noopener nofollow">{sourceHost}</a></p>}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <div style="display:grid;gap:10px">
+        <h2 class="pf-h2">Closest things that exist</h2>
+        <p class="lede">We searched GitHub when this was posted. Here's what's out there{idea.missing ? ', and what the poster says it is missing' : ''}.</p>
+      </div>
+      {closest.length ? (
+        <div class="pf-grid pf-grid-wide">
+          {closest.map((c) => (
+            <div class="pf-row-flat" style="display:grid;gap:10px;align-content:start">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap">
+                <h3 class="pf-h3" style="font-size:1.35rem;overflow-wrap:anywhere"><a href={c.onSite ? `/projects/${c.fullName}` : c.url} rel={c.onSite ? undefined : 'noopener'}>{c.fullName}</a></h3>
+                <span class="pf-tag num">★ {shortCount(c.stars)}</span>
+              </div>
+              {c.does && <p class="muted small">{c.does}</p>}
+              {c.missing && <p class="small"><b>Missing:</b> {c.missing}</p>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="pf-empty"><p>Nothing like it turned up on GitHub. Wide open.</p></div>
+      )}
+    </div>
+  </section>
+
+  {
+    merged.length > 0 && (
+      <section id="merged" class="wrap pf-section">
+        <div class="pf-split">
+          <div>
+            <h2 class="pf-h2">Merged into this one</h2>
+            <p class="lede">Same wish, different words. Their "me too"s count here now, and nobody is counted twice.</p>
+          </div>
+          <ul class="pf-list">
+            {merged.map((m) => (
+              <li class="pf-row-flat" style="background:var(--card);box-shadow:0 0 0 1px var(--line)">
+                <div>
+                  <span style="font-weight:700">"{m.title}"</span>
+                  {m.reason && <div class="muted small">{m.reason}</div>}
+                </div>
+                <span class="muted num">+{m.want} me too</span>
+                {person && (
+                  <form method="post" action="/api/gaps/unmerge">
+                    <input type="hidden" name="from" value={m.slug} />
+                    <input type="hidden" name="into" value={idea.slug} />
+                    <button class="pf-toggle" type="submit">These aren't the same</button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section id="builders" class="pf-wall">
+    <div class="wrap pf-section">
+      <div class="pf-head-row">
+        <div style="display:grid;gap:10px;max-width:640px">
+          <h2 class="pf-h2">Builders on it</h2>
+          <p class="pf-sub" style="font-size:1.125rem;font-weight:500">Claiming doesn't lock anyone out. It lets people find each other, so they build one great version instead of five okay ones.</p>
+        </div>
+      </div>
+      {claims.length ? (
+        <div class="pf-grid">
+          {claims.map((c, i) => (
+            <a class={`pf-brick p${((i + 1) % 6) + 1}`} href={profilePath(c.provider, c.handle)}>
+              <b>{c.name || `@${c.handle}`}</b>
+              {c.note && <span>{c.note}</span>}
+              {c.repoUrl && <small>{c.repoUrl.replace(/^https:\/\//, '')}</small>}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="pf-sub" style="font-weight:500">Nobody has claimed it yet. Be the first, and others will find you here.</p>
+      )}
+      {person ? (
+        mine.claimed ? (
+          <form method="post" action="/api/gaps/claim">
+            <input type="hidden" name="idea" value={idea.slug} />
+            <button class="key key-mint" name="action" value="unclaim" type="submit">You're on it. Step back</button>
+          </form>
+        ) : (
+          <form class="pf-claim" method="post" action="/api/gaps/claim">
+            <input type="hidden" name="idea" value={idea.slug} />
+            <label class="pf-sub" for="claim-note">What you'll work on <span style="font-weight:500">(optional)</span></label>
+            <input class="input" id="claim-note" name="note" maxlength="140" placeholder="The color and type engine" />
+            <label class="pf-sub" for="claim-repo">Shared repo <span style="font-weight:500">(optional; tag it antipaywall on GitHub)</span></label>
+            <input class="input" id="claim-repo" name="repo_url" type="url" placeholder="https://github.com/you/brand-kit" />
+            <button class="key key-marigold" type="submit" style="justify-self:start">Claim it with the others</button>
+          </form>
+        )
+      ) : (
+        <a class="key key-marigold" href={`/auth/signin?next=${encodeURIComponent(here + '#builders')}`} style="justify-self:start">Sign in with GitHub to claim it</a>
+      )}
+    </div>
+  </section>
+
+  <section class="wrap pf-section">
+    <a class="card pf-season-card" href="/hackathon">
+      <div style="display:grid;gap:8px;max-width:720px">
+        <span class="chip" style="justify-self:start">The Antipaywall Hackathon · Season 1</span>
+        <h2 class="pf-h3" style="font-size:clamp(1.6rem,3vw,2.4rem)">{season ? `This is one of the briefs for ${season.name}.` : 'The most wanted gaps become hackathon briefs.'}</h2>
+        <p class="muted">Free to enter. Builders vote on the winners. {demand.want > 0 ? `The ${demand.want} ${demand.want === 1 ? 'person' : 'people'} who want this get first look at every build.` : ''}</p>
+      </div>
+      <span class="key key-tomato">See the season</span>
+    </a>
+  </section>
+
+  {
+    isAdmin(person) && (
+      <section class="wrap pf-section pf-section-tight">
+        <form class="card stack" method="post" action="/api/gaps/merge" style="max-width:640px">
+          <p class="h2">Organizer: merge this into another gap</p>
+          <input type="hidden" name="from" value={idea.slug} />
+          <label for="merge-into">The gap it duplicates (its address or slug)</label>
+          <input class="input" id="merge-into" name="into" required />
+          <label for="merge-reason">Why they're the same</label>
+          <input class="input" id="merge-reason" name="reason" maxlength="300" required />
+          <button class="key" type="submit" style="justify-self:start">Merge</button>
+        </form>
+      </section>
+    )
+  }
+  <SignalScript />
+</Platform>

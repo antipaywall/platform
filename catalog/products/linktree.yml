@@ -1,0 +1,22 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: linktree
+name: Linktree
+category: Websites
+price:
+  cents: 500
+  period: month
+blurb: One page with all your links, for your social profiles.
+words:
+  - link in bio
+  - links page
+  - bio link
+  - landing page
+topics:
+  - link-in-bio
+  - linktree
+  - links
+search_terms:
+  - linktree alternative
+  - link in bio
+aliases: []
+excludes: []

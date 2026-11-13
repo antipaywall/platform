@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: midjourney
+name: Midjourney
+category: AI tools
+price:
+  cents: 1000
+  period: month
+blurb: Make images from a written description.
+words:
+  - image generation
+  - ai art
+  - text to image
+  - stable diffusion
+  - generate pictures
+topics:
+  - stable-diffusion
+  - image-generation
+  - text-to-image
+search_terms:
+  - midjourney alternative
+  - open source image generation
+aliases: []
+excludes: []

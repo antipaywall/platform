@@ -1,0 +1,54 @@
+---
+// "What they want": paid products they switched from or would switch from, and gaps they back,
+// filtered by Switched / Being built / Wanted. The filter is a link, so it works without scripts.
+import { personWants, WANT_LABEL, type WantStatus } from '../../lib/personWants';
+import { adminClient } from '../../lib/supabase';
+
+interface Props {
+  personId: string;
+  name?: string;
+}
+const { personId, name } = Astro.props;
+const db = adminClient();
+const data = db ? await personWants(db, personId).catch(() => null) : null;
+const raw = Astro.url.searchParams.get('want');
+const filter: WantStatus | 'all' = raw === 'switched' || raw === 'building' || raw === 'wanted' ? raw : 'all';
+const wants = (data?.wants ?? []).filter((w) => filter === 'all' || w.status === filter);
+const tone: Record<WantStatus, string> = { switched: 'var(--mint)', building: 'var(--marigold)', wanted: 'var(--pink)' };
+const link = (f: string) => {
+  const u = new URL(Astro.url);
+  if (f === 'all') u.searchParams.delete('want');
+  else u.searchParams.set('want', f);
+  return `${u.pathname}${u.search}#wants`;
+};
+---
+
+{
+  data && data.wants.length > 0 && (
+    <section id="wants" style="display:grid;gap:16px">
+      <div class="pf-head-row">
+        <h2 class="pf-h3">What {name ?? 'they'} want{name ? 's' : ''}</h2>
+        <nav class="pf-filters" aria-label="Filter">
+          {(['all', 'switched', 'building', 'wanted'] as const).map((f) => (
+            <a class="pf-toggle" href={link(f)} aria-pressed={filter === f ? 'true' : 'false'}>{f === 'all' ? 'All' : WANT_LABEL[f]}</a>
+          ))}
+        </nav>
+      </div>
+      {wants.length ? (
+        <ul class="pf-list">
+          {wants.map((w) => (
+            <li class="pf-row-flat">
+              <div style="display:grid;gap:4px">
+                <a href={w.href} style="font-size:1.0625rem">{w.title}</a>
+                {w.note && <span class="muted small">{w.note}</span>}
+              </div>
+              <span class="pf-tag" style={`background:${tone[w.status]};color:var(--ink)`}>{WANT_LABEL[w.status]}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">Nothing here under that filter.</p>
+      )}
+    </section>
+  )
+}

@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: figma
+name: Figma
+category: Design
+price:
+  cents: 1600
+  period: month
+blurb: Design screens and prototypes together in the browser.
+words:
+  - interface design
+  - prototyping
+  - ui design
+  - wireframes
+  - mockups
+  - vector
+topics:
+  - design-tool
+  - prototyping
+  - ui-design
+  - figma-alternative
+search_terms:
+  - figma alternative
+aliases: []
+excludes: []

@@ -1,0 +1,27 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: calendly
+name: Calendly
+category: Scheduling
+price:
+  cents: 1000
+  period: month
+blurb: Booking links so people can pick a time to meet you.
+words:
+  - booking
+  - appointments
+  - scheduling
+  - meeting link
+  - availability
+  - book a call
+  - calendar
+topics:
+  - scheduling
+  - booking
+  - appointments
+  - calendly-alternative
+search_terms:
+  - calendly alternative
+  - appointment booking
+aliases:
+  - calendly.com
+excludes: []

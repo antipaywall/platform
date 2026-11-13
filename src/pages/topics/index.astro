@@ -1,0 +1,24 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import { listTopics } from '../../lib/topics';
+import { adminClient } from '../../lib/supabase';
+
+const db = adminClient();
+const topics = db ? await listTopics(db).catch(() => []) : [];
+---
+
+<Platform title="Open-source software by topic" description="Free, open-source projects from GitHub, grouped by what they do.">
+  <section class="wrap pf-section">
+    <h1 class="pf-title">Open source, by what it does</h1>
+    <p class="lede">Each topic gathers the public GitHub projects that carry it, the paid products they replace, and what people still want.</p>
+    <div class="pf-grid">
+      {topics.map((t, i) => (
+        <a class={`pf-brick p${(i % 6) + 1}`} href={`/topics/${t.slug}`}>
+          <b>{t.name}</b>
+          <span style="font-size:0.9375rem">{t.blurb}</span>
+          <small class="num">{t.count} {t.count === 1 ? 'project' : 'projects'}</small>
+        </a>
+      ))}
+    </div>
+  </section>
+</Platform>

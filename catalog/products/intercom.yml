@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: intercom
+name: Intercom
+category: Support and chat
+price:
+  cents: 2900
+  period: month
+blurb: Chat with customers on your website and answer their questions.
+words:
+  - live chat
+  - customer support
+  - help desk
+  - chat widget
+  - inbox
+topics:
+  - live-chat
+  - customer-support
+  - helpdesk
+  - chat-widget
+search_terms:
+  - intercom alternative
+  - live chat
+aliases: []
+excludes: []

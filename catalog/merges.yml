@@ -1,0 +1,6 @@
+# Gaps that are the same wish, proposed by `pnpm match` or by anyone in a pull request.
+# The sync applies each one once. Anyone signed in can undo a merge on the site.
+# - from: slug-of-the-duplicate
+#   into: slug-of-the-gap-it-joins
+#   reason: Both ask for a booking page that takes a deposit.
+[]

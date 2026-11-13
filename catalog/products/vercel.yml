@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: vercel
+name: Vercel
+category: Hosting and cloud
+price:
+  cents: 2000
+  period: month
+blurb: Host websites and web apps with previews for every change.
+words:
+  - hosting
+  - deploy
+  - frontend hosting
+  - serverless
+  - web hosting
+topics:
+  - paas
+  - self-hosted
+  - deployment
+  - serverless
+search_terms:
+  - vercel alternative
+  - self-hosted deployment platform
+aliases: []
+excludes: []

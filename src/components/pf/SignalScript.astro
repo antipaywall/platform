@@ -1,0 +1,53 @@
+---
+// Makes signal and heart buttons answer without reloading the page. Without scripts the forms
+// still post and come back, so nothing depends on this.
+---
+
+<script>
+  function wire(form: HTMLFormElement) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = form.querySelector<HTMLButtonElement>('button[type=submit]');
+      const onField = form.querySelector<HTMLInputElement>('input[name=on]');
+      if (!button || !onField || button.disabled) return;
+      button.disabled = true;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { accept: 'application/json' } });
+        const body = await res.json().catch(() => null);
+        if (!res.ok || !body?.ok) {
+          // Fall back to the plain post, which shows the reason on the page.
+          form.submit();
+          return;
+        }
+        const nowOn = onField.value === '1';
+        // A new amount on a would-pay that was already on replaces it: the count stays the same.
+        const repick = form.dataset.repick === '1';
+        delete form.dataset.repick;
+        const wasOn = repick || button.getAttribute('aria-pressed') === 'true';
+        button.setAttribute('aria-pressed', nowOn ? 'true' : 'false');
+        onField.value = nowOn ? '0' : '1';
+        const count = Number(button.dataset.count ?? '0') + (nowOn && !wasOn ? 1 : !nowOn && wasOn ? -1 : 0);
+        button.dataset.count = String(count);
+        const countText = button.querySelector('[data-count-text]');
+        if (countText && /^\d+$/.test(countText.textContent ?? '')) countText.textContent = String(count);
+        const labelText = button.querySelector('[data-label-text]');
+        if (labelText && button.dataset.onLabel && !countText) labelText.textContent = nowOn ? button.dataset.onLabel : button.dataset.label ?? '';
+      } catch {
+        form.submit();
+      } finally {
+        button.disabled = false;
+      }
+    });
+    // Changing the amount on a would-pay that is already on updates it straight away.
+    form.querySelector('select[name=pay]')?.addEventListener('change', () => {
+      const button = form.querySelector('button[type=submit]');
+      const onField = form.querySelector<HTMLInputElement>('input[name=on]');
+      if (button?.getAttribute('aria-pressed') === 'true' && onField) {
+        onField.value = '1';
+        form.dataset.repick = '1';
+        form.requestSubmit();
+      }
+    });
+  }
+  document.querySelectorAll<HTMLFormElement>('form[data-signal]').forEach(wire);
+</script>

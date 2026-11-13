@@ -1,0 +1,185 @@
+/* The directory's pages: paid products, projects, topics, gaps, search, the home page.
+   Built from the brand's tokens in global.css: milk and ink, the six paints, key buttons,
+   painted bricks. Everything here is prefixed pf- so it never collides with older pages. */
+
+.pf-main { min-height: 70svh; }
+.pf-flash { margin-top: 24px; }
+
+.pf-section { padding-block: clamp(40px, 6vw, 72px); display: grid; gap: 20px; }
+.pf-section-tight { padding-block: clamp(28px, 4vw, 48px); }
+.pf-band { background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+.pf-wall { background: var(--wall); color: #fff; }
+.pf-wall .muted, .pf-wall .pf-sub { color: var(--wall-ink); }
+
+.pf-hero {
+  padding-block: clamp(32px, 5vw, 56px);
+  display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;
+}
+.pf-hero-main { flex: 999 1 560px; min-width: 0; display: grid; gap: 18px; }
+.pf-hero-side { flex: 1 1 340px; min-width: 0; }
+.pf-title {
+  font-family: var(--display); font-weight: 800; letter-spacing: -0.035em; line-height: 0.95;
+  font-size: clamp(2.6rem, 5.6vw, 5rem); text-wrap: balance; margin: 0;
+}
+.pf-h2 {
+  font-family: var(--display); font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  font-size: clamp(1.9rem, 3.6vw, 3rem); text-wrap: balance; margin: 0;
+}
+.pf-h3 { font-family: var(--display); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; font-size: 1.6rem; margin: 0; }
+.pf-head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
+.pf-sub { color: var(--ink-2); font-size: 0.9375rem; font-weight: 700; }
+
+.pf-crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.9375rem; font-weight: 700; color: var(--ink-2); }
+.pf-crumbs a { text-decoration: none; }
+.pf-crumbs a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+.pf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pf-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--mint); display: inline-block; }
+.pf-dot-marigold { background: var(--marigold); }
+.pf-dot-tomato { background: var(--tomato); }
+.pf-tag {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+  background: var(--milk-2); font-size: 0.8125rem; font-weight: 700; color: var(--ink-2);
+}
+.pf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.key-sm { min-height: 42px; --depth: 4px; font-size: 0.9375rem; padding-inline: 1em; }
+.key-mint { --k: var(--mint); --ke: oklch(0.7 0.1 165); --kt: var(--ink); }
+.key-sky { --k: var(--sky); --ke: oklch(0.66 0.09 240); --kt: var(--ink); }
+
+/* Painted bricks: the free thing in the wall. */
+.pf-brick {
+  background: var(--p); box-shadow: inset 0 -6px 0 var(--pe); border-radius: 20px; color: var(--ink);
+  padding: 20px 20px 26px; display: grid; gap: 6px; align-content: start; text-decoration: none; min-width: 0;
+  transition: transform 220ms var(--spring);
+}
+a.pf-brick:hover { transform: translateY(-3px); }
+.pf-brick b { font-family: var(--display); font-size: 1.4rem; letter-spacing: -0.02em; line-height: 1.08; }
+.pf-brick small { font-size: 0.875rem; font-weight: 700; }
+.pf-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.pf-grid-wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+
+/* Signals: where do you stand? */
+.pf-signal { display: grid; gap: 16px; }
+.pf-opts { display: grid; gap: 10px; }
+.pf-opt-form { display: contents; }
+.pf-opt {
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left; width: 100%;
+  padding: 16px 18px; border-radius: 16px; border: 0; background: var(--milk);
+  box-shadow: 0 0 0 1.5px var(--line) inset; color: var(--ink); font: 500 0.9375rem/1.35 var(--text);
+  cursor: pointer; min-height: 44px; transition: transform 200ms var(--spring);
+}
+.pf-opt b { font: 800 1.4rem/1 var(--display); letter-spacing: -0.02em; }
+.pf-opt:hover { transform: translateY(-2px); }
+.pf-opt[aria-pressed='true'] { background: var(--marigold); box-shadow: inset 0 -5px 0 oklch(0.72 0.14 78); }
+.pf-opt:focus-visible, .pf-toggle:focus-visible, .pf-select:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.pf-pay-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.pf-pay-row .pf-opt { flex: 1 1 180px; width: auto; }
+.pf-select {
+  min-height: 44px; border-radius: 12px; border: 0; padding: 0 12px; font: 700 0.9375rem var(--text);
+  color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--line) inset;
+}
+.pf-note { font-size: 0.875rem; color: var(--ink-2); }
+
+.pf-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 14px;
+  border-radius: 12px; border: 0; background: var(--milk-2); color: var(--ink); font: 700 0.9375rem/1 var(--text); cursor: pointer;
+}
+.pf-toggle[aria-pressed='true'] { background: var(--mint); }
+
+/* Meters on a gap page. */
+.pf-meter { display: grid; gap: 6px; }
+.pf-meter-top { display: flex; justify-content: space-between; font-weight: 700; }
+.pf-meter-bar { height: 14px; border-radius: 99px; background: var(--milk-2); overflow: hidden; }
+.pf-meter-bar span { display: block; height: 100%; border-radius: 99px; background: var(--p, var(--tomato)); min-width: 4px; }
+
+/* Rows: projects, gaps, issues. */
+.pf-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.pf-row {
+  display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; padding: 22px 24px;
+  background: var(--card); border-radius: 24px; box-shadow: 0 30px 60px -40px oklch(0.23 0.045 310 / 0.35), 0 0 0 1px var(--line);
+}
+.pf-row-main { flex: 999 1 420px; min-width: 0; display: grid; gap: 8px; }
+.pf-row-side { flex: 1 1 220px; display: grid; gap: 10px; }
+.pf-row-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.pf-row-title a { text-decoration: none; }
+.pf-row-title a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+.pf-row-flat {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 16px 18px; border-radius: 16px;
+  background: var(--milk); box-shadow: 0 0 0 1px var(--line) inset;
+}
+.pf-band .pf-row-flat { background: var(--milk); }
+.pf-row-flat > div { flex: 1 1 260px; min-width: 0; }
+.pf-row-flat a { font-weight: 700; text-decoration: none; }
+.pf-row-flat a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+
+.pf-split { display: flex; flex-wrap: wrap; gap: 40px; }
+.pf-split > :first-child { flex: 1 1 340px; display: grid; gap: 12px; align-content: start; }
+.pf-split > :last-child { flex: 999 1 520px; min-width: 0; }
+
+.pf-empty {
+  padding: 22px 24px; border-radius: 20px; background: var(--milk); box-shadow: 0 0 0 1.5px var(--line) inset;
+  display: grid; gap: 10px; justify-items: start;
+}
+.pf-band .pf-empty { background: var(--milk); }
+
+/* Search */
+.pf-search { display: flex; flex-wrap: wrap; gap: 10px; max-width: 760px; }
+.pf-search input {
+  flex: 1 1 280px; min-width: 0; min-height: 60px; border-radius: 16px; border: 0; padding: 0 20px;
+  font: 700 1.125rem var(--text); color: var(--ink); background: var(--card);
+  box-shadow: 0 0 0 2px var(--ink) inset, 0 20px 40px -30px oklch(0.23 0.045 310 / 0.5);
+}
+.pf-search input:focus-visible { outline: 3px solid var(--marigold); outline-offset: 2px; }
+
+/* Stats */
+.pf-stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+.pf-stat { display: grid; gap: 4px; }
+.pf-stat b { font: 800 clamp(2.25rem, 4vw, 3.25rem)/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+/* Star chart on a project page. */
+.pf-chart { width: 100%; height: auto; display: block; }
+.pf-code {
+  display: block; padding: 14px 16px; border-radius: 12px; background: var(--milk-2); font: 500 0.8125rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-x: auto; white-space: pre; max-width: 100%;
+}
+
+.pf-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.pf-filters a { text-decoration: none; }
+
+.pf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-opt, .pf-brick, a.pf-brick { transition: none; }
+  .pf-opt:hover, a.pf-brick:hover { transform: none; }
+}
+
+.pf-toggle-dark { background: rgb(255 255 255 / 0.12); color: #fff; }
+.pf-toggle-dark[aria-pressed='true'] { background: var(--mint); color: var(--ink); }
+.pf-wall a.pf-brick, .pf-wall .pf-brick { color: var(--ink); }
+.pf-claim { display: grid; gap: 10px; max-width: 560px; }
+.pf-claim .input { background: #fff; }
+.pf-season-card { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; text-decoration: none; }
+.pf-writeup { display: grid; gap: 22px; max-width: 70ch; }
+.pf-writeup p { margin: 0; }
+.pf-quote { font-size: clamp(1.125rem, 1.45vw, 1.3125rem); line-height: 1.45; color: var(--ink-2); max-width: 60ch; text-wrap: pretty; margin: 0; }
+
+/* Home */
+.pf-home-hero { display: flex; flex-wrap: wrap; gap: 48px; align-items: center; padding-block: clamp(40px, 7vw, 96px) clamp(28px, 4vw, 48px); }
+.pf-home-hero > :first-child { flex: 999 1 560px; min-width: 0; display: grid; gap: 22px; }
+.pf-home-title { font-family: var(--display); font-weight: 800; letter-spacing: -0.04em; line-height: 0.92; font-size: clamp(3rem, 7.4vw, 6.5rem); text-wrap: balance; margin: 0; }
+.pf-wallbits { flex: 1 1 280px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 420px; }
+.pf-wallbits span { aspect-ratio: 2 / 1; border-radius: 10px; background: var(--wall); box-shadow: inset 0 -5px 0 var(--wall-edge); }
+.pf-wallbits span.pf-brick { box-shadow: inset 0 -5px 0 var(--pe); padding: 0; border-radius: 10px; }
+.pf-season {
+  display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: center; justify-content: space-between;
+  background: var(--wall); color: #fff; border-radius: 28px; padding: clamp(22px, 3.4vw, 40px);
+  box-shadow: inset 0 -8px 0 var(--wall-edge);
+}
+.pf-season h2 { font-family: var(--display); font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-size: clamp(1.8rem, 3.4vw, 2.8rem); margin: 0; text-wrap: balance; }
+.pf-season p { color: var(--wall-ink); margin: 0; }
+.pf-season-bar { height: 12px; border-radius: 99px; background: rgb(255 255 255 / 0.14); overflow: hidden; max-width: 420px; }
+.pf-season-bar span { display: block; height: 100%; background: var(--marigold); border-radius: 99px; min-width: 6px; }
+.pf-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.pf-steps li b.pf-step-n { font-size: 2.4rem; }
+.pf-gap-row .pf-meter-bar { height: 8px; max-width: 320px; }

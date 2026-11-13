@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: webflow
+name: Webflow
+category: Websites
+price:
+  cents: 1400
+  period: month
+blurb: Design and publish websites without writing code.
+words:
+  - website builder
+  - no code website
+  - web design
+  - landing pages
+  - cms
+topics:
+  - website-builder
+  - no-code
+  - page-builder
+search_terms:
+  - webflow alternative
+  - website builder
+aliases: []
+excludes: []
