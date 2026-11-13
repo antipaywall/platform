@@ -42,11 +42,20 @@ export async function findProfile(provider: Provider, handle: string): Promise<P
   return (data as Person) ?? null;
 }
 
-/** Their listed ideas, newest first. */
-export async function ideasBy(personId: string): Promise<{ slug: string; title: string }[]> {
-  const { data, error } = await db().from('ideas').select('slug, title').eq('author_id', personId).eq('status', 'listed').order('created_at', { ascending: false }).limit(20);
+export type ProfileIdea = { slug: string; title: string; pitch: string; hearts: number; similar: number; created_at: string };
+
+/** Their listed ideas, newest first, with heart counts and how many similar projects were found. */
+export async function ideasBy(personId: string): Promise<ProfileIdea[]> {
+  const own = await db().from('ideas').select('id').eq('author_id', personId).eq('status', 'listed').limit(50);
+  if (own.error) throw new DataUnavailableError(own.error.message);
+  const ids = (own.data ?? []).map((r) => r.id);
+  if (!ids.length) return [];
+  const { data, error } = await db().from('idea_totals').select('slug, title, pitch, hearts, existing_repos, created_at').in('id', ids).order('created_at', { ascending: false });
   if (error) throw new DataUnavailableError(error.message);
-  return data ?? [];
+  return (data ?? []).map((i: any) => ({
+    slug: i.slug, title: i.title, pitch: i.pitch ?? '', hearts: Number(i.hearts) || 0,
+    similar: Array.isArray(i.existing_repos) ? i.existing_repos.length : 0, created_at: i.created_at,
+  }));
 }
 
 /** Their live pledge, if any: for their own account page only. */

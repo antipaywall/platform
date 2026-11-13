@@ -13,7 +13,7 @@ import type { Activity } from '../../lib/activity';
 import { badgesFor, topBadge, type Badge } from '../../lib/badges';
 import { providerName, providerOf } from '../../lib/accounts';
 import { attempt, DataUnavailableError, type Person } from '../../lib/db';
-import { findProfile, ideasBy, isPublic, parseProfilePath, pledgeOf, profilePath, refreshActivity, refreshRepos } from '../../lib/profiles';
+import { findProfile, ideasBy, type ProfileIdea, isPublic, parseProfilePath, pledgeOf, profilePath, refreshActivity, refreshRepos } from '../../lib/profiles';
 import { followCounts, grantedBadges, isFollowing, postsBy, type PostView } from '../../lib/social';
 import { languageColor, pickFeatured, savedRepos, type Repo } from '../../lib/repos';
 
@@ -21,7 +21,7 @@ const where = parseProfilePath(Astro.params.slug);
 if (!where) return new Response(null, { status: 404 });
 
 let person: Person | null;
-let ideas: { slug: string; title: string }[] = [];
+let ideas: ProfileIdea[] = [];
 let repos: Repo[] = [];
 let activity: Activity = { public: {}, all: {} };
 let badges: Badge[] = [];
@@ -167,8 +167,25 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
       {
         ideas.length > 0 && (
           <section aria-labelledby="ideas-h">
-            <h2 class="prof-h" id="ideas-h">Ideas they posted</h2>
-            <ul class="prof-list">{ideas.map((i) => <li><a class="link" href={`/ideas/${i.slug}`}>{i.title}</a></li>)}</ul>
+            <h2 class="prof-h" id="ideas-h">
+              Ideas they posted
+              {ideas.length > 4 && <a class="link" href="/ideas">All ideas</a>}
+            </h2>
+            <ul class="prof-ideas">
+              {ideas.slice(0, 4).map((i, n) => (
+                <li class={`prof-idea p${(n % 6) + 1}`}>
+                  <a href={`/ideas/${i.slug}`}>
+                    <h3>{i.title}</h3>
+                    {i.pitch && <p>{i.pitch}</p>}
+                  </a>
+                  <p class="prof-idea-foot">
+                    <span title="Hearts">♥ <b>{i.hearts}</b></span>
+                    {i.similar > 0 && <span>{i.similar} similar {i.similar === 1 ? 'project' : 'projects'} found</span>}
+                    <span>{month(i.created_at)}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
           </section>
         )
       }
