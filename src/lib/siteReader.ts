@@ -116,7 +116,9 @@ export function readSite(html: string, domain: string): SiteFacts {
   const named = [meta.get('og:site_name'), meta.get('application-name')].find((v) => v && v.length <= 40 && v.split(' ').length <= 4);
   const titled = segments.find((s) => letters(s) === letters(label)) ?? segments.find((s) => letters(s).startsWith(letters(label)) && s.split(' ').length <= 3);
   // "Calendly.com" is the address, not the name; "Marker.io" is both, and stays.
-  const name = (named ?? titled ?? capital(label)).replace(/\.(com|org|net)$/i, '').slice(0, 60);
+  // Failing both, the address as the site itself spells it ("BugHerd"), else with a capital.
+  const spelled = new RegExp(`(?:^|[^\\p{L}\\p{N}])(${label.replace(/[^a-z0-9]/g, '')})(?![\\p{L}\\p{N}])`, 'iu').exec(`${title} ${meta.get('description') ?? ''}`)?.[1];
+  const name = (named ?? titled ?? spelled ?? capital(label)).replace(/\.(com|org|net)$/i, '').slice(0, 60);
 
   const rest = segments.filter((s) => s !== titled && letters(s) !== letters(name));
   const tagline = (rest.sort((a, b) => b.length - a.length)[0] ?? h1[0] ?? '').slice(0, 160);

@@ -57,6 +57,9 @@ describe('reading a homepage', () => {
     expect(readSite(page('<title>Marker.io: The Website Feedback Tool for Any Team</title>'), 'marker.io').name).toBe('Marker.io');
     expect(readSite(page('<meta property="og:site_name" content="Calendly.com"><title>Scheduling</title>'), 'calendly.com').name).toBe('Calendly');
   });
+  it('spells the name the way the site does', () => {
+    expect(readSite(page('<title>BugHerd Makes it Easy to Get Website Feedback</title>'), 'bugherd.com').name).toBe('BugHerd');
+  });
   it('falls back to the address when the page says nothing', () => {
     expect(readSite('', 'annot.io')).toMatchObject({ name: 'Annot', tagline: '', words: [], phrases: [], price: null });
   });
