@@ -32,7 +32,7 @@ const { id, placeholder = 'A tool you pay for, or what you need it to do', butto
 </form>
 
 <script>
-  type Result = { products: { slug: string; name: string }[]; gaps: { slug: string; title: string }[]; projects: { fullName: string; description: string | null; stars: number }[]; topics: { slug: string; name: string }[] };
+  type Result = { products: { slug: string; name: string }[]; gaps: { slug: string; title: string }[]; projects: { fullName: string; description: string | null; stars: number }[]; topics: { slug: string; name: string }[]; asked?: { domain: string; name: string; tagline: string }[]; site?: string | null };
   const short = (n: number) => (n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n));
 
   function setup(form: HTMLFormElement) {
@@ -85,13 +85,34 @@ const { id, placeholder = 'A tool you pay for, or what you need it to do', butto
     };
     const render = (q: string, r: Result) => {
       panel.replaceChildren();
+      const asked = r.asked ?? [];
+      // A pasted website: one press reads it and finds the open-source projects that do the same job.
+      let lookup: HTMLElement | null = null;
+      if (r.site && !asked.some((t) => t.domain === r.site)) {
+        const b = document.createElement('button');
+        b.type = 'submit';
+        b.formAction = '/api/find';
+        b.formMethod = 'post';
+        b.className = 'pf-isearch-row pf-isearch-lookup';
+        const t = document.createElement('span');
+        t.className = 'pf-isearch-t';
+        const main = document.createElement('b');
+        main.textContent = `Look up ${r.site}`;
+        const sub = document.createElement('span');
+        sub.textContent = 'We read the website and find open-source projects that do the same job';
+        t.append(main, sub);
+        b.append(t);
+        lookup = group('A tool\'s website', [b]);
+      }
       const groups = [
+        lookup,
+        group('Tools people asked about', asked.slice(0, 3).map((t) => row(`/find/${t.domain}`, `Free alternatives to ${t.name}`, t.tagline))),
         group('Paid tools', r.products.slice(0, 4).map((p) => row(`/free-alternatives/${p.slug}`, `Free alternatives to ${p.name}`, ''))),
         group('Wanted', r.gaps.slice(0, 3).map((g) => row(`/ideas/${g.slug}`, g.title, 'Something people want built'))),
         group('Open-source projects', r.projects.slice(0, 5).map((p) => row(`/projects/${p.fullName}`, p.fullName, `★ ${short(p.stars)}${p.description ? ` · ${p.description}` : ''}`, `https://github.com/${p.fullName.split('/')[0]}.png?size=56`))),
         group('Topics', r.topics.slice(0, 3).map((t) => row(`/topics/${t.slug}`, t.name, 'Topic'))),
       ].filter(Boolean) as HTMLElement[];
-      const total = r.products.length + r.gaps.length + r.projects.length + r.topics.length;
+      const total = r.products.length + r.gaps.length + r.projects.length + r.topics.length + asked.length;
       const foot = document.createElement('div');
       foot.className = 'pf-isearch-foot';
       const all = document.createElement('a');
@@ -99,6 +120,12 @@ const { id, placeholder = 'A tool you pay for, or what you need it to do', butto
       all.textContent = total ? `See all results for “${q}”` : `Nothing yet for “${q}”. Post it as something you want`;
       if (!total) all.href = `/ideas/new?title=${encodeURIComponent(q.slice(0, 80))}`;
       foot.append(all);
+      if (!r.site && !r.products.length) {
+        const paste = document.createElement('a');
+        paste.href = '/find';
+        paste.textContent = 'Not here? Paste the tool’s website and we’ll look it up';
+        foot.append(paste);
+      }
       panel.append(...groups, foot);
       status.textContent = total ? `${total} results` : 'No results';
       open(true);
@@ -146,3 +173,9 @@ const { id, placeholder = 'A tool you pay for, or what you need it to do', butto
   }
   document.querySelectorAll<HTMLFormElement>('form[data-isearch]').forEach(setup);
 </script>
+
+<style is:global>
+  /* The "Look up this website" result is a button, so it posts the form; it looks like the other rows. */
+  button.pf-isearch-lookup { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+  .pf-isearch-foot a + a { font-weight: 600; color: var(--ink-2); }
+</style>

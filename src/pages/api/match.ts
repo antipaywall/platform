@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
-import { findMatches } from '../../lib/match';
+import { matchAsked } from '../../lib/askedTools';
+import { findMatches, queryWords } from '../../lib/match';
+import { parseDomain } from '../../lib/siteReader';
 import { adminClient } from '../../lib/supabase';
 
 // What already matches a wish while someone types it: gaps others posted, paid products, topics.
@@ -10,7 +12,9 @@ export const GET: APIRoute = async ({ url }) => {
   const db = adminClient();
   if (!db || q.trim().length < 2) return json({ products: [], gaps: [], projects: [], topics: [] });
   try {
-    return json(await findMatches(db, q, 6));
+    // A pasted website is offered as a lookup; tools others already looked up are matched by name or by what they do.
+    const [matches, asked] = await Promise.all([findMatches(db, q, 6), matchAsked(db, q.trim(), queryWords(q))]);
+    return json({ ...matches, asked, site: parseDomain(q) });
   } catch {
     return json({ products: [], gaps: [], projects: [], topics: [], unavailable: true }, 503);
   }

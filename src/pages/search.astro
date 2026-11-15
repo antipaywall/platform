@@ -3,15 +3,21 @@ import Platform from '../layouts/Platform.astro';
 import { findMatches, isWeak, recordMiss, type Matches } from '../lib/match';
 import ProjectCard from '../components/pf/ProjectCard.astro';
 import { adminClient } from '../lib/supabase';
+import { matchAsked } from '../lib/askedTools';
+import { queryWords } from '../lib/match';
+import { parseDomain } from '../lib/siteReader';
 
 const q = (Astro.url.searchParams.get('q') ?? '').trim().slice(0, 200);
 let matches: Matches | null = null;
 let failed = false;
+// A pasted website is offered as a lookup, and tools others looked up are matched too.
+const site = parseDomain(q);
+let asked: { domain: string; name: string; tagline: string }[] = [];
 const db = adminClient();
 if (q && db) {
   try {
-    matches = await findMatches(db, q, 12);
-    if (isWeak(matches)) await recordMiss(db, q);
+    [matches, asked] = await Promise.all([findMatches(db, q, 12), matchAsked(db, q, queryWords(q), 6)]);
+    if (isWeak(matches) && !asked.length && !site) await recordMiss(db, q);
   } catch {
     failed = true;
   }
@@ -34,7 +40,7 @@ if (top && db) {
 }
 const shown = new Set(topAlts.map((p) => p.fullName));
 const otherProjects = (matches?.projects ?? []).filter((p) => !shown.has(p.fullName)).sort((a, b) => b.stars - a.stars);
-const empty = matches && !matches.products.length && !matches.gaps.length && !matches.projects.length && !matches.topics.length;
+const empty = matches && !matches.products.length && !matches.gaps.length && !matches.projects.length && !matches.topics.length && !asked.length;
 ---
 
 <Platform title={q ? `Search: ${q}` : "Search"} description="Search for a free, open-source version of anything you pay for." noindex>
@@ -46,7 +52,30 @@ const empty = matches && !matches.products.length && !matches.gaps.length && !ma
       <button class="key" type="submit">Search</button>
     </form>
     {failed && <p class="flash flash-error" role="alert">Search isn't answering right now. Try again in a minute.</p>}
+    {site && (
+      <form class="pf-empty" method="post" action="/api/find" style="margin-top:18px">
+        <input type="hidden" name="site" value={site} />
+        <p><b>Is {site} the tool's website?</b> We can read what it does and find the open-source projects that do the same job.</p>
+        <button class="key key-tomato key-sm" type="submit">Look up {site}</button>
+      </form>
+    )}
   </section>
+
+  {
+    asked.length > 0 && (
+      <section class="wrap pf-section pf-section-tight">
+        <h2 class="pf-h3">Tools people asked about</h2>
+        <div class="pf-grid" style="margin-top:14px">
+          {asked.map((t, i) => (
+            <a class={`pf-brick p${(i % 6) + 1}`} href={`/find/${t.domain}`}>
+              <small>Free alternatives to</small>
+              <b>{t.name}</b>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   {
     matches && !empty && (
@@ -110,6 +139,7 @@ const empty = matches && !matches.products.length && !matches.gaps.length && !ma
         <div class="pf-empty">
           <p><b>{empty ? `Nothing yet for “${q}”.` : 'No paid product or wish matches that yet.'}</b> If you want it, say so. Others who want it too can back it, and builders see it.</p>
           <a class="key key-marigold key-sm" href={`/ideas/new?title=${encodeURIComponent(q.slice(0, 80))}`}>Add it as something you want</a>
+          <a class="key key-milk key-sm" href="/find">Paste the tool's website</a>
         </div>
       </section>
     )

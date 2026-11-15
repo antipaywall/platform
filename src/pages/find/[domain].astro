@@ -1,0 +1,124 @@
+---
+// What we found for a tool someone looked up by its website: what the tool says it does, the
+// closest open-source projects, and a way to ask for one when nothing solid exists.
+import Platform from '../../layouts/Platform.astro';
+import { getAsked } from '../../lib/askedTools';
+import { cleanDescription, dollars, shortCount } from '../../lib/format';
+import { SOLID_STARS } from '../../lib/products';
+import { parseDomain } from '../../lib/siteReader';
+import { adminClient } from '../../lib/supabase';
+
+const domain = parseDomain(Astro.params.domain ?? '');
+const db = adminClient();
+if (!domain || !db) return new Response(null, { status: 404 });
+const tool = await getAsked(db, domain).catch(() => null);
+if (tool?.status === 'hidden') return new Response(null, { status: 404 });
+
+// Projects we already follow get their page here; the rest link to GitHub.
+let followed = new Set<string>();
+if (tool?.repos.length) {
+  const { data } = await db.from('projects').select('full_name').eq('listed', true).in('full_name', tool.repos.map((r) => r.fullName));
+  followed = new Set(((data ?? []) as { full_name: string }[]).map((r) => r.full_name.toLowerCase()));
+}
+const solid = tool ? tool.bestStars >= SOLID_STARS : false;
+const price = tool?.price ? `from about ${dollars(tool.price.cents)} a ${tool.price.period}` : null;
+const wantTitle = tool ? `An open-source ${tool.name}`.slice(0, 80) : '';
+---
+
+{
+  !tool ? (
+    <Platform title={`Look up ${domain}`} description={`Find open-source projects that do what ${domain} does.`} noindex>
+      <section class="wrap pf-section ft">
+        <h1 class="pf-title">We haven't looked at {domain} yet.</h1>
+        <p class="lede">Look it up and we'll read what it does, then search GitHub for open-source projects doing the same job.</p>
+        <form method="post" action="/api/find">
+          <input type="hidden" name="site" value={domain} />
+          <button class="key key-big key-tomato" type="submit">Look up {domain}</button>
+        </form>
+      </section>
+    </Platform>
+  ) : (
+    <Platform title={`Free, open-source alternatives to ${tool.name}`} description={`Open-source projects that do what ${tool.name} does, found from the words on its own website.`} noindex>
+      <section class="wrap pf-section ft">
+        <p class="ft-from">
+          <a class="link" href={`https://${tool.domain}`} rel="noopener nofollow" target="_blank">{tool.domain}</a>
+          {price && <span>{price}</span>}
+          {tool.asks > 1 && <span>{tool.asks} people asked</span>}
+        </p>
+        <h1 class="pf-title">{solid ? `Free, open-source alternatives to ${tool.name}` : `Nobody has built a solid free ${tool.name} yet.`}</h1>
+        {tool.readOk ? (
+          <p class="lede">
+            {tool.name} says it is: “{tool.tagline || tool.description}”{tool.tagline && tool.description ? ` ${tool.description}` : ''}
+          </p>
+        ) : (
+          <p class="lede">We couldn't read {tool.domain}, so all we know is its name. Tell us what it does and it becomes something builders can pick up.</p>
+        )}
+      </section>
+
+      <section class="wrap pf-section pf-section-tight ft">
+        {tool.repos.length > 0 ? (
+          <>
+            <div class="pf-head-row">
+              <h2 class="pf-h2">{solid ? 'Open-source projects that do this' : 'The closest open-source projects'}</h2>
+            </div>
+            {!solid && <p class="pf-note">These exist, but none has {shortCount(SOLID_STARS)} stars yet, so few people rely on them. Each one is a place to start building from.</p>}
+            <ul class="ft-list">
+              {tool.repos.map((r) => {
+                const ours = followed.has(r.fullName.toLowerCase());
+                const [owner, name] = r.fullName.split('/');
+                return (
+                  <li>
+                    <a href={ours ? `/projects/${r.fullName}` : `https://github.com/${r.fullName}`} rel={ours ? undefined : 'noopener'} target={ours ? undefined : '_blank'}>
+                      <img src={`https://github.com/${owner}.png?size=88`} alt="" width="44" height="44" loading="lazy" decoding="async" />
+                      <span class="ft-t">
+                        <b>{name}</b>
+                        <span>{cleanDescription(r.description) || 'No description'}</span>
+                      </span>
+                      <span class="ft-s num">★ {shortCount(r.stars)}{r.license ? ` · ${r.license}` : ''}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        ) : (
+          <p class="pf-empty">We found no open-source project that does what {tool.name} does. Wide open.</p>
+        )}
+      </section>
+
+      <section class="wrap pf-section pf-section-tight ft">
+        <div class="ft-ask">
+          <div>
+            <h2 class="pf-h2">{solid ? 'Not the same thing?' : `Want a free ${tool.name}?`}</h2>
+            <p>{solid ? `If none of these replaces ${tool.name} for you, say what is missing. That gap is what builders look for.` : 'Post it as something you want. Builders see what people ask for, and the most wanted ones go into the hackathon.'}</p>
+          </div>
+          <a class="key key-big key-tomato" href={`/ideas/new?title=${encodeURIComponent(wantTitle)}`}>Post it as something you want</a>
+        </div>
+        <p class="pf-note">
+          How we found these: we read {tool.domain} and searched GitHub with its own words{tool.phrases.length > 0 && <> (“{tool.phrases.slice(0, 2).join('”, “')}”)</>}. No AI is involved, so the list can miss or include something off. <a class="link" href="/find">Look up another tool</a>
+        </p>
+      </section>
+    </Platform>
+  )
+}
+
+<style>
+  .ft { display: grid; gap: 16px; max-width: 900px; }
+  .ft-from { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-weight: 700; color: var(--ink-2); margin: 0; }
+  .ft-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .ft-list a { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: var(--card); box-shadow: 0 0 0 1px var(--line); text-decoration: none; color: var(--ink); }
+  .ft-list a:hover { box-shadow: 0 0 0 1.5px var(--ink); }
+  .ft-list img { border-radius: 11px; background: var(--milk-2); }
+  .ft-t { display: grid; gap: 2px; min-width: 0; }
+  .ft-t b { font: 800 1.1rem/1.2 var(--display); letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ft-t span { font-size: 0.9375rem; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ft-s { font-size: 0.875rem; font-weight: 700; color: var(--ink-2); white-space: nowrap; }
+  .ft-ask { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; padding: clamp(20px, 3vw, 30px); border-radius: 22px; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+  .ft-ask > div { display: grid; gap: 6px; flex: 1 1 320px; }
+  .ft-ask p { margin: 0; color: var(--ink-2); }
+  @media (max-width: 560px) {
+    .ft-list a { grid-template-columns: 36px minmax(0, 1fr); }
+    .ft-list img { width: 36px; height: 36px; }
+    .ft-s { grid-column: 2; }
+  }
+</style>
