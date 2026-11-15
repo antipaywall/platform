@@ -2,12 +2,14 @@
 // "Start your Season 1 entry": for a builder who joined. Shows their entry once it's started.
 import { CURRENT_SEASON } from '../lib/entries';
 import { adminClient } from '../lib/supabase';
+import { seenAs } from '../lib/viewAs';
 
 interface Props {
   next: string;
 }
 const { next } = Astro.props;
-const person = Astro.locals.person;
+// The organizer can look at this page the way another kind of account sees it.
+const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;
 let entry: string | null = null;
 if (person?.is_builder) {
   const { data } = (await adminClient()?.from('season_entries').select('repo_full_name').eq('season_id', CURRENT_SEASON).eq('person_id', person.id).maybeSingle()) ?? { data: null };

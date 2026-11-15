@@ -18,6 +18,7 @@ import { attempt, getOrganizerPledge, getStats, listBuilders, listIdeas, listPle
 import { getSeason } from '../../lib/seasons';
 import { adminClient } from '../../lib/supabase';
 import '../../styles/platform.css';
+import { seenAs } from '../../lib/viewAs';
 
 // If the database can't be read, the page says so. It never shows a zero it could not verify.
 const [stats, recent, sponsors, organizer, newest] = await Promise.all([
@@ -163,7 +164,7 @@ import VercelAnalytics from '../../components/VercelAnalytics.astro';
     </section>
 
     <main>
-      {Astro.locals.person?.is_builder && <section class="wrap" style="padding-top:32px"><EntryBox next="/hackathon" /></section>}
+      {Astro.locals.person && seenAs(Astro.locals.person, Astro.locals.viewAs).is_builder && <section class="wrap" style="padding-top:32px"><EntryBox next="/hackathon" /></section>}
       <section class="when" aria-label="How it runs">
         <ol class="wrap when-row">
           {

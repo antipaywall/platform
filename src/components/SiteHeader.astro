@@ -7,6 +7,7 @@ import { providerName, providerOf } from '../lib/accounts';
 import { isAdmin } from '../lib/db';
 import { isPublic, profilePath } from '../lib/profiles';
 import { seenAs } from '../lib/viewAs';
+import ViewAsBar from './ViewAsBar.astro';
 
 // The organizer can look at the site as another kind of account: the header then shows what that account would see.
 const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;
@@ -50,6 +51,7 @@ const mine = person
 ---
 
 <header class="site-head" data-site-head>
+  <ViewAsBar />
   <div class="wrap bar-top">
     <a class="brand" href="/" aria-label={`${site.name} home`}><span class="brand-anti">anti</span>paywall</a>
     <nav class="bar-links" aria-label="Main">

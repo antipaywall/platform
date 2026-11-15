@@ -1,0 +1,27 @@
+---
+// A strip across the top of the public pages while the organizer looks at the site as another
+// kind of account, with the way back. Drawn for the organizer only: the view is never set for
+// anyone else.
+import { VIEW_LABEL } from '../lib/viewAs';
+
+const view = Astro.locals.viewAs;
+const here = Astro.url.pathname;
+---
+
+{
+  view && (
+    <form class="view-bar" method="post" action="/api/admin/view-as">
+      <input type="hidden" name="as" value="" />
+      <input type="hidden" name="next" value={here} />
+      <p><b>Viewing as {VIEW_LABEL[view]}.</b> Only what you see changes. Anything you save still happens as you.</p>
+      <button type="submit">Back to organizer view</button>
+    </form>
+  )
+}
+
+<style>
+  .view-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 16px; padding: 7px var(--gutter); background: var(--marigold); color: var(--ink); font-size: 0.9375rem; }
+  .view-bar p { margin: 0; }
+  .view-bar button { border: 0; padding: 4px 12px; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+  .view-bar button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+</style>

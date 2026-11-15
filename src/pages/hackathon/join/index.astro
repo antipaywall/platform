@@ -3,8 +3,10 @@ import Base from '../../../layouts/Base.astro';
 import { shape, site } from '../../../config/site';
 import { attempt, getInvolvement } from '../../../lib/db';
 import { WAYS } from '../../../lib/ways';
+import { seenAs } from '../../../lib/viewAs';
 
-const person = Astro.locals.person;
+// The organizer can look at this page the way another kind of account sees it.
+const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;
 const mine = person ? await attempt(() => getInvolvement(person.id)) : null;
 
 // What a signed-in person has already done, per card. Null means nothing to show.

@@ -25,6 +25,15 @@ describe('view as', () => {
     for (const f of ['delete', 'email', 'profile', 'repos', 'username']) expect(readFileSync(`src/pages/api/account/${f}.ts`, 'utf8'), f).not.toMatch(/viewAs|seenAs/);
     expect(readFileSync('src/lib/db.ts', 'utf8')).not.toMatch(/viewAs|seenAs/);
   });
+  it('is followed by the hackathon pages, and public pages say when it is on', () => {
+    const seen = 'const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;';
+    for (const f of ['src/pages/hackathon/join/build.astro', 'src/pages/hackathon/join/index.astro', 'src/components/EntryBox.astro']) expect(readFileSync(f, 'utf8'), f).toContain(seen);
+    expect(readFileSync('src/pages/hackathon/index.astro', 'utf8')).toContain('seenAs(Astro.locals.person, Astro.locals.viewAs).is_builder');
+    expect(readFileSync('src/components/SiteHeader.astro', 'utf8')).toContain('<ViewAsBar />');
+    // The strip draws nothing unless a view is on, and the join route itself never reads the view.
+    expect(readFileSync('src/components/ViewAsBar.astro', 'utf8')).toMatch(/\{\s*view && \(/);
+    for (const f of ['src/pages/api/join.ts', 'src/pages/api/hackathon/entry.ts']) expect(readFileSync(f, 'utf8'), f).not.toMatch(/viewAs|seenAs/);
+  });
   it('hides the way into the organizer\'s pages while looking as someone else', () => {
     expect(readFileSync('src/components/AccountNav.astro', 'utf8')).toContain("const organizer = isAdmin(real) && !view ? [{ href: '/admin', label: 'Organizer pages' }] : [];");
   });

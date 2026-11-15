@@ -4,8 +4,10 @@ import SignIn from '../../../components/SignIn.astro';
 import { shape, site } from '../../../config/site';
 import { providerName, providerOf } from '../../../lib/accounts';
 import { checkEligibility } from '../../../lib/eligibility';
+import { seenAs } from '../../../lib/viewAs';
 
-const person = Astro.locals.person;
+// The organizer can look at this page the way another kind of account sees it.
+const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;
 const checked = person?.checked_at && person.account_created_at;
 const results = checked
   ? checkEligibility(
