@@ -40,6 +40,14 @@ const now = new Date();
       Ask your agent "is there an open-source version of this?" and it checks Antipaywall. If nothing exists, it can post the idea for you, say
       "me too" on one that's already wanted, or follow it. It's the same site, the same rules and the same limits, through MCP.
     </p>
+    <h2 class="pf-h3" style="margin-top:8px">Things to ask it</h2>
+    <ul class="ag-asks">
+      <li>“Is there an open-source version of Calendly?”</li>
+      <li>“I pay for annot.io. Is anyone building a free one?”</li>
+      <li>“Add Loom and Typeform to the tools I pay for.”</li>
+      <li>“Find me a good first issue in a TypeScript project.”</li>
+      <li>“Is this repo ready to open-source?”</li>
+    </ul>
     <h2 class="pf-h3" style="margin-top:8px">What your agent can do</h2>
     <dl class="ag-tools">
       {TOOLS.map((t) => (
@@ -110,4 +118,6 @@ const now = new Date();
   .ag-tools > div { background: var(--card); padding: 14px 18px; display: grid; gap: 6px; align-content: start; }
   .ag-tools dt code { font: 700 0.9375rem ui-monospace, SFMono-Regular, Menlo, monospace; padding: 2px 8px; border-radius: 8px; background: var(--milk-2); }
   .ag-tools dd { margin: 0; color: var(--ink-2); font-size: 0.9375rem; }
+  .ag-asks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .ag-asks li { padding: 8px 14px; border-radius: 999px; background: var(--card); box-shadow: 0 0 0 1px var(--line); font-weight: 700; font-size: 0.9375rem; }
 </style>

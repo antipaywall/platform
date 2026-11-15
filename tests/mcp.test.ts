@@ -50,7 +50,7 @@ describe('the MCP protocol', () => {
   it('lists its tools', async () => {
     const r: any = await handleRpc({ jsonrpc: '2.0', id: 2, method: 'tools/list' }, ctx);
     expect(r.result.tools.map((t: any) => t.name)).toEqual(TOOLS.map((t) => t.name));
-    expect(TOOLS.map((t) => t.name)).toEqual(['search', 'alternatives_to', 'get_gap', 'top_gaps', 'post_idea', 'me_too', 'suggest_improvement', 'follow']);
+    expect(TOOLS.map((t) => t.name)).toEqual(['search', 'alternatives_to', 'get_gap', 'top_gaps', 'post_idea', 'me_too', 'suggest_improvement', 'follow', 'lookup_tool', 'my_tools', 'help_wanted', 'open_source_ready']);
   });
   it('answers notifications with nothing', async () => {
     expect(await handleRpc({ jsonrpc: '2.0', method: 'notifications/initialized' }, ctx)).toBeNull();
@@ -60,5 +60,34 @@ describe('the MCP protocol', () => {
     expect(r.error.code).toBe(-32601);
     const t: any = await handleRpc({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'nope', arguments: {} } }, ctx);
     expect(t.result.isError).toBe(true);
+  });
+});
+
+describe('the newer MCP tools', () => {
+  const ctx = { person: { id: 'p1' } as any, db: {} as any, origin: 'https://www.antipaywall.org' };
+  const call = async (name: string, args: object) => ((await handleRpc({ jsonrpc: '2.0', id: 9, method: 'tools/call', params: { name, arguments: args } }, ctx)) as any).result;
+  it('refuse something that is not a tool\'s website before doing any work', async () => {
+    for (const website of ['annot', 'http://localhost:3000', '169.254.169.254', 'github.com', 'next.js']) {
+      const r = await call('lookup_tool', { website });
+      expect(r.isError, website).toBe(true);
+      expect(r.structuredContent.error).toMatch(/not a tool's website/);
+    }
+  });
+  it('ask which tool, and which action, before touching the list of tools someone pays for', async () => {
+    expect((await call('my_tools', { action: 'drop' })).structuredContent.error).toMatch(/list, add or remove/);
+    expect((await call('my_tools', { action: 'add' })).structuredContent.error).toMatch(/which tool/);
+    expect((await call('my_tools', { action: 'remove', tool: '  ' })).isError).toBe(true);
+  });
+  it('hand over the Open Source Ready checklist and where it lives, and nothing about anyone\'s code', async () => {
+    const all = (await call('open_source_ready', {})).structuredContent;
+    expect(all.guide).toBe('https://www.antipaywall.org/open-source-ready');
+    expect(all.skill).toBe('https://github.com/antipaywall/open-source-ready');
+    expect(all.steps).toBeGreaterThan(10);
+    expect(all.parts[0].steps[0]).toEqual(expect.objectContaining({ step: expect.any(String), why: expect.any(String), for: expect.any(String), checked_by_the_skill: expect.any(Boolean) }));
+    // Narrowed to one kind of project, the steps for every project stay and the rest go.
+    const company = (await call('open_source_ready', { for: 'company' })).structuredContent;
+    expect(company.steps).toBeLessThan(all.steps);
+    expect(company.parts.flatMap((p: any) => p.steps).every((s: any) => ['Every project', 'Work or company projects'].includes(s.for))).toBe(true);
+    expect((await call('open_source_ready', { for: 'nonsense' })).structuredContent.steps).toBe(all.steps);
   });
 });

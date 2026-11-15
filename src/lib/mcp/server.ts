@@ -1,29 +1,74 @@
-// The Antipaywall MCP: what coding agents can do here. Search for free alternatives, look up gaps
-// and their demand, post an idea, say "me too", suggest an improvement, follow. Builders only, with
-// the same checks and limits as the site. Nothing here calls an AI model.
+// The Antipaywall MCP: what coding agents can do here. Search for free alternatives, look a paid
+// tool up by its website, keep the list of tools you pay for, look up gaps and their demand, post
+// an idea, say "me too", suggest an improvement, follow, find an issue to contribute to, and get
+// the checklist for making a project ready to open-source. Builders only, with the same checks and
+// limits as the site. Nothing here calls an AI model. The design is in docs/mcp.md.
 //
 // A small, stateless JSON-RPC handler for MCP's Streamable HTTP transport: each POST is answered
 // with JSON, which suits the site's serverless functions.
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { site } from '../../config/site';
+import { OSR_GUIDE_PATH, osrChecklist } from './checklist';
+import { catalogSlugFor, countAsk, getAsked, isStale, lookupTool, type AskedTool } from '../askedTools';
 import type { Person } from '../db';
 import { parseIdea } from '../forms';
 import { demandFor } from '../gaps';
 import { pushNewIdea } from '../ideasSync';
 import { findMatches } from '../match';
+import { addMyTool, listMyTools, removeMyTool } from '../myTools';
 import { storeIdea } from '../postIdea';
-import { getProductPage } from '../products';
+import { getProductPage, SOLID_STARS } from '../products';
 import { takeSlot } from '../ratelimit';
+import { parseDomain } from '../siteReader';
 
 export const PROTOCOL_VERSION = '2025-06-18';
 const MAX_WRITES_PER_HOUR = 30;
+/** New websites one person, and the site as a whole, may have looked up in an hour: the same as the site's own lookup. */
+const MAX_LOOKUPS_PER_HOUR = 10;
+const MAX_ALL_LOOKUPS_PER_HOUR = 150;
 
 type Ctx = { person: Person; db: SupabaseClient; origin: string };
 type Tool = { name: string; description: string; inputSchema: object; write?: boolean; run: (args: any, ctx: Ctx) => Promise<unknown> };
 
 const str = (d: string, max = 200) => ({ type: 'string', description: d, maxLength: max });
 const url = (ctx: Ctx, path: string) => `${ctx.origin}${path}`;
+const count = (v: unknown, max: number, fallback: number) => Math.min(max, Math.max(1, Math.trunc(Number(v)) || fallback));
+
+/** What a lookup found, as an agent reads it. */
+const asLookup = (t: AskedTool, ctx: Ctx) => ({
+  name: t.name,
+  website: t.domain,
+  says_it_is: t.tagline || t.description || null,
+  price: t.price ? `from about $${(t.price.cents / 100).toFixed(t.price.cents % 100 ? 2 : 0)} a ${t.price.period}` : null,
+  // A gap: nothing found that many people rely on.
+  is_a_gap: t.bestStars < SOLID_STARS,
+  projects: t.repos.map((r) => ({ repo: r.fullName, url: r.url, stars: r.stars, license: r.license, description: r.description })),
+  people_who_asked: t.asks,
+  page: url(ctx, `/find/${t.domain}`),
+  how: t.readOk
+    ? 'Found by reading the tool\'s own website and searching GitHub with its words. No AI was used, so the list can miss or include something off.'
+    : 'The website could not be read, so only its name is known.',
+});
+
+/**
+ * The saved answer for a website, looking it up first when nobody has, or when the answer is old.
+ * A new lookup costs a page read and a handful of GitHub searches, so it has the site's limits.
+ */
+async function lookedUp(ctx: Ctx, domain: string): Promise<AskedTool | 'limited' | 'hidden'> {
+  const known = await getAsked(ctx.db, domain);
+  if (known?.status === 'hidden') return 'hidden';
+  if (known && !isStale(known)) return known;
+  const limited =
+    (await takeSlot(ctx.db, 'find', `u:${ctx.person.id}`, MAX_LOOKUPS_PER_HOUR)) === 'limited' || (await takeSlot(ctx.db, 'find-all', 'all', MAX_ALL_LOOKUPS_PER_HOUR)) === 'limited';
+  if (limited) return known ?? 'limited';
+  try {
+    return (await lookupTool(ctx.db, domain, { token: import.meta.env.GITHUB_TOKEN })).tool;
+  } catch (e) {
+    if (known) return known;
+    throw e;
+  }
+}
 
 export const TOOLS: Tool[] = [
   {
@@ -148,6 +193,127 @@ export const TOOLS: Tool[] = [
       return { ok: true };
     },
   },
+  {
+    name: 'lookup_tool',
+    description:
+      'Look up a paid tool by its website when search does not know it. Antipaywall reads what the tool says it does and searches GitHub for open-source projects doing the same job, then remembers the answer. Use it when someone names a tool they pay for and gives, or you know, its website.',
+    inputSchema: { type: 'object', properties: { website: str('The tool\'s website, e.g. "annot.io"', 200) }, required: ['website'] },
+    run: async ({ website }, ctx) => {
+      const domain = parseDomain(String(website ?? ''));
+      if (!domain) return { error: 'That is not a tool\'s website. Give the address someone would type to visit it, like "annot.io".' };
+      const slug = await catalogSlugFor(ctx.db, domain);
+      if (slug) return { tracked: true, slug, page: url(ctx, `/free-alternatives/${slug}`), next: 'Antipaywall already tracks this tool. Call alternatives_to with this slug.' };
+      const tool = await lookedUp(ctx, domain);
+      if (tool === 'hidden') return { error: 'That website can\'t be looked up.' };
+      if (tool === 'limited') return { error: 'Too many lookups in the last hour. Try again later.' };
+      await countAsk(ctx.db, domain, `u:${ctx.person.id}`);
+      return {
+        ...asLookup(tool, ctx),
+        next: tool.bestStars < SOLID_STARS ? 'Nobody has built a solid free version. If the person wants one, offer post_idea.' : 'If none of these replaces it for the person, offer post_idea and say what is missing.',
+      };
+    },
+  },
+  {
+    name: 'my_tools',
+    description:
+      'The paid tools this person pays for today. List them, add one, or remove one. Adding a tool tells Antipaywall it is worth replacing; it is not a payment and costs nothing. Give a tool as returned by search (a slug like "calendly") or as its website ("annot.io").',
+    inputSchema: {
+      type: 'object',
+      properties: { action: { type: 'string', enum: ['list', 'add', 'remove'] }, tool: str('For add and remove: the tool\'s slug or website', 200) },
+      required: ['action'],
+    },
+    run: async ({ action, tool }, ctx) => {
+      const shown = async () =>
+        (await listMyTools(ctx.db, ctx.person.id)).map((t) =>
+          t.kind === 'catalog' ? { name: t.name, slug: t.slug, page: url(ctx, `/free-alternatives/${t.slug}`) } : { name: t.name, website: t.domain, page: url(ctx, `/find/${t.domain}`) },
+        );
+      if (action === 'list') return { tools: await shown() };
+      if (action !== 'add' && action !== 'remove') return { error: 'action must be list, add or remove.' };
+      if (typeof tool !== 'string' || !tool.trim()) return { error: 'Say which tool: its slug or its website.' };
+      if ((await takeSlot(ctx.db, 'mcp_write', ctx.person.id, MAX_WRITES_PER_HOUR)) === 'limited') return { error: 'Too many changes in the last hour. Try again later.' };
+      if (action === 'remove') return { removed: await removeMyTool(ctx.db, ctx.person.id, tool), tools: await shown() };
+      let added = await addMyTool(ctx.db, ctx.person.id, tool);
+      // A website nobody has asked about yet is looked up first, then added.
+      if (!added.ok && added.reason === 'not_looked_up') {
+        const domain = parseDomain(tool);
+        const found = domain ? await lookedUp(ctx, domain) : 'hidden';
+        if (found === 'limited') return { error: 'Too many lookups in the last hour. Try again later.' };
+        if (found !== 'hidden') added = await addMyTool(ctx.db, ctx.person.id, tool);
+      }
+      if (!added.ok) {
+        return {
+          error: {
+            unknown: 'No paid tool by that name or website. Use search, or give its website.',
+            not_looked_up: 'That website can\'t be looked up.',
+            too_many: 'That is the most tools one person can list.',
+            failed: 'That did not save. Try again in a minute.',
+          }[added.reason],
+        };
+      }
+      return { added: !added.already, already_listed: added.already, tool: added.tool.name, tools: await shown() };
+    },
+  },
+  {
+    name: 'help_wanted',
+    description:
+      'Open issues that open-source projects have marked "help wanted" or "good first issue", for someone looking for something to contribute to. Narrow it by a paid tool (projects replacing it), or by a topic or language as projects tag themselves on GitHub (e.g. "typescript", "self-hosted").',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        paid_tool: str('A paid tool\'s slug, as returned by search: issues in the projects that replace it', 60),
+        topic: str('A GitHub topic or language the project is tagged with', 50),
+        first_timers: { type: 'boolean', description: 'Only issues marked as good for a first contribution' },
+        limit: { type: 'integer', minimum: 1, maximum: 25 },
+      },
+    },
+    run: async ({ paid_tool, topic, first_timers, limit }, ctx) => {
+      const n = count(limit, 25, 10);
+      let projects: { id: string; full_name: string; stars: number }[] = [];
+      if (typeof paid_tool === 'string' && paid_tool.trim()) {
+        const { data: p } = await ctx.db.from('products').select('id').eq('slug', paid_tool.trim().toLowerCase()).maybeSingle();
+        if (!p) return { error: 'No paid tool with that slug. Use search first.' };
+        const { data } = await ctx.db.from('project_products').select('projects!inner(id, full_name, stars, listed)').eq('product_id', p.id).eq('projects.listed', true).limit(200);
+        projects = ((data ?? []) as any[]).map((r) => r.projects).filter(Boolean);
+      } else {
+        let q = ctx.db.from('projects').select('id, full_name, stars').eq('listed', true).or('help_wanted.gt.0,good_first.gt.0');
+        const tag = typeof topic === 'string' ? topic.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9+#.-]/g, '') : '';
+        if (tag) q = q.contains('topics', [tag]);
+        const { data, error } = await q.order('stars', { ascending: false }).limit(150);
+        if (error) throw new Error(error.message);
+        projects = (data ?? []) as typeof projects;
+      }
+      projects = projects.sort((a, b) => b.stars - a.stars).slice(0, 150);
+      if (!projects.length) return { issues: [], note: 'No tracked project matches that. Try a broader topic, or none at all.' };
+      const byId = new Map(projects.map((p) => [p.id, p]));
+      const { data, error } = await ctx.db.from('help_issues').select('project_id, title, url, labels, comments, updated_at').in('project_id', projects.map((p) => p.id)).order('updated_at', { ascending: false }).limit(300);
+      if (error) throw new Error(error.message);
+      const first = (labels: string[]) => labels.some((l) => /good.first|first.timer|beginner|starter|easy/i.test(l));
+      // At most two from any one project, so one busy project doesn't fill the list.
+      const perProject = new Map<string, number>();
+      const issues = ((data ?? []) as { project_id: string; title: string; url: string; labels: string[] | null; comments: number; updated_at: string | null }[])
+        // An issue nobody has touched in two years is rarely still wanted.
+        .filter((i) => !i.updated_at || Date.now() - Date.parse(i.updated_at) < 730 * 24 * 3600 * 1000)
+        .filter((i) => !first_timers || first(i.labels ?? []))
+        .filter((i) => {
+          const seen = perProject.get(i.project_id) ?? 0;
+          perProject.set(i.project_id, seen + 1);
+          return seen < 2;
+        })
+        .slice(0, n)
+        .map((i) => {
+          const p = byId.get(i.project_id)!;
+          return { title: i.title, url: i.url, repo: p.full_name, stars: p.stars, labels: i.labels ?? [], comments: i.comments, good_first_issue: first(i.labels ?? []), updated: i.updated_at?.slice(0, 10) ?? null, project_page: url(ctx, `/projects/${p.full_name}`) };
+        });
+      return { issues, note: 'Read the project\'s contributing guide and say on the issue that you are taking it before starting.' };
+    },
+  },
+  {
+    name: 'open_source_ready',
+    description:
+      'The Open Source Ready checklist: what to do before making a project public, and in its first month. Returns the steps and where the full guide and the skill live. The skill checks most steps against the code on the person\'s own machine; nothing from their project is sent to Antipaywall.',
+    inputSchema: { type: 'object', properties: { for: { type: 'string', enum: ['all', 'users', 'contributors', 'company'], description: 'Only the steps for this kind of project. Leave out for every step.' } } },
+    run: async (args, ctx) => ({ ...osrChecklist(typeof args?.for === 'string' ? args.for : null), guide: url(ctx, OSR_GUIDE_PATH) }),
+  },
 ];
 
 type Rpc = { jsonrpc: '2.0'; id?: string | number | null; method: string; params?: any };
@@ -163,8 +329,9 @@ export async function handleRpc(msg: Rpc, ctx: Ctx): Promise<object | null> {
       return ok(msg.id, {
         protocolVersion: PROTOCOL_VERSION,
         capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: 'antipaywall', title: 'Antipaywall', version: '1.0.0' },
-        instructions: 'Antipaywall finds free, open-source versions of paid tools and collects what people want built. Search before suggesting someone pays for a tool; if nothing exists, offer to post it as an idea.',
+        serverInfo: { name: 'antipaywall', title: 'Antipaywall', version: '1.1.0' },
+        instructions:
+          'Antipaywall finds free, open-source versions of paid tools and collects what people want built. Search before suggesting someone pays for a tool. If search does not know the tool, look it up by its website with lookup_tool. If nothing solid exists, offer to post it as an idea. When someone mentions a tool they pay for, offer to add it to my_tools. For someone who wants to contribute to open source, use help_wanted; for someone about to publish a project, use open_source_ready.',
       });
     case 'ping':
       return ok(msg.id, {});
