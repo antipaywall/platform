@@ -5,10 +5,10 @@ import { money, site } from '../config/site';
 
 const person = Astro.locals.person;
 const cols: { title: string; links: [string, string][] }[] = [
-  { title: 'Find', links: [['/free-alternatives', 'Free alternatives'], ['/explore', 'Explore projects'], ['/topics', 'Topics'], ['/search', 'Search']] },
+  { title: 'Find', links: [['/free-alternatives', 'Free alternatives'], ['/explore', 'Explore projects'], ['/topics', 'Topics'], ['/search', 'Search'], ['/wall', 'The wall']] },
   { title: 'Take part', links: [['/ideas', 'What people want'], ['/ideas/new', 'Post an idea'], ['/feed', 'Feed'], ['/builders', 'Builders'], ['/agents', 'For coding agents'], ['/open-source-ready', 'Open Source Ready']] },
   { title: 'Hackathon', links: [['/hackathon', 'Season 1'], ['/hackathon/join', 'Join'], ['/hackathon/rules', 'Rules'], ['/hackathon/pool', 'Prize pool'], ['/hackathon/fund', 'Pledge'], ['/hackathon/faq', 'Questions']] },
-  { title: 'In the open', links: [[site.repo, 'Code on GitHub'], [`${site.repo}/blob/main/docs/run-locally.md`, 'Run it yourself'], [`${site.repo}/blob/main/CONTRIBUTING.md`, 'Contribute'], ['/hackathon/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms']] },
+  { title: 'In the open', links: [[site.repo, 'Code on GitHub'], [`${site.repo}/blob/main/docs/run-locally.md`, 'Run it yourself'], [`${site.repo}/blob/main/CONTRIBUTING.md`, 'Contribute'], ['/about', 'About'], ['/help-build', 'Help build it'], ['/privacy', 'Privacy'], ['/terms', 'Terms']] },
 ];
 ---
 

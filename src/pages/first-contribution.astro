@@ -1,0 +1,179 @@
+---
+// A guided first open-source contribution, practised on the antipaywall/ideas repo (one Markdown
+// file per wanted tool), never on the platform's own code. Two ways: with a coding agent, or in
+// the browser on GitHub with nothing to install. The page fills in the file and the agent prompt
+// from what the person types; it remembers their place in this browser only.
+import Platform from '../layouts/Platform.astro';
+
+const REPO = 'antipaywall/ideas';
+---
+
+<Platform title="Make your first open-source contribution" description="A guided first pull request: add an open-source tool you wish existed to the Antipaywall ideas repository, with your coding agent or right in the browser.">
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <h1 class="pf-title">Your first open-source contribution</h1>
+      <p class="lede fc-lede">
+        Everyone's first pull request is a little nerve-wracking. This one is safe to get wrong: you'll add one small file, an
+        open-source tool you wish existed, to Antipaywall's public ideas repository. Someone reviews it, and once it's merged it
+        shows up on the site with your name on it. About ten minutes.
+      </p>
+      <div class="fc-progress" aria-hidden="true"><span data-fc-bar></span></div>
+    </div>
+  </section>
+
+  <section class="wrap pf-section fc" data-fc data-repo={REPO}>
+    <ol class="fc-steps">
+      <li class="fc-step" data-step="1">
+        <h2 class="pf-h3"><span class="osr-num">1</span> Pick something you wish existed</h2>
+        <p>Something you pay for and wish had a free, open-source version, or a tool that doesn't exist at all. A rough idea is fine.</p>
+        <div class="fc-fields">
+          <label>What should it be called? <input class="input" data-fc-title type="text" maxlength="80" placeholder="Open-source review widget" /></label>
+          <label>One line: what would it do? <input class="input" data-fc-pitch type="text" maxlength="140" placeholder="Pull Google and Yelp reviews into one widget for static sites" /></label>
+          <label>Does it replace a paid tool? <span class="muted">(optional)</span> <input class="input" data-fc-replaces type="text" maxlength="60" placeholder="Elfsight" /></label>
+        </div>
+        <button class="key key-sm" type="button" data-fc-done="1">Next</button>
+      </li>
+
+      <li class="fc-step" data-step="2">
+        <h2 class="pf-h3"><span class="osr-num">2</span> This is the file you'll add</h2>
+        <p>Every idea is one Markdown file in the <code>ideas/</code> folder. The part between the <code>---</code> lines is for the site to read; the rest is for people.</p>
+        <p class="muted small">File: <code data-fc-path>ideas/your-idea.md</code></p>
+        <pre class="pf-code fc-file" data-fc-file></pre>
+        <button class="key key-sm" type="button" data-fc-done="2">Next</button>
+      </li>
+
+      <li class="fc-step" data-step="3">
+        <h2 class="pf-h3"><span class="osr-num">3</span> Make the change</h2>
+        <p>Pick one way. Both end in the same place: a pull request, which is a proposal to add your change.</p>
+        <div class="fc-ways">
+          <div class="fc-way">
+            <h3>In your browser, nothing to install</h3>
+            <ol>
+              <li>Sign in to GitHub.</li>
+              <li>Press the button below. GitHub opens the new file with your text already in it.</li>
+              <li>GitHub will say you can't edit this repository directly and offer to make your own copy (a <em>fork</em>). That's expected: say yes.</li>
+              <li>Scroll down, press <b>Propose changes</b>.</li>
+            </ol>
+            <a class="key key-sm key-mint" data-fc-github href={`https://github.com/${REPO}`} rel="noopener" target="_blank">Open the file on GitHub</a>
+          </div>
+          <div class="fc-way">
+            <h3>With your coding agent</h3>
+            <p>Paste this into Claude Code, Cursor, Codex or another agent. It needs the <code>gh</code> command, signed in.</p>
+            <pre class="pf-code fc-prompt" data-fc-prompt></pre>
+            <button class="key key-sm key-milk" type="button" data-fc-copy>Copy the prompt</button>
+          </div>
+        </div>
+        <button class="key key-sm" type="button" data-fc-done="3">I've made the change</button>
+      </li>
+
+      <li class="fc-step" data-step="4">
+        <h2 class="pf-h3"><span class="osr-num">4</span> Open the pull request</h2>
+        <ul class="osr-how">
+          <li><b>Title:</b> say what it adds: <code data-fc-prtitle>Add idea: …</code></li>
+          <li><b>Description:</b> a sentence on why you want it. Mention anything you looked at that came close.</li>
+          <li>Press <b>Create pull request</b>. That's it: you've proposed a change to an open-source project.</li>
+        </ul>
+        <p class="muted">What happens next: a maintainer reads it, may ask a question or suggest a tweak (that's normal, not a rejection), and merges it. You'll get a GitHub notification at each step.</p>
+        <button class="key key-sm" type="button" data-fc-done="4">I opened it</button>
+      </li>
+
+      <li class="fc-step" data-step="5">
+        <h2 class="pf-h3"><span class="osr-num">5</span> You're an open-source contributor</h2>
+        <p>The same steps work on any project: find something small, make the change, open a pull request, answer questions kindly.</p>
+        <ul class="ob-steps">
+          <li><a href="/explore"><b>Find a good first issue</b><span>Open-source projects that have said they want help.</span></a></li>
+          <li><a href="/help-build"><b>Help build Antipaywall</b><span>The platform itself is open source too.</span></a></li>
+          <li><a href="/open-source-ready"><b>Share your own project</b><span>The free guide to getting it ready.</span></a></li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+</Platform>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-fc]');
+  if (root) {
+    const repo = root.dataset.repo!;
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s);
+    const title = $<HTMLInputElement>('[data-fc-title]')!;
+    const pitch = $<HTMLInputElement>('[data-fc-pitch]')!;
+    const replaces = $<HTMLInputElement>('[data-fc-replaces]')!;
+    const KEY = 'fc-progress-v1';
+    const read = () => {
+      try { return JSON.parse(localStorage.getItem(KEY) ?? '{}'); } catch { return {}; }
+    };
+    const write = (v: object) => {
+      try { localStorage.setItem(KEY, JSON.stringify(v)); } catch { /* private window: fine */ }
+    };
+    const saved = read();
+    title.value = saved.title ?? '';
+    pitch.value = saved.pitch ?? '';
+    replaces.value = saved.replaces ?? '';
+    let done: number = saved.done ?? 0;
+
+    const slugify = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'my-idea';
+    const yamlStr = (s: string) => JSON.stringify(s);
+    const render = () => {
+      const t = title.value.trim() || 'My idea';
+      const p = pitch.value.trim();
+      const r = replaces.value.trim();
+      const slug = slugify(t);
+      const file = [
+        '---',
+        `title: ${yamlStr(t)}`,
+        ...(p ? [`pitch: ${yamlStr(p)}`] : []),
+        'status: wanted',
+        ...(r ? ['replaces:', `  - ${yamlStr(r)}`] : []),
+        '---',
+        '',
+        '## The problem',
+        '',
+        p || 'What this would solve, in a sentence or two.',
+        '',
+        '## What it should do',
+        '',
+        '- The one thing it must do well',
+        '',
+      ].join('\n');
+      $('[data-fc-path]')!.textContent = `ideas/${slug}.md`;
+      $('[data-fc-file]')!.textContent = file;
+      $('[data-fc-prtitle]')!.textContent = `Add idea: ${t}`;
+      const gh = $<HTMLAnchorElement>('[data-fc-github]')!;
+      gh.href = `https://github.com/${repo}/new/main/ideas?filename=${encodeURIComponent(`${slug}.md`)}&value=${encodeURIComponent(file)}`;
+      $('[data-fc-prompt]')!.textContent =
+        `I'd like to make my first open-source contribution. Fork ${repo} with gh, add the file ideas/${slug}.md with exactly this content, ` +
+        `commit it with the message "Add idea: ${t}", push it to my fork, and open a pull request to ${repo} with the title "Add idea: ${t}". ` +
+        `Explain each step to me as you go, and ask me before you push or open the pull request.\n\n${file}`;
+      write({ title: title.value, pitch: pitch.value, replaces: replaces.value, done });
+    };
+    const show = () => {
+      root.querySelectorAll<HTMLElement>('.fc-step').forEach((el) => {
+        const n = Number(el.dataset.step);
+        el.classList.toggle('is-done', n <= done);
+        el.classList.toggle('is-current', n === done + 1);
+      });
+      const bar = document.querySelector<HTMLElement>('[data-fc-bar]');
+      if (bar) bar.style.width = `${Math.min(100, (done / 4) * 100)}%`;
+    };
+    [title, pitch, replaces].forEach((i) => i.addEventListener('input', render));
+    root.querySelectorAll<HTMLButtonElement>('[data-fc-done]').forEach((b) =>
+      b.addEventListener('click', () => {
+        done = Math.max(done, Number(b.dataset.fcDone));
+        render();
+        show();
+        root.querySelector<HTMLElement>(`[data-step="${done + 1}"]`)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      }),
+    );
+    $('[data-fc-copy]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget as HTMLButtonElement;
+      try {
+        await navigator.clipboard.writeText($('[data-fc-prompt]')!.textContent ?? '');
+        btn.textContent = 'Copied';
+      } catch {
+        btn.textContent = 'Select the text and copy it';
+      }
+    });
+    render();
+    show();
+  }
+</script>

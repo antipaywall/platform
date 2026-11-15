@@ -3,7 +3,6 @@
 // site's own links on the new addresses.
 export const HACKATHON_REDIRECTS: Record<string, string> = {
   '/rules': '/hackathon/rules',
-  '/about': '/hackathon/about',
   '/faq': '/hackathon/faq',
   '/pool': '/hackathon/pool',
   '/fund': '/hackathon/fund',

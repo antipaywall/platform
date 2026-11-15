@@ -76,7 +76,9 @@ describe('profile addresses', () => {
     // One namespace: a GitLab builder's address is their username, not their GitLab handle.
     expect(profilePath({ username: 'tanuki', handle: 'tanuki.dev' })).toBe('/builders/tanuki');
     // Someone still choosing a username has no address yet: never borrow their GitLab handle.
-    expect(profilePath({ username: null, handle: 'old-handle' })).toBe('/builders');
+    expect(profilePath({ username: null, handle: 'old-handle', provider: 'gitlab' })).toBe('/builders');
+    // A GitHub account without a saved username yet (joined on the live site before the release): its login is its username.
+    expect(profilePath({ username: null, handle: 'old-handle', provider: 'github' })).toBe('/builders/old-handle');
   });
   it('reads them back, and nothing else', () => {
     expect(parseProfilePath('prophen')).toEqual({ kind: 'username', name: 'prophen' });

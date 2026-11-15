@@ -1,0 +1,161 @@
+---
+// What Antipaywall is for: the mission, what the platform does, how it gets better with use, and
+// what it will never do. The hackathon's own page is /hackathon/about.
+import Platform from '../layouts/Platform.astro';
+import { site } from '../config/site';
+
+const beliefs = [
+  {
+    title: 'Paying for software is a race to the bottom.',
+    text: 'Most of what people pay for every month can already be built in a weekend by a few people with coding agents, and AI will rewrite much of the rest. The question left is who owns what comes next.',
+    paint: 'p1',
+  },
+  {
+    title: 'You should be able to own your software.',
+    text: 'Run it yourself, change it, keep it when a company raises its prices or shuts down. Owning the software you rely on, if you want to, should be normal again.',
+    paint: 'p2',
+  },
+  {
+    title: 'Open source is crowdsourced product development.',
+    text: 'Put a good idea where people can use it, and some of them will tell you what is wrong, fix it, and build on it. A rough project shared early can end up with dozens of contributors. That is how the best software has always been made.',
+    paint: 'p3',
+  },
+  {
+    title: 'It should be built by a community, in the open, and fairly.',
+    text: 'Open source started as people building things together and sharing them. We want that back: credit where it is earned, decisions made in public, and nothing that only works if you pay or give up your data.',
+    paint: 'p4',
+  },
+];
+
+const does = [
+  {
+    title: 'Find the free version',
+    text: 'Search a paid tool, or paste its website, and see the open-source projects that do the same job, straight from GitHub.',
+    href: '/free-alternatives',
+    cta: 'Find free alternatives',
+  },
+  {
+    title: 'See the gaps',
+    text: 'When nothing good exists yet, that is a gap. People say "me too", and the gaps everyone wants rise to the top.',
+    href: '/wall',
+    cta: 'See the wall',
+  },
+  {
+    title: 'Build the missing piece',
+    text: 'Each hackathon season takes the most wanted gaps and builds them, in public, with the community picking the winners.',
+    href: '/hackathon',
+    cta: 'The hackathon',
+  },
+  {
+    title: 'Share what you build',
+    text: 'Get your own project ready for open source with the free Open Source Ready guide, and let people find it and help.',
+    href: '/open-source-ready',
+    cta: 'The guide',
+  },
+];
+
+const loop = [
+  ['You look up a tool you pay for', 'The site reads its website and searches GitHub for projects that do the same job.'],
+  ['The map grows', 'The answer is saved, so the next person gets it at once, and every person asking is counted.'],
+  ['The gaps show themselves', 'Tools many people pay for, with nothing good to replace them, rise to the top.'],
+  ['A season builds them', 'The community takes the biggest gaps and builds the free version in the open.'],
+  ['The wall comes down', 'A gap with a good free alternative gets painted in. Then the next one.'],
+];
+
+const never = [
+  'Build or launch our own products to compete with yours. Antipaywall is the map and the community, not a company shipping apps.',
+  'Charge people to use it, or put any part of it behind a paywall.',
+  'Sell your data, or show ads.',
+  'Hide how anything works. The code that runs this site is public, and so is the data behind it.',
+];
+---
+
+<Platform title="About Antipaywall" description="Antipaywall is a community building the free, open-source versions of the software people pay for. Why it exists, what it does, and what it will never do.">
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <h1 class="pf-title">Software you can own, built by people who share it.</h1>
+      <p class="lede ab-lede">
+        Antipaywall is a community of people building the free, open-source versions of the software everyone pays for.
+        It maps what people still pay for, finds the gaps nobody has filled, and brings builders together to fill them,
+        in the open.
+      </p>
+    </div>
+  </section>
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <h2 class="pf-h2">What we believe</h2>
+      <div class="ab-beliefs">
+        {beliefs.map((b) => (
+          <div class={`pf-brick ${b.paint}`}>
+            <b>{b.title}</b>
+            <span>{b.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap pf-section">
+    <h2 class="pf-h2">What Antipaywall does</h2>
+    <div class="ab-does">
+      {does.map((d) => (
+        <div class="ab-card">
+          <h3 class="pf-h3">{d.title}</h3>
+          <p>{d.text}</p>
+          <a class="link" href={d.href}>{d.cta}</a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="pf-wall">
+    <div class="wrap pf-section">
+      <h2 class="pf-h2">It gets better every time someone uses it</h2>
+      <p class="lede ab-lede">
+        Every tool you look up teaches Antipaywall what people really pay for. The map of paid software is drawn by the
+        people paying for it, and the gaps in it become what we build next.
+      </p>
+      <ol class="ab-loop">
+        {loop.map(([t, x]) => (
+          <li>
+            <b>{t}</b>
+            <span>{x}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="wrap pf-section ab-two">
+    <div>
+      <h2 class="pf-h3">Bigger than any one person</h2>
+      <p>
+        Antipaywall was started by one builder, but it only works if it belongs to everyone who uses it. That is why the
+        platform itself is open source under the MIT license: anyone can read how it works, suggest a change, or run their
+        own copy. The ideas people post live in a public repository, and changes to them arrive as pull requests.
+      </p>
+      <p>
+        <a class="key key-sm key-milk" href={site.repo} rel="noopener">The code on GitHub</a>
+        <a class="key key-sm key-mint" href="/help-build">Help build Antipaywall</a>
+      </p>
+    </div>
+    <div>
+      <h2 class="pf-h3">What we will never do</h2>
+      <ul class="osr-how">
+        {never.map((n) => <li>{n}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <h2 class="pf-h3">Start here</h2>
+      <div class="pf-chips">
+        <a class="key key-sm key-marigold" href="/free-alternatives">Find a free alternative</a>
+        <a class="key key-sm key-milk" href="/wall">See the gaps</a>
+        <a class="key key-sm key-milk" href="/first-contribution">Make your first open-source contribution</a>
+      </div>
+    </div>
+  </section>
+</Platform>
