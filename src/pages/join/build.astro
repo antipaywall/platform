@@ -82,6 +82,28 @@ const results = checked
               )
             }
             {
+              checked && providerOf(person) === 'github' && results.some((r) => r.rule === 'contributions' && !r.pass) && (
+                <div class="card stack private-hint">
+                  <p class="h2">Most of your work is private?</p>
+                  <p>
+                    GitHub only counts work in private repositories if you choose to show it on your profile,
+                    and we only see what your profile shows. To count it:
+                  </p>
+                  <ol>
+                    <li>Open your <a class="link" href="https://github.com/settings/profile" rel="noopener">GitHub profile settings</a>.</li>
+                    <li>Under "Contributions &amp; activity", tick <strong>Include private contributions on my profile</strong> and save.</li>
+                    <li>Come back and check again.</li>
+                  </ol>
+                  <p class="muted small">
+                    Commits made with an email address that isn't on your GitHub account don't count anywhere.
+                    If that's you, <a class="link" href="https://github.com/settings/emails" rel="noopener">add the email</a> first.
+                    Only the totals are shown, never your private code or repository names.
+                  </p>
+                  <p><a class="key key-tomato" href="/auth/signin?provider=github&next=/join/build">Check again</a></p>
+                </div>
+              )
+            }
+            {
               checked && !person.verified && (
                 <p class="muted">
                   You can still <a class="link" href="/ideas">post and heart ideas</a>, pledge to the pool,
