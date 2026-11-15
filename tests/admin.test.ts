@@ -70,7 +70,8 @@ describe('organizer pages are private', () => {
     const middleware = readFileSync('src/middleware.ts', 'utf8');
     expect(middleware).toMatch(/if \(isAdminPath\(context\.url\.pathname\)\) \{\s*for \(const \[name, value\] of Object\.entries\(ADMIN_HEADERS\)\) response\.headers\.set\(name, value\);/);
     // Every organizer page is drawn by the organizer's own layout, which always asks not to be indexed.
-    expect(readFileSync('src/layouts/Admin.astro', 'utf8')).toMatch(/<Head [^\n]* noindex \/>/);
+    expect(readFileSync('src/layouts/Shell.astro', 'utf8')).toMatch(/<Head [^\n]* noindex \/>/);
+    expect(readFileSync('src/layouts/Admin.astro', 'utf8')).toContain('<Shell heading={heading} about={about} area="Organizer">');
     for (const page of adminPages) {
       const source = readFileSync(page, 'utf8');
       expect(source, page).toMatch(/<Admin heading="[^"]+"( about="[^"]+")?>/);
@@ -124,7 +125,7 @@ describe('every organizer page and route checks isAdmin first', () => {
 describe('the admin link', () => {
   const header = readFileSync('src/components/SiteHeader.astro', 'utf8');
   it('is only ever built for an organizer, so it is absent from the page for everyone else', () => {
-    expect(header).toContain("const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];");
+    expect(header).toContain("const admin = isAdmin(person) && !Astro.locals.viewAs ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];");
     // The only mention of the admin address in the header is that one line, used by both menus.
     expect(header.match(/\/admin/g)?.length).toBe(2);
     expect(header).toContain('{[...links, ...admin].map(');

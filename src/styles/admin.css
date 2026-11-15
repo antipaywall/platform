@@ -246,7 +246,7 @@
   overflow-wrap: normal;
 }
 
-/* The organizer's shell (src/layouts/Admin.astro): a dark side menu, a plain work surface. */
+/* The signed-in shell (src/layouts/Shell.astro), for members and the organizer alike: a dark side menu, a plain work surface. */
 body.adm {
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr);
@@ -288,13 +288,9 @@ body.adm {
   padding: 0 8px;
   line-height: 1.15;
 }
-.adm-mark {
+.adm-brand img {
   grid-row: span 2;
-  width: 30px;
-  height: 20px;
-  border-radius: 6px;
-  background: var(--tomato);
-  box-shadow: 0 4px 0 oklch(0.56 0.17 30);
+  border-radius: 10px;
 }
 .adm-brand b {
   font: 800 1.0625rem var(--display);
@@ -432,5 +428,84 @@ body.adm {
   }
   .adm-who {
     margin: 0;
+  }
+}
+
+/* A heading between groups of links in the side menu. */
+.adm-group {
+  margin: 14px 12px 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--wall-ink);
+}
+.adm-who small {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+/* The organizer's "view as" switch, and the notice shown while it is on. */
+.adm-view {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: var(--wall-ink);
+  font-weight: 700;
+}
+.adm-view > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: oklch(0 0 0 / 0.25);
+}
+.adm-view button {
+  width: 100%;
+  padding: 6px 2px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.8125rem;
+}
+.adm-view button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--ink);
+}
+.adm-viewing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--marigold);
+}
+.adm-viewing p {
+  margin: 0;
+  flex: 1 1 320px;
+}
+/* Account pages inside the shell: one readable column. */
+.adm-main .acct-main {
+  max-width: 760px;
+}
+@media (max-width: 860px) {
+  .adm-group {
+    display: none;
+  }
+  .adm-view {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    flex: 1 1 100%;
+  }
+  .adm-view > div {
+    flex: 1;
+    max-width: 320px;
   }
 }

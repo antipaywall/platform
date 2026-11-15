@@ -6,8 +6,10 @@ import { site } from '../config/site';
 import { providerName, providerOf } from '../lib/accounts';
 import { isAdmin } from '../lib/db';
 import { isPublic, profilePath } from '../lib/profiles';
+import { seenAs } from '../lib/viewAs';
 
-const person = Astro.locals.person;
+// The organizer can look at the site as another kind of account: the header then shows what that account would see.
+const person = Astro.locals.person ? seenAs(Astro.locals.person, Astro.locals.viewAs) : null;
 const here = Astro.url.pathname;
 const cur = (on: boolean) => (on ? 'page' : undefined);
 const links = [
@@ -35,14 +37,14 @@ const more = [
   { href: '/hackathon/join', label: 'Join the hackathon', on: here.startsWith('/hackathon/join') },
 ];
 
-const admin = isAdmin(person) ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
+const admin = isAdmin(person) && !Astro.locals.viewAs ? [{ href: '/admin', label: 'Admin', on: here === '/admin' }] : [];
 // Everything that is yours, in the account menu and at the bottom of the phone menu.
 const mine = person
   ? [
       ...(isPublic(person) ? [{ href: profilePath(person), label: 'Your profile' }] : []),
-      { href: '/account', label: 'Edit profile' },
-      { href: '/account#activity', label: 'Your pledge and ideas' },
-      { href: '/account#email', label: 'Email' },
+      { href: '/account', label: 'Your account' },
+      { href: '/account/profile', label: 'Edit profile' },
+      { href: '/account/settings', label: 'Email and account' },
     ]
   : [];
 ---

@@ -1,0 +1,37 @@
+---
+// The menu of a signed-in person's own pages. What it lists depends on the kind of account:
+// everyone gets their account pages, a builder gets their spot in the hackathon, and the
+// organizer gets a way into the organizer's pages. Seen through "view as", it shows what that
+// kind of account would see.
+import { isAdmin } from '../lib/db';
+import { isPublic, profilePath } from '../lib/profiles';
+import { seenAs } from '../lib/viewAs';
+
+const real = Astro.locals.person;
+const view = Astro.locals.viewAs;
+const person = real ? seenAs(real, view) : null;
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const mine = [
+  { href: '/account', label: 'Overview' },
+  { href: '/account/profile', label: 'Profile' },
+  { href: '/account/settings', label: 'Email and account' },
+];
+const site = person
+  ? [
+      ...(isPublic(person) ? [{ href: profilePath(person), label: 'Your public profile' }] : []),
+      { href: '/feed', label: 'Feed' },
+      { href: '/ideas/new', label: 'Post an idea' },
+      person.is_builder ? { href: '/hackathon/join/build', label: 'Your builder spot' } : { href: '/hackathon/join/build', label: 'Join as a builder' },
+    ]
+  : [];
+// Built only for the organizer, and not while they look at the site as someone else.
+const organizer = isAdmin(real) && !view ? [{ href: '/admin', label: 'Organizer pages' }] : [];
+---
+
+<nav class="admin-nav" aria-label="Your account">
+  {mine.map((l) => <a href={l.href} aria-current={here === l.href ? 'page' : undefined}>{l.label}</a>)}
+  {site.length > 0 && <span class="adm-group">On the site</span>}
+  {site.map((l) => <a href={l.href}>{l.label}</a>)}
+  {organizer.length > 0 && <span class="adm-group">Organizer</span>}
+  {organizer.map((l) => <a href={l.href}>{l.label}</a>)}
+</nav>

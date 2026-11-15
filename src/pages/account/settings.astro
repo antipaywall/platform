@@ -1,0 +1,59 @@
+---
+// Email and account: whether you hear from us, signing out, and deleting your account.
+import Account from '../../layouts/Account.astro';
+import { providerName, providerOf } from '../../lib/accounts';
+import { isAdmin } from '../../lib/db';
+import { onList } from '../../lib/profiles';
+import { seenAs } from '../../lib/viewAs';
+
+// Signed-out visitors are sent to sign in and brought back here.
+const real = Astro.locals.person;
+if (!real) return Astro.redirect('/signin?next=/account/settings');
+// The organizer can look at these pages the way another kind of account sees them.
+const view = Astro.locals.viewAs;
+const person = seenAs(real, view);
+const listed = await onList(real.id);
+const provider = providerOf(person);
+const organizer = isAdmin(real);
+---
+
+<Account heading="Email and account" about="Whether you hear from us, signing out, and deleting your account.">
+  <div class="acct-main">
+      <section class="acct-panel" id="email">
+        <h2 class="acct-h">Email</h2>
+        <ul class="acct-rows">
+          <li>
+            <span>
+              {listed === null ? 'Your email status is unavailable right now.' : listed ? <>On the email list, at the address on your {providerName(provider)} account.</> : 'Not on the email list. To rejoin, use the link in any earlier email from us.'}
+            </span>
+            {listed && (
+              <form method="post" action="/api/account/email"><button class="link-button" type="submit">Unsubscribe</button></form>
+            )}
+          </li>
+        </ul>
+      </section>
+
+      <section class="acct-panel" id="delete">
+        <h2 class="acct-h">Account</h2>
+        <ul class="acct-rows">
+          <li>
+            <span>Signed in with <b>{providerName(provider)}</b> as @{person.handle}.</span>
+            <form method="post" action="/auth/signout"><button class="link-button" type="submit">Sign out</button></form>
+          </li>
+        </ul>
+        {
+          organizer && !view ? (
+            <p class="muted small">The organizer's account can't be deleted from here.</p>
+          ) : (
+            <form class="acct-delete stack" method="post" action="/api/account/delete">
+              <p class="small">Deleting your account removes your profile, your ideas, your pledge, your builder spot, anything you sent the organizer, and the record of what you did on the site. It can't be undone.</p>
+              <label class="check"><input type="checkbox" name="leave_list" checked disabled={organizer} /> <span>Also take my email off the list</span></label>
+              <label class="check"><input type="checkbox" name="confirm" required disabled={organizer} /> <span>I understand. Delete my account.</span></label>
+              <div><button class="key acct-danger" type="submit" disabled={organizer}>Delete my account</button></div>
+              {organizer && <p class="muted small">Switched off: this is what a member sees, and the organizer's account can't be deleted.</p>}
+            </form>
+          )
+        }
+      </section>
+  </div>
+</Account>

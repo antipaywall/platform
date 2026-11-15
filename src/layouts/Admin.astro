@@ -1,56 +1,16 @@
 ---
-// The organizer's own area: a dark side menu and a plain work surface, with none of the public
-// site's header or footer, so it is always clear you are behind the scenes. Each organizer page
-// checks who is asking before it renders anything, and passes its section links into the menu.
-import '../styles/global.css';
-import '../styles/page.css';
-import '../styles/admin.css';
-import Head from '../components/Head.astro';
-import { site } from '../config/site';
-import { MESSAGES, type MessageCode } from '../lib/respond';
+// The organizer's pages: the signed-in shell, labelled as the organizer's area. Each organizer
+// page checks who is asking before it renders anything, and passes its section links in.
+import Shell from './Shell.astro';
 
 interface Props {
-  /** The page's name, shown as its heading and in the browser tab. */
   heading: string;
-  /** One line under the heading saying what the page is for. */
   about?: string;
 }
 const { heading, about } = Astro.props;
-const person = Astro.locals.person;
-// Messages arrive as a code and are looked up here, so a link can't make the page say something.
-const code = Astro.url.searchParams.get('m') ?? '';
-const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
 ---
 
-<html lang="en">
-  <head>
-    <Head title={`${heading} | ${site.name} admin`} description="The organizer's pages." noindex />
-  </head>
-  <body class="adm">
-    <a class="adm-skip" href="#adm-main">Skip to the page</a>
-    <aside class="adm-side">
-      <p class="adm-brand"><span class="adm-mark" aria-hidden="true"></span><b>{site.name}</b><span>Admin</span></p>
-      <slot name="nav" />
-      <div class="adm-foot">
-        {
-          person && (
-            <p class="adm-who">
-              {person.avatar_url && <img src={person.avatar_url} alt="" width="28" height="28" />}
-              <span>@{person.handle}</span>
-            </p>
-          )
-        }
-        <a href="/">Back to the site</a>
-        <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
-      </div>
-    </aside>
-    <main class="adm-main" id="adm-main">
-      <header class="adm-top">
-        <h1>{heading}</h1>
-        {about && <p>{about}</p>}
-      </header>
-      {flash && <p class={`flash flash-${flash.kind}`} role={flash.kind === 'error' ? 'alert' : 'status'}>{flash.text}</p>}
-      <slot />
-    </main>
-  </body>
-</html>
+<Shell heading={heading} about={about} area="Organizer">
+  <slot name="nav" slot="nav" />
+  <slot />
+</Shell>

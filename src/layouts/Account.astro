@@ -1,0 +1,16 @@
+---
+// A signed-in person's own pages: the signed-in shell with their sections in the menu.
+import AccountNav from '../components/AccountNav.astro';
+import Shell from './Shell.astro';
+
+interface Props {
+  heading: string;
+  about?: string;
+}
+const { heading, about } = Astro.props;
+---
+
+<Shell heading={heading} about={about} area="Your account">
+  <AccountNav slot="nav" />
+  <slot />
+</Shell>

@@ -96,7 +96,7 @@ const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1)
       <div class="pcard-btns">
         {
           own ? (
-            <a class="key key-milk" href="/account">Edit profile</a>
+            <a class="key key-milk" href="/account/profile">Edit profile</a>
           ) : viewer ? (
             <form method="post" action="/api/follow">
               <input type="hidden" name="person" value={p.id} />

@@ -13,15 +13,15 @@ export const POST: APIRoute = async (context) => {
   const db = adminClient();
   if (!person || !db) return back('/account', 'need_signin');
   const form = await request.formData();
-  if (form.get('confirm') !== 'on') return back('/account#delete', 'need_delete_confirm');
+  if (form.get('confirm') !== 'on') return back('/account/settings#delete', 'need_delete_confirm');
   // The organizer's account holds the site's own pledge and admin access, so it can't be deleted from here.
-  if (isAdmin(person)) return back('/account#delete', 'organizer_cannot_delete');
+  if (isAdmin(person)) return back('/account/settings#delete', 'organizer_cannot_delete');
   if (form.get('leave_list') === 'on') {
     const { data } = await db.from('subscribers').select('token').eq('person_id', person.id).is('unsubscribed_at', null);
     for (const r of data ?? []) await leaveList(db, context, r.token, false);
   }
   const { error } = await db.auth.admin.deleteUser(person.id);
-  if (error) return back('/account#delete', 'save_failed');
+  if (error) return back('/account/settings#delete', 'save_failed');
   // The user is already gone, so only this browser's session cookies are cleared.
   await sessionClient(request, cookies)?.auth.signOut({ scope: 'local' });
   return back('/', 'account_deleted');

@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     about: form.get('about'), skills: form.get('skills'), xHandle: form.get('x_handle'), siteUrl: form.get('site_url'),
     openToTeam: form.get('open_to_team'), teamNote: form.get('team_note'), profilePublic: form.get('profile_public'),
   });
-  if (!parsed.ok) return back('/account', parsed.error);
+  if (!parsed.ok) return back('/account/profile', parsed.error);
   const p = parsed.profile;
   const { error } = await db.from('people').update({
     about: p.about, skills: p.skills, x_handle: p.xHandle, site_url: p.siteUrl,
@@ -21,5 +21,5 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // A builder's profile is always public; the switch is only for everyone else.
     profile_public: person.is_builder ? person.profile_public ?? false : p.profilePublic,
   }).eq('id', person.id);
-  return back('/account', error ? 'save_failed' : 'profile_saved');
+  return back('/account/profile', error ? 'save_failed' : 'profile_saved');
 };

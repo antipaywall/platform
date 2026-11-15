@@ -10,5 +10,5 @@ export const POST: APIRoute = async (context) => {
   if (!person || !db) return back('/account#email', 'need_signin');
   const { data } = await db.from('subscribers').select('token').eq('person_id', person.id).is('unsubscribed_at', null);
   for (const r of data ?? []) await leaveList(db, context, r.token, false);
-  return back('/account#email', 'done');
+  return back('/account/settings#email', 'done');
 };

@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!person || !db) return back('/account', 'need_signin');
   const form = await request.formData();
   const parsed = parseFeatured(form.getAll('repo'), savedRepos(person.repos).map((r) => r.name));
-  if (!parsed.ok) return back('/account#repos', parsed.error);
+  if (!parsed.ok) return back('/account/profile#repos', parsed.error);
   const { error } = await db.from('people').update({ featured_repos: parsed.featured }).eq('id', person.id);
-  return back('/account#repos', error ? 'save_failed' : 'repos_saved');
+  return back('/account/profile#repos', error ? 'save_failed' : 'repos_saved');
 };

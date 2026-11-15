@@ -1,0 +1,95 @@
+---
+// Your profile: what it says about you and which repositories it features.
+import Account from '../../layouts/Account.astro';
+import { providerName, providerOf } from '../../lib/accounts';
+import { ABOUT_MAX, SKILLS_MAX, TEAM_NOTE_MAX } from '../../lib/forms';
+import { refreshRepos } from '../../lib/profiles';
+import { pickFeatured, savedRepos, type Repo } from '../../lib/repos';
+import { seenAs } from '../../lib/viewAs';
+
+// Signed-out visitors are sent to sign in and brought back here.
+const real = Astro.locals.person;
+if (!real) return Astro.redirect('/signin?next=/account/profile');
+// The organizer can look at these pages the way another kind of account sees them.
+const view = Astro.locals.viewAs;
+const person = seenAs(real, view);
+let repos: Repo[] = await refreshRepos(real, { timeoutMs: 2000 });
+if (!repos.length) repos = savedRepos(real.repos);
+const provider = providerOf(person);
+const featured = new Set(pickFeatured(repos, person.featured_repos ?? []).map((r) => r.name));
+const picked = (person.featured_repos ?? []).length > 0;
+---
+
+<Account heading="Profile" about="What your public profile says about you, and which repositories it features.">
+  <div class="acct-main">
+      <form class="acct-panel stack" id="profile" method="post" action="/api/account/profile">
+        <h2 class="acct-h">Profile</h2>
+        <p class="muted small">
+          {person.is_builder ? 'Your profile is public because you joined as a builder.' : 'Your profile is private unless you switch it on below.'} Changes show as soon as you save. Your email is never shown.
+        </p>
+        <div class="field">
+          <label for="about">About <span class="muted">(optional)</span></label>
+          <textarea class="input" id="about" name="about" maxlength={ABOUT_MAX} rows="4">{person.about ?? ''}</textarea>
+          <span class="help">Up to {ABOUT_MAX} characters.{person.bio ? ' Your bio from ' + providerName(provider) + ' already shows at the top of your profile.' : ''}</span>
+        </div>
+        <div class="field">
+          <label for="skills">Skills <span class="muted">(optional)</span></label>
+          <input class="input" id="skills" name="skills" value={(person.skills ?? []).join(', ')} autocomplete="off" />
+          <span class="help">Up to {SKILLS_MAX}, separated by commas. For example: TypeScript, design, Postgres.</span>
+        </div>
+        <div class="acct-two">
+          <div class="field">
+            <label for="x_handle">X username <span class="muted">(optional)</span></label>
+            <input class="input" id="x_handle" name="x_handle" value={person.x_handle ?? ''} autocomplete="off" maxlength="40" placeholder="@name" />
+          </div>
+          <div class="field">
+            <label for="site_url">Website <span class="muted">(optional)</span></label>
+            <input class="input" id="site_url" name="site_url" value={person.site_url ?? ''} inputmode="url" maxlength="200" placeholder="yoursite.com" />
+          </div>
+        </div>
+        <label class="check">
+          <input type="checkbox" name="open_to_team" checked={person.open_to_team === true} />
+          <span>I'm open to joining a team for build week</span>
+        </label>
+        <div class="field">
+          <label for="team_note">Team note <span class="muted">(optional)</span></label>
+          <input class="input" id="team_note" name="team_note" value={person.team_note ?? ''} maxlength={TEAM_NOTE_MAX} placeholder="Looking for a designer and one backend dev" />
+          <span class="help">Shown on your profile while the box above is ticked. Up to {TEAM_NOTE_MAX} characters.</span>
+        </div>
+        {
+          !person.is_builder && (
+            <label class="check">
+              <input type="checkbox" name="profile_public" checked={person.profile_public === true} />
+              <span>Make my profile public</span>
+            </label>
+          )
+        }
+        <div><button class="key" type="submit">Save profile</button></div>
+      </form>
+
+      <form class="acct-panel stack" id="repos" method="post" action="/api/account/repos">
+        <h2 class="acct-h">Repositories</h2>
+        <p class="muted small">
+          Tick up to 6 to feature on your profile. {picked ? 'These are your picks.' : 'Until you pick, your 6 most-starred are shown.'} Only your own public repositories are listed, and nothing private is ever read.
+        </p>
+        {
+          repos.length ? (
+            <ul class="acct-repos">
+              {repos.map((r) => (
+                <li>
+                  <label class="check">
+                    <input type="checkbox" name="repo" value={r.name} checked={featured.has(r.name)} />
+                    <span><b>{r.name}</b>{r.description && <small>{r.description}</small>}</span>
+                    <span class="acct-stars">★ {r.stars}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="empty">We couldn't load your public repositories yet. They load the next time you sign in.</p>
+          )
+        }
+        {repos.length > 0 && <div><button class="key key-milk" type="submit">Save choices</button></div>}
+      </form>
+  </div>
+</Account>

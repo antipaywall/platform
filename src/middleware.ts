@@ -3,6 +3,7 @@ import { ADMIN_HEADERS, isAdminPath } from './lib/admin';
 import { isProduction, pageViewFor } from './lib/analytics';
 import { attempt, getPerson, isAdmin } from './lib/db';
 import { usernameGate } from './lib/usernames';
+import { parseViewAs, VIEW_COOKIE } from './lib/viewAs';
 import { allowedRequest } from './lib/origin';
 import { clientIp, VISITOR_KEY } from './lib/requester';
 import { adminClient, sessionClient } from './lib/supabase';
@@ -31,6 +32,7 @@ function countView(context: Context): Promise<void> {
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.person = null;
   context.locals.userId = null;
+  context.locals.viewAs = null;
   // Anything that changes something must come from one of our own pages.
   if (!allowedRequest({ method: context.request.method, origin: context.request.headers.get('origin'), self: context.url.origin, path: context.url.pathname })) {
     return new Response('Cross-site requests are not accepted.', { status: 403 });
@@ -45,6 +47,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.person = await attempt(() => getPerson(user.id));
     }
   }
+  // Only the organizer can look at the site as another kind of account; for anyone else the cookie means nothing.
+  if (isAdmin(context.locals.person)) context.locals.viewAs = parseViewAs(context.cookies.get(VIEW_COOKIE)?.value);
   // Someone signed in without a username yet chooses one before anything else.
   const me = context.locals.person;
   if (me && !me.username) {
