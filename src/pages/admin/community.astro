@@ -1,7 +1,7 @@
 ---
 // Posts and badges. Organizer only: reported posts, recent posts, who can't post, and badges.
 import AdminNav from '../../components/AdminNav.astro';
-import Base from '../../layouts/Base.astro';
+import Admin from '../../layouts/Admin.astro';
 import { when } from '../../lib/adminNav';
 import { BADGE_INFO } from '../../lib/badges';
 import { isAdmin } from '../../lib/db';
@@ -29,9 +29,8 @@ const who = (p: any) => (p ? profilePath(p) : '#');
 const grantable = (['founder', 'organizer', 'panel', 'sponsor', 'winner'] as const).map((k) => ({ key: k, label: BADGE_INFO[k].label }));
 ---
 
-<Base title="Admin: posts and badges" noindex>
-  <h1 class="page-title">Posts and badges</h1>
-  <AdminNav />
+<Admin heading="Posts and badges">
+  <AdminNav slot="nav" />
   <div class="stack" style="margin-top:32px;gap:48px">
     <section class="stack" id="reports">
       <p class="h2">Reported ({reported.length})</p>
@@ -98,4 +97,4 @@ const grantable = (['founder', 'organizer', 'panel', 'sponsor', 'winner'] as con
       </ul>
     </section>
   </div>
-</Base>
+</Admin>

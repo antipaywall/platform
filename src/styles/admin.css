@@ -245,3 +245,192 @@
   min-width: 9.5rem;
   overflow-wrap: normal;
 }
+
+/* The organizer's shell (src/layouts/Admin.astro): a dark side menu, a plain work surface. */
+body.adm {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  min-height: 100svh;
+  background: oklch(0.985 0.004 310);
+  font-size: 1rem;
+}
+.adm-skip {
+  position: absolute;
+  left: -999px;
+  top: 8px;
+  z-index: 5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 700;
+}
+.adm-skip:focus {
+  left: 8px;
+}
+.adm-side {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 22px 14px 18px;
+  background: var(--wall);
+  color: #fff;
+}
+.adm-brand {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 10px;
+  margin: 0;
+  padding: 0 8px;
+  line-height: 1.15;
+}
+.adm-mark {
+  grid-row: span 2;
+  width: 30px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--tomato);
+  box-shadow: 0 4px 0 oklch(0.56 0.17 30);
+}
+.adm-brand b {
+  font: 800 1.0625rem var(--display);
+  letter-spacing: -0.01em;
+}
+.adm-brand span:last-child {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--wall-ink);
+}
+.adm-side .admin-nav {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+.adm-side .admin-nav a {
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: none;
+  box-shadow: none;
+  color: oklch(0.88 0.02 310);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.adm-side .admin-nav a:hover {
+  background: oklch(1 0 0 / 0.07);
+  color: #fff;
+}
+.adm-side .admin-nav a[aria-current='page'] {
+  background: #fff;
+  color: var(--ink);
+}
+.adm-side a:focus-visible,
+.adm-side button:focus-visible {
+  outline: 3px solid var(--marigold);
+  outline-offset: 2px;
+}
+.adm-foot {
+  margin-top: auto;
+  display: grid;
+  gap: 4px;
+  padding: 14px 8px 0;
+  border-top: 1px solid oklch(1 0 0 / 0.12);
+  font-size: 0.875rem;
+}
+.adm-who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-weight: 700;
+  min-width: 0;
+}
+.adm-who img {
+  border-radius: 50%;
+}
+.adm-who span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.adm-foot a,
+.adm-foot button {
+  padding: 5px 0;
+  border: 0;
+  background: none;
+  color: var(--wall-ink);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.adm-foot a:hover,
+.adm-foot button:hover {
+  color: #fff;
+}
+.adm-main {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 40px) clamp(16px, 3.5vw, 48px) 96px;
+  max-width: 1280px;
+}
+.adm-top {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.adm-top h1 {
+  margin: 0;
+  font: 800 clamp(1.625rem, 2.4vw, 2.125rem) / 1.1 var(--display);
+  letter-spacing: -0.025em;
+}
+.adm-top p {
+  margin: 0;
+  color: var(--ink-2);
+  max-width: 78ch;
+}
+/* The links to parts of one long page stay as a row of pills, in the page itself. */
+.adm-main .admin-nav {
+  margin-top: 0;
+}
+@media (max-width: 860px) {
+  body.adm {
+    display: block;
+  }
+  .adm-side {
+    position: static;
+    height: auto;
+    gap: 12px;
+    padding: 14px var(--gutter);
+  }
+  .adm-brand {
+    padding: 0;
+  }
+  .adm-side .admin-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .adm-side .admin-nav a {
+    white-space: nowrap;
+  }
+  .adm-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 16px;
+    margin-top: 0;
+    padding: 10px 0 0;
+  }
+  .adm-who {
+    margin: 0;
+  }
+}

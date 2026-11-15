@@ -2,7 +2,7 @@
 // Tools people looked up by pasting a website. Organizer only: what each lookup found, how many
 // people asked, and whether its page is listed on /find, left reachable by address, or hidden.
 import AdminNav from '../../components/AdminNav.astro';
-import Base from '../../layouts/Base.astro';
+import Admin from '../../layouts/Admin.astro';
 import { when } from '../../lib/adminNav';
 import { isAdmin } from '../../lib/db';
 import { dollars, shortCount } from '../../lib/format';
@@ -27,10 +27,9 @@ const done: Record<string, string> = { list: 'Listed.', hide: 'Hidden.', unlist:
 const message = done[Astro.url.searchParams.get('done') ?? ''];
 ---
 
-<Base title="Admin: looked-up tools" noindex>
-  <h1 class="page-title">Looked-up tools</h1>
-  <AdminNav />
-  <p class="admin-note" style="margin-top:24px">
+<Admin heading="Looked-up tools">
+  <AdminNav slot="nav" />
+  <p class="admin-note">
     Paid tools people looked up by pasting the tool's website. The site read each homepage once and searched GitHub with its own words; nothing here came from an AI model. A tool counts as a gap when its best match has under {shortCount(SOLID_STARS)} stars.
   </p>
   {message && <p class="flash flash-ok" role="status">{message}</p>}
@@ -84,7 +83,7 @@ const message = done[Astro.url.searchParams.get('done') ?? ''];
       })
     }
   </div>
-</Base>
+</Admin>
 
 <style>
   .at-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }

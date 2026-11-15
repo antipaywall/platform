@@ -69,8 +69,13 @@ describe('organizer pages are private', () => {
     expect(ADMIN_HEADERS['x-robots-tag']).toContain('noindex');
     const middleware = readFileSync('src/middleware.ts', 'utf8');
     expect(middleware).toMatch(/if \(isAdminPath\(context\.url\.pathname\)\) \{\s*for \(const \[name, value\] of Object\.entries\(ADMIN_HEADERS\)\) response\.headers\.set\(name, value\);/);
-    expect(readFileSync('src/pages/admin.astro', 'utf8')).toMatch(/<Base title="Admin" noindex>/);
-    for (const page of ['visitors', 'people', 'manage']) expect(readFileSync(`src/pages/admin/${page}.astro`, 'utf8')).toMatch(/<Base title="Admin: [a-z ]+" noindex>/);
+    // Every organizer page is drawn by the organizer's own layout, which always asks not to be indexed.
+    expect(readFileSync('src/layouts/Admin.astro', 'utf8')).toMatch(/<Head [^\n]* noindex \/>/);
+    for (const page of adminPages) {
+      const source = readFileSync(page, 'utf8');
+      expect(source, page).toMatch(/<Admin heading="[^"]+"( about="[^"]+")?>/);
+      expect(source, page).not.toMatch(/layouts\/(Base|Platform)\.astro/);
+    }
     for (const p of ['/admin/visitors', '/admin/people', '/admin/manage', '/api/admin/people.csv']) expect(isAdminPath(p)).toBe(true);
   });
 });

@@ -1,7 +1,7 @@
 ---
 import AdminNav from '../../components/AdminNav.astro';
 import { profileUrl } from '../../lib/accounts';
-import Base from '../../layouts/Base.astro';
+import Admin from '../../layouts/Admin.astro';
 import PledgeWho from '../../components/PledgeWho.astro';
 import SponsorForm from '../../components/SponsorForm.astro';
 import { postedBy } from '../../lib/ideas';
@@ -24,9 +24,8 @@ const waiting = (rows: { handled: boolean }[]) => rows.filter((r) => !r.handled)
 const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty', unsure: 'Not sure yet' };
 ---
 
-<Base title="Admin: inbox and moderation" noindex>
-  <h1 class="page-title">Inbox and moderation</h1>
-  <AdminNav />
+<Admin heading="Inbox and moderation">
+  <AdminNav slot="nav" />
   <nav class="admin-nav" aria-label="On this page">
     <a href="#list">Email list</a><a href="#panel">Panel</a><a href="#organize">Organize</a><a href="#inquiries">Sponsor inquiries</a><a href="#pledges">Pledges</a><a href="#ideas">Ideas</a><a href="#sponsors">Sponsors</a>
   </nav>
@@ -229,4 +228,4 @@ const kindLabel: Record<string, string> = { pool: 'Main pool', bounty: 'Bounty',
       </div>
     </section>
   </div>
-</Base>
+</Admin>

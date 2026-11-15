@@ -1,6 +1,6 @@
 ---
 import AdminNav from '../components/AdminNav.astro';
-import Base from '../layouts/Base.astro';
+import Admin from '../layouts/Admin.astro';
 import { site } from '../config/site';
 import { when } from '../lib/adminNav';
 import { attempt, getReport, isAdmin } from '../lib/db';
@@ -35,9 +35,8 @@ const tables: [string, string, Counted[] | undefined, string][] = [
 const links = taggedLinks(site.origin);
 ---
 
-<Base title="Admin" noindex>
-  <h1 class="page-title">Admin</h1>
-  <AdminNav humans={humans} />
+<Admin heading="Overview">
+  <AdminNav slot="nav" humans={humans} />
 
   <div class="stack" style="margin-top:28px;gap:44px">
     {
@@ -220,4 +219,4 @@ const links = taggedLinks(site.origin);
       )
     }
   </div>
-</Base>
+</Admin>
