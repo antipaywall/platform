@@ -1,0 +1,137 @@
+---
+// Onboarding, right after a first sign-in: what Antipaywall is, then "what do you pay for?".
+// Tools we track show their free alternatives straight away; a website we don't know yet is
+// looked up live, and adding it puts a new brick on the wall. Works without scripts: the box
+// suggests names from a datalist and posts a plain form.
+import Platform from '../layouts/Platform.astro';
+import { listProducts, type ProductSummary } from '../lib/products';
+import { brickState, trustedAlternatives } from '../lib/wall';
+import { listMyTools } from '../lib/myTools';
+import { safeNext } from '../lib/respond';
+import { adminClient } from '../lib/supabase';
+
+const person = Astro.locals.person;
+const next = safeNext(Astro.url.searchParams.get('next'), '/');
+if (!person) return Astro.redirect(`/signin?next=${encodeURIComponent('/welcome')}`);
+
+const q = Astro.url.searchParams;
+const added = q.get('added');
+const isNew = q.get('new') === '1';
+const error = q.get('e');
+
+type Mine = { name: string; href: string; state: 'solid' | 'some' | 'gap'; free: number; people: number; key: string };
+const db = adminClient();
+let products: ProductSummary[] = [];
+let mine: Mine[] = [];
+let suggestions: string[] = [];
+if (db) {
+  try {
+    let trusted: Map<string, { count: number; best: number }>;
+    [products, trusted] = await Promise.all([listProducts(db), trustedAlternatives(db)]);
+    // Until the paid_tools table exists, the list can't be read; the rest of the page still works.
+    const list = await listMyTools(db, person.id).catch(() => []);
+    const domains = list.flatMap((t) => (t.kind === 'asked' ? [t.domain] : []));
+    const [{ data: asked }, { data: listedAsked }] = await Promise.all([
+      domains.length ? db.from('asked_tools').select('domain, name, repos, best_stars, askers').in('domain', domains) : Promise.resolve({ data: [] as any[] }),
+      db.from('asked_tools').select('name').eq('status', 'listed').limit(500),
+    ]);
+    const bySlug = new Map(products.map((p) => [p.slug, p]));
+    const askedBy = new Map(((asked ?? []) as any[]).map((t) => [t.domain, t]));
+    mine = list.flatMap((t): Mine[] => {
+      if (t.kind === 'catalog') {
+        const p = bySlug.get(t.slug);
+        if (!p) return [];
+        const tr = trusted.get(p.id);
+        return [{ name: p.name, href: `/free-alternatives/${p.slug}`, state: brickState(tr?.count ?? 0, tr?.best ?? 0), free: p.freeOptions, people: p.signals, key: p.slug }];
+      }
+      const a = askedBy.get(t.domain);
+      const free = (a?.repos ?? []).length;
+      return [{ name: t.name, href: `/find/${t.domain}`, state: brickState(free, a?.best_stars ?? 0), free, people: (a?.askers ?? []).length, key: t.domain }];
+    });
+    suggestions = [...new Set([...products.map((p) => p.name), ...((listedAsked ?? []) as any[]).map((t) => t.name)])].sort((a, b) => a.localeCompare(b));
+  } catch {
+    /* The page still works: the box takes any name or website. */
+  }
+}
+const just = added ? mine.find((m) => m.key === added) : undefined;
+const ERR: Record<string, string> = {
+  unknown: "We don't know that one yet. Paste its website (like calendly.com) and we'll look it up.",
+  limit: "That's a lot of new lookups for one hour. Try again a little later.",
+  busy: "That didn't work just now. Try again in a minute.",
+  too_many: "That's the most tools one list can hold.",
+};
+const peopleText = (n: number) => (n <= 1 ? 'You are the first person to ask for it.' : `${n} people want it replaced.`);
+---
+
+<Platform title="Welcome" description="Get started on Antipaywall." noindex>
+  <section class="wrap pf-section ob">
+    <p class="pf-sub">Welcome, {person.name ?? person.handle}</p>
+    <h1 class="pf-title">Let's see what you're paying for.</h1>
+    <p class="lede ob-lede">
+      Antipaywall maps the software people pay for and finds free, open-source versions of it. When nothing good exists yet,
+      that's a gap, and the community builds it. Every tool you add makes the map more complete for everyone.{' '}
+      <a class="link" href="/about">Why we're doing this</a>.
+    </p>
+
+    {just && (
+      <div class={`ob-result ${isNew ? 'ob-new' : ''}`} role="status">
+        <div class="ob-drop" aria-hidden="true"><span class={`wall-brick ${just.state}`}><span>{just.name}</span></span></div>
+        <div class="ob-result-text">
+          {isNew ? (
+            <>
+              <b>You just put {just.name} on the map.</b>
+              <span>Nobody had added it before you. {just.free > 0 ? `We found ${just.free} open-source project${just.free === 1 ? '' : 's'} that might do the same job.` : 'We found nothing free that does the same job yet: it\'s a new gap, and the next season could build it.'}</span>
+            </>
+          ) : just.state === 'gap' ? (
+            <>
+              <b>{just.name} is a gap.</b>
+              <span>Nothing free does the job yet. {peopleText(just.people)}</span>
+            </>
+          ) : (
+            <>
+              <b>{just.name}: {just.free} free alternative{just.free === 1 ? '' : 's'}.</b>
+              <span>{just.state === 'solid' ? 'At least one is widely used.' : 'None is widely used yet.'} {peopleText(just.people)}</span>
+            </>
+          )}
+          <a class="link" href={just.href}>See them</a>
+        </div>
+      </div>
+    )}
+    {error && <p class="flash flash-error" role="alert">{ERR[error] ?? ERR.busy}</p>}
+
+    <form class="ob-form" action="/api/welcome/tool" method="post">
+      <label for="tool" class="pf-h3">What do you pay for?</label>
+      <p class="muted">Type a tool's name, or paste its website. Add as many as you like, one at a time.</p>
+      <div class="pf-search">
+        <input id="tool" name="tool" type="text" list="tool-names" placeholder="Calendly, notion.so, …" autocomplete="off" required autofocus />
+        <input type="hidden" name="next" value={next} />
+        <button class="key" type="submit">Add</button>
+      </div>
+      <datalist id="tool-names">{suggestions.map((s) => <option value={s} />)}</datalist>
+    </form>
+
+    {mine.length > 0 && (
+      <div class="ob-mine">
+        <h2 class="pf-h3">Your wall</h2>
+        <ul class="wall-row ob-wall">
+          {mine.map((m) => (
+            <li style="flex-grow:1">
+              <a class={`wall-brick ${m.state}`} href={m.href} title={m.state === 'gap' ? 'A gap: nothing free yet' : `${m.free} free alternative${m.free === 1 ? '' : 's'}`}><span>{m.name}</span></a>
+            </li>
+          ))}
+        </ul>
+        <p class="muted small">Painted bricks have a free alternative people rely on. Bare ones are gaps. <a class="link" href="/wall">See everyone's wall</a>.</p>
+      </div>
+    )}
+
+    <div class="ob-next">
+      <h2 class="pf-h3">Then</h2>
+      <ul class="ob-steps">
+        <li><a href="/free-alternatives"><b>Find more free alternatives</b><span>Browse every paid tool we track.</span></a></li>
+        <li><a href="/first-contribution"><b>Make your first open-source contribution</b><span>A guided walk-through, with or without a coding agent.</span></a></li>
+        <li><a href="/hackathon"><b>Build the missing pieces</b><span>The hackathon season takes the biggest gaps and builds them.</span></a></li>
+      </ul>
+      <a class="key key-marigold" href={next === '/welcome' ? '/' : next}>{mine.length ? "I'm done for now" : 'Skip for now'}</a>
+    </div>
+  </section>
+</Platform>

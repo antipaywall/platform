@@ -116,5 +116,7 @@ export const GET: APIRoute = async (context) => {
   if (!before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
   if (before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
   if (listed?.status === 'new') await recordEvent(db, context, { ...who, kind: 'list_joined', subject: listed.id });
-  return redirect(mustChoose ? `/auth/username?next=${encodeURIComponent(next)}` : next);
+  // A first sign-in goes through onboarding (what Antipaywall is, and what they pay for) on the way.
+  const onward = before.data ? next : `/welcome?next=${encodeURIComponent(next)}`;
+  return redirect(mustChoose ? `/auth/username?next=${encodeURIComponent(onward)}` : onward);
 };
