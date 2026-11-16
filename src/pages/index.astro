@@ -35,6 +35,7 @@ const openGaps = findOpenGaps(products);
 const stateOf = (p: ProductSummary) => brickState(p.trustedOptions, p.bestStars);
 const painted = products.filter((p) => stateOf(p) === 'solid').length;
 const early = products.filter((p) => stateOf(p) === 'some').length;
+const bare = products.length - painted - early;
 const WORK = ['slack', 'notion', 'monday', 'clickup', 'trello', 'asana', 'jira', 'salesforce', 'hubspot', 'pipedrive', 'zoom', 'google-workspace', 'microsoft-365', 'dropbox', 'figma', 'canva', 'grammarly', 'docusign', 'calendly', 'mailchimp', 'zapier', 'quickbooks', 'airtable', 'miro', 'loom', 'intercom', 'zendesk', 'shopify', 'typeform', '1password', 'adobe-acrobat', 'photoshop', 'linear', 'confluence', 'gusto', 'rippling', 'greenhouse', 'webflow', 'semrush', 'chatgpt', 'gong', 'docsend', 'surveymonkey', 'hootsuite'];
 const workBricks = WORK.map((s) => products.find((p) => p.slug === s)).filter((p): p is ProductSummary => Boolean(p)).map((p) => ({ slug: p.slug, name: p.name, state: stateOf(p) }));
 // The tools most people know from their own card statement, in this order; anything the catalog
@@ -158,8 +159,8 @@ const builderCount = stats?.builders ?? null;
       {platform && (
         <p class="hm-say">
           <a href="/explore?show=all">{platform.projects.toLocaleString('en-US')} open-source projects</a> already do the job of{' '}
-          <a href="/free-alternatives">{platform.products} tools people pay for</a>.{' '}
-          {openGaps.length > 0 && <><a href="/wall">{openGaps.length.toLocaleString('en-US')} still have no free version people rely on</a>.</>}
+          <a href="/free-alternatives">{(products.length - bare).toLocaleString('en-US')} of the {products.length.toLocaleString('en-US')} tools people pay for</a>.{' '}
+          {bare > 0 && <><a href="/wall">{bare.toLocaleString('en-US')} still have nothing free</a>.</>}
           {platform.gaps > 0 && <>{' '}<a href="#gaps-h">{platform.gaps} more {platform.gaps === 1 ? 'thing is' : 'things are'} wanted that nobody has built</a>.</>}
         </p>
       )}
@@ -179,7 +180,7 @@ const builderCount = stats?.builders ?? null;
             <span class="wall-bar-solid" style={`width:${(painted / products.length) * 100}%`}></span>
             <span class="wall-bar-some" style={`width:${(early / products.length) * 100}%`}></span>
           </div>
-          <p><strong>{Math.round((painted / products.length) * 100)}%</strong> painted: {painted} of {products.length.toLocaleString('en-US')} paid tools have a free alternative people rely on. {early} have early options, and {products.length - painted - early} have nothing free yet.</p>
+          <p><strong>{Math.round((painted / products.length) * 100)}%</strong> painted: {painted} of {products.length.toLocaleString('en-US')} paid tools have a free alternative people rely on. {early} have early options, and {bare} have nothing free yet.</p>
         </div>
         <ul class="wall-row hm-wall-row" aria-label="The tools most teams pay for">
           {workBricks.map((b) => (
