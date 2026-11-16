@@ -37,8 +37,12 @@ export type ProductSummary = { id: string; slug: string; name: string; category:
 
 /** Below this many stars, a free alternative exists but few people rely on it yet. */
 export const SOLID_STARS = 1000;
-/** Matches trusted enough to say a free alternative exists: hand-picked, named in its own README or name, or tagged for the tool. */
-export const TRUSTED_SOURCES = ['catalog', 'search', 'tag'] as const;
+/**
+ * Every kind of link now needs evidence (see src/lib/sync/link.ts): a hand-picked link with a
+ * reason, or a repo that calls itself an alternative to the tool by name or tags itself for it.
+ * So every source counts; the list stays so the rule is written down in one place.
+ */
+export const TRUSTED_SOURCES = ['catalog', 'search', 'tag', 'topic'] as const;
 
 /** A rough monthly cost for ranking, counting a one-time price as spread over two years. */
 const rankCents = (p: Price): number => (!p ? 0 : p.period === 'once' ? Math.round(p.cents / 24) : monthlyCents(p));

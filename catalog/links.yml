@@ -1563,10 +1563,6 @@
   product: revit
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: mrdoob/three.js
-  product: spline
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: meilisearch/meilisearch
   product: algolia
   action: add
@@ -2059,10 +2055,6 @@
   product: databricks
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: airbytehq/airbyte
-  product: hightouch
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: frappe/hrms
   product: adp
   action: add
@@ -2127,10 +2119,6 @@
   product: articulate-360
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: oslokommune/okr-tracker
-  product: 15five
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: ever-co/ever-gauzy
   product: deputy
   action: add
@@ -2141,10 +2129,6 @@
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: ever-co/ever-gauzy
   product: connecteam
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: ever-co/ever-gauzy
-  product: homebase
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: akaunting/akaunting
@@ -2299,26 +2283,6 @@
   product: sibelius
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: jellyfin/jellyfin
-  product: netflix
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: navidrome/navidrome
-  product: apple-music
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: navidrome/navidrome
-  product: tidal
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: advplyr/audiobookshelf
-  product: audible
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: kovidgoyal/calibre
-  product: kindle-unlimited
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: ad-aures/castopod
   product: buzzsprout
   action: add
@@ -2428,10 +2392,6 @@
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: ankitects/anki
-  product: duolingo-super
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: ankitects/anki
   product: quizlet-plus
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
@@ -2453,10 +2413,6 @@
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: keepassxreboot/keepassxc
   product: 1password
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: wg-easy/wg-easy
-  product: nordvpn
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: keycloak/keycloak
@@ -2939,10 +2895,6 @@
   product: restream
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: jitsi/jitsi-meet
-  product: riverside
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: WordPress/WordPress
   product: squarespace
   action: add
@@ -3011,18 +2963,6 @@
   product: languagetool
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: errata-ai/vale
-  product: hemingway
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: languagetool-org/languagetool
-  product: quillbot
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: languagetool-org/languagetool
-  product: wordtune
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: AmruthPillai/Reactive-Resume
   product: kickresume
   action: add
@@ -3041,9 +2981,5 @@
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
 - project: oobabooga/text-generation-webui
   product: novelai
-  action: add
-  reason: A well-known open-source tool that does the same job; added when the catalog grew.
-- project: oobabooga/text-generation-webui
-  product: sudowrite
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.

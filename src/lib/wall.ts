@@ -1,7 +1,6 @@
-// The wall's rule for whether a paid tool has a free alternative people rely on. Only matches we
-// trust count: hand-picked ones (catalog), ones whose own README or name names the tool (search),
-// and repos tagged for it. Broad topic matches are useful for browsing but too loose to paint a
-// brick. "Relied on" is the platform's usual bar: SOLID_STARS stars.
+// The wall's rule for whether a paid tool has a free alternative people rely on. Every link needs
+// evidence (src/lib/sync/link.ts), so every link counts. "Relied on" is the platform's usual bar:
+// SOLID_STARS stars.
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SOLID_STARS, TRUSTED_SOURCES } from './products';
 export { TRUSTED_SOURCES };

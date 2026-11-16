@@ -163,8 +163,11 @@ describe('linkSource', () => {
   it('links a repo tagged <slug>-alternative without further checks', () => {
     expect(linkSource(repo({ topics: ['calendly-alternative'], description: 'Something' }), product, ['tag'])).toBe('tag');
   });
-  it('links a topic match that shares two of the product words', () => {
-    expect(linkSource(repo({ description: 'Open source booking and appointments for everyone' }), product, ['topic'])).toBe('topic');
+  it('refuses a topic match that only shares plain words with the product', () => {
+    expect(linkSource(repo({ description: 'Open source booking and appointments for everyone' }), product, ['topic'])).toBeNull();
+  });
+  it('links a topic match that calls itself an alternative to the product', () => {
+    expect(linkSource(repo({ description: 'Open source booking pages, a Calendly alternative' }), product, ['topic'])).toBe('topic');
   });
   it('refuses a topic match that shares no words with the product', () => {
     expect(linkSource(repo({ description: 'Distributed cron job scheduler', topics: ['scheduling'] }), product, ['topic'])).toBeNull();
@@ -173,7 +176,7 @@ describe('linkSource', () => {
     expect(linkSource(repo({ fullName: 'Someone/Wrong', topics: ['calendly-alternative'] }), product, ['tag'])).toBeNull();
   });
   it('prefers the strongest way it was found', () => {
-    expect(linkSource(repo({ description: 'booking pages for appointments' }), product, ['search', 'topic'])).toBe('topic');
+    expect(linkSource(repo({ description: 'Calendly alternative: booking pages for appointments' }), product, ['search', 'topic'])).toBe('topic');
   });
 });
 
@@ -261,11 +264,39 @@ describe('linkSource is strict about broad topics', () => {
   it('drops a pipeline tool that only shares the word "scheduling"', () => {
     expect(linkSource(repo({ fullName: 'spotify/luigi', description: 'Build complex pipelines of batch jobs', topics: ['python', 'scheduling', 'hadoop'] }), calendly, ['topic'])).toBeNull();
   });
-  it('keeps a booking app that shares several of the product words', () => {
-    expect(linkSource(repo({ fullName: 'alextselegidis/easyappointments', description: 'Online appointments scheduler for booking', topics: ['scheduling'] }), calendly, ['topic'])).toBe('topic');
+  it('drops a booking app that shares words but never says it replaces the product (a hand link can add it)', () => {
+    expect(linkSource(repo({ fullName: 'alextselegidis/easyappointments', description: 'Online appointments scheduler for booking', topics: ['scheduling'] }), calendly, ['topic'])).toBeNull();
   });
-  it('keeps a repo that names the product', () => {
+  it('keeps a repo that calls itself an open-source version of the product', () => {
     expect(linkSource(repo({ fullName: 'x/y', description: 'An open source Calendly', topics: [] }), calendly, ['search'])).toBe('search');
+  });
+  it('drops a repo that names the product without saying it replaces it', () => {
+    expect(linkSource(repo({ fullName: 'x/calendly-sync', description: 'Sync Calendly events to Google Sheets', topics: ['calendly'] }), calendly, ['search'])).toBeNull();
+  });
+});
+
+describe('linkSource needs evidence (the Lovable page)', () => {
+  const lovable = { slug: 'lovable', name: 'Lovable', aliases: ['lovable.dev'], excludes: [] };
+  it('keeps a repo that lists Lovable among the tools it replaces', () => {
+    expect(linkSource(repo({ fullName: 'dyad-sh/dyad', description: 'Local, open-source AI app builder for power users ✨ v0 / Lovable / Replit / Bolt alternative', topics: ['ai-app-builder', 'lovable'] }), lovable, ['topic'])).toBe('topic');
+  });
+  it('keeps "The open-source V0/Lovable alternative"', () => {
+    expect(linkSource(repo({ fullName: 'nextify-limited/libra', description: 'The open-source V0/Lovable alternative', topics: ['lovable'] }), lovable, ['search'])).toBe('search');
+  });
+  it('drops an internal-tools builder that only shares "no code" and "ai app builder"', () => {
+    expect(linkSource(repo({ fullName: 'ToolJet/ToolJet', description: 'Open-source foundation of ToolJet AI - the enterprise app generation platform for internal tools', topics: ['no-code', 'low-code', 'ai-app-builder'] }), lovable, ['topic'])).toBeNull();
+  });
+  it('drops a prompt pack even when it shares topics', () => {
+    expect(linkSource(repo({ fullName: 'someone/agency-agents', description: '277 plug-and-play AI expert roles', topics: ['no-code', 'prompt-engineering', 'system-prompts'] }), lovable, ['topic'])).toBeNull();
+  });
+  it('drops an awesome-list even when it names Lovable', () => {
+    expect(linkSource(repo({ fullName: 'taskade/awesome-vibe-coding', description: 'The complete guide to vibe coding, with Lovable alternatives', topics: ['awesome-list'] }), lovable, ['topic'])).toBeNull();
+  });
+  it('drops a tutorial for another product', () => {
+    expect(linkSource(repo({ fullName: 'x/vibe-coding-with-base44', description: 'A beginner-friendly guide to building apps with Base44', topics: ['tutorial'] }), lovable, ['topic'])).toBeNull();
+  });
+  it('still takes the <slug>-alternative tag as evidence', () => {
+    expect(linkSource(repo({ fullName: 'a/b', description: 'AI app builder', topics: ['lovable-alternative'] }), lovable, ['topic'])).toBe('topic');
   });
 });
 
