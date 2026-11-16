@@ -1,8 +1,7 @@
 # Repos and words that never reach the site. A repo whose name, description or topics contain
 # one of these words as a whole word is dropped by the sync. Antipaywall lists open-source
 # projects, never pirated copies, cracks or cheats.
-repos:
-  - ethanplusai/sellbird
+repos: []
 words:
   - crack
   - cracked
