@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "connecteam"
+name: "Connecteam"
+category: "HR and hiring"
+price: { cents: 2900, period: month }
+blurb: "An app for managing frontline teams."
+words: ["frontline", "scheduling", "checklists", "time clock"]
+topics: ["shift-scheduling", "hr", "connecteam-alternative"]
+search_terms: ["Connecteam alternative", "open source workforce management"]
+aliases: ["connecteam.com"]
+excludes: []

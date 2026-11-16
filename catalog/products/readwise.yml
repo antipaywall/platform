@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "readwise"
+name: "Readwise"
+category: "Docs and notes"
+price: { cents: 899, period: month }
+blurb: "Your highlights from books and articles in one place."
+words: ["highlights", "kindle", "reading", "review"]
+topics: ["reading", "highlights", "readwise-alternative"]
+search_terms: ["Readwise alternative", "open source highlights"]
+aliases: ["readwise.io"]
+excludes: []

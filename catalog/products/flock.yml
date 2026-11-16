@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "flock"
+name: "Flock"
+category: "Team chat"
+price: { cents: 450, period: month }
+blurb: "Team messaging."
+words: ["team chat", "messaging", "channels", "video"]
+topics: ["team-chat", "chat", "flock-alternative"]
+search_terms: ["Flock alternative", "open source team chat"]
+aliases: ["flock.com"]
+excludes: []

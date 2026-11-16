@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "clickfunnels"
+name: "ClickFunnels"
+category: "Websites"
+price: { cents: 9700, period: month }
+blurb: "Sales funnels and landing pages."
+words: ["sales funnel", "landing page", "checkout", "upsell"]
+topics: ["landing-page", "funnel", "clickfunnels-alternative"]
+search_terms: ["ClickFunnels alternative", "open source sales funnel"]
+aliases: ["clickfunnels.com"]
+excludes: []

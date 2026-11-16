@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "15five"
+name: "15Five"
+category: "HR and hiring"
+price: { cents: 400, period: month }
+blurb: "Check-ins, reviews and goals."
+words: ["check-ins", "performance", "okrs", "feedback"]
+topics: ["performance-management", "okr", "15five-alternative"]
+search_terms: ["15Five alternative", "open source okr"]
+aliases: ["15five.com"]
+excludes: []

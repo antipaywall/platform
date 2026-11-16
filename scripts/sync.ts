@@ -7,6 +7,11 @@
 //   pnpm sync --dry-run          (reads GitHub, writes nothing, prints counts)
 //   pnpm sync --links-only       (a few minutes: only adds the hand-made links in catalog/links.yml;
 //                                 searches nothing, removes nothing, unlists nothing)
+//   pnpm sync --only-new         (searches only for products with no free alternatives linked yet,
+//                                 such as ones just added to the catalog; every other product keeps its links)
+//   SYNC_SEARCH_MINUTES=45       (how long searching may take; products not reached in time keep
+//                                 their links and go first next run. Default 45, so the daily job
+//                                 fits GitHub's 60-minute limit however big the catalog gets)
 // Production runs it daily in GitHub Actions (.github/workflows/sync.yml).
 //
 // It never spends GitHub's whole allowance: when only a reserve is left it stops, records
@@ -19,11 +24,14 @@ import { factsFromSearchItem, fetchReposResilient, GithubBudget, isIndexable, Ra
 import { linkSource, type FoundBy } from '../src/lib/sync/link';
 import { parseIdeaFile } from '../src/lib/ideaFile';
 import { applyIdeaFile } from '../src/lib/ideasSync';
-import { dedupeLinks, fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
+import { dedupeLinks, fetchAllRows, relinkable, searchOrder, toUnlist } from '../src/lib/sync/plan';
 
 const DRY = process.argv.includes('--dry-run');
 /** Only the hand-made links: no searches, and every product keeps the links it has. */
 const LINKS_ONLY = process.argv.includes('--links-only');
+/** Search only for products that have no links yet. */
+const ONLY_NEW = process.argv.includes('--only-new');
+const SEARCH_MS = Math.max(1, Number(process.env.SYNC_SEARCH_MINUTES ?? 45)) * 60 * 1000;
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
 const SEARCH_PER_QUERY = 50;
 /** At most this many projects per paid product, most-starred first. */
@@ -62,7 +70,7 @@ async function upsertCatalog(db: SupabaseClient, products: Product[], topics: { 
   must(await db.from('topics').upsert(topics.map((t) => ({ ...t, tracked: true })), { onConflict: 'slug' }), 'topics');
 }
 
-async function findCandidates(products: Product[]): Promise<{ found: Map<string, Map<string, Set<FoundBy>>>; failed: Set<string>; seen: Map<string, RepoFacts> }> {
+async function findCandidates(products: Product[], deadline = Infinity): Promise<{ found: Map<string, Map<string, Set<FoundBy>>>; failed: Set<string>; seen: Map<string, RepoFacts> }> {
   // What each search result already says about a repo, so junk is dropped without more requests.
   const seen = new Map<string, RepoFacts>();
   // product slug → repo full name → how it was found
@@ -70,7 +78,11 @@ async function findCandidates(products: Product[]): Promise<{ found: Map<string,
   // Products with a search that didn't answer: their existing links are left alone this run.
   const failed = new Set<string>();
   const tagged = new Set<string>();
+  // Many products share a search (topic:crm, "open source crm"): each one runs once per sync.
+  const answered = new Map<string, string[]>();
   const runSearch = async (q: string): Promise<string[] | null> => {
+    const known = answered.get(q);
+    if (known) return known;
     const res = await gh(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${SEARCH_PER_QUERY}`, undefined, search);
     await sleep(2200); // 30 searches a minute
     if (!res.ok) return null;
@@ -82,9 +94,12 @@ async function findCandidates(products: Product[]): Promise<{ found: Map<string,
       seen.set(f.fullName.toLowerCase(), f);
       names.push(f.fullName);
     }
+    answered.set(q, names);
     return names;
   };
   for (const p of products) {
+    // Out of time: this product isn't searched, so it keeps the links it has.
+    if (Date.now() > deadline) { failed.add(p.slug); continue; }
     const byRepo = new Map<string, Set<FoundBy>>();
     for (const q of searchQueries(p)) {
       const how: FoundBy = q.startsWith(`topic:${p.slug}-alternative`) ? 'tag' : q.startsWith('topic:') ? 'topic' : 'search';
@@ -102,6 +117,19 @@ async function findCandidates(products: Product[]): Promise<{ found: Map<string,
   for (const name of (await runSearch('topic:antipaywall archived:false fork:false')) ?? []) tagged.add(name);
   found.set('', new Map([...tagged].map((n) => [n, new Set<FoundBy>(['tag'])])));
   return { found, failed, seen };
+}
+
+/** The products this run searches for, in order. */
+async function productsToSearch(db: SupabaseClient | null, products: Product[]): Promise<Product[]> {
+  if (!db) return ONLY_NEW ? [] : products;
+  const linked = await fetchAllRows<{ product_id: string }>((a, b) => db.from('project_products').select('product_id').order('product_id').order('project_id').range(a, b));
+  const ids = must(await db.from('products').select('id, slug'), 'products read') as { id: string; slug: string }[];
+  const has = new Set(linked.map((l) => l.product_id));
+  const unlinked = new Set(ids.filter((p) => !has.has(p.id)).map((p) => p.slug));
+  for (const p of products) if (!ids.some((i) => i.slug === p.slug)) unlinked.add(p.slug);
+  const day = Math.floor(Date.now() / (24 * 3600 * 1000));
+  const ordered = searchOrder(products, unlinked, day);
+  return ONLY_NEW ? ordered.filter((p) => unlinked.has(p.slug)) : ordered;
 }
 
 async function contributorsOf(fullName: string): Promise<number | null> {
@@ -133,7 +161,11 @@ async function main() {
     // With no searches, every product counts as "not searched", so none of its links are replaced.
     const { found, failed, seen } = LINKS_ONLY
       ? { found: new Map<string, Map<string, Set<FoundBy>>>(), failed: new Set(catalog.products.map((p) => p.slug)), seen: new Map<string, RepoFacts>() }
-      : await findCandidates(catalog.products);
+      : await findCandidates(await productsToSearch(db, catalog.products), Date.now() + SEARCH_MS).then((r) => {
+          // Products left out of this run (--only-new) keep their links too.
+          for (const p of catalog.products) if (!r.found.has(p.slug)) r.failed.add(p.slug);
+          return r;
+        });
     // Hand-made links from the catalog count as found, and so do every repo they name.
     const removed = new Set(catalog.links.filter((l) => l.action === 'remove').map((l) => `${l.product}|${l.project.toLowerCase()}`));
     const manual = catalog.links.filter((l) => l.action === 'add');

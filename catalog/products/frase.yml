@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "frase"
+name: "Frase"
+category: "Writing"
+price: { cents: 1500, period: month }
+blurb: "SEO content briefs and writing."
+words: ["content brief", "seo writing", "keywords", "outline"]
+topics: ["seo", "content-optimization", "frase-alternative"]
+search_terms: ["Frase alternative", "open source seo content"]
+aliases: ["frase.io"]
+excludes: []

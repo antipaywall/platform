@@ -1,0 +1,10 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "openrouter"
+name: "OpenRouter"
+category: "AI tools"
+blurb: "One API for hundreds of AI models, with a fee on credits."
+words: ["llm api", "model routing", "ai gateway", "models"]
+topics: ["llm", "ai-gateway", "openrouter-alternative"]
+search_terms: ["OpenRouter alternative", "open source llm gateway"]
+aliases: ["openrouter.ai"]
+excludes: []

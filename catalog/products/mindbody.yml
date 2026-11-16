@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "mindbody"
+name: "Mindbody"
+category: "Scheduling"
+price: { cents: 12900, period: month }
+blurb: "Booking and payments for gyms and studios."
+words: ["gym booking", "classes", "studio", "memberships"]
+topics: ["booking", "fitness", "mindbody-alternative"]
+search_terms: ["Mindbody alternative", "open source gym management"]
+aliases: ["mindbody.com"]
+excludes: []

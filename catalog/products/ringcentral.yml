@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "ringcentral"
+name: "RingCentral"
+category: "Video and calls"
+price: { cents: 2000, period: month }
+blurb: "Business phone, video and messaging."
+words: ["business phone", "voip", "video meetings", "sms"]
+topics: ["voip", "telephony", "ringcentral-alternative"]
+search_terms: ["RingCentral alternative", "open source business phone system"]
+aliases: ["ringcentral.com"]
+excludes: []

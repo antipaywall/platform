@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "wps-office"
+name: "WPS Office Pro"
+category: "Office"
+price: { cents: 3599, period: year }
+blurb: "An office suite."
+words: ["office suite", "documents", "spreadsheets", "presentations"]
+topics: ["office-suite", "documents", "wps-office-alternative"]
+search_terms: ["WPS Office Pro alternative", "open source office suite"]
+aliases: ["wps.com"]
+excludes: []

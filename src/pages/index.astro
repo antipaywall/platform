@@ -11,6 +11,7 @@ import { shortCount } from '../lib/format';
 import { demandFor } from '../lib/gaps';
 import { findOpenGaps, listProducts, priceLabel, type ProductSummary } from '../lib/products';
 import { tileBadges } from '../lib/social';
+import { brickState } from '../lib/wall';
 import { adminClient } from '../lib/supabase';
 import { listTopics } from '../lib/topics';
 import ProjectCard from '../components/pf/ProjectCard.astro';
@@ -30,6 +31,12 @@ const builderBadges = (builders && (await attempt(() => tileBadges(builders.map(
 const ranked = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions);
 // Gaps the platform finds itself: paid tools with no free alternative many people rely on.
 const openGaps = findOpenGaps(products);
+// The wall, in short: how much of it is painted, and the tools most teams pay for as bricks.
+const stateOf = (p: ProductSummary) => brickState(p.trustedOptions, p.bestStars);
+const painted = products.filter((p) => stateOf(p) === 'solid').length;
+const early = products.filter((p) => stateOf(p) === 'some').length;
+const WORK = ['slack', 'notion', 'monday', 'clickup', 'trello', 'asana', 'jira', 'salesforce', 'hubspot', 'pipedrive', 'zoom', 'google-workspace', 'microsoft-365', 'dropbox', 'figma', 'canva', 'grammarly', 'docusign', 'calendly', 'mailchimp', 'zapier', 'quickbooks', 'airtable', 'miro', 'loom', 'intercom', 'zendesk', 'shopify', 'typeform', '1password', 'adobe-acrobat', 'photoshop', 'linear', 'confluence', 'gusto', 'rippling', 'greenhouse', 'webflow', 'semrush', 'chatgpt', 'gong', 'docsend', 'surveymonkey', 'hootsuite'];
+const workBricks = WORK.map((s) => products.find((p) => p.slug === s)).filter((p): p is ProductSummary => Boolean(p)).map((p) => ({ slug: p.slug, name: p.name, state: stateOf(p) }));
 // The tools most people know from their own card statement, in this order; anything the catalog
 // doesn't have yet is skipped, and the list is topped up from the rest.
 const EVERYDAY = ['calendly', 'loom', 'notion', 'formspree', 'typeform', 'semrush', 'mailchimp', 'zapier', 'slack', 'dropbox', 'photoshop', 'docusign', 'linktree', 'zoom', 'trello', 'lastpass', 'grammarly'];
@@ -152,10 +159,37 @@ const builderCount = stats?.builders ?? null;
         <p class="hm-say">
           <a href="/explore?show=all">{platform.projects.toLocaleString('en-US')} open-source projects</a> already do the job of{' '}
           <a href="/free-alternatives">{platform.products} tools people pay for</a>.{' '}
-          {platform.gaps + openGaps.length > 0 && <><a href="#gaps-h">{platform.gaps + openGaps.length} {platform.gaps + openGaps.length === 1 ? 'thing is' : 'things are'} still missing</a>.</>}
+          {openGaps.length > 0 && <><a href="/wall">{openGaps.length.toLocaleString('en-US')} still have no free version people rely on</a>.</>}
+          {platform.gaps > 0 && <>{' '}<a href="#gaps-h">{platform.gaps} more {platform.gaps === 1 ? 'thing is' : 'things are'} wanted that nobody has built</a>.</>}
         </p>
       )}
     </section>
+
+    {products.length > 0 && (
+      <section class="wrap pf-section hm-wall" aria-labelledby="wall-h">
+        <div class="pf-head-row">
+          <div style="display:grid;gap:10px">
+            <h2 id="wall-h" class="pf-h2">The wall.</h2>
+            <p class="lede">Every paid tool we track is a brick. It gets painted once a free, open-source version people rely on exists. The bare ones are what's left to build.</p>
+          </div>
+          <a class="key key-milk key-sm" href="/wall">See the whole wall</a>
+        </div>
+        <div class="wall-meter">
+          <div class="wall-bar" role="img" aria-label={`${painted} of ${products.length} bricks painted`}>
+            <span class="wall-bar-solid" style={`width:${(painted / products.length) * 100}%`}></span>
+            <span class="wall-bar-some" style={`width:${(early / products.length) * 100}%`}></span>
+          </div>
+          <p><strong>{Math.round((painted / products.length) * 100)}%</strong> painted: {painted} of {products.length.toLocaleString('en-US')} paid tools have a free alternative people rely on. {early} have early options, and {products.length - painted - early} have nothing free yet.</p>
+        </div>
+        <ul class="wall-row hm-wall-row" aria-label="The tools most teams pay for">
+          {workBricks.map((b) => (
+            <li style="flex-grow:1">
+              <a class={`wall-brick ${b.state}`} href={`/free-alternatives/${b.slug}`} title={b.state === 'solid' ? 'A free alternative people rely on' : b.state === 'some' ? 'Early free options' : 'A gap: nothing free yet'}><span>{b.name}</span></a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     <section class="wrap hm-gaps" aria-labelledby="gaps-h">
       <div class="pf-head-row">

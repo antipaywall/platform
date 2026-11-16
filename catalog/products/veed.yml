@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "veed"
+name: "VEED"
+category: "Photos and video"
+price: { cents: 1200, period: month }
+blurb: "Online video editing with subtitles."
+words: ["online video editor", "subtitles", "captions", "editing"]
+topics: ["video-editor", "subtitles", "veed-alternative"]
+search_terms: ["VEED alternative", "open source video editor"]
+aliases: ["veed.io"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "invoice2go"
+name: "Invoice2go"
+category: "Money and invoicing"
+price: { cents: 599, period: month }
+blurb: "Invoices and estimates from your phone."
+words: ["invoices", "estimates", "payments", "small business"]
+topics: ["invoicing", "billing", "invoice2go-alternative"]
+search_terms: ["Invoice2go alternative", "open source invoicing"]
+aliases: ["invoice2go.com"]
+excludes: []

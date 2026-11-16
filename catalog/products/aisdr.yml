@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "aisdr"
+name: "AiSDR"
+category: "Sales and CRM"
+price: { cents: 90000, period: month }
+blurb: "An AI sales rep that prospects, researches and follows up."
+words: ["ai sdr", "prospecting", "outbound", "follow-up"]
+topics: ["lead-generation", "sales-engagement", "aisdr-alternative"]
+search_terms: ["AiSDR alternative", "open source ai sdr"]
+aliases: ["aisdr.com"]
+excludes: []

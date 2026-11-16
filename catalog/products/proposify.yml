@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "proposify"
+name: "Proposify"
+category: "Sales and CRM"
+price: { cents: 1900, period: month }
+blurb: "Sales proposals with e-signatures."
+words: ["proposals", "quotes", "e-signature", "templates"]
+topics: ["proposals", "e-signature", "proposify-alternative"]
+search_terms: ["Proposify alternative", "open source proposal software"]
+aliases: ["proposify.com"]
+excludes: []

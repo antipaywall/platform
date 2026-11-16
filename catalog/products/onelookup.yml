@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "onelookup"
+name: "1Lookup"
+category: "Sales and CRM"
+price: { cents: 5000, period: month }
+blurb: "One API to verify and enrich phone, email and company data."
+words: ["data enrichment", "phone validation", "email verification", "lead data"]
+topics: ["enrichment", "email-verification", "onelookup-alternative"]
+search_terms: ["1Lookup alternative", "open source data enrichment"]
+aliases: ["1lookup.io"]
+excludes: []

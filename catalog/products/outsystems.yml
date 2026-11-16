@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "outsystems"
+name: "OutSystems"
+category: "Developer tools"
+price: { cents: 150000, period: month }
+blurb: "An enterprise low-code platform."
+words: ["low code", "enterprise apps", "app builder", "workflows"]
+topics: ["low-code", "app-builder", "outsystems-alternative"]
+search_terms: ["OutSystems alternative", "open source low code"]
+aliases: ["outsystems.com"]
+excludes: []

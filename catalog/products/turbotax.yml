@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "turbotax"
+name: "TurboTax"
+category: "Money and invoicing"
+price: { cents: 8900, period: year }
+blurb: "Tax filing software."
+words: ["tax return", "tax filing", "deductions", "irs"]
+topics: ["tax", "personal-finance", "turbotax-alternative"]
+search_terms: ["TurboTax alternative", "open source tax software"]
+aliases: ["turbotax.intuit.com"]
+excludes: []

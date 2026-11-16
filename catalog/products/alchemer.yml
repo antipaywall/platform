@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "alchemer"
+name: "Alchemer"
+category: "Forms and surveys"
+price: { cents: 5500, period: month }
+blurb: "Online surveys and feedback."
+words: ["surveys", "feedback", "questionnaire", "reports"]
+topics: ["surveys", "forms", "alchemer-alternative"]
+search_terms: ["Alchemer alternative", "open source survey tool"]
+aliases: ["alchemer.com"]
+excludes: []

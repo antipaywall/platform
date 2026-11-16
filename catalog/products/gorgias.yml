@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gorgias"
+name: "Gorgias"
+category: "Support and chat"
+price: { cents: 1000, period: month }
+blurb: "Customer support for online stores."
+words: ["help desk", "ecommerce support", "tickets", "shopify"]
+topics: ["helpdesk", "ecommerce", "gorgias-alternative"]
+search_terms: ["Gorgias alternative", "open source help desk"]
+aliases: ["gorgias.com"]
+excludes: []

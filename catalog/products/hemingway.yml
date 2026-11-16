@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "hemingway"
+name: "Hemingway Editor"
+category: "Writing"
+price: { cents: 1999, period: once }
+blurb: "Makes your writing bold and clear."
+words: ["readability", "writing", "clear writing", "editing"]
+topics: ["writing", "readability", "hemingway-alternative"]
+search_terms: ["Hemingway Editor alternative", "open source hemingway editor"]
+aliases: ["hemingwayapp.com"]
+excludes: []

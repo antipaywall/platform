@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "google-analytics-360"
+name: "Google Analytics 360"
+category: "Analytics"
+price: { cents: 1250000, period: month }
+blurb: "Enterprise web analytics from Google."
+words: ["web analytics", "visitors", "conversions", "reports"]
+topics: ["web-analytics", "analytics", "google-analytics-360-alternative"]
+search_terms: ["Google Analytics 360 alternative", "open source web analytics"]
+aliases: ["marketingplatform.google.com"]
+excludes: []

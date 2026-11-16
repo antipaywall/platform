@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "articulate-360"
+name: "Articulate 360"
+category: "HR and hiring"
+price: { cents: 149900, period: year }
+blurb: "Build e-learning courses."
+words: ["e-learning authoring", "courses", "scorm", "training"]
+topics: ["e-learning", "authoring-tool", "articulate-360-alternative"]
+search_terms: ["Articulate 360 alternative", "open source e-learning authoring"]
+aliases: ["articulate.com"]
+excludes: []

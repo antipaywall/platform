@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "prosp"
+name: "PROSP"
+category: "Sales and CRM"
+price: { cents: 5000, period: month }
+blurb: "AI-personalised LinkedIn outreach campaigns."
+words: ["linkedin outreach", "personalisation", "campaigns", "replies"]
+topics: ["linkedin", "sales-engagement", "prosp-alternative"]
+search_terms: ["PROSP alternative", "open source linkedin automation"]
+aliases: ["prosp.ai"]
+excludes: []

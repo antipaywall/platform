@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "aws"
+name: "Amazon Web Services"
+category: "Hosting and cloud"
+price: { cents: 1000, period: month }
+blurb: "Amazon's cloud."
+words: ["cloud", "servers", "storage", "hosting"]
+topics: ["cloud", "self-hosted", "aws-alternative"]
+search_terms: ["Amazon Web Services alternative", "open source cloud platform"]
+aliases: ["aws.amazon.com"]
+excludes: []

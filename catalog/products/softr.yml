@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "softr"
+name: "Softr"
+category: "Websites"
+price: { cents: 5900, period: month }
+blurb: "Build portals and apps from your data without code."
+words: ["no code", "client portal", "app builder", "airtable"]
+topics: ["no-code", "app-builder", "softr-alternative"]
+search_terms: ["Softr alternative", "open source no code app builder"]
+aliases: ["softr.io"]
+excludes: []

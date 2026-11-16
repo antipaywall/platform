@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "aweber"
+name: "AWeber"
+category: "Email and newsletters"
+price: { cents: 1500, period: month }
+blurb: "Email marketing and autoresponders."
+words: ["email marketing", "autoresponder", "newsletters", "lists"]
+topics: ["email-marketing", "newsletter", "aweber-alternative"]
+search_terms: ["AWeber alternative", "open source email marketing"]
+aliases: ["aweber.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "publer"
+name: "Publer"
+category: "Social media"
+price: { cents: 1200, period: month }
+blurb: "Schedule posts to every social network."
+words: ["social media scheduling", "posts", "calendar", "analytics"]
+topics: ["social-media", "scheduler", "publer-alternative"]
+search_terms: ["Publer alternative", "open source social media scheduler"]
+aliases: ["publer.io"]
+excludes: []

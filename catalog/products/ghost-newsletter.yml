@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "ghost-newsletter"
+name: "Buttondown"
+category: "Email and newsletters"
+price: { cents: 900, period: month }
+blurb: "A simple newsletter tool."
+words: ["newsletter", "email", "subscribers", "markdown"]
+topics: ["newsletter", "email-marketing", "ghost-newsletter-alternative"]
+search_terms: ["Buttondown alternative", "open source newsletter"]
+aliases: ["buttondown.com"]
+excludes: []

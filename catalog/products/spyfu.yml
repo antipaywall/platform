@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "spyfu"
+name: "SpyFu"
+category: "Analytics"
+price: { cents: 3900, period: month }
+blurb: "See competitors' keywords and ads."
+words: ["competitor keywords", "ppc", "seo", "ads research"]
+topics: ["seo", "competitive-intelligence", "spyfu-alternative"]
+search_terms: ["SpyFu alternative", "open source competitor seo"]
+aliases: ["spyfu.com"]
+excludes: []

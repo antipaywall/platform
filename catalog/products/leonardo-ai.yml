@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "leonardo-ai"
+name: "Leonardo.Ai"
+category: "AI tools"
+price: { cents: 1200, period: month }
+blurb: "AI image generation for creators."
+words: ["ai images", "image generation", "art", "design"]
+topics: ["image-generation", "stable-diffusion", "leonardo-ai-alternative"]
+search_terms: ["Leonardo.Ai alternative", "open source image generation"]
+aliases: ["leonardo.ai"]
+excludes: []

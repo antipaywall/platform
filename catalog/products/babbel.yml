@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "babbel"
+name: "Babbel"
+category: "Other"
+price: { cents: 1399, period: month }
+blurb: "Language-learning lessons."
+words: ["language learning", "lessons", "speaking", "vocabulary"]
+topics: ["language-learning", "education", "babbel-alternative"]
+search_terms: ["Babbel alternative", "open source language learning"]
+aliases: ["babbel.com"]
+excludes: []

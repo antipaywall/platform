@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "proofhub"
+name: "ProofHub"
+category: "Project management"
+price: { cents: 4500, period: month }
+blurb: "Project management and proofing for teams."
+words: ["project management", "proofing", "tasks", "discussions"]
+topics: ["project-management", "task-manager", "proofhub-alternative"]
+search_terms: ["ProofHub alternative", "open source project management"]
+aliases: ["proofhub.com"]
+excludes: []

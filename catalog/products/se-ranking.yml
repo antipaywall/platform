@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "se-ranking"
+name: "SE Ranking"
+category: "Analytics"
+price: { cents: 5200, period: month }
+blurb: "SEO rank tracking and audits."
+words: ["rank tracker", "seo audit", "keywords", "backlinks"]
+topics: ["seo", "rank-tracker", "se-ranking-alternative"]
+search_terms: ["SE Ranking alternative", "open source rank tracker"]
+aliases: ["seranking.com"]
+excludes: []

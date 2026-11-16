@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "hightouch"
+name: "Hightouch"
+category: "Hosting and cloud"
+price: { cents: 35000, period: month }
+blurb: "Sends warehouse data to business tools."
+words: ["reverse etl", "data activation", "sync", "audiences"]
+topics: ["reverse-etl", "data-integration", "hightouch-alternative"]
+search_terms: ["Hightouch alternative", "open source reverse etl"]
+aliases: ["hightouch.com"]
+excludes: []

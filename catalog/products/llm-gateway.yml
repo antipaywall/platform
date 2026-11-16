@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "llm-gateway"
+name: "LLM Gateway"
+category: "AI tools"
+price: { cents: 2900, period: month }
+blurb: "One API for every AI model provider."
+words: ["llm api", "model routing", "ai gateway", "costs"]
+topics: ["llm", "ai-gateway", "llm-gateway-alternative"]
+search_terms: ["LLM Gateway alternative", "open source llm gateway"]
+aliases: ["llmgateway.io"]
+excludes: []

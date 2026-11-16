@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "kofi-gold"
+name: "Ko-fi Gold"
+category: "Selling online"
+price: { cents: 600, period: month }
+blurb: "Tips, memberships and shop for creators."
+words: ["tips", "donations", "memberships", "creator"]
+topics: ["donations", "creator", "kofi-gold-alternative"]
+search_terms: ["Ko-fi Gold alternative", "open source creator donations"]
+aliases: ["ko-fi.com"]
+excludes: []

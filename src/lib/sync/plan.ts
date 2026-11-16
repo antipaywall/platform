@@ -34,3 +34,15 @@ export function dedupeLinks(rows: LinkRow[]): LinkRow[] {
   }
   return [...out.values()];
 }
+
+/**
+ * The order products are searched in: ones with no links first (new to the catalog), then a
+ * rotation that starts somewhere different each day, so a run that stops for time doesn't always
+ * leave out the same products.
+ */
+export function searchOrder<T extends { slug: string }>(products: T[], unlinked: Set<string>, day: number): T[] {
+  const fresh = products.filter((p) => unlinked.has(p.slug));
+  const rest = products.filter((p) => !unlinked.has(p.slug));
+  const start = rest.length ? (day * 97) % rest.length : 0;
+  return [...fresh, ...rest.slice(start), ...rest.slice(0, start)];
+}

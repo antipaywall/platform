@@ -177,7 +177,7 @@ describe('linkSource', () => {
   });
 });
 
-import { fetchAllRows, relinkable, toUnlist } from '../src/lib/sync/plan';
+import { fetchAllRows, relinkable, searchOrder, toUnlist } from '../src/lib/sync/plan';
 
 describe('review fixes: sync', () => {
   it('fetchRepoBatch throws when GitHub answers with errors and no data, instead of reading it as "no repos"', async () => {
@@ -300,5 +300,22 @@ describe('dedupeLinks', () => {
       { project_id: 'q', product_id: 'x', source: 'search', score: 1 },
     ]);
     expect(out).toEqual([{ project_id: 'p', product_id: 'x', source: 'catalog', score: 10 }, { project_id: 'q', product_id: 'x', source: 'search', score: 1 }]);
+  });
+});
+
+describe('searchOrder', () => {
+  const ps = ['a', 'b', 'c', 'd', 'e'].map((slug) => ({ slug }));
+  it('puts products with no links first', () => {
+    expect(searchOrder(ps, new Set(['d']), 0).map((p) => p.slug)[0]).toBe('d');
+  });
+  it('covers every product exactly once, wherever the rotation starts', () => {
+    for (const day of [0, 1, 2, 19000]) {
+      const order = searchOrder(ps, new Set(['b']), day).map((p) => p.slug);
+      expect([...order].sort()).toEqual(['a', 'b', 'c', 'd', 'e']);
+    }
+  });
+  it('starts the rest somewhere different on different days', () => {
+    const firsts = new Set([0, 1, 2, 3].map((d) => searchOrder(ps, new Set(), d)[0].slug));
+    expect(firsts.size).toBeGreaterThan(1);
   });
 });

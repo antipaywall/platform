@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "youcanbookme"
+name: "YouCanBook.me"
+category: "Scheduling"
+price: { cents: 1080, period: month }
+blurb: "Online booking for your calendar."
+words: ["booking", "appointments", "calendar", "scheduling"]
+topics: ["scheduling", "booking", "youcanbookme-alternative"]
+search_terms: ["YouCanBook.me alternative", "open source appointment booking"]
+aliases: ["youcanbook.me"]
+excludes: []

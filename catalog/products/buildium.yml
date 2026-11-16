@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "buildium"
+name: "Buildium"
+category: "Money and invoicing"
+price: { cents: 5800, period: month }
+blurb: "Property management for landlords."
+words: ["property management", "rent", "tenants", "leases"]
+topics: ["property-management", "real-estate", "buildium-alternative"]
+search_terms: ["Buildium alternative", "open source property management"]
+aliases: ["buildium.com"]
+excludes: []

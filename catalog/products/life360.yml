@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "life360"
+name: "Life360"
+category: "Other"
+price: { cents: 1499, period: month }
+blurb: "Family location sharing."
+words: ["location sharing", "family", "safety", "tracking"]
+topics: ["location-sharing", "gps", "life360-alternative"]
+search_terms: ["Life360 alternative", "open source location sharing"]
+aliases: ["life360.com"]
+excludes: []

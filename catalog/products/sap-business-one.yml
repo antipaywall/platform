@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "sap-business-one"
+name: "SAP Business One"
+category: "Money and invoicing"
+price: { cents: 9400, period: month }
+blurb: "An ERP for small businesses."
+words: ["erp", "accounting", "inventory", "sales"]
+topics: ["erp", "accounting", "sap-business-one-alternative"]
+search_terms: ["SAP Business One alternative", "open source erp"]
+aliases: ["sap.com"]
+excludes: []

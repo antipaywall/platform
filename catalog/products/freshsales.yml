@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "freshsales"
+name: "Freshsales"
+category: "Sales and CRM"
+price: { cents: 900, period: month }
+blurb: "A CRM with built-in phone and email."
+words: ["crm", "deals", "pipeline", "contacts"]
+topics: ["crm", "sales", "freshsales-alternative"]
+search_terms: ["Freshsales alternative", "open source crm"]
+aliases: ["freshworks.com/crm"]
+excludes: []

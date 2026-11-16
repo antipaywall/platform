@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "carta"
+name: "Carta"
+category: "Money and invoicing"
+price: { cents: 280000, period: year }
+blurb: "Cap tables and equity management."
+words: ["cap table", "equity", "stock options", "409a"]
+topics: ["cap-table", "equity", "carta-alternative"]
+search_terms: ["Carta alternative", "open source cap table"]
+aliases: ["carta.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "traxy"
+name: "traxy.ai"
+category: "Sales and CRM"
+price: { cents: 9900, period: month }
+blurb: "Finds buyers already engaging in your market."
+words: ["buyer intent", "leads", "signals", "prospecting"]
+topics: ["lead-generation", "intent-data", "traxy-alternative"]
+search_terms: ["traxy.ai alternative", "open source buyer intent"]
+aliases: ["traxy.ai"]
+excludes: []

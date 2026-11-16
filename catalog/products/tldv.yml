@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "tldv"
+name: "tl;dv"
+category: "AI tools"
+price: { cents: 1800, period: month }
+blurb: "Records and summarises meetings."
+words: ["meeting recording", "ai notes", "summaries", "crm notes"]
+topics: ["transcription", "meeting-notes", "tldv-alternative"]
+search_terms: ["tl;dv alternative", "open source meeting recorder"]
+aliases: ["tldv.io"]
+excludes: []

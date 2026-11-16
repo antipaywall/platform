@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "envato-elements"
+name: "Envato Elements"
+category: "Design"
+price: { cents: 1650, period: month }
+blurb: "Unlimited stock photos, video, music and templates."
+words: ["stock photos", "templates", "stock video", "fonts"]
+topics: ["stock-photos", "assets", "envato-elements-alternative"]
+search_terms: ["Envato Elements alternative", "open source stock photos"]
+aliases: ["elements.envato.com"]
+excludes: []

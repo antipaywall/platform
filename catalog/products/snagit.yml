@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "snagit"
+name: "Snagit"
+category: "Photos and video"
+price: { cents: 3999, period: year }
+blurb: "Screenshots and screen recordings."
+words: ["screenshots", "screen capture", "annotations", "recording"]
+topics: ["screenshot", "screen-recording", "snagit-alternative"]
+search_terms: ["Snagit alternative", "open source screenshot tool"]
+aliases: ["techsmith.com/snagit"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "any-do"
+name: "Any.do"
+category: "Project management"
+price: { cents: 500, period: month }
+blurb: "To-do lists, reminders and a daily planner."
+words: ["to-do list", "reminders", "tasks", "planner"]
+topics: ["todo", "task-manager", "any-do-alternative"]
+search_terms: ["Any.do alternative", "open source todo app"]
+aliases: ["any.do"]
+excludes: []

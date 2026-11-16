@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "elementor-pro"
+name: "Elementor Pro"
+category: "Websites"
+price: { cents: 5900, period: year }
+blurb: "The paid WordPress page builder."
+words: ["page builder", "wordpress", "drag and drop", "templates"]
+topics: ["page-builder", "wordpress", "elementor-pro-alternative"]
+search_terms: ["Elementor Pro alternative", "open source page builder"]
+aliases: ["elementor.com"]
+excludes: []

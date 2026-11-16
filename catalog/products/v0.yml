@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "v0"
+name: "v0"
+category: "AI tools"
+price: { cents: 2000, period: month }
+blurb: "Generates web interfaces from prompts."
+words: ["ui generator", "react", "ai design", "prompt"]
+topics: ["ai-app-builder", "ui-generation", "v0-alternative"]
+search_terms: ["v0 alternative", "open source ui generator"]
+aliases: ["v0.dev"]
+excludes: []

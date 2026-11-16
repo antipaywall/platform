@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "woocommerce-extensions"
+name: "WooCommerce paid extensions"
+category: "Selling online"
+price: { cents: 7900, period: year }
+blurb: "Paid add-ons for WooCommerce stores."
+words: ["woocommerce", "store", "subscriptions", "plugins"]
+topics: ["ecommerce", "woocommerce", "woocommerce-extensions-alternative"]
+search_terms: ["WooCommerce paid extensions alternative", "open source ecommerce"]
+aliases: ["woocommerce.com"]
+excludes: []

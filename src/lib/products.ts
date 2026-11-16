@@ -33,10 +33,12 @@ export function priceLabel(p: Price): string | null {
 export const priceOf = (row: { price_cents: number | null; price_period: string | null }): Price =>
   row.price_cents != null && row.price_period ? { cents: row.price_cents, period: row.price_period as 'month' | 'year' | 'once' } : null;
 
-export type ProductSummary = { id: string; slug: string; name: string; category: string; blurb: string; price: Price; freeOptions: number; signals: number; /** Stars of the most-starred free alternative; 0 when there is none. */ bestStars: number };
+export type ProductSummary = { id: string; slug: string; name: string; category: string; blurb: string; price: Price; freeOptions: number; /** Free alternatives we trust (see TRUSTED_SOURCES). */ trustedOptions: number; signals: number; /** Stars of the most-starred free alternative we trust (see TRUSTED_SOURCES); 0 when there is none. */ bestStars: number };
 
 /** Below this many stars, a free alternative exists but few people rely on it yet. */
 export const SOLID_STARS = 1000;
+/** Matches trusted enough to say a free alternative exists: hand-picked, named in its own README or name, or tagged for the tool. */
+export const TRUSTED_SOURCES = ['catalog', 'search', 'tag'] as const;
 
 /** A rough monthly cost for ranking, counting a one-time price as spread over two years. */
 const rankCents = (p: Price): number => (!p ? 0 : p.period === 'once' ? Math.round(p.cents / 24) : monthlyCents(p));
@@ -55,21 +57,25 @@ export function findOpenGaps<T extends Pick<ProductSummary, 'bestStars' | 'signa
 export async function listProducts(db: SupabaseClient): Promise<ProductSummary[]> {
   const [products, links, sigs] = await Promise.all([
     db.from('products').select('id, slug, name, category, blurb, price_cents, price_period').order('name'),
-    fetchAllRows<{ product_id: string; projects: unknown }>((a, b) => db.from('project_products').select('product_id, projects!inner(listed, stars)').eq('projects.listed', true).order('product_id').order('project_id').range(a, b)),
+    fetchAllRows<{ product_id: string; source: string; projects: unknown }>((a, b) => db.from('project_products').select('product_id, source, projects!inner(listed, stars)').eq('projects.listed', true).order('product_id').order('project_id').range(a, b)),
     fetchAllRows<{ subject_id: string }>((a, b) => db.from('signals').select('subject_id').eq('subject_kind', 'product').order('id').range(a, b)),
   ]);
   if (products.error) throw new Error(products.error.message);
   const free = new Map<string, number>();
   const best = new Map<string, number>();
+  const trusted = new Map<string, number>();
   for (const l of links) {
     free.set(l.product_id, (free.get(l.product_id) ?? 0) + 1);
-    best.set(l.product_id, Math.max(best.get(l.product_id) ?? 0, Number((l.projects as any)?.stars ?? (l.projects as any)?.[0]?.stars ?? 0)));
+    // "Relied on" counts only matches we trust, the same rule the wall paints by: a broad topic
+    // match with many stars is often a different tool.
+    if ((TRUSTED_SOURCES as readonly string[]).includes(l.source)) trusted.set(l.product_id, (trusted.get(l.product_id) ?? 0) + 1);
+    if ((TRUSTED_SOURCES as readonly string[]).includes(l.source)) best.set(l.product_id, Math.max(best.get(l.product_id) ?? 0, Number((l.projects as any)?.stars ?? (l.projects as any)?.[0]?.stars ?? 0)));
   }
   const sig = new Map<string, number>();
   for (const s of sigs) sig.set(s.subject_id, (sig.get(s.subject_id) ?? 0) + 1);
   return (products.data ?? []).map((p: any) => ({
     id: p.id, slug: p.slug, name: p.name, category: p.category, blurb: p.blurb, price: priceOf(p),
-    freeOptions: free.get(p.id) ?? 0, signals: sig.get(p.id) ?? 0, bestStars: best.get(p.id) ?? 0,
+    freeOptions: free.get(p.id) ?? 0, trustedOptions: trusted.get(p.id) ?? 0, signals: sig.get(p.id) ?? 0, bestStars: best.get(p.id) ?? 0,
   }));
 }
 

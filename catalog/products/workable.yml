@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "workable"
+name: "Workable"
+category: "HR and hiring"
+price: { cents: 14900, period: month }
+blurb: "Recruiting software for small teams."
+words: ["ats", "job board", "candidates", "hiring"]
+topics: ["ats", "recruiting", "workable-alternative"]
+search_terms: ["Workable alternative", "open source applicant tracking system"]
+aliases: ["workable.com"]
+excludes: []

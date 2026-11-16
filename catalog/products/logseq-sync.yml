@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "logseq-sync"
+name: "Logseq Sync"
+category: "Docs and notes"
+price: { cents: 500, period: month }
+blurb: "Paid sync for Logseq notes."
+words: ["notes sync", "outliner", "notes", "backlinks"]
+topics: ["note-taking", "sync", "logseq-sync-alternative"]
+search_terms: ["Logseq Sync alternative", "open source notes sync"]
+aliases: ["logseq.com"]
+excludes: []

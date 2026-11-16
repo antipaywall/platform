@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "resend"
+name: "Resend"
+category: "Email and newsletters"
+price: { cents: 2000, period: month }
+blurb: "An email API for developers."
+words: ["email api", "transactional email", "react email", "smtp"]
+topics: ["transactional-email", "email-api", "resend-alternative"]
+search_terms: ["Resend alternative", "open source email api"]
+aliases: ["resend.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "iterable"
+name: "Iterable"
+category: "Email and newsletters"
+price: { cents: 50000, period: month }
+blurb: "Cross-channel marketing automation."
+words: ["marketing automation", "email", "sms", "push"]
+topics: ["marketing-automation", "email-marketing", "iterable-alternative"]
+search_terms: ["Iterable alternative", "open source marketing automation"]
+aliases: ["iterable.com"]
+excludes: []

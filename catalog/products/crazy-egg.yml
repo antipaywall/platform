@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "crazy-egg"
+name: "Crazy Egg"
+category: "Analytics"
+price: { cents: 2900, period: month }
+blurb: "Heatmaps and A/B tests for websites."
+words: ["heatmaps", "a/b testing", "recordings", "conversion"]
+topics: ["heatmap", "ab-testing", "crazy-egg-alternative"]
+search_terms: ["Crazy Egg alternative", "open source heatmap"]
+aliases: ["crazyegg.com"]
+excludes: []

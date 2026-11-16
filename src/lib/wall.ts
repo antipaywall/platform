@@ -3,10 +3,10 @@
 // and repos tagged for it. Broad topic matches are useful for browsing but too loose to paint a
 // brick. "Relied on" is the platform's usual bar: SOLID_STARS stars.
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { SOLID_STARS } from './products';
+import { SOLID_STARS, TRUSTED_SOURCES } from './products';
+export { TRUSTED_SOURCES };
 
 export type BrickState = 'solid' | 'some' | 'gap';
-export const TRUSTED_SOURCES = ['catalog', 'search', 'tag'] as const;
 
 /** Per product id: how many trusted free alternatives it has and the stars of the best one. */
 export async function trustedAlternatives(db: SupabaseClient): Promise<Map<string, { count: number; best: number }>> {

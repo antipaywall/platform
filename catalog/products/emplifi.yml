@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "emplifi"
+name: "Emplifi"
+category: "Social media"
+price: { cents: 200000, period: month }
+blurb: "Social media marketing and care for brands."
+words: ["social media management", "social care", "analytics", "influencers"]
+topics: ["social-media", "analytics", "emplifi-alternative"]
+search_terms: ["Emplifi alternative", "open source social media management"]
+aliases: ["emplifi.io"]
+excludes: []

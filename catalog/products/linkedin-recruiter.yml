@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "linkedin-recruiter"
+name: "LinkedIn Recruiter"
+category: "HR and hiring"
+price: { cents: 17000, period: month }
+blurb: "Find and contact candidates on LinkedIn."
+words: ["recruiting", "candidates", "sourcing", "linkedin"]
+topics: ["recruiting", "linkedin", "linkedin-recruiter-alternative"]
+search_terms: ["LinkedIn Recruiter alternative", "open source recruiting"]
+aliases: ["linkedin.com/talent"]
+excludes: []

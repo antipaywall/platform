@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "mailgun"
+name: "Mailgun"
+category: "Email and newsletters"
+price: { cents: 1500, period: month }
+blurb: "An email-sending API for developers."
+words: ["transactional email", "email api", "smtp", "deliverability"]
+topics: ["transactional-email", "smtp", "mailgun-alternative"]
+search_terms: ["Mailgun alternative", "open source email api"]
+aliases: ["mailgun.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "github-team"
+name: "GitHub Team"
+category: "Developer tools"
+price: { cents: 400, period: month }
+blurb: "Paid GitHub plans for teams."
+words: ["git hosting", "code review", "pull requests", "repositories"]
+topics: ["git", "code-hosting", "github-team-alternative"]
+search_terms: ["GitHub Team alternative", "open source git hosting"]
+aliases: ["github.com"]
+excludes: []

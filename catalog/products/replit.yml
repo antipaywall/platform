@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "replit"
+name: "Replit Core"
+category: "AI tools"
+price: { cents: 2000, period: month }
+blurb: "Build apps in the browser with an AI agent."
+words: ["online ide", "ai agent", "app builder", "hosting"]
+topics: ["ai-coding", "online-ide", "replit-alternative"]
+search_terms: ["Replit Core alternative", "open source online ide"]
+aliases: ["replit.com"]
+excludes: []

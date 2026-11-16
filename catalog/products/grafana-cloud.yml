@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "grafana-cloud"
+name: "Grafana Cloud"
+category: "Developer tools"
+price: { cents: 1900, period: month }
+blurb: "Hosted dashboards, metrics, logs and traces."
+words: ["monitoring", "dashboards", "metrics", "logs"]
+topics: ["monitoring", "observability", "grafana-cloud-alternative"]
+search_terms: ["Grafana Cloud alternative", "open source observability"]
+aliases: ["grafana.com"]
+excludes: []

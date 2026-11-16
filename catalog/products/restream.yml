@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "restream"
+name: "Restream"
+category: "Video and calls"
+price: { cents: 1600, period: month }
+blurb: "Stream to many platforms at once."
+words: ["multistreaming", "live streaming", "studio", "chat"]
+topics: ["live-streaming", "rtmp", "restream-alternative"]
+search_terms: ["Restream alternative", "open source multistreaming"]
+aliases: ["restream.io"]
+excludes: []

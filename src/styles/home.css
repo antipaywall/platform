@@ -1124,3 +1124,7 @@ main > section.sponsors {
   .target-meter:not(.target-meter-over) .target-tip { right: -2px; }
   .target-meter:not(.target-meter-over) .target-tip::after { right: 2px; }
 }
+
+/* The wall, in short, under the hero. */
+.hm-wall { display: grid; gap: 18px; }
+.hm-wall-row { margin-top: 4px; }

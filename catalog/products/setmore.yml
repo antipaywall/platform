@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "setmore"
+name: "Setmore"
+category: "Scheduling"
+price: { cents: 500, period: month }
+blurb: "Appointment booking for small businesses."
+words: ["appointments", "booking", "salon", "clinic"]
+topics: ["booking", "appointments", "setmore-alternative"]
+search_terms: ["Setmore alternative", "open source appointment booking"]
+aliases: ["setmore.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gemini-advanced"
+name: "Google AI Pro"
+category: "AI tools"
+price: { cents: 1999, period: month }
+blurb: "Google's paid Gemini plan."
+words: ["ai assistant", "chatbot", "gemini", "writing"]
+topics: ["llm", "chatbot", "gemini-advanced-alternative"]
+search_terms: ["Google AI Pro alternative", "open source ai assistant"]
+aliases: ["gemini.google.com"]
+excludes: []

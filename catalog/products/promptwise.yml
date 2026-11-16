@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "promptwise"
+name: "Promptwise"
+category: "Social media"
+price: { cents: 9900, period: month }
+blurb: "An AI agent that plans, writes, posts and analyses content."
+words: ["content agent", "social posts", "ai content", "analytics"]
+topics: ["social-media", "ai-writing", "promptwise-alternative"]
+search_terms: ["Promptwise alternative", "open source ai content agent"]
+aliases: ["promptwise.com"]
+excludes: []

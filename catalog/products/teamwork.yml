@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "teamwork"
+name: "Teamwork.com"
+category: "Project management"
+price: { cents: 1000, period: month }
+blurb: "Project management for client work and agencies."
+words: ["project management", "client projects", "time tracking", "tasks"]
+topics: ["project-management", "task-manager", "teamwork-alternative"]
+search_terms: ["Teamwork.com alternative", "open source project management"]
+aliases: ["teamwork.com"]
+excludes: []

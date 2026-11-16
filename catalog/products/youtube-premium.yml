@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "youtube-premium"
+name: "YouTube Premium"
+category: "Music and media"
+price: { cents: 1399, period: month }
+blurb: "YouTube with no ads and background play."
+words: ["youtube", "no ads", "background play", "music"]
+topics: ["youtube", "video-player", "youtube-premium-alternative"]
+search_terms: ["YouTube Premium alternative", "open source youtube client"]
+aliases: ["youtube.com/premium"]
+excludes: []

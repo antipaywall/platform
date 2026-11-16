@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "lovable"
+name: "Lovable"
+category: "AI tools"
+price: { cents: 2500, period: month }
+blurb: "Build web apps by chatting with AI."
+words: ["ai app builder", "no code", "web apps", "prompt"]
+topics: ["ai-app-builder", "no-code", "lovable-alternative"]
+search_terms: ["Lovable alternative", "open source ai app builder"]
+aliases: ["lovable.dev"]
+excludes: []

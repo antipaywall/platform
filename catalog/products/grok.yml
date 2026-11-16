@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "grok"
+name: "SuperGrok"
+category: "AI tools"
+price: { cents: 3000, period: month }
+blurb: "xAI's paid chatbot plan."
+words: ["ai assistant", "chatbot", "grok", "search"]
+topics: ["llm", "chatbot", "grok-alternative"]
+search_terms: ["SuperGrok alternative", "open source chatbot"]
+aliases: ["grok.com"]
+excludes: []

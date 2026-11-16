@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "crowdstrike"
+name: "CrowdStrike Falcon"
+category: "Passwords and security"
+price: { cents: 5999, period: year }
+blurb: "Endpoint protection for companies."
+words: ["endpoint security", "edr", "malware", "threat detection"]
+topics: ["edr", "security", "crowdstrike-alternative"]
+search_terms: ["CrowdStrike Falcon alternative", "open source edr"]
+aliases: ["crowdstrike.com"]
+excludes: []

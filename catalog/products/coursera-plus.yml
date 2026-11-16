@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "coursera-plus"
+name: "Coursera Plus"
+category: "Other"
+price: { cents: 5900, period: month }
+blurb: "Unlimited online courses and certificates."
+words: ["online courses", "certificates", "learning", "university"]
+topics: ["education", "online-courses", "coursera-plus-alternative"]
+search_terms: ["Coursera Plus alternative", "open source learning platform"]
+aliases: ["coursera.org"]
+excludes: []

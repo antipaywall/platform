@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "everhour"
+name: "Everhour"
+category: "Money and invoicing"
+price: { cents: 850, period: month }
+blurb: "Time tracking inside your project tools."
+words: ["time tracking", "timesheets", "billable hours", "budgets"]
+topics: ["time-tracking", "timesheet", "everhour-alternative"]
+search_terms: ["Everhour alternative", "open source time tracking"]
+aliases: ["everhour.com"]
+excludes: []

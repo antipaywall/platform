@@ -15,6 +15,7 @@ const here = Astro.url.pathname;
 const cur = (on: boolean) => (on ? 'page' : undefined);
 const links = [
   { href: '/', label: 'Find', on: here === '/' || here.startsWith('/free-alternatives') || here === '/search' },
+  { href: '/wall', label: 'The wall', on: here === '/wall' },
   { href: '/explore', label: 'Explore', on: here.startsWith('/explore') || here.startsWith('/projects') || here.startsWith('/topics') },
   { href: '/ideas', label: 'Wanted', on: here.startsWith('/ideas') },
   { href: '/feed', label: 'Feed', on: here.startsWith('/feed') },

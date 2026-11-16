@@ -1,0 +1,10 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "stripe-billing"
+name: "Stripe Billing"
+category: "Money and invoicing"
+blurb: "Subscriptions and invoices on Stripe, for a share of revenue."
+words: ["subscriptions", "billing", "invoices", "recurring payments"]
+topics: ["billing", "subscriptions", "stripe-billing-alternative"]
+search_terms: ["Stripe Billing alternative", "open source billing"]
+aliases: ["stripe.com/billing"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "languagetool"
+name: "LanguageTool Premium"
+category: "Writing"
+price: { cents: 499, period: month }
+blurb: "Grammar and style checking in many languages."
+words: ["grammar", "spelling", "style", "proofreading"]
+topics: ["grammar", "spellcheck", "languagetool-alternative"]
+search_terms: ["LanguageTool Premium alternative", "open source grammar checker"]
+aliases: ["languagetool.org"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "proton-mail"
+name: "Proton Mail Plus"
+category: "Email and newsletters"
+price: { cents: 499, period: month }
+blurb: "Encrypted email."
+words: ["encrypted email", "privacy", "custom domain", "email hosting"]
+topics: ["email-server", "encryption", "proton-mail-alternative"]
+search_terms: ["Proton Mail Plus alternative", "open source encrypted email"]
+aliases: ["proton.me/mail"]
+excludes: []

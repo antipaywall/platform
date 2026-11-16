@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "epidemic-sound"
+name: "Epidemic Sound"
+category: "Music and media"
+price: { cents: 1700, period: month }
+blurb: "Royalty-free music for videos."
+words: ["royalty free music", "background music", "sound effects", "youtube"]
+topics: ["music", "royalty-free", "epidemic-sound-alternative"]
+search_terms: ["Epidemic Sound alternative", "open source royalty free music"]
+aliases: ["epidemicsound.com"]
+excludes: []

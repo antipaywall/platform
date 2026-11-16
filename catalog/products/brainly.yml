@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "brainly"
+name: "Brainly Plus"
+category: "Other"
+price: { cents: 2499, period: year }
+blurb: "Homework answers and explanations."
+words: ["homework help", "answers", "study", "questions"]
+topics: ["education", "study", "brainly-alternative"]
+search_terms: ["Brainly Plus alternative", "open source homework help"]
+aliases: ["brainly.com"]
+excludes: []

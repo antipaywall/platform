@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "synthesia"
+name: "Synthesia"
+category: "AI tools"
+price: { cents: 2900, period: month }
+blurb: "AI avatar videos from text."
+words: ["ai avatar", "video generation", "training videos", "presenter"]
+topics: ["ai-video", "avatar", "synthesia-alternative"]
+search_terms: ["Synthesia alternative", "open source ai avatar video"]
+aliases: ["synthesia.io"]
+excludes: []

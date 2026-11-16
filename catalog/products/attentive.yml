@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "attentive"
+name: "Attentive"
+category: "Email and newsletters"
+price: { cents: 100000, period: month }
+blurb: "SMS marketing for brands."
+words: ["sms marketing", "text messages", "campaigns", "ecommerce"]
+topics: ["sms-marketing", "marketing", "attentive-alternative"]
+search_terms: ["Attentive alternative", "open source sms marketing"]
+aliases: ["attentive.com"]
+excludes: []

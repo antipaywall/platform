@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "monday-crm"
+name: "monday sales CRM"
+category: "Sales and CRM"
+price: { cents: 1200, period: month }
+blurb: "A CRM built on monday.com boards."
+words: ["crm", "pipeline", "deals", "boards"]
+topics: ["crm", "sales", "monday-crm-alternative"]
+search_terms: ["monday sales CRM alternative", "open source crm"]
+aliases: ["monday.com/crm"]
+excludes: []

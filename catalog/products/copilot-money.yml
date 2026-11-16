@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "copilot-money"
+name: "Copilot Money"
+category: "Money and invoicing"
+price: { cents: 1300, period: month }
+blurb: "A personal finance app."
+words: ["budget", "spending", "net worth", "investments"]
+topics: ["personal-finance", "budgeting", "copilot-money-alternative"]
+search_terms: ["Copilot Money alternative", "open source budgeting app"]
+aliases: ["copilot.money"]
+excludes: []

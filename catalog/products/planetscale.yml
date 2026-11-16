@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "planetscale"
+name: "PlanetScale"
+category: "Hosting and cloud"
+price: { cents: 3900, period: month }
+blurb: "A hosted MySQL and Postgres database."
+words: ["database", "mysql", "postgres", "branching"]
+topics: ["database", "mysql", "planetscale-alternative"]
+search_terms: ["PlanetScale alternative", "open source database hosting"]
+aliases: ["planetscale.com"]
+excludes: []

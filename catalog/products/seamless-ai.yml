@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "seamless-ai"
+name: "Seamless.AI"
+category: "Sales and CRM"
+price: { cents: 14700, period: month }
+blurb: "A B2B contact search engine."
+words: ["contacts", "b2b data", "leads", "prospecting"]
+topics: ["lead-generation", "b2b-data", "seamless-ai-alternative"]
+search_terms: ["Seamless.AI alternative", "open source lead finder"]
+aliases: ["seamless.ai"]
+excludes: []
