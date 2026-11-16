@@ -23,7 +23,7 @@ async function main() {
   const handRemoved = new Set(catalog.links.filter((l) => l.action === 'remove').map((l) => `${l.product}|${l.project.toLowerCase()}`));
 
   const rows = await fetchAllRows<Row>((a, b) =>
-    db.from('project_products').select('project_id, product_id, source, projects!inner(full_name, description, topics, stars, listed), products!inner(slug)').order('product_id').order('project_id').range(a, b),
+    db.from('project_products').select('project_id, product_id, source, projects!inner(full_name, description, topics, stars, listed), products!inner(slug)').order('product_id').order('project_id').range(a, b) as unknown as PromiseLike<{ data: Row[] | null; error: { message: string } | null }>,
   );
 
   const drop: Row[] = [];
