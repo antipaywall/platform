@@ -1,0 +1,22 @@
+# Added 2026-11-16 at a member's request. Price: Dia Pro, approximate; correct it if you know better.
+slug: dia
+name: Dia
+category: Other
+price:
+  cents: 2000
+  period: month
+blurb: A web browser with an AI assistant built in.
+words:
+  - ai browser
+  - web browser
+  - browser assistant
+topics:
+  - ai-browser
+  - agentic-browser
+  - dia-alternative
+search_terms:
+  - Dia alternative
+  - open source ai browser
+aliases:
+  - diabrowser.com
+excludes: []

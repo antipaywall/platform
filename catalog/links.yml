@@ -2983,3 +2983,39 @@
   product: novelai
   action: add
   reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zen-browser/desktop
+  product: arc-browser
+  action: add
+  reason: 'The open-source browser most often recommended to Arc users: vertical tabs, workspaces, split view and pinned tabs.'
+- project: ardia-browser/ardia
+  product: arc-browser
+  action: add
+  reason: 'Its description: "Arc''s sidebar, Dia''s polish".'
+- project: ardia-browser/ardia
+  product: dia
+  action: add
+  reason: 'Its description: "Arc''s sidebar, Dia''s polish".'
+- project: VictorKildahl/cra
+  product: arc-browser
+  action: add
+  reason: 'Calls itself "the open-source Arc replacement".'
+- project: ysalitrynskyi/stedding-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an open-source Arc-style browser, with one-click import from Arc.'
+- project: FujiwaraChoki/mori-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an "OSS Arc Alternative".'
+- project: lucianodiisouza/flecha-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an "Open-source Arc alternative".'
+- project: browseros-ai/BrowserOS
+  product: dia
+  action: add
+  reason: 'Calls itself an open-source alternative to Dia.'
+- project: BrowserOperator/browser-operator-core
+  product: dia
+  action: add
+  reason: 'Calls itself an open-source alternative to Dia.'
