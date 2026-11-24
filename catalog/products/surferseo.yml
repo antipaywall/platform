@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "surferseo"
+name: "Surfer"
+category: "Writing"
+price: { cents: 9900, period: month }
+blurb: "Writes and optimises content to rank in search."
+words: ["seo writing", "content optimisation", "keywords", "blog"]
+topics: ["seo", "content-optimization", "surferseo-alternative"]
+search_terms: ["Surfer alternative", "open source seo content editor"]
+aliases: ["surferseo.com"]
+excludes: []

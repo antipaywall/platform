@@ -1,0 +1,11 @@
+---
+// The person page's stats slot: things backed, would-pay (a signal, never money), builds tested,
+// saved by switching. Shows nothing for someone who hasn't backed anything.
+import Stats from '../pf/PersonStats.astro';
+interface Props {
+  personId: string;
+}
+const { personId } = Astro.props;
+---
+
+<Stats personId={personId} />

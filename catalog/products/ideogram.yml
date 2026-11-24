@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "ideogram"
+name: "Ideogram"
+category: "AI tools"
+price: { cents: 800, period: month }
+blurb: "AI images that get text right."
+words: ["ai images", "text in images", "logos", "posters"]
+topics: ["image-generation", "stable-diffusion", "ideogram-alternative"]
+search_terms: ["Ideogram alternative", "open source image generation"]
+aliases: ["ideogram.ai"]
+excludes: []

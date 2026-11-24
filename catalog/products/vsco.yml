@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "vsco"
+name: "VSCO"
+category: "Photos and video"
+price: { cents: 799, period: month }
+blurb: "Photo filters and editing."
+words: ["photo filters", "presets", "editing", "photography"]
+topics: ["photo-editor", "image-editing", "vsco-alternative"]
+search_terms: ["VSCO alternative", "open source photo editor"]
+aliases: ["vsco.co"]
+excludes: []

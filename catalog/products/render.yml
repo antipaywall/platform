@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "render"
+name: "Render"
+category: "Hosting and cloud"
+price: { cents: 700, period: month }
+blurb: "Hosting for web apps, databases and workers."
+words: ["hosting", "deploy", "web services", "databases"]
+topics: ["paas", "hosting", "render-alternative"]
+search_terms: ["Render alternative", "open source paas"]
+aliases: ["render.com"]
+excludes: []

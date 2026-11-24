@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: pro-tools
+name: Pro Tools
+category: Music and media
+price:
+  cents: 2999
+  period: month
+blurb: Recording and mixing used in studios.
+words:
+  - audio recording
+  - mixing
+  - studio
+topics:
+  - daw
+  - audio
+  - recording
+  - pro-tools-alternative
+search_terms:
+  - pro tools alternative
+  - open source audio recording
+aliases: []
+excludes: []

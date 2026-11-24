@@ -1,0 +1,21 @@
+# Added 2026-11-16 at a member's request. Arc itself is free; it is listed because people look for
+# an open-source browser that works like it, and its maker has moved on to the paid Dia.
+slug: arc-browser
+name: Arc Browser
+category: Other
+blurb: A web browser with a sidebar, spaces and pinned tabs.
+words:
+  - web browser
+  - vertical tabs
+  - spaces
+topics:
+  - arc-alternative
+  - arc-browser
+  - arc-browser-alternative
+search_terms:
+  - Arc alternative
+  - Arc browser alternative
+aliases:
+  - arc.net
+  - arc
+excludes: []

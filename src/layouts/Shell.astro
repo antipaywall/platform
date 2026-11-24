@@ -1,0 +1,97 @@
+---
+// The signed-in area, for every kind of account: a dark side menu and a plain work surface, with
+// none of the public site's header or footer. Members see their own sections; the organizer's
+// pages use the same frame with more in the menu. The page passes its menu in as the "nav" slot.
+import '../styles/global.css';
+import '../styles/page.css';
+import '../styles/admin.css';
+import Head from '../components/Head.astro';
+import { site } from '../config/site';
+import { isAdmin } from '../lib/db';
+import { MESSAGES, type MessageCode } from '../lib/respond';
+import { seenAs, VIEW_LABEL } from '../lib/viewAs';
+
+interface Props {
+  /** The page's name, shown as its heading and in the browser tab. */
+  heading: string;
+  /** One line under the heading saying what the page is for. */
+  about?: string;
+  /** Which area this is, shown under the name in the menu. */
+  area: string;
+}
+const { heading, about, area } = Astro.props;
+const real = Astro.locals.person;
+const view = Astro.locals.viewAs;
+const person = real ? seenAs(real, view) : null;
+// The switch is drawn for the organizer only, whichever view they are in.
+const organizer = isAdmin(real);
+const here = Astro.url.pathname;
+const views = [
+  { as: '', label: 'Organizer', on: !view },
+  { as: 'builder', label: 'Builder', on: view === 'builder' },
+  { as: 'member', label: 'Member', on: view === 'member' },
+];
+// Messages arrive as a code and are looked up here, so a link can't make the page say something.
+const code = Astro.url.searchParams.get('m') ?? '';
+const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
+---
+
+<html lang="en">
+  <head>
+    <Head title={`${heading} | ${site.name}`} description="Your part of the site." noindex />
+  </head>
+  <body class="adm">
+    <a class="adm-skip" href="#adm-main">Skip to the page</a>
+    <aside class="adm-side">
+      <p class="adm-brand"><img src="/logo-mark.png" alt="" width="40" height="40" /><b>{site.name}</b><span>{area}</span></p>
+      <slot name="nav" />
+      <div class="adm-foot">
+        {
+          organizer && (
+            <div class="adm-view">
+              <span id="adm-view-label">View as</span>
+              <div role="group" aria-labelledby="adm-view-label">
+                {views.map((v) => (
+                  <form method="post" action="/api/admin/view-as">
+                    <input type="hidden" name="as" value={v.as} />
+                    <input type="hidden" name="next" value={here} />
+                    <button type="submit" aria-pressed={v.on ? 'true' : 'false'}>{v.label}</button>
+                  </form>
+                ))}
+              </div>
+            </div>
+          )
+        }
+        {
+          person && (
+            <p class="adm-who">
+              {person.avatar_url && <img src={person.avatar_url} alt="" width="28" height="28" />}
+              <span>@{person.handle}</span>
+              {person.is_builder && <small>Builder</small>}
+            </p>
+          )
+        }
+        <a href="/">Back to the site</a>
+        <form method="post" action="/auth/signout"><button type="submit">Sign out</button></form>
+      </div>
+    </aside>
+    <main class="adm-main" id="adm-main">
+      {
+        organizer && view && (
+          <form class="adm-viewing" method="post" action="/api/admin/view-as">
+            <input type="hidden" name="as" value="" />
+            <input type="hidden" name="next" value={here} />
+            <p><b>You're viewing the site as {VIEW_LABEL[view]}.</b> This only changes what you see. Anything you save still happens as you.</p>
+            <button class="key key-sm" type="submit">Back to organizer view</button>
+          </form>
+        )
+      }
+      <header class="adm-top">
+        <h1>{heading}</h1>
+        {about && <p>{about}</p>}
+      </header>
+      {flash && <p class={`flash flash-${flash.kind}`} role={flash.kind === 'error' ? 'alert' : 'status'}>{flash.text}</p>}
+      <slot />
+    </main>
+  </body>
+</html>

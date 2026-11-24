@@ -1,0 +1,52 @@
+---
+// Paste the website of a tool you pay for. The form posts to /api/find, which reads the site,
+// searches GitHub with the tool's own words, and sends you to what it found.
+import Platform from '../../layouts/Platform.astro';
+import { adminClient } from '../../lib/supabase';
+
+const site = (Astro.url.searchParams.get('site') ?? '').slice(0, 200);
+const e = Astro.url.searchParams.get('e');
+const error =
+  e === 'bad' ? "That doesn't look like a tool's website. Paste the address you'd type to visit it, like annot.io."
+  : e === 'limit' ? 'That is a lot of lookups in an hour. Try again later.'
+  : e === 'busy' ? "We couldn't look that up just now. Try again in a minute."
+  : null;
+
+// What people asked about most recently, once an organizer has listed it.
+const db = adminClient();
+const { data } = db ? await db.from('asked_tools').select('domain, name, tagline, best_stars').eq('status', 'listed').order('created_at', { ascending: false }).limit(12) : { data: [] };
+const asked = (data ?? []) as { domain: string; name: string; tagline: string; best_stars: number }[];
+---
+
+<Platform title="Look up a tool you pay for" description="Paste the website of any tool you pay for. We read what it does and find the open-source projects that do the same job.">
+  <section class="wrap pf-section fd">
+    <h1 class="pf-title">Paste the website of a tool you pay for.</h1>
+    <p class="lede">We read what the tool says it does, then search GitHub for open-source projects doing the same job. If nobody has built one, you've found a gap worth filling.</p>
+    {error && <p class="flash flash-error" role="alert">{error}</p>}
+    <form class="pf-search" method="post" action="/api/find">
+      <label for="site" class="pf-sr">The tool's website</label>
+      <input id="site" name="site" type="text" inputmode="url" value={site} placeholder="annot.io" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="200" required />
+      <button class="key key-tomato" type="submit">Find it free</button>
+    </form>
+    <p class="pf-note">It takes a few seconds the first time anyone asks about a tool. No AI is involved: we use the words on the tool's own page, so results can miss.</p>
+  </section>
+  {
+    asked.length > 0 && (
+      <section class="wrap pf-section pf-section-tight">
+        <h2 class="pf-h2">Tools people asked about</h2>
+        <div class="pf-grid" style="margin-top:16px">
+          {asked.map((t, i) => (
+            <a class={`pf-brick p${(i % 6) + 1}`} href={`/find/${t.domain}`}>
+              <small>{t.best_stars >= 1000 ? 'Free alternatives to' : 'Nobody has built a free'}</small>
+              <b>{t.name}</b>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Platform>
+
+<style>
+  .fd { display: grid; gap: 18px; max-width: 860px; }
+</style>

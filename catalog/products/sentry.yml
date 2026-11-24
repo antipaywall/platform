@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: sentry
+name: Sentry
+category: Developer tools
+price:
+  cents: 2600
+  period: month
+blurb: Find out when your app crashes, and why.
+words:
+  - error tracking
+  - crash reports
+  - exceptions
+  - bug reports
+  - monitoring
+topics:
+  - error-tracking
+  - error-monitoring
+  - crash-reporting
+search_terms:
+  - sentry alternative
+  - error tracking
+aliases: []
+excludes: []

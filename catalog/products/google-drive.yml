@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: google-drive
+name: Google Drive
+category: Files and storage
+price:
+  cents: 199
+  period: month
+blurb: Cloud storage and file sharing.
+words:
+  - cloud storage
+  - file sharing
+  - file sync
+topics:
+  - file-sharing
+  - cloud-storage
+  - file-sync
+  - google-drive-alternative
+search_terms:
+  - google drive alternative
+  - open source cloud storage
+aliases: []
+excludes: []

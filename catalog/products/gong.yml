@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gong"
+name: "Gong"
+category: "Sales and CRM"
+price: { cents: 120000, period: year }
+blurb: "Records and analyses sales calls."
+words: ["call recording", "sales calls", "conversation intelligence", "coaching"]
+topics: ["call-recording", "sales", "gong-alternative"]
+search_terms: ["Gong alternative", "open source conversation intelligence"]
+aliases: ["gong.io"]
+excludes: []

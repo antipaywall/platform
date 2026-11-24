@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: spotify
+name: Spotify
+category: Music and media
+price:
+  cents: 1199
+  period: month
+blurb: Stream music and podcasts.
+words:
+  - music streaming
+  - music player
+  - playlists
+  - podcasts
+  - listen to music
+topics:
+  - music-player
+  - music-streaming
+  - music-server
+search_terms:
+  - spotify alternative
+  - self-hosted music streaming
+aliases: []
+excludes: []

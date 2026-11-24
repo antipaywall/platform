@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "fly-io"
+name: "Fly.io"
+category: "Hosting and cloud"
+price: { cents: 500, period: month }
+blurb: "Runs apps close to users worldwide."
+words: ["hosting", "containers", "edge", "deploy"]
+topics: ["paas", "hosting", "fly-io-alternative"]
+search_terms: ["Fly.io alternative", "open source paas"]
+aliases: ["fly.io"]
+excludes: []

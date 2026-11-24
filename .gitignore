@@ -33,3 +33,7 @@ supabase/.temp/
 # Editor and agent notes
 .vscode/
 AGENTS.md
+.superpowers/
+
+match-bundle.md
+ideas-export/

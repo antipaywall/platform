@@ -1,0 +1,25 @@
+# Repos and words that never reach the site. A repo whose name, description or topics contain
+# one of these words as a whole word is dropped by the sync. Antipaywall lists open-source
+# projects, never pirated copies, cracks or cheats.
+repos: []
+words:
+  - crack
+  - cracked
+  - cracks
+  - keygen
+  - warez
+  - torrent
+  - torrents
+  - pirate
+  - pirated
+  - piracy
+  - nulled
+  - serial key
+  - free download
+  - activator
+  - license bypass
+  - cheat engine
+  - aimbot
+  - wallhack
+  - mod menu
+  - account generator

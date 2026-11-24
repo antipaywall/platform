@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "copper"
+name: "Copper"
+category: "Sales and CRM"
+price: { cents: 900, period: month }
+blurb: "A CRM built for Google Workspace."
+words: ["crm", "gmail", "contacts", "pipeline"]
+topics: ["crm", "sales", "copper-alternative"]
+search_terms: ["Copper alternative", "open source crm"]
+aliases: ["copper.com"]
+excludes: []

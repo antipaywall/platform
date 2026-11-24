@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -31,6 +31,15 @@ describe('what is served to visitors', () => {
   it('makes one statement about who holds the pool, and never says it "will be named"', () => {
     const found = served.filter((f) => /will be named|is named here before|to be named/i.test(readFileSync(f, 'utf8')));
     expect(found).toEqual([]);
+  });
+  it('never talks about donating (web addresses aside)', () => {
+    const found = served.filter((f) => /\bdonat|\bdonor/i.test(readFileSync(f, 'utf8').replace(/https?:\/\/\S+/g, '')));
+    expect(found).toEqual([]);
+  });
+  it('signs in with GitHub or GitLab only: no email sign-in', () => {
+    const found = ['src/pages/auth/email.astro', 'src/pages/api/auth/email.ts', 'src/lib/emailSignIn.ts', 'src/pages/api/account/backer.ts'].filter((f) => existsSync(f));
+    expect(found).toEqual([]);
+    expect(served.filter((f) => /sign in with your email|auth\/email/i.test(readFileSync(f, 'utf8')))).toEqual([]);
   });
   it('does not claim the checks keep fake accounts out', () => {
     const found = served.filter((f) => /keep (fake|throwaway) accounts out/i.test(readFileSync(f, 'utf8')));

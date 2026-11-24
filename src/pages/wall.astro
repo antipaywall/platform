@@ -1,0 +1,123 @@
+---
+// The wall: every paid tool Antipaywall tracks is a brick. A brick is painted once a free,
+// open-source alternative people rely on exists; bare bricks are the gaps. Wider bricks are tools
+// more people say they pay for or want replaced. No money figures: we can't make them reliable.
+import Platform from '../layouts/Platform.astro';
+import { listProducts, SOLID_STARS, type ProductSummary } from '../lib/products';
+import { brickState, trustedAlternatives } from '../lib/wall';
+import { adminClient } from '../lib/supabase';
+
+type Brick = { name: string; href: string; state: 'solid' | 'some' | 'gap'; people: number; detail: string };
+
+let products: ProductSummary[] = [];
+let asked: { domain: string; name: string; best_stars: number; askers: string[] }[] = [];
+let trusted = new Map<string, { count: number; best: number }>();
+let failed = false;
+try {
+  const db = adminClient();
+  if (db) {
+    [products, trusted] = await Promise.all([listProducts(db), trustedAlternatives(db)]);
+    const { data } = await db.from('asked_tools').select('domain, name, best_stars, askers').eq('status', 'listed').order('created_at').limit(300);
+    asked = (data ?? []) as typeof asked;
+  }
+} catch {
+  failed = true;
+}
+
+const DETAIL = { solid: 'A free alternative people rely on exists', some: 'Free options exist, none widely used yet', gap: 'Nothing free yet: a gap' };
+const people = (n: number) => (n === 1 ? '1 person' : `${n} people`);
+
+const rows = new Map<string, Brick[]>();
+for (const p of products) {
+  const t = trusted.get(p.id);
+  const state = brickState(t?.count ?? 0, t?.best ?? 0);
+  const b: Brick = { name: p.name, href: `/free-alternatives/${p.slug}`, state, people: p.signals, detail: `${DETAIL[state]}. ${people(p.signals)} said they pay for it or want it replaced.` };
+  rows.set(p.category, [...(rows.get(p.category) ?? []), b]);
+}
+const added: Brick[] = asked.map((t) => {
+  const state: Brick['state'] = t.best_stars >= SOLID_STARS ? 'solid' : t.best_stars > 0 ? 'some' : 'gap';
+  return { name: t.name, href: `/find/${t.domain}`, state, people: t.askers.length, detail: `${DETAIL[state]}. Looked up by ${people(t.askers.length)}.` };
+});
+if (added.length) rows.set('Added by members', added);
+const order = [...rows.keys()].sort((a, b) => (a === 'Added by members' ? 1 : b === 'Added by members' ? -1 : a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)));
+for (const list of rows.values()) list.sort((a, b) => b.people - a.people || a.name.localeCompare(b.name));
+
+const all = [...rows.values()].flat();
+const count = (s: Brick['state']) => all.filter((b) => b.state === s).length;
+const painted = count('solid');
+const pct = all.length ? Math.round((painted / all.length) * 100) : 0;
+const topGaps = all.filter((b) => b.state === 'gap').sort((a, b) => b.people - a.people).slice(0, 6);
+// Width: every brick has a base, and each person adds to it, with diminishing returns so one tool can't fill a row.
+const grow = (n: number) => (1 + Math.sqrt(n)).toFixed(2);
+---
+
+<Platform title="The wall: what people still pay for" description="Every paid tool Antipaywall tracks, as a wall. Painted bricks have a free, open-source alternative people rely on; bare ones are the gaps still to build.">
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <h1 class="pf-title">The wall</h1>
+      <p class="lede wall-lede">
+        Every paid tool we track is a brick. When a free, open-source alternative people rely on exists, its brick gets painted.
+        The bare ones are the gaps, and they're what the community builds next. Wider bricks are tools more people pay for.
+      </p>
+      {all.length > 0 && (
+        <div class="wall-meter">
+          <div class="wall-bar" role="img" aria-label={`${painted} of ${all.length} bricks painted`}>
+            <span class="wall-bar-solid" style={`width:${(painted / all.length) * 100}%`}></span>
+            <span class="wall-bar-some" style={`width:${(count('some') / all.length) * 100}%`}></span>
+          </div>
+          <p><strong>{pct}%</strong> of the wall is painted: {painted} of {all.length} paid tools have a free alternative people rely on. {count('some')} have early options, and {count('gap')} have nothing free yet.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {failed && <div class="wrap"><p class="flash flash-error" role="alert">The wall isn't loading right now. Try again in a minute.</p></div>}
+
+  <section class="wrap pf-section wall-key-row" aria-label="Key">
+    <ul class="wall-key">
+      <li><i class="wall-swatch solid"></i> A free alternative people rely on</li>
+      <li><i class="wall-swatch some"></i> Early free options</li>
+      <li><i class="wall-swatch gap"></i> A gap: nothing free yet</li>
+    </ul>
+  </section>
+
+  <section class="wrap wall" aria-label="Every paid tool, by category">
+    {order.map((cat, i) => (
+      <div class="wall-course">
+        <h2 class="wall-cat">{cat}</h2>
+        <ul class={`wall-row ${i % 2 ? 'offset' : ''}`}>
+          {rows.get(cat)!.map((b) => (
+            <li style={`flex-grow:${grow(b.people)}`}>
+              <a class={`wall-brick ${b.state}`} href={b.href} title={`${b.name}: ${b.detail}`}>
+                <span>{b.name}</span>
+                {b.people > 0 && <small>{b.people}</small>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  {topGaps.length > 0 && (
+    <section class="pf-band">
+      <div class="wrap pf-section">
+        <h2 class="pf-h3">The biggest bare bricks</h2>
+        <p class="muted">The gaps the most people want filled. These are the strongest candidates for the next hackathon season.</p>
+        <ul class="wall-top">
+          {topGaps.map((g) => <li><a class="link" href={g.href}>{g.name}</a> <span class="muted">{people(g.people)}</span></li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="wrap pf-section">
+    <h2 class="pf-h3">Add a brick</h2>
+    <p>Pay for something that isn't here? Paste its website and Antipaywall will look for free versions. Every tool you add makes the wall more complete for the next person.</p>
+    <form class="pf-search" action="/api/find" method="post">
+      <label for="site" class="pf-sr">The website of a tool you pay for</label>
+      <input id="site" name="site" type="text" inputmode="url" placeholder="calendly.com" autocomplete="off" />
+      <button class="key" type="submit">Look it up</button>
+    </form>
+  </section>
+</Platform>

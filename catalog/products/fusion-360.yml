@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "fusion-360"
+name: "Autodesk Fusion"
+category: "Design"
+price: { cents: 7000, period: month }
+blurb: "CAD, CAM and 3D design for products."
+words: ["cad", "3d modelling", "cam", "product design"]
+topics: ["cad", "3d-modeling", "fusion-360-alternative"]
+search_terms: ["Autodesk Fusion alternative", "open source cad"]
+aliases: ["autodesk.com/fusion-360"]
+excludes: []

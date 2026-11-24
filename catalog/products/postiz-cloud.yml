@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "postiz-cloud"
+name: "Postiz Cloud"
+category: "Social media"
+price: { cents: 2900, period: month }
+blurb: "Hosted social media scheduling with AI agents."
+words: ["social media scheduling", "ai posts", "calendar", "automation"]
+topics: ["social-media", "scheduler", "postiz-cloud-alternative"]
+search_terms: ["Postiz Cloud alternative", "open source social media scheduler"]
+aliases: ["postiz.com"]
+excludes: []

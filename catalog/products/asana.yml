@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: asana
+name: Asana
+category: Project management
+price:
+  cents: 1099
+  period: month
+blurb: Tasks and projects for teams.
+words:
+  - task management
+  - project tracking
+  - team tasks
+topics:
+  - project-management
+  - task-manager
+  - kanban
+  - asana-alternative
+search_terms:
+  - asana alternative
+  - open source task management
+aliases: []
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "microsoft-forms"
+name: "Microsoft Forms"
+category: "Forms and surveys"
+price: { cents: 600, period: month }
+blurb: "Forms and quizzes in Microsoft 365."
+words: ["forms", "quiz", "survey", "responses"]
+topics: ["forms", "surveys", "microsoft-forms-alternative"]
+search_terms: ["Microsoft Forms alternative", "open source form builder"]
+aliases: ["forms.office.com"]
+excludes: []

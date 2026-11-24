@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "aha"
+name: "Aha!"
+category: "Project management"
+price: { cents: 5900, period: month }
+blurb: "Product roadmaps and strategy."
+words: ["product roadmap", "strategy", "ideas", "features"]
+topics: ["roadmap", "product-management", "aha-alternative"]
+search_terms: ["Aha! alternative", "open source product roadmap"]
+aliases: ["aha.io"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "supergrow"
+name: "Supergrow"
+category: "Social media"
+price: { cents: 1900, period: month }
+blurb: "LinkedIn content, scheduling and analytics."
+words: ["linkedin", "posts", "scheduling", "analytics"]
+topics: ["linkedin", "social-media", "supergrow-alternative"]
+search_terms: ["Supergrow alternative", "open source linkedin scheduler"]
+aliases: ["supergrow.ai"]
+excludes: []

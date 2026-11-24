@@ -8,10 +8,14 @@ import type { AccountFacts } from '../../lib/eligibility';
 import { fetchGithubFacts, GithubUnavailableError } from '../../lib/github';
 import { fetchGitlabFacts, GitlabUnavailableError } from '../../lib/gitlab';
 import { accountIdentity } from '../../lib/identity';
+import { refreshActivity, refreshRepos } from '../../lib/profiles';
 import { parseEmail } from '../../lib/intake';
 import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
+import { claimSignals } from '../../lib/signals';
+import { assignUsername, currentGithubLogin, linkedGithubId } from '../../lib/usernames';
+import { visitorId } from '../../lib/visitor';
 
 export const GET: APIRoute = async (context) => {
   const { request, cookies, url, redirect } = context;
@@ -19,7 +23,9 @@ export const GET: APIRoute = async (context) => {
   const code = url.searchParams.get('code');
   const supabase = sessionClient(request, cookies);
   const db = adminClient();
-  if (!code || !supabase || !db) return back(next, 'signin_failed');
+  if (!supabase || !db) return back(next, 'signin_failed');
+
+  if (!code) return back(next, 'signin_failed');
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error || !data.session) return back(next, 'signin_failed');
@@ -57,7 +63,7 @@ export const GET: APIRoute = async (context) => {
   if (facts.accountId !== identity.accountId) return giveUp();
 
   // Whether this account has been here before, so a first sign-in can be told from a return.
-  const before = await db.from('people').select('verified, provider').eq('id', user.id).maybeSingle();
+  const before = await db.from('people').select('verified, provider, username, github_login').eq('id', user.id).maybeSingle();
   if (before.error) return giveUp();
   // One account per person: someone who joined with one provider keeps signing in with it.
   if (before.data && providerOf(before.data) !== provider) return giveUp(provider === 'gitlab' ? 'signin_use_github' : 'signin_use_gitlab');
@@ -65,6 +71,12 @@ export const GET: APIRoute = async (context) => {
   // Two letters from the hosting provider. Nothing finer than a country is kept.
   const country = countryCode(request.headers.get('x-vercel-ip-country'));
   const { verified, results } = checkEligibility(facts, new Date());
+  // A handle is a name the provider lets people give up and others take. If another account here
+  // still has this one saved, it is out of date: the provider has just said it belongs to this
+  // sign-in. That row's saved handle is marked stale (its next sign-in saves its new one), so the
+  // current owner is never locked out by a name someone else used to have.
+  const stale = await db.from('people').select('id, handle').eq('provider', provider).ilike('handle', facts.handle.replace(/[\\%_]/g, (c) => `\\${c}`)).neq('id', user.id);
+  for (const r of stale.data ?? []) await db.from('people').update({ handle: `${r.handle}~${String(r.id).slice(0, 8)}` }).eq('id', r.id);
   const saved = await db.from('people').upsert({
     id: user.id,
     provider,
@@ -75,11 +87,35 @@ export const GET: APIRoute = async (context) => {
     country,
     account_created_at: facts.accountCreatedAt,
     contributions_12mo: facts.contributions12mo,
+    name: facts.name ?? null,
+    bio: facts.bio ?? null,
+    location: facts.location ?? null,
+    repo_count: facts.repoCount ?? null,
     verified,
     failed_rules: results.filter((r) => !r.pass).map((r) => r.rule),
     checked_at: new Date().toISOString(),
   });
   if (saved.error) return giveUp();
+
+  // Their username: the GitHub login, or for GitLab the handle unless it collides. On a collision
+  // they choose, after the rest of sign-in has finished.
+  // For GitLab, a linked GitHub name counts only as GitHub says it is now, asked by the linked account's
+  // id: a login saved earlier may since belong to someone else.
+  const linkedId = provider === 'gitlab' ? linkedGithubId(user) : null;
+  const githubLogin = linkedId ? await currentGithubLogin(linkedId) : null;
+  if (provider === 'gitlab' && (before.data?.github_login ?? null) !== githubLogin) await db.from('people').update({ github_login: githubLogin }).eq('id', user.id);
+  const named = await assignUsername(db, { id: user.id, provider, handle: facts.handle, githubLogin, current: before.data?.username ?? null }).catch(() => null);
+  const mustChoose = Boolean(named && 'choose' in named);
+
+  // Their public repositories and activity, for their profile. A slow provider never holds up the sign-in.
+  const fresh = { id: user.id, provider, handle: facts.handle, github_id: provider === 'github' ? facts.accountId : null, gitlab_id: provider === 'gitlab' ? facts.accountId : null } as Person;
+  await Promise.all([
+    refreshRepos(fresh, { force: true, timeoutMs: 1500 }),
+    refreshActivity(fresh, { force: true, timeoutMs: 2500, token: provider === 'github' ? provider_token : undefined }),
+  ]);
+
+  // What this browser backed before signing in becomes theirs.
+  await claimSignals(db, visitorId(cookies), user.id);
 
   // Signing in joins the email list, as the sign-in button says, using the address the provider gave.
   // An address that unsubscribed stays off. Failing to add it never blocks the sign-in.
@@ -91,5 +127,7 @@ export const GET: APIRoute = async (context) => {
   if (!before.data) await recordEvent(db, context, { ...who, kind: 'signed_in' });
   if (before.data?.verified !== verified) await recordEvent(db, context, { ...who, kind: verified ? 'checks_passed' : 'checks_failed' });
   if (listed?.status === 'new') await recordEvent(db, context, { ...who, kind: 'list_joined', subject: listed.id });
-  return redirect(next);
+  // A first sign-in goes through onboarding (what Antipaywall is, and what they pay for) on the way.
+  const onward = before.data ? next : `/welcome?next=${encodeURIComponent(next)}`;
+  return redirect(mustChoose ? `/auth/username?next=${encodeURIComponent(onward)}` : onward);
 };

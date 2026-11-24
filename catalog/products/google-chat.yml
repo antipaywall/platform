@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "google-chat"
+name: "Google Chat (Workspace)"
+category: "Team chat"
+price: { cents: 700, period: month }
+blurb: "Team chat in Google Workspace."
+words: ["team chat", "spaces", "messaging", "google"]
+topics: ["team-chat", "chat", "google-chat-alternative"]
+search_terms: ["Google Chat alternative", "open source team chat"]
+aliases: ["chat.google.com"]
+excludes: []

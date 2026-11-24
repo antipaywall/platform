@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: webstorm
+name: WebStorm
+category: Developer tools
+price:
+  cents: 690
+  period: month
+blurb: An IDE for JavaScript and TypeScript.
+words:
+  - javascript ide
+  - code editor
+  - ide
+topics:
+  - ide
+  - code-editor
+  - editor
+  - webstorm-alternative
+search_terms:
+  - webstorm alternative
+  - open source javascript ide
+aliases: []
+excludes: []

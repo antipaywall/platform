@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "dropbox-paper"
+name: "Dropbox Paper"
+category: "Docs and notes"
+price: { cents: 1000, period: month }
+blurb: "Shared docs for teams."
+words: ["documents", "shared docs", "notes", "collaboration"]
+topics: ["collaborative-editing", "documents", "dropbox-paper-alternative"]
+search_terms: ["Dropbox Paper alternative", "open source collaborative documents"]
+aliases: ["dropbox.com/paper"]
+excludes: []

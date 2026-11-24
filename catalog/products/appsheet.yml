@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "appsheet"
+name: "AppSheet"
+category: "Websites"
+price: { cents: 500, period: month }
+blurb: "Build apps from Google Sheets."
+words: ["no code", "spreadsheet apps", "google sheets", "forms"]
+topics: ["no-code", "app-builder", "appsheet-alternative"]
+search_terms: ["AppSheet alternative", "open source no code app builder"]
+aliases: ["appsheet.com"]
+excludes: []

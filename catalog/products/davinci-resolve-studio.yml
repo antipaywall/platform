@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: davinci-resolve-studio
+name: DaVinci Resolve Studio
+category: Photos and video
+price:
+  cents: 29500
+  period: once
+blurb: Video editing, colour grading and audio in one app.
+words:
+  - video editing
+  - color grading
+  - post production
+topics:
+  - video-editor
+  - color-grading
+  - video-editing
+  - davinci-resolve-studio-alternative
+search_terms:
+  - davinci resolve studio alternative
+  - open source video editing
+aliases: []
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "chili-piper"
+name: "Chili Piper"
+category: "Scheduling"
+price: { cents: 2250, period: month }
+blurb: "Meeting booking and routing for sales teams."
+words: ["meeting booking", "lead routing", "demos", "scheduling"]
+topics: ["scheduling", "booking", "chili-piper-alternative"]
+search_terms: ["Chili Piper alternative", "open source meeting scheduler"]
+aliases: ["chilipiper.com"]
+excludes: []

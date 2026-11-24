@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "cloudflare-pro"
+name: "Cloudflare Pro"
+category: "Hosting and cloud"
+price: { cents: 2000, period: month }
+blurb: "Paid CDN, security and performance."
+words: ["cdn", "firewall", "ddos", "dns"]
+topics: ["cdn", "security", "cloudflare-pro-alternative"]
+search_terms: ["Cloudflare Pro alternative", "open source cdn"]
+aliases: ["cloudflare.com"]
+excludes: []

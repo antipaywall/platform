@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: adobe-indesign
+name: Adobe InDesign
+category: Design
+price:
+  cents: 2299
+  period: month
+blurb: Page layout for books, magazines and brochures.
+words:
+  - page layout
+  - desktop publishing
+  - book layout
+  - magazine
+topics:
+  - desktop-publishing
+  - page-layout
+  - typesetting
+  - adobe-indesign-alternative
+search_terms:
+  - adobe indesign alternative
+  - open source page layout
+aliases: []
+excludes: []

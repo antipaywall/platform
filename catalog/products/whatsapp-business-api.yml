@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "whatsapp-business-api"
+name: "WhatsApp Business API (via providers)"
+category: "Support and chat"
+price: { cents: 5000, period: month }
+blurb: "Send WhatsApp messages from your business."
+words: ["whatsapp", "business messaging", "notifications", "chat"]
+topics: ["whatsapp", "messaging", "whatsapp-business-api-alternative"]
+search_terms: ["WhatsApp Business API alternative", "open source whatsapp business"]
+aliases: ["business.whatsapp.com"]
+excludes: []

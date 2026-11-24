@@ -1,0 +1,30 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: chatgpt
+name: ChatGPT
+category: AI tools
+price:
+  cents: 2000
+  period: month
+blurb: An AI assistant you chat with to write, answer questions and help with work.
+words:
+  - ai assistant
+  - chatbot
+  - chat
+  - llm
+  - local model
+  - writing help
+  - answer questions
+  - ai chat
+topics:
+  - chatgpt
+  - llm
+  - chatbot
+  - local-llm
+  - ai-assistant
+search_terms:
+  - chatgpt alternative
+  - self-hosted ai chat
+aliases:
+  - openai
+  - chat gpt
+excludes: []

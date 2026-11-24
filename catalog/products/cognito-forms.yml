@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "cognito-forms"
+name: "Cognito Forms"
+category: "Forms and surveys"
+price: { cents: 1900, period: month }
+blurb: "Forms with calculations, payments and workflows."
+words: ["forms", "payments", "calculations", "workflow"]
+topics: ["forms", "form-builder", "cognito-forms-alternative"]
+search_terms: ["Cognito Forms alternative", "open source form builder"]
+aliases: ["cognitoforms.com"]
+excludes: []

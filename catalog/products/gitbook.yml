@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: gitbook
+name: GitBook
+category: Docs and notes
+price:
+  cents: 7900
+  period: month
+blurb: Documentation sites written by a team.
+words:
+  - documentation
+  - docs site
+  - knowledge base
+  - api docs
+topics:
+  - documentation
+  - docs
+  - documentation-generator
+  - gitbook-alternative
+search_terms:
+  - gitbook alternative
+  - open source documentation
+aliases: []
+excludes: []

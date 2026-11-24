@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: insomnia
+name: Insomnia
+category: Developer tools
+price:
+  cents: 500
+  period: month
+blurb: A client for testing APIs.
+words:
+  - api client
+  - rest client
+  - graphql client
+topics:
+  - api-client
+  - rest-client
+  - http-client
+  - insomnia-alternative
+search_terms:
+  - insomnia alternative
+  - open source api client
+aliases: []
+excludes: []

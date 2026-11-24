@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: duolingo-super
+name: Duolingo Super
+category: Other
+price:
+  cents: 699
+  period: month
+blurb: Learn languages with daily lessons.
+words:
+  - language learning
+  - flashcards
+  - spaced repetition
+topics:
+  - language-learning
+  - flashcards
+  - spaced-repetition
+  - duolingo-super-alternative
+search_terms:
+  - duolingo super alternative
+  - open source language learning
+aliases: []
+excludes: []

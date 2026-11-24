@@ -107,10 +107,10 @@ describe('toCsv', () => {
 });
 
 describe('the join pages are counted, and only them', () => {
-  it.each(['/join', '/join/build', '/join/panel', '/join/organize'])('counts %s', (p) => {
+  it.each(['/hackathon', '/hackathon/join', '/hackathon/join/build', '/hackathon/join/panel', '/hackathon/join/organize', '/hackathon/rules', '/hackathon/pool', '/hackathon/fund', '/hackathon/builders', '/free-alternatives', '/free-alternatives/calendly', '/topics/scheduling', '/projects/calcom/cal.diy', '/search'])('counts %s', (p) => {
     expect(trackablePath(p)).toBe(p);
   });
-  it.each(['/help', '/join/other', '/unsubscribe', '/admin', '/api/subscribe'])('does not count %s', (p) => {
+  it.each(['/help', '/join/other', '/hackathon/other', '/projects/a', '/unsubscribe', '/admin', '/api/subscribe'])('does not count %s', (p) => {
     expect(trackablePath(p)).toBeNull();
   });
 });

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "akiflow"
+name: "Akiflow"
+category: "Project management"
+price: { cents: 1900, period: month }
+blurb: "One inbox for tasks from every app, planned into your day."
+words: ["tasks", "inbox", "time blocking", "calendar"]
+topics: ["task-manager", "calendar", "akiflow-alternative"]
+search_terms: ["Akiflow alternative", "open source time blocking"]
+aliases: ["akiflow.com"]
+excludes: []

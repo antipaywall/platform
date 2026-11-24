@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "affinity"
+name: "Affinity (paid add-ons)"
+category: "Design"
+price: { cents: 7000, period: once }
+blurb: "Photo, design and publishing apps."
+words: ["photo editing", "vector design", "publishing", "layout"]
+topics: ["image-editor", "vector-graphics", "affinity-alternative"]
+search_terms: ["Affinity alternative", "open source design software"]
+aliases: ["affinity.serif.com"]
+excludes: []

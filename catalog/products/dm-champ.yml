@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "dm-champ"
+name: "DM Champ"
+category: "Sales and CRM"
+price: { cents: 5000, period: month }
+blurb: "An AI agent that books demos across chat channels."
+words: ["ai sales agent", "whatsapp", "book demos", "chat"]
+topics: ["chatbot", "sales", "dm-champ-alternative"]
+search_terms: ["DM Champ alternative", "open source ai sales agent"]
+aliases: ["dmchamp.com"]
+excludes: []

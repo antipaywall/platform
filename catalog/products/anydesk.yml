@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "anydesk"
+name: "AnyDesk"
+category: "Office"
+price: { cents: 2290, period: month }
+blurb: "Remote desktop access."
+words: ["remote desktop", "remote support", "screen control", "access"]
+topics: ["remote-desktop", "remote-access", "anydesk-alternative"]
+search_terms: ["AnyDesk alternative", "open source remote desktop"]
+aliases: ["anydesk.com"]
+excludes: []

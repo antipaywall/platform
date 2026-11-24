@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "hunter"
+name: "Hunter"
+category: "Sales and CRM"
+price: { cents: 3400, period: month }
+blurb: "Find and verify professional email addresses."
+words: ["email finder", "email verification", "prospecting", "domain search"]
+topics: ["email-finder", "email-verification", "hunter-alternative"]
+search_terms: ["Hunter alternative", "open source email finder"]
+aliases: ["hunter.io"]
+excludes: []

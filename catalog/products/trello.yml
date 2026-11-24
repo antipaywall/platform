@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: trello
+name: Trello
+category: Project management
+price:
+  cents: 500
+  period: month
+blurb: Boards and cards for keeping track of work.
+words:
+  - kanban
+  - boards
+  - cards
+  - tasks
+  - to do
+  - project board
+topics:
+  - kanban
+  - kanban-board
+  - project-management
+  - trello-alternative
+search_terms:
+  - trello alternative
+  - kanban board
+aliases: []
+excludes: []

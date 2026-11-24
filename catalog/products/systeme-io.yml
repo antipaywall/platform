@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "systeme-io"
+name: "Systeme.io"
+category: "Websites"
+price: { cents: 1700, period: month }
+blurb: "Funnels, email and courses in one place."
+words: ["funnels", "email marketing", "courses", "landing pages"]
+topics: ["funnel", "landing-page", "systeme-io-alternative"]
+search_terms: ["Systeme.io alternative", "open source sales funnel"]
+aliases: ["systeme.io"]
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: hey
+name: HEY
+category: Email and newsletters
+price:
+  cents: 9900
+  period: month
+blurb: Email with a screener for who can reach you.
+words:
+  - email service
+  - email client
+  - private email
+topics:
+  - email
+  - mail-server
+  - email-client
+  - hey-alternative
+search_terms:
+  - hey alternative
+  - open source email service
+aliases: []
+excludes: []

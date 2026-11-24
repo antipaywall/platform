@@ -1,0 +1,133 @@
+---
+// Open Source Ready: a free guide to preparing a project for open source, and the first month
+// after. The companion skill (github.com/antipaywall/open-source-ready) checks most of it for you.
+import Platform from '../layouts/Platform.astro';
+import { INTENTS, LATER, MISTAKES, NEED_LABEL, PARTS, READING, REPO_URL } from '../data/open-source-ready';
+
+// Plain text with `code` spans: escape everything, then turn the spans into <code>.
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const rich = (s: string) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+const stepCount = PARTS.reduce((n, p) => n + p.steps.length, 0);
+const title = 'Open Source Ready: how to prepare a project for open source';
+const description = 'A free, practical guide to everything worth doing before your project goes public, and in the first month after: licensing, secrets, the README, contributors, security and launch.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to prepare a project for open source',
+  description,
+  step: PARTS.map((p) => ({ '@type': 'HowToSection', name: p.title, itemListElement: p.steps.map((s) => ({ '@type': 'HowToStep', name: s.title, text: s.why })) })),
+};
+---
+
+<Platform title={title} description={description} jsonLd={jsonLd} bareTitle>
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <h1 class="pf-title">Open Source Ready</h1>
+      <p class="lede osr-lede">
+        Everything worth doing before your project goes public, and in the first month after. {stepCount} steps,
+        each with why it matters and exactly what to do. Free, and sized to what you actually want from it.
+      </p>
+      <nav class="osr-toc" aria-label="On this page">
+        <ol>
+          {PARTS.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+        </ol>
+      </nav>
+    </div>
+    <aside class="pf-hero-side">
+      <div class="osr-agent">
+        <h2 class="pf-h3">Let your coding agent do it</h2>
+        <p>
+          The Open Source Ready skill works through your repo with you: it scans the whole history for keys, checks every step it can,
+          and writes the files. It asks before anything public.
+        </p>
+        <pre class="pf-code">npx skills add antipaywall/open-source-ready</pre>
+        <p class="muted small">Works in Claude Code, Cursor, Codex and other agents that read skills. Then say "get this repo ready for open source".</p>
+        <a class="key key-sm key-milk" href={REPO_URL} rel="noopener">See it on GitHub</a>
+      </div>
+    </aside>
+  </section>
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <h2 class="pf-h2">First, what do you want from it?</h2>
+      <p class="lede">Not every project needs every step. Each step below says who it's for.</p>
+      <div class="osr-intents">
+        {INTENTS.map((i, n) => (
+          <div class={`pf-brick p${[4, 2, 3][n]}`}>
+            <b>{i.title}</b>
+            <span>{i.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {PARTS.map((part, pi) => (
+    <section id={part.id} class="wrap pf-section osr-part">
+      <div class="osr-part-head">
+        <span class="osr-num" aria-hidden="true">{pi + 1}</span>
+        <div>
+          <h2 class="pf-h2">{part.title}</h2>
+          <p class="lede">{part.intro}</p>
+        </div>
+      </div>
+      <ol class="osr-steps">
+        {part.steps.map((s) => (
+          <li id={s.id} class="osr-step">
+            <div class="osr-step-head">
+              <h3 class="osr-step-title"><a href={`#${s.id}`}>{s.title}</a></h3>
+              <span class="pf-tags">
+                <span class={`pf-tag osr-need-${s.need}`}>{NEED_LABEL[s.need]}</span>
+                {s.checked && <span class="pf-tag" title="The skill's review checks this automatically">Checked by the skill</span>}
+              </span>
+            </div>
+            <p class="osr-why" set:html={rich(s.why)} />
+            <ul class="osr-how">
+              {s.how.map((h) => <li set:html={rich(h)} />)}
+            </ul>
+            {s.copy && <pre class="pf-code">{s.copy}</pre>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+
+  <section class="pf-band">
+    <div class="wrap pf-section osr-two">
+      <div>
+        <h2 class="pf-h3">Later, once it has momentum</h2>
+        <dl class="osr-later">
+          {LATER.map((l) => (
+            <div>
+              <dt>{l.title}</dt>
+              <dd set:html={rich(l.text)} />
+            </div>
+          ))}
+        </dl>
+      </div>
+      <div>
+        <h2 class="pf-h3">The mistakes first launches make</h2>
+        <ul class="osr-how">
+          {MISTAKES.map((m) => <li>{m}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap pf-section">
+    <h2 class="pf-h3">Further reading</h2>
+    <p class="muted">The guides this one builds on. Each is worth your time.</p>
+    <ul class="osr-reading">
+      {READING.map((r) => (
+        <li>
+          <a href={r.url} rel="noopener">{r.title}</a>
+          <span class="muted">{r.text}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="muted small">
+      This guide is open source too. Spotted something wrong or missing? <a class="link" href={`${REPO_URL}/issues`} rel="noopener">Open an issue</a>.
+    </p>
+  </section>
+</Platform>

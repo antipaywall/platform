@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "stitch"
+name: "Stitch"
+category: "Hosting and cloud"
+price: { cents: 10000, period: month }
+blurb: "Simple ETL into your warehouse."
+words: ["etl", "data pipelines", "connectors", "warehouse"]
+topics: ["etl", "data-integration", "stitch-alternative"]
+search_terms: ["Stitch alternative", "open source etl"]
+aliases: ["stitchdata.com"]
+excludes: []

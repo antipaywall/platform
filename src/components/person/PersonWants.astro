@@ -1,0 +1,10 @@
+---
+// The person page's "What they want" slot: Switched / Being built / Wanted.
+import Wants from '../pf/PersonWants.astro';
+interface Props {
+  personId: string;
+}
+const { personId } = Astro.props;
+---
+
+<Wants personId={personId} />

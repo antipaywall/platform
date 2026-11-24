@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gliffy"
+name: "Gliffy"
+category: "Design"
+price: { cents: 1000, period: month }
+blurb: "Diagrams inside Confluence and Jira."
+words: ["diagrams", "flowcharts", "confluence", "uml"]
+topics: ["diagram", "flowchart", "gliffy-alternative"]
+search_terms: ["Gliffy alternative", "open source diagram tool"]
+aliases: ["gliffy.com"]
+excludes: []

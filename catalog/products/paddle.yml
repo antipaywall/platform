@@ -1,0 +1,10 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "paddle"
+name: "Paddle"
+category: "Money and invoicing"
+blurb: "Payments, tax and subscriptions for software, for a share of revenue."
+words: ["payments", "merchant of record", "tax", "subscriptions"]
+topics: ["billing", "payments", "paddle-alternative"]
+search_terms: ["Paddle alternative", "open source payments"]
+aliases: ["paddle.com"]
+excludes: []

@@ -1,0 +1,26 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: adobe-acrobat
+name: Adobe Acrobat
+category: Office
+price:
+  cents: 1999
+  period: month
+blurb: Read, edit, fill in and sign PDF files.
+words:
+  - pdf editor
+  - edit pdf
+  - fill forms
+  - pdf
+  - merge pdf
+  - sign pdf
+topics:
+  - pdf
+  - pdf-editor
+  - pdf-tools
+search_terms:
+  - acrobat alternative
+  - pdf editor
+aliases:
+  - acrobat
+  - adobe acrobat pro
+excludes: []

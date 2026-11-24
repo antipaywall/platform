@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "namely"
+name: "Namely"
+category: "HR and hiring"
+price: { cents: 1200, period: month }
+blurb: "HR, payroll and benefits."
+words: ["hr", "payroll", "benefits", "people"]
+topics: ["hr", "hris", "namely-alternative"]
+search_terms: ["Namely alternative", "open source hris"]
+aliases: ["namely.com"]
+excludes: []

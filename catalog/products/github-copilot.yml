@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: github-copilot
+name: GitHub Copilot
+category: AI tools
+price:
+  cents: 1000
+  period: month
+blurb: An AI that suggests code as you type.
+words:
+  - code completion
+  - ai coding
+  - code assistant
+  - autocomplete
+  - pair programmer
+topics:
+  - code-completion
+  - ai-coding-assistant
+  - copilot
+search_terms:
+  - copilot alternative
+  - local code completion
+aliases:
+  - copilot
+excludes: []

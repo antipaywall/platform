@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "jamf"
+name: "Jamf Pro"
+category: "Passwords and security"
+price: { cents: 400, period: month }
+blurb: "Apple device management."
+words: ["mdm", "apple devices", "macs", "ipads"]
+topics: ["mdm", "device-management", "jamf-alternative"]
+search_terms: ["Jamf Pro alternative", "open source mdm"]
+aliases: ["jamf.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "jira-service-management"
+name: "Jira Service Management"
+category: "Support and chat"
+price: { cents: 2000, period: month }
+blurb: "An IT and customer service desk."
+words: ["service desk", "it tickets", "itsm", "requests"]
+topics: ["itsm", "helpdesk", "jira-service-management-alternative"]
+search_terms: ["Jira Service Management alternative", "open source service desk"]
+aliases: ["atlassian.com/software/jira/service-management"]
+excludes: []

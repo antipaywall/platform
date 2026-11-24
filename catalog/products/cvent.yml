@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "cvent"
+name: "Cvent"
+category: "Selling online"
+price: { cents: 500000, period: year }
+blurb: "Event management for companies."
+words: ["event management", "registration", "venues", "conferences"]
+topics: ["events", "event-management", "cvent-alternative"]
+search_terms: ["Cvent alternative", "open source event management"]
+aliases: ["cvent.com"]
+excludes: []

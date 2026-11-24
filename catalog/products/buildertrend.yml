@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "buildertrend"
+name: "Buildertrend"
+category: "Project management"
+price: { cents: 19900, period: month }
+blurb: "Project management for builders."
+words: ["construction", "builders", "schedules", "clients"]
+topics: ["construction", "project-management", "buildertrend-alternative"]
+search_terms: ["Buildertrend alternative", "open source construction management"]
+aliases: ["buildertrend.com"]
+excludes: []

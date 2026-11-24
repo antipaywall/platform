@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "uptimerobot"
+name: "UptimeRobot Pro"
+category: "Developer tools"
+price: { cents: 700, period: month }
+blurb: "Website uptime monitoring and status pages."
+words: ["uptime monitoring", "status page", "alerts", "downtime"]
+topics: ["monitoring", "uptime", "uptimerobot-alternative"]
+search_terms: ["UptimeRobot Pro alternative", "open source uptime monitor"]
+aliases: ["uptimerobot.com"]
+excludes: []

@@ -7,7 +7,7 @@ import { MAX_NOTES_PER_HOUR, takeSlot } from '../../lib/ratelimit';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
-const HERE = '/join/panel';
+const HERE = '/hackathon/join/panel';
 
 // An application to sit on the review panel. Signed-in people only; sending it again replaces the earlier one.
 export const POST: APIRoute = async (context) => {

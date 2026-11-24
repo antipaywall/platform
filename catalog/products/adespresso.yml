@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "adespresso"
+name: "AdEspresso"
+category: "Social media"
+price: { cents: 4900, period: month }
+blurb: "Create and test Facebook and Instagram ads."
+words: ["facebook ads", "ad testing", "campaigns", "instagram ads"]
+topics: ["advertising", "social-media", "adespresso-alternative"]
+search_terms: ["AdEspresso alternative", "open source ads manager"]
+aliases: ["adespresso.com"]
+excludes: []

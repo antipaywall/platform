@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "coderabbit"
+name: "CodeRabbit"
+category: "AI tools"
+price: { cents: 1200, period: month }
+blurb: "AI code reviews on pull requests."
+words: ["ai code review", "pull requests", "review bot", "linting"]
+topics: ["code-review", "ai-coding", "coderabbit-alternative"]
+search_terms: ["CodeRabbit alternative", "open source ai code review"]
+aliases: ["coderabbit.ai"]
+excludes: []

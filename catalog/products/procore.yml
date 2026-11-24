@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "procore"
+name: "Procore"
+category: "Project management"
+price: { cents: 37500, period: month }
+blurb: "Construction project management."
+words: ["construction", "projects", "documents", "field"]
+topics: ["construction", "project-management", "procore-alternative"]
+search_terms: ["Procore alternative", "open source construction management"]
+aliases: ["procore.com"]
+excludes: []

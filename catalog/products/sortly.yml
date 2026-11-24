@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "sortly"
+name: "Sortly"
+category: "Selling online"
+price: { cents: 4900, period: month }
+blurb: "Simple inventory tracking."
+words: ["inventory", "stock", "barcodes", "assets"]
+topics: ["inventory", "asset-management", "sortly-alternative"]
+search_terms: ["Sortly alternative", "open source inventory management"]
+aliases: ["sortly.com"]
+excludes: []

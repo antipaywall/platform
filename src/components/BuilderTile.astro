@@ -1,0 +1,27 @@
+---
+// One builder as a small tile. The picture and name open their profile on this site;
+// the icons underneath go to their own accounts.
+import type { Badge } from '../lib/badges';
+import type { BuilderTile } from '../lib/db';
+import BadgeMark from './BadgeMark.astro';
+import { profilePath } from '../lib/profiles';
+import ProfileLinks from './ProfileLinks.astro';
+
+interface Props {
+  builder: BuilderTile;
+  badge?: Badge | null;
+}
+const { builder: b, badge = null } = Astro.props;
+const initial = (b.handle[0] ?? '?').toUpperCase();
+---
+
+<li class="tile">
+  <a class="tile-main" href={profilePath(b)} title={b.handle}>
+    <span class="tile-pic" aria-hidden="true">
+      <span>{initial}</span>
+      {b.avatar_url && <img src={b.avatar_url} alt="" width="52" height="52" loading="lazy" decoding="async" />}
+    </span>
+    <span class="tile-name"><b>{b.handle}</b>{badge && <BadgeMark badge={badge} />}</span>
+  </a>
+  <ProfileLinks provider={b.provider} handle={b.handle} xHandle={b.x_handle} siteUrl={b.site_url} />
+</li>

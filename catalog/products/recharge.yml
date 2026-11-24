@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "recharge"
+name: "Recharge"
+category: "Selling online"
+price: { cents: 9900, period: month }
+blurb: "Subscriptions for Shopify stores."
+words: ["subscriptions", "shopify", "recurring orders", "ecommerce"]
+topics: ["subscriptions", "ecommerce", "recharge-alternative"]
+search_terms: ["Recharge alternative", "open source subscriptions"]
+aliases: ["rechargepayments.com"]
+excludes: []

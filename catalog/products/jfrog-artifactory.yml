@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "jfrog-artifactory"
+name: "JFrog Artifactory"
+category: "Developer tools"
+price: { cents: 15000, period: month }
+blurb: "A repository for packages and build artifacts."
+words: ["artifact repository", "packages", "docker registry", "maven"]
+topics: ["artifact-repository", "package-registry", "jfrog-artifactory-alternative"]
+search_terms: ["JFrog Artifactory alternative", "open source artifact repository"]
+aliases: ["jfrog.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "youtrack"
+name: "YouTrack"
+category: "Project management"
+price: { cents: 440, period: month }
+blurb: "Issue tracking and agile boards."
+words: ["issue tracker", "agile board", "bugs", "sprints"]
+topics: ["issue-tracker", "agile", "youtrack-alternative"]
+search_terms: ["YouTrack alternative", "open source issue tracker"]
+aliases: ["jetbrains.com/youtrack"]
+excludes: []

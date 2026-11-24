@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: descript
+name: Descript
+category: Photos and video
+price:
+  cents: 1600
+  period: month
+blurb: Edit video and podcasts by editing the transcript.
+words:
+  - video editor
+  - podcast editor
+  - transcript editing
+  - remove filler words
+topics:
+  - video-editor
+  - podcast
+  - transcription
+  - descript-alternative
+search_terms:
+  - descript alternative
+  - open source video editor
+aliases: []
+excludes: []

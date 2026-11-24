@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "devin"
+name: "Devin"
+category: "AI tools"
+price: { cents: 2000, period: month }
+blurb: "An autonomous AI software engineer."
+words: ["ai engineer", "coding agent", "autonomous", "pull requests"]
+topics: ["ai-coding", "coding-agent", "devin-alternative"]
+search_terms: ["Devin alternative", "open source coding agent"]
+aliases: ["devin.ai"]
+excludes: []

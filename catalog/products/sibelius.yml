@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: sibelius
+name: Sibelius
+category: Music and media
+price:
+  cents: 999
+  period: month
+blurb: Writing sheet music and scores.
+words:
+  - music notation
+  - sheet music
+  - score writer
+topics:
+  - music-notation
+  - sheet-music
+  - score
+  - sibelius-alternative
+search_terms:
+  - sibelius alternative
+  - open source music notation
+aliases: []
+excludes: []

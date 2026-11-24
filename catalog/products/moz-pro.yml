@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "moz-pro"
+name: "Moz Pro"
+category: "Analytics"
+price: { cents: 4900, period: month }
+blurb: "SEO tools: rankings, links and keywords."
+words: ["seo", "rank tracking", "backlinks", "keyword research"]
+topics: ["seo", "seo-tools", "moz-pro-alternative"]
+search_terms: ["Moz Pro alternative", "open source seo tools"]
+aliases: ["moz.com"]
+excludes: []

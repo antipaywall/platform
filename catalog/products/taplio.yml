@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "taplio"
+name: "Taplio"
+category: "Social media"
+price: { cents: 3900, period: month }
+blurb: "Grow on LinkedIn with AI posts and scheduling."
+words: ["linkedin", "posts", "scheduling", "personal brand"]
+topics: ["linkedin", "social-media", "taplio-alternative"]
+search_terms: ["Taplio alternative", "open source linkedin scheduler"]
+aliases: ["taplio.com"]
+excludes: []

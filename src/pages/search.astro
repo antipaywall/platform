@@ -1,0 +1,147 @@
+---
+import Platform from '../layouts/Platform.astro';
+import { findMatches, isWeak, recordMiss, type Matches } from '../lib/match';
+import ProjectCard from '../components/pf/ProjectCard.astro';
+import { adminClient } from '../lib/supabase';
+import { matchAsked } from '../lib/askedTools';
+import { queryWords } from '../lib/match';
+import { parseDomain } from '../lib/siteReader';
+
+const q = (Astro.url.searchParams.get('q') ?? '').trim().slice(0, 200);
+let matches: Matches | null = null;
+let failed = false;
+// A pasted website is offered as a lookup, and tools others looked up are matched too.
+const site = parseDomain(q);
+let asked: { domain: string; name: string; tagline: string }[] = [];
+const db = adminClient();
+if (q && db) {
+  try {
+    [matches, asked] = await Promise.all([findMatches(db, q, 12), matchAsked(db, q, queryWords(q), 6)]);
+    if (isWeak(matches) && !asked.length && !site) await recordMiss(db, q);
+  } catch {
+    failed = true;
+  }
+}
+// The best paid-product match brings its free alternatives straight onto this page.
+const top = matches?.products[0] ?? null;
+let topAlts: { fullName: string; description: string | null; stars: number; license: string | null; pushedAt: string | null }[] = [];
+if (top && db) {
+  const { data } = await db
+    .from('project_products')
+    .select('projects!inner(full_name, description, stars, license_spdx, license_name, pushed_at, listed), products!inner(slug)')
+    .eq('products.slug', top.slug)
+    .eq('projects.listed', true)
+    .limit(60);
+  topAlts = ((data ?? []) as any[])
+    .map((r) => r.projects)
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 6)
+    .map((p) => ({ fullName: p.full_name, description: p.description, stars: p.stars, license: p.license_spdx ?? (p.license_name ? 'Own license' : null), pushedAt: p.pushed_at }));
+}
+const shown = new Set(topAlts.map((p) => p.fullName));
+const otherProjects = (matches?.projects ?? []).filter((p) => !shown.has(p.fullName)).sort((a, b) => b.stars - a.stars);
+const empty = matches && !matches.products.length && !matches.gaps.length && !matches.projects.length && !matches.topics.length && !asked.length;
+---
+
+<Platform title={q ? `Search: ${q}` : "Search"} description="Search for a free, open-source version of anything you pay for." noindex>
+  <section class="wrap pf-section">
+    <h1 class="pf-title">{q ? <>Results for “{q}”</> : 'Find the free version'}</h1>
+    <form class="pf-search" action="/search" method="get" role="search">
+      <label for="q" class="pf-sr">A paid product, or what you need it to do</label>
+      <input id="q" name="q" type="search" value={q} placeholder="Calendly, or “book appointments with a deposit”" autocomplete="off" maxlength="200" />
+      <button class="key" type="submit">Search</button>
+    </form>
+    {failed && <p class="flash flash-error" role="alert">Search isn't answering right now. Try again in a minute.</p>}
+    {site && (
+      <form class="pf-empty" method="post" action="/api/find" style="margin-top:18px">
+        <input type="hidden" name="site" value={site} />
+        <p><b>Is {site} the tool's website?</b> We can read what it does and find the open-source projects that do the same job.</p>
+        <button class="key key-tomato key-sm" type="submit">Look up {site}</button>
+      </form>
+    )}
+  </section>
+
+  {
+    asked.length > 0 && (
+      <section class="wrap pf-section pf-section-tight">
+        <h2 class="pf-h3">Tools people asked about</h2>
+        <div class="pf-grid" style="margin-top:14px">
+          {asked.map((t, i) => (
+            <a class={`pf-brick p${(i % 6) + 1}`} href={`/find/${t.domain}`}>
+              <small>Free alternatives to</small>
+              <b>{t.name}</b>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    matches && !empty && (
+      <section class="wrap pf-section pf-section-tight">
+        {top && topAlts.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <div class="pf-head-row">
+              <h2 class="pf-h2">Free alternatives to {top.name}</h2>
+              <a class="key key-sm" href={`/free-alternatives/${top.slug}`}>Compare them all</a>
+            </div>
+            <div class="pf-grid">{topAlts.map((p) => <ProjectCard {...p} />)}</div>
+          </div>
+        )}
+        {matches.products.length > (topAlts.length ? 1 : 0) && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">{topAlts.length ? 'Other paid tools that match' : 'Paid tools that match'}</h2>
+            <div class="pf-grid">
+              {matches.products.slice(topAlts.length ? 1 : 0).map((p, i) => (
+                <a class={`pf-brick p${(i % 6) + 1}`} href={`/free-alternatives/${p.slug}`}>
+                  <small>Free alternatives to</small>
+                  <b>{p.name}</b>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        {matches.gaps.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Wanted</h2>
+            <ul class="pf-list">
+              {matches.gaps.map((g) => (
+                <li class="pf-row-flat"><div><a href={`/ideas/${g.slug}`}>{g.title}</a></div></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {otherProjects.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <div class="pf-head-row">
+              <h2 class="pf-h3">Open-source projects that mention it</h2>
+              <a class="link" href={`/explore?show=all&q=${encodeURIComponent(q.slice(0, 60))}`}>Search all projects in Explore</a>
+            </div>
+            <div class="pf-grid">{otherProjects.map((p) => <ProjectCard fullName={p.fullName} description={p.description} stars={p.stars} />)}</div>
+          </div>
+        )}
+        {matches.topics.length > 0 && (
+          <div class="pf-section-tight" style="display:grid;gap:14px">
+            <h2 class="pf-h3">Topics</h2>
+            <div class="pf-chips">
+              {matches.topics.map((t) => <a class="chip" href={`/topics/${t.slug}`}>{t.name}</a>)}
+            </div>
+          </div>
+        )}
+      </section>
+    )
+  }
+
+  {
+    q && matches && isWeak(matches) && (
+      <section class="wrap pf-section pf-section-tight">
+        <div class="pf-empty">
+          <p><b>{empty ? `Nothing yet for “${q}”.` : 'No paid product or wish matches that yet.'}</b> If you want it, say so. Others who want it too can back it, and builders see it.</p>
+          <a class="key key-marigold key-sm" href={`/ideas/new?title=${encodeURIComponent(q.slice(0, 80))}`}>Add it as something you want</a>
+          <a class="key key-milk key-sm" href="/find">Paste the tool's website</a>
+        </div>
+      </section>
+    )
+  }
+</Platform>

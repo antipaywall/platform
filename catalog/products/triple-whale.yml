@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "triple-whale"
+name: "Triple Whale"
+category: "Analytics"
+price: { cents: 12900, period: month }
+blurb: "Attribution and analytics for ecommerce brands."
+words: ["attribution", "ecommerce analytics", "roas", "shopify"]
+topics: ["attribution", "marketing-analytics", "triple-whale-alternative"]
+search_terms: ["Triple Whale alternative", "open source attribution"]
+aliases: ["triplewhale.com"]
+excludes: []

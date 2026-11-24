@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "artlist"
+name: "Artlist"
+category: "Music and media"
+price: { cents: 1499, period: month }
+blurb: "Music and footage for creators."
+words: ["royalty free music", "stock footage", "sound effects", "licence"]
+topics: ["music", "royalty-free", "artlist-alternative"]
+search_terms: ["Artlist alternative", "open source royalty free music"]
+aliases: ["artlist.io"]
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: contentful
+name: Contentful
+category: Websites
+price:
+  cents: 30000
+  period: month
+blurb: A headless CMS for content behind websites and apps.
+words:
+  - headless cms
+  - content api
+  - cms
+topics:
+  - headless-cms
+  - cms
+  - content-management
+  - contentful-alternative
+search_terms:
+  - contentful alternative
+  - open source headless cms
+aliases: []
+excludes: []

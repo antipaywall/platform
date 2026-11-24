@@ -1,0 +1,26 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: photoshop
+name: Adobe Photoshop
+category: Design
+price:
+  cents: 2299
+  period: month
+blurb: Edit photos and make images, the industry standard from Adobe.
+words:
+  - photo editing
+  - image editor
+  - retouch
+  - layers
+  - raster
+  - edit pictures
+topics:
+  - image-editor
+  - photo-editing
+  - raster-graphics
+search_terms:
+  - photoshop alternative
+  - image editor
+aliases:
+  - adobe photoshop
+  - ps
+excludes: []

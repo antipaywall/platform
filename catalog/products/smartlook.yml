@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "smartlook"
+name: "Smartlook"
+category: "Analytics"
+price: { cents: 5500, period: month }
+blurb: "Session recordings and heatmaps."
+words: ["session recording", "heatmaps", "funnels", "events"]
+topics: ["session-replay", "heatmap", "smartlook-alternative"]
+search_terms: ["Smartlook alternative", "open source session recording"]
+aliases: ["smartlook.com"]
+excludes: []

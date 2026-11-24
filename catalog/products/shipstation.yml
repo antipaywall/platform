@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "shipstation"
+name: "ShipStation"
+category: "Selling online"
+price: { cents: 1499, period: month }
+blurb: "Shipping labels and order management."
+words: ["shipping labels", "orders", "fulfilment", "carriers"]
+topics: ["shipping", "ecommerce", "shipstation-alternative"]
+search_terms: ["ShipStation alternative", "open source shipping software"]
+aliases: ["shipstation.com"]
+excludes: []

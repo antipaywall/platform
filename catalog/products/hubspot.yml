@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: hubspot
+name: HubSpot
+category: Sales and CRM
+price:
+  cents: 2000
+  period: month
+blurb: A CRM with marketing and sales tools.
+words:
+  - crm
+  - contacts
+  - deals
+  - marketing automation
+topics:
+  - crm
+  - marketing-automation
+  - sales
+  - hubspot-alternative
+search_terms:
+  - hubspot alternative
+  - open source crm
+aliases: []
+excludes: []

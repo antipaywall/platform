@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "agorapulse"
+name: "Agorapulse"
+category: "Social media"
+price: { cents: 4900, period: month }
+blurb: "Social media publishing, inbox and reports."
+words: ["social media management", "scheduling", "social inbox", "reports"]
+topics: ["social-media", "scheduler", "agorapulse-alternative"]
+search_terms: ["Agorapulse alternative", "open source social media management"]
+aliases: ["agorapulse.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "raindrop"
+name: "Raindrop.io Pro"
+category: "Docs and notes"
+price: { cents: 300, period: month }
+blurb: "A bookmark manager for everything you save."
+words: ["bookmarks", "bookmark manager", "collections", "web clipper"]
+topics: ["bookmarks", "bookmark-manager", "raindrop-alternative"]
+search_terms: ["Raindrop.io Pro alternative", "open source bookmark manager"]
+aliases: ["raindrop.io"]
+excludes: []

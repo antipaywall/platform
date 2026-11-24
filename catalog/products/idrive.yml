@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "idrive"
+name: "IDrive"
+category: "Files and storage"
+price: { cents: 700, period: month }
+blurb: "Cloud backup for computers and phones."
+words: ["cloud backup", "sync", "restore", "devices"]
+topics: ["backup", "cloud-backup", "idrive-alternative"]
+search_terms: ["IDrive alternative", "open source cloud backup"]
+aliases: ["idrive.com"]
+excludes: []

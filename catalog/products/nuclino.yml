@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "nuclino"
+name: "Nuclino"
+category: "Docs and notes"
+price: { cents: 600, period: month }
+blurb: "A fast wiki and docs for teams."
+words: ["wiki", "team docs", "notes", "knowledge base"]
+topics: ["wiki", "knowledge-base", "nuclino-alternative"]
+search_terms: ["Nuclino alternative", "open source team wiki"]
+aliases: ["nuclino.com"]
+excludes: []

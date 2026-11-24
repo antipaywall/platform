@@ -9,11 +9,17 @@
 // The rest of the wall is filled with generic kinds of tools.
 interface Props {
   ideas?: { slug: string; title: string; hearts: number }[];
+  /** Real paid products to paint the wall with. Each fallen brick opens onto its free alternatives. */
+  products?: { slug: string; name: string; free: number }[];
+  /** Where the "Your idea here" slot goes. */
+  yoursHref?: string;
+  /** Leave more open space between the words and the bricks. */
+  roomy?: boolean;
 }
-const { ideas = [] } = Astro.props;
+const { ideas = [], products = [], yoursHref = '/hackathon/join', roomy = false } = Astro.props;
 ---
 
-<div class="wall" data-wall data-ideas={JSON.stringify(ideas)} aria-hidden="true"></div>
+<div class="wall" data-wall data-ideas={JSON.stringify(ideas)} data-products={JSON.stringify(products)} data-yours={yoursHref} data-roomy={roomy ? "1" : undefined} aria-hidden="true"></div>
 
 <script>
   const NAMES = [
@@ -44,6 +50,21 @@ const { ideas = [] } = Astro.props;
   } catch {
     ideas = [];
   }
+
+  type Product = { slug: string; name: string; free: number };
+  let products: Product[] = [];
+  try {
+    products = JSON.parse(wall?.dataset.products ?? '[]');
+  } catch {
+    products = [];
+  }
+  // With real products, the wall is made of them; otherwise of generic kinds of tools.
+  const names = [...new Set(products.length ? products.map((p) => p.name) : NAMES)];
+  // Step through the names by a stride that shares no factor with their count, so neighbours differ.
+  const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+  const stride = [17, 13, 11, 7, 19, 23, 29].find((k) => names.length > k && gcd(k, names.length) === 1) ?? 1;
+  const productBy = new Map(products.map((p) => [p.name, p]));
+  const yoursHref = wall?.dataset.yours || '/hackathon/join';
 
   let timers: number[] = [];
   // The painted, free brick waiting behind each dark one.
@@ -79,7 +100,8 @@ const { ideas = [] } = Astro.props;
     const bw = clamp(124, W * 0.122, 196);
     const bh = clamp(46, W * 0.045, 66);
     const gap = W < 700 ? 5 : 7;
-    const pad = W < 700 ? 10 : 26;
+    // Open space kept clear around the words, so the wall frames them without crowding.
+    const pad = wall.dataset.roomy ? (W < 700 ? 16 : Math.round(clamp(48, W * 0.06, 96))) : W < 700 ? 10 : 26;
     const box = hero.getBoundingClientRect();
     const zones = [...hero.querySelectorAll<HTMLElement>('[data-clear]')].map((el) => {
       const r = el.getBoundingClientRect();
@@ -107,7 +129,7 @@ const { ideas = [] } = Astro.props;
         const x = c * (bw + gap) - (r % 2 ? bw / 2 : 0) - gap;
         const y = r * (bh + gap);
         const hit = zones.some((z) => x < z.r && x + bw > z.l && y < z.b && y + bh > z.t);
-        const name = NAMES[(n++ * 17 + r * 5) % NAMES.length];
+        const name = names[(n++ * stride + r * 5) % names.length];
         const tone = rand();
         if (hit && !intro) continue;
 
@@ -119,12 +141,52 @@ const { ideas = [] } = Astro.props;
           slot.className = yours ? 'slot yours' : `slot p${1 + Math.floor(rand() * 6)}`;
           slot.style.cssText = pos;
           if (yours) {
-            (slot as HTMLAnchorElement).href = '/join';
+            (slot as HTMLAnchorElement).href = yoursHref;
             slot.tabIndex = -1;
             slot.innerHTML = '<span class="name">Your idea here</span><span class="tag">+</span>';
             yoursPlaced = true;
           } else {
-            slot.innerHTML = `<span class="name">${name}</span><span class="tag">free</span>`;
+            const sn = document.createElement('span');
+            sn.className = 'name';
+            sn.textContent = name;
+            const st = document.createElement('span');
+            st.className = 'tag';
+            st.textContent = 'free';
+            slot.append(sn, st);
+          }
+          // A real product's slot opens onto its free alternatives.
+          const product = productBy.get(name);
+          if (product && !yours) {
+            const link = document.createElement('a');
+            link.className = slot.className;
+            link.style.cssText = pos;
+            link.href = `/free-alternatives/${encodeURIComponent(product.slug)}`;
+            link.title = product.free > 0 ? `Free ${product.name}: ${product.free} open-source ${product.free === 1 ? 'option' : 'options'}` : `Free ${product.name}: wanted, not built yet`;
+            link.tabIndex = -1;
+            const label = document.createElement('span');
+            label.className = 'name';
+            label.textContent = `Free ${product.name}`;
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = product.free > 0 ? `${product.free} free` : 'wanted';
+            link.append(label, tag);
+            frag.append(link);
+            lastSlot = link;
+            const brick = document.createElement('div');
+            brick.className = 'brick';
+            brick.style.cssText = pos + `--t:${tone.toFixed(2)};`;
+            const bn = document.createElement('span');
+            bn.className = 'name';
+            bn.textContent = product.name;
+            const bt = document.createElement('span');
+            bt.className = 'tag';
+            bt.textContent = '$/mo';
+            brick.append(bn, bt);
+            frag.append(brick);
+            slots.set(brick, link);
+            standing.push(brick);
+            open.push({ slot: link, brick, x, y });
+            continue;
           }
           frag.append(slot);
           if (yours) continue;
@@ -134,7 +196,13 @@ const { ideas = [] } = Astro.props;
         const brick = document.createElement('div');
         brick.className = 'brick';
         brick.style.cssText = pos + `--t:${tone.toFixed(2)};`;
-        brick.innerHTML = `<span class="name">${name}</span><span class="tag">$/mo</span>`;
+        const bn = document.createElement('span');
+        bn.className = 'name';
+        bn.textContent = name;
+        const bt = document.createElement('span');
+        bt.className = 'tag';
+        bt.textContent = '$/mo';
+        brick.append(bn, bt);
         frag.append(brick);
         if (!hit && lastSlot) slots.set(brick, lastSlot);
 
@@ -179,17 +247,19 @@ const { ideas = [] } = Astro.props;
         link.className = slot.className + ' real';
         link.style.cssText = slot.style.cssText;
         link.href = `/ideas/${encodeURIComponent(idea.slug)}`;
+        link.title = idea.title;
         link.tabIndex = -1;
         const name = document.createElement('span');
         name.className = 'name';
         name.textContent = idea.title;
         const tag = document.createElement('span');
         tag.className = 'tag';
-        tag.textContent = `♥ ${idea.hearts}`;
+        tag.textContent = idea.hearts > 0 ? `♥ ${idea.hearts}` : 'wanted';
         link.append(name, tag);
         slot.replaceWith(link);
         slots.set(brick, link);
         brick.querySelector('.name')!.textContent = idea.title;
+        brick.querySelector('.tag')!.textContent = 'wanted';
         real.add(brick);
       });
     }
@@ -324,8 +394,13 @@ const { ideas = [] } = Astro.props;
   .wall .slot.real {
     font-weight: 800;
   }
-  .wall .slot.real.on {
+  /* Any slot that links somewhere (a wanted idea, a paid tool's free alternatives) can be clicked once revealed. */
+  .wall a.slot.on {
     pointer-events: auto;
+    cursor: pointer;
+  }
+  .wall a.slot.on:hover {
+    filter: brightness(1.06);
   }
   .wall .slot.real:hover {
     filter: brightness(1.06);

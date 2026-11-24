@@ -1,0 +1,20 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: onesignal
+name: OneSignal
+category: Developer tools
+price:
+  cents: 900
+  period: month
+blurb: Push notifications for apps and sites.
+words:
+  - push notifications
+  - in-app messages
+topics:
+  - push-notifications
+  - notifications
+  - onesignal-alternative
+search_terms:
+  - onesignal alternative
+  - open source push notifications
+aliases: []
+excludes: []

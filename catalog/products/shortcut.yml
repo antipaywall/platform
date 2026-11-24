@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "shortcut"
+name: "Shortcut"
+category: "Project management"
+price: { cents: 850, period: month }
+blurb: "Issue tracking and sprints for software teams."
+words: ["issue tracker", "sprints", "stories", "kanban"]
+topics: ["issue-tracker", "agile", "shortcut-alternative"]
+search_terms: ["Shortcut alternative", "open source issue tracker"]
+aliases: ["shortcut.com"]
+excludes: []

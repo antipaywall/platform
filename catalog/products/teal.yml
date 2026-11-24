@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "teal"
+name: "Teal"
+category: "Writing"
+price: { cents: 2900, period: month }
+blurb: "A job-search tracker and resume builder."
+words: ["job search", "resume", "job tracker", "applications"]
+topics: ["resume", "job-search", "teal-alternative"]
+search_terms: ["Teal alternative", "open source job tracker"]
+aliases: ["tealhq.com"]
+excludes: []

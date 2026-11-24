@@ -1,7 +1,7 @@
 ---
 import AdminNav from '../../components/AdminNav.astro';
 import { profileUrl, providerName } from '../../lib/accounts';
-import Base from '../../layouts/Base.astro';
+import Admin from '../../layouts/Admin.astro';
 import { clock, when } from '../../lib/adminNav';
 import { attempt, getPeople, isAdmin } from '../../lib/db';
 import { buildEntries, describe, filterEntries, PEOPLE_FILTERS, sourceText, timeline } from '../../lib/report';
@@ -19,9 +19,8 @@ const n = (v: number) => v.toLocaleString('en-US');
 const csv = `/api/admin/people.csv?${new URLSearchParams({ kind, q })}`;
 ---
 
-<Base title="Admin: people" noindex>
-  <h1 class="page-title">People</h1>
-  <AdminNav />
+<Admin heading="People">
+  <AdminNav slot="nav" />
 
   <div class="stack" style="margin-top:28px;gap:20px">
     <p class="admin-note">
@@ -120,4 +119,4 @@ const csv = `/api/admin/people.csv?${new URLSearchParams({ kind, q })}`;
       )
     }
   </div>
-</Base>
+</Admin>

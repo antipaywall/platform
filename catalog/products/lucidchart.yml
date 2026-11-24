@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: lucidchart
+name: Lucidchart
+category: Design
+price:
+  cents: 900
+  period: month
+blurb: Flowcharts and diagrams made together.
+words:
+  - flowchart
+  - diagram
+  - org chart
+  - uml
+topics:
+  - diagram
+  - flowchart
+  - diagramming
+  - lucidchart-alternative
+search_terms:
+  - lucidchart alternative
+  - open source flowchart
+aliases: []
+excludes: []

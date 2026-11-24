@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "pocket-premium"
+name: "Pocket Premium"
+category: "Docs and notes"
+price: { cents: 499, period: month }
+blurb: "Save articles and videos to view later."
+words: ["read later", "articles", "saved", "tags"]
+topics: ["read-it-later", "bookmarks", "pocket-premium-alternative"]
+search_terms: ["Pocket Premium alternative", "open source read it later"]
+aliases: ["getpocket.com"]
+excludes: []

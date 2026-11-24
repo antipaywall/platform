@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "front"
+name: "Front"
+category: "Support and chat"
+price: { cents: 1900, period: month }
+blurb: "Shared inboxes for teams."
+words: ["shared inbox", "customer email", "team inbox", "support"]
+topics: ["shared-inbox", "helpdesk", "front-alternative"]
+search_terms: ["Front alternative", "open source shared inbox"]
+aliases: ["front.com"]
+excludes: []

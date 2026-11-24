@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "quillbot"
+name: "QuillBot"
+category: "Writing"
+price: { cents: 995, period: month }
+blurb: "Paraphrasing and grammar help."
+words: ["paraphrase", "rewrite", "grammar", "summarise"]
+topics: ["grammar", "writing-assistant", "quillbot-alternative"]
+search_terms: ["QuillBot alternative", "open source paraphrasing tool"]
+aliases: ["quillbot.com"]
+excludes: []

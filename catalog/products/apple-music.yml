@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "apple-music"
+name: "Apple Music"
+category: "Music and media"
+price: { cents: 1099, period: month }
+blurb: "Music streaming from Apple."
+words: ["music streaming", "songs", "playlists", "albums"]
+topics: ["music-streaming", "music-server", "apple-music-alternative"]
+search_terms: ["Apple Music alternative", "open source music streaming"]
+aliases: ["music.apple.com"]
+excludes: []

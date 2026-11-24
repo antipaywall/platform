@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
+import { HACKATHON_REDIRECTS } from './src/config/routes.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -30,12 +31,8 @@ export default defineConfig({
       styleDirective: { resources: ["'self'", "'unsafe-inline'", 'https://api.fontshare.com'] },
     },
   },
-  // The old page of ways to help is now the join page, and the review panel's page used to
-  // be called "judge".
-  redirects: {
-    '/help': { status: 301, destination: '/join' },
-    '/join/judge': { status: 301, destination: '/join/panel' },
-  },
+  // The hackathon's pages moved under /hackathon. Every old address redirects permanently.
+  redirects: Object.fromEntries(Object.entries(HACKATHON_REDIRECTS).map(([from, to]) => [from, { status: 301, destination: to }])),
   devToolbar: { enabled: false },
   // 4321 is Astro's default and is often taken by another project on this machine.
   server: { port: 4610, host: '127.0.0.1' },

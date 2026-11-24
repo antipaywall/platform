@@ -1,0 +1,31 @@
+---
+// Season 1's builders: everyone who joined the hackathon. Once entries open, the people who have
+// started their entry repo are listed first, as Season 1 builders.
+import Base from '../../layouts/Base.astro';
+import BuilderTile from '../../components/BuilderTile.astro';
+import { site } from '../../config/site';
+import { attempt, listBuilders } from '../../lib/db';
+import { tileBadges } from '../../lib/social';
+
+const builders = await attempt(listBuilders);
+const badges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
+const count = builders?.length ?? 0;
+const need = site.launch.buildersNeeded;
+---
+
+<Base title="Season 1 builders" description="Everyone who has joined Season 1 of the Antipaywall Hackathon.">
+  <h1 class="page-title">{!builders ? 'Season 1 builders.' : count === 0 ? 'Be the first to join Season 1.' : `${count} ${count === 1 ? 'builder has' : 'builders have'} joined Season 1.`}</h1>
+  <p class="lede">The dates are announced once {need}+ builders have joined and the pool holder is confirmed. Everyone here signed in with GitHub or GitLab and passed the two automatic checks.</p>
+  {
+    !builders ? (
+      <p class="empty">The list is unavailable right now.</p>
+    ) : builders.length ? (
+      <ul class="crew-list">
+        {builders.map((b) => <BuilderTile builder={b} badge={badges.get(b.id)} />)}
+      </ul>
+    ) : (
+      <p class="empty">Nobody has joined yet. <a class="link" href="/hackathon/join/build">Join as a builder.</a></p>
+    )
+  }
+  <p class="muted small" style="margin-top:28px">Looking for everyone on Antipaywall, not only the hackathon? <a class="link" href="/builders">All builders</a>.</p>
+</Base>

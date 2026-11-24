@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "hostinger-builder"
+name: "Hostinger Website Builder"
+category: "Websites"
+price: { cents: 299, period: month }
+blurb: "An AI website builder with hosting."
+words: ["website builder", "hosting", "ai website", "templates"]
+topics: ["website-builder", "cms", "hostinger-builder-alternative"]
+search_terms: ["Hostinger Website Builder alternative", "open source website builder"]
+aliases: ["hostinger.com"]
+excludes: []

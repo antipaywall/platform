@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "webex"
+name: "Webex"
+category: "Video and calls"
+price: { cents: 1450, period: month }
+blurb: "Video meetings and calling from Cisco."
+words: ["video meetings", "webinars", "calling", "conferencing"]
+topics: ["video-conferencing", "webrtc", "webex-alternative"]
+search_terms: ["Webex alternative", "open source video conferencing"]
+aliases: ["webex.com"]
+excludes: []

@@ -1,0 +1,207 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import FollowButton from '../../components/pf/FollowButton.astro';
+import SignalButton from '../../components/pf/SignalButton.astro';
+import SignalScript from '../../components/pf/SignalScript.astro';
+import Heart from '../../components/Heart.astro';
+import { site } from '../../config/site';
+import { cleanDescription, cleanIssueTitle, dollars, shortCount, timeAgo, updated } from '../../lib/format';
+import { getProductPage, priceLabel, productDescription, productTitle, type ProductPage } from '../../lib/products';
+import { adminClient } from '../../lib/supabase';
+import { visitorId } from '../../lib/visitor';
+
+const slug = String(Astro.params.slug).toLowerCase();
+const db = adminClient();
+if (!db) return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+let page: ProductPage | null;
+try {
+  page = await getProductPage(db, slug, { userId: Astro.locals.userId, personId: Astro.locals.person?.id ?? null, visitor: visitorId(Astro.cookies) });
+} catch {
+  return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+}
+if (!page) return new Response(null, { status: 404 });
+
+const { product, projects, missing, issues, demand, mine, syncedAt } = page;
+const here = `/free-alternatives/${product.slug}`;
+const now = new Date();
+const pay = mine.get('pay');
+const price = priceLabel(product.price);
+const title = productTitle(product.name);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: title,
+  url: new URL(here, site.origin).href,
+  itemListElement: projects.slice(0, 20).map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: { '@type': 'SoftwareSourceCode', name: p.name, codeRepository: p.url, url: new URL(`/projects/${p.fullName}`, site.origin).href },
+  })),
+};
+---
+
+<Platform title={title} description={productDescription(product.name, projects.length)} jsonLd={jsonLd} noindex={projects.length === 0 && missing.length === 0}>
+  <section class="wrap pf-hero">
+    <div class="pf-hero-main">
+      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><a href={`/explore?category=${encodeURIComponent(product.category)}`}>{product.category}</a><span aria-hidden="true">/</span><span>{product.name}</span></nav>
+      <h1 class="pf-title">{title}</h1>
+      <p class="lede">
+        {product.name} is {product.blurb.charAt(0).toLowerCase() + product.blurb.slice(1).replace(/\.$/, '')}{price ? `, and it costs ${price}` : ''}.
+        {projects.length > 0
+          ? ` Here ${projects.length === 1 ? 'is 1 free, open-source project that does' : `are ${projects.length} free, open-source projects that do`} the same job, with their stars, license and activity straight from GitHub.`
+          : ' Nobody has built a free, open-source version yet.'}
+      </p>
+      <div class="pf-chips">
+        <span class="chip"><span class="pf-dot" aria-hidden="true"></span>{syncedAt ? `Synced from GitHub ${timeAgo(syncedAt, now)}` : 'Not synced from GitHub yet'}</span>
+        <span class="chip num">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</span>
+        {product.topics.length > 0 && <span class="chip">Topics: {product.topics.slice(0, 3).map((t, i) => <>{i > 0 && ', '}<a href={`/topics/${t}`}>{t}</a></>)}</span>}
+        <FollowButton kind="tool" id={product.id} following={page.following} next={here} label="Follow" signedIn={Boolean(Astro.locals.person)} />
+      </div>
+    </div>
+
+    <aside class="card pf-hero-side pf-signal" aria-labelledby="stand">
+      <h2 id="stand" class="pf-h3">Where do you stand?</h2>
+      <p class="muted small">No code needed. This is how builders learn what's worth making.</p>
+      <div class="pf-opts">
+        <SignalButton subjectKind="product" subjectId={product.id} kind="use" on={mine.has('use')} count={demand.use} label="I use a free one already" next={here} />
+        <SignalButton subjectKind="product" subjectId={product.id} kind="switch" on={mine.has('switch')} count={demand.switch} label="I’d switch if it did more" next={here} />
+        <SignalButton subjectKind="product" subjectId={product.id} kind="pay" on={Boolean(pay)} count={demand.pay} label="I’d pay if it worked" next={here} pay={{ period: pay?.payPeriod ?? 'month', picked: pay?.payCents ?? null }} />
+      </div>
+      <p class="pf-note num">{demand.avgPayMonthCents ? `Average would-pay: ${dollars(demand.avgPayMonthCents)} a month. ` : ''}A signal, not a payment. Nobody is charged.</p>
+    </aside>
+  </section>
+
+  <section class="wrap pf-section">
+    <div class="pf-head-row">
+      <h2 class="pf-h2">What exists today</h2>
+      {projects.length > 1 && <span class="pf-sub">{projects.some((p) => p.users > 0) ? 'Most used here first' : 'Best-known first'}</span>}
+    </div>
+    {projects.length > 1 && (
+      <p class="cmp-hint" aria-hidden="true">Swipe the table sideways to see more →</p>
+      <div class="cmp-wrap" role="region" aria-label={`Free ${product.name} alternatives side by side`} tabindex="0">
+        <table class="cmp">
+          <thead>
+            <tr><th scope="col">Project</th><th scope="col">Stars</th><th scope="col">License</th><th scope="col">Last update</th><th scope="col">Contributors</th><th scope="col">Help wanted</th><th scope="col">Used here</th></tr>
+          </thead>
+          <tbody>
+            {projects.map((p) => (
+              <tr>
+                <th scope="row"><a href={`/projects/${p.fullName}`}><img src={`https://github.com/${p.fullName.split('/')[0]}.png?size=56`} alt="" width="28" height="28" loading="lazy" decoding="async" /><span>{p.name}</span></a></th>
+                <td class="num">{shortCount(p.stars)}</td>
+                <td>{p.license ?? '–'}</td>
+                <td>{p.pushedAt ? updated(p.pushedAt, now) : '–'}</td>
+                <td class="num">{p.contributors != null ? shortCount(p.contributors) : '–'}</td>
+                <td class="num">{p.helpWanted > 0 ? <a href={`/projects/${p.fullName}#help`}>{p.helpWanted} {p.helpWanted === 1 ? "issue" : "issues"}</a> : '–'}</td>
+                <td class="num">{p.users > 0 ? p.users : '–'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {projects.length > 1 && <h3 class="pf-h2" style="margin-top:28px">Each one up close</h3>}
+    {projects.length ? (
+      <ul class="pf-list">
+        {projects.slice(0, 10).map((p) => (
+          <li class="pf-row">
+            <div class="pf-row-main">
+              <div class="pf-row-title">
+                <img class="pf-row-logo" src={`https://github.com/${p.fullName.split('/')[0]}.png?size=88`} alt="" width="40" height="40" loading="lazy" decoding="async" />
+                <h3 class="pf-h3"><a href={`/projects/${p.fullName}`}>{p.name}</a></h3>
+                <span class="muted small" style="font-weight:700">{p.fullName}</span>
+              </div>
+              {cleanDescription(p.description) && <p class="muted">{cleanDescription(p.description)}</p>}
+              <div class="pf-tags">
+                <span class="pf-tag num">★ {shortCount(p.stars)}</span>
+                {p.license && <span class="pf-tag">{p.license}</span>}
+                {p.pushedAt && <span class="pf-tag">Updated {updated(p.pushedAt, now)}</span>}
+                {p.helpWanted > 0 && <span class="pf-tag num">{p.helpWanted} need help</span>}
+              </div>
+            </div>
+            <div class="pf-row-side">
+              {p.users > 0 && <span class="num" style="font-weight:700;font-size:0.9375rem">{p.users} {p.users === 1 ? 'person uses' : 'people use'} this</span>}
+              <SignalButton subjectKind="project" subjectId={p.id} kind="use" on={p.mineUse} count={p.users} label="I use this" onLabel="You use this" variant="toggle" next={here} />
+              {p.helpWanted > 0
+                ? <a class="key key-milk key-sm" href={`/projects/${p.fullName}#help`}>See what it needs</a>
+                : <a class="key key-milk key-sm" href={`/projects/${p.fullName}`}>Open the project</a>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="pf-empty">
+        <p>No open-source project we track does this yet{syncedAt ? '' : ', or the first sync hasn’t run'}. That makes it a gap.</p>
+        <a class="key key-marigold key-sm" href={`/ideas/new?product=${product.slug}`}>Say what you'd want instead</a>
+      </div>
+    )}
+    <p class="pf-more">
+      {projects.length > 10 && <>The other {projects.length - 10} are in the table above. </>}
+      <a class="link" href={`/explore?category=${encodeURIComponent(product.category)}`}>Browse all free {product.category.toLowerCase()} software</a>
+    </p>
+    <p class="muted small">Projects can add the <b>antipaywall</b> topic on GitHub to show up here. Spot a wrong match or a missing project? <a class="link" href={`${site.repo}/blob/main/catalog/products/${product.slug}.yml`} rel="noopener">Fix it in the open catalog</a>.</p>
+  </section>
+
+  <section class="pf-band">
+    <div class="wrap pf-section">
+      <div class="pf-split">
+        <div>
+          <h2 class="pf-h2">What's still missing</h2>
+          <p class="lede">Things people want that none of these do yet. Enough "me too" and it becomes a hackathon brief.</p>
+          <a class="key key-marigold key-sm" href={`/ideas/new?product=${product.slug}`} style="justify-self:start">Add what's missing</a>
+        </div>
+        {missing.length ? (
+          <ul class="pf-list">
+            {missing.map((m) => (
+              <li class="pf-row-flat">
+                <div><a href={`/ideas/${m.slug}`}>{m.title}</a><div class="muted small num">{m.want} said me too</div></div>
+                <Heart slug={m.slug} hearts={m.want} hearted={m.hearted} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div class="pf-empty"><p><b>Nothing yet.</b> If something keeps you paying for {product.name}, add it. When enough people back the same thing, it becomes a brief that builders take on.</p></div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  {
+    issues.length > 0 && (
+      <section id="help" class="wrap pf-section">
+        <div style="display:grid;gap:10px">
+          <h2 class="pf-h2">Help wanted across these projects</h2>
+          <p class="lede">Issues the maintainers labeled "help wanted" or "good first issue". Pick one and open a pull request.</p>
+        </div>
+        <div class="pf-grid pf-grid-wide">
+          {issues.map((i, n) => (
+            <a class={`pf-brick p${((n + 3) % 6) + 1}`} href={i.url} rel="noopener">
+              <small>{i.project} · {i.labels.find((l) => /help|first/i.test(l)) ?? 'help wanted'}</small>
+              <b style="font-size:1.25rem">{cleanIssueTitle(i.title)}</b>
+              <small style="font-weight:500">{i.comments === 0 ? 'No comments yet' : `${i.comments} ${i.comments === 1 ? 'comment' : 'comments'}`}</small>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+  <SignalScript />
+</Platform>
+
+<style>
+  .cmp-wrap { overflow-x: auto; border-radius: 20px; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+  .cmp-wrap:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .cmp { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9375rem; min-width: 720px; }
+  .cmp-hint { display: none; margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-3); }
+  @media (max-width: 760px) { .cmp-hint { display: block; } }
+  .cmp th, .cmp td { padding: 12px 16px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  .cmp tbody tr:last-child > * { border-bottom: 0; }
+  .cmp thead th { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); background: var(--milk-2); }
+  .cmp td.num, .cmp thead th:nth-child(n + 2):not(:nth-child(3)):not(:nth-child(4)) { text-align: right; }
+  .cmp tbody th a { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); text-decoration: none; }
+  .cmp tbody th a:hover span { text-decoration: underline; text-underline-offset: 0.18em; }
+  .cmp tbody th img { width: 28px; height: 28px; border-radius: 8px; background: var(--milk-2); }
+  .cmp tbody th { position: sticky; left: 0; background: var(--card); }
+  .cmp td a { font-weight: 700; }
+  .pf-row-logo { width: 40px; height: 40px; border-radius: 11px; background: var(--milk-2); align-self: center; }
+  .pf-more { margin: 0; font-weight: 700; }
+</style>

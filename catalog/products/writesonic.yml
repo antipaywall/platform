@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "writesonic"
+name: "Writesonic"
+category: "Writing"
+price: { cents: 1600, period: month }
+blurb: "AI writing for blog posts and ads."
+words: ["ai writing", "blog posts", "seo content", "ads"]
+topics: ["ai-writing", "content-generation", "writesonic-alternative"]
+search_terms: ["Writesonic alternative", "open source ai writer"]
+aliases: ["writesonic.com"]
+excludes: []

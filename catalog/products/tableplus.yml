@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: tableplus
+name: TablePlus
+category: Developer tools
+price:
+  cents: 8900
+  period: once
+blurb: A desktop app for browsing and editing databases.
+words:
+  - database client
+  - sql client
+  - database gui
+topics:
+  - database-client
+  - sql-client
+  - database-gui
+  - tableplus-alternative
+search_terms:
+  - tableplus alternative
+  - open source database client
+aliases: []
+excludes: []

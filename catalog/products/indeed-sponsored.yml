@@ -1,0 +1,10 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "indeed-sponsored"
+name: "Indeed Sponsored Jobs"
+category: "HR and hiring"
+blurb: "Paid job ads on Indeed."
+words: ["job ads", "job board", "hiring", "candidates"]
+topics: ["job-board", "recruiting", "indeed-sponsored-alternative"]
+search_terms: ["Indeed Sponsored Jobs alternative", "open source job board"]
+aliases: ["indeed.com"]
+excludes: []

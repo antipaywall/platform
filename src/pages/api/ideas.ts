@@ -3,6 +3,7 @@ import { site } from '../../config/site';
 import { recordEvent } from '../../lib/events';
 import { parseIdea } from '../../lib/forms';
 import { storeIdea } from '../../lib/postIdea';
+import { pushNewIdea } from '../../lib/ideasSync';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
 
@@ -20,7 +21,14 @@ export const POST: APIRoute = async (context) => {
   if (mine.error) return back('/ideas/new', 'save_failed');
   if ((mine.count ?? 0) >= site.ideas.maxPerPerson) return back('/ideas/new', 'too_many_ideas');
 
-  const { slug, code } = await storeIdea(db, parsed, person.id);
-  if (slug) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
+  // The paid products it replaces, picked from the matches shown while typing. Only real ones are kept.
+  const picked = form.getAll('products').map(String).filter((s) => /^[a-z0-9-]{1,60}$/.test(s)).slice(0, 5);
+  const productIds = picked.length ? ((await db.from('products').select('id').in('slug', picked)).data ?? []).map((p) => p.id as string) : [];
+
+  const { slug, code, created } = await storeIdea(db, parsed, person.id, undefined, { productIds });
+  if (created) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
+  // The idea also becomes a file in the public ideas repo, credited to the person who posted it.
+  // Only an idea this request made: posting an existing title never makes it the poster's.
+  if (created && slug) await pushNewIdea(db, slug, { login: person.username!, githubId: person.github_id, personId: person.id }).catch(() => false);
   return back(slug ? `/ideas/${slug}` : '/ideas/new', code);
 };

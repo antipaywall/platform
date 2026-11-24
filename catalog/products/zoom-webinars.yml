@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "zoom-webinars"
+name: "Zoom Webinars"
+category: "Video and calls"
+price: { cents: 7900, period: month }
+blurb: "Webinars on Zoom."
+words: ["webinars", "registration", "q&a", "live events"]
+topics: ["webinar", "video-conferencing", "zoom-webinars-alternative"]
+search_terms: ["Zoom Webinars alternative", "open source webinar"]
+aliases: ["zoom.us/webinar"]
+excludes: []

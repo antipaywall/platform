@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "grasshopper"
+name: "Grasshopper"
+category: "Video and calls"
+price: { cents: 1400, period: month }
+blurb: "A virtual phone number for small businesses."
+words: ["virtual phone number", "business line", "voicemail", "calls"]
+topics: ["voip", "telephony", "grasshopper-alternative"]
+search_terms: ["Grasshopper alternative", "open source virtual phone"]
+aliases: ["grasshopper.com"]
+excludes: []

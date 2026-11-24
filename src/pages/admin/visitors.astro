@@ -1,6 +1,6 @@
 ---
 import AdminNav from '../../components/AdminNav.astro';
-import Base from '../../layouts/Base.astro';
+import Admin from '../../layouts/Admin.astro';
 import { clock, when } from '../../lib/adminNav';
 import { attempt, getRecentVisitors, isAdmin } from '../../lib/db';
 import { AUTOMATED_NOTES, sourceText, timeline } from '../../lib/report';
@@ -18,9 +18,8 @@ const n = (v: number) => v.toLocaleString('en-US');
 const to = (p: number, h = humans) => `/admin/visitors?${new URLSearchParams({ ...(h ? { humans: '1' } : {}), ...(p > 1 ? { page: String(p) } : {}) })}`.replace(/\?$/, '');
 ---
 
-<Base title="Admin: visitors" noindex>
-  <h1 class="page-title">Visitors</h1>
-  <AdminNav humans={humans} />
+<Admin heading="Visitors">
+  <AdminNav slot="nav" humans={humans} />
 
   <div class="stack" style="margin-top:28px;gap:20px">
     <p class="admin-note">
@@ -73,4 +72,4 @@ const to = (p: number, h = humans) => `/admin/visitors?${new URLSearchParams({ .
       )
     }
   </div>
-</Base>
+</Admin>

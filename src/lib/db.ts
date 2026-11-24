@@ -11,6 +11,8 @@ export type Person = {
   github_id: number | null;
   gitlab_id: number | null;
   handle: string;
+  /** The address of their profile: /builders/<username>. */
+  username?: string | null;
   avatar_url: string | null;
   verified: boolean;
   failed_rules: string[];
@@ -20,6 +22,26 @@ export type Person = {
   contributions_12mo: number | null;
   x_handle: string | null;
   site_url: string | null;
+  joined_at?: string | null;
+  created_at?: string;
+  /** From the provider at sign-in. */
+  name?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  repo_count?: number | null;
+  /** Written by the person on their account page. */
+  about?: string | null;
+  skills?: string[];
+  open_to_team?: boolean;
+  team_note?: string | null;
+  profile_public?: boolean;
+  featured_repos?: string[];
+  repos?: unknown;
+  repos_fetched_at?: string | null;
+  /** Saved activity calendar, and whether this person may post. */
+  contributions?: unknown;
+  contributions_fetched_at?: string | null;
+  can_post?: boolean;
 };
 
 export type Idea = {
@@ -147,8 +169,11 @@ export async function getStats(): Promise<Stats> {
   };
 }
 
-export async function listBuilders(): Promise<{ handle: string; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null }[]> {
-  const { data, error } = await db().from('people').select('handle, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(1000);
+export type BuilderTile = { id: string; handle: string; username?: string | null; provider: Provider; avatar_url: string | null; x_handle: string | null; site_url: string | null };
+
+/** Builders, newest first. */
+export async function listBuilders(limit = 1000): Promise<BuilderTile[]> {
+  const { data, error } = await db().from('people').select('id, handle, username, provider, avatar_url, x_handle, site_url').eq('is_builder', true).order('joined_at', { ascending: false }).limit(limit);
   if (error) throw new DataUnavailableError(error.message);
   return (data ?? []).map((b: any) => ({ ...b, provider: providerOf(b) }));
 }
@@ -292,9 +317,14 @@ export async function getOrganizerPledge(): Promise<number | null> {
 }
 
 /** Which of these ideas this browser has hearted. */
-export async function heartedBy(visitor: string | undefined, ideaIds: string[]): Promise<Set<string>> {
-  if (!visitor || !ideaIds.length) return new Set();
-  const { data, error } = await db().from('idea_hearts').select('idea_id').eq('visitor', visitor).in('idea_id', ideaIds);
+export async function heartedBy(visitor: string | undefined, ideaIds: string[], userId: string | null = null): Promise<Set<string>> {
+  if ((!visitor && !userId) || !ideaIds.length) return new Set();
+  // Signed in: this person's hearts from any browser, plus this browser's anonymous ones.
+  // Signed out: only this browser's anonymous ones, never hearts tied to an account.
+  let q = db().from('idea_hearts').select('idea_id').in('idea_id', ideaIds);
+  const anon = visitor ? `and(visitor.eq.${visitor},user_id.is.null)` : null;
+  q = userId ? q.or([`user_id.eq.${userId}`, anon].filter(Boolean).join(',')) : q.eq('visitor', visitor!).is('user_id', null);
+  const { data, error } = await q;
   if (error) throw new DataUnavailableError(error.message);
   return new Set((data ?? []).map((r) => r.idea_id));
 }

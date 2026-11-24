@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: premiere-pro
+name: Adobe Premiere Pro
+category: Photos and video
+price:
+  cents: 2299
+  period: month
+blurb: Edit videos on a timeline.
+words:
+  - video editor
+  - video editing
+  - timeline
+  - cut video
+  - effects
+topics:
+  - video-editor
+  - video-editing
+search_terms:
+  - premiere alternative
+  - video editor
+aliases:
+  - premiere
+  - adobe premiere
+excludes: []

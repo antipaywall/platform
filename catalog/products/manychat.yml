@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "manychat"
+name: "ManyChat"
+category: "Social media"
+price: { cents: 1500, period: month }
+blurb: "Chat automation for Instagram, WhatsApp and Messenger."
+words: ["instagram dm", "chatbot", "messenger", "whatsapp automation"]
+topics: ["chatbot", "instagram", "manychat-alternative"]
+search_terms: ["ManyChat alternative", "open source instagram chatbot"]
+aliases: ["manychat.com"]
+excludes: []

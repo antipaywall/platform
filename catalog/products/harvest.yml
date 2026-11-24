@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: harvest
+name: Harvest
+category: Project management
+price:
+  cents: 1100
+  period: month
+blurb: Time tracking and invoicing.
+words:
+  - time tracking
+  - timesheets
+  - billable hours
+topics:
+  - time-tracking
+  - time-tracker
+  - timesheet
+  - harvest-alternative
+search_terms:
+  - harvest alternative
+  - open source time tracking
+aliases: []
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "sonarcloud"
+name: "SonarQube Cloud"
+category: "Developer tools"
+price: { cents: 3200, period: month }
+blurb: "Code quality and security checks."
+words: ["code quality", "static analysis", "bugs", "security"]
+topics: ["static-analysis", "code-quality", "sonarcloud-alternative"]
+search_terms: ["SonarQube Cloud alternative", "open source code quality"]
+aliases: ["sonarsource.com"]
+excludes: []

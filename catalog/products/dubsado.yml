@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "dubsado"
+name: "Dubsado"
+category: "Money and invoicing"
+price: { cents: 2000, period: month }
+blurb: "Client workflows, contracts and invoices."
+words: ["client management", "contracts", "invoices", "workflows"]
+topics: ["invoicing", "crm", "dubsado-alternative"]
+search_terms: ["Dubsado alternative", "open source client management"]
+aliases: ["dubsado.com"]
+excludes: []

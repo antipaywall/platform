@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "birdeye"
+name: "Birdeye"
+category: "Support and chat"
+price: { cents: 29900, period: month }
+blurb: "Review management for local businesses."
+words: ["reviews", "reputation", "google reviews", "local business"]
+topics: ["reviews", "reputation-management", "birdeye-alternative"]
+search_terms: ["Birdeye alternative", "open source review management"]
+aliases: ["birdeye.com"]
+excludes: []

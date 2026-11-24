@@ -1,0 +1,24 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: plex
+name: Plex
+category: Music and media
+price:
+  cents: 699
+  period: month
+blurb: Stream your own movies, shows and music to any screen.
+words:
+  - media server
+  - stream movies
+  - home theater
+  - tv shows
+  - personal media
+topics:
+  - media-server
+  - streaming
+  - home-theater
+search_terms:
+  - plex alternative
+  - media server
+aliases:
+  - plex pass
+excludes: []

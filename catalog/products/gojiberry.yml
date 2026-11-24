@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gojiberry"
+name: "Gojiberry"
+category: "Sales and CRM"
+price: { cents: 9900, period: month }
+blurb: "AI sales agents that spot buying signals and run outreach."
+words: ["ai sdr", "buying signals", "lead scoring", "outreach"]
+topics: ["lead-generation", "sales-engagement", "gojiberry-alternative"]
+search_terms: ["Gojiberry alternative", "open source ai sdr"]
+aliases: ["gojiberry.ai"]
+excludes: []

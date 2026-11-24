@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "pinecone"
+name: "Pinecone"
+category: "AI tools"
+price: { cents: 5000, period: month }
+blurb: "A hosted vector database."
+words: ["vector database", "embeddings", "semantic search", "rag"]
+topics: ["vector-database", "embeddings", "pinecone-alternative"]
+search_terms: ["Pinecone alternative", "open source vector database"]
+aliases: ["pinecone.io"]
+excludes: []

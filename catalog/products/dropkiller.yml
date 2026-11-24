@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "dropkiller"
+name: "Dropkiller"
+category: "Selling online"
+price: { cents: 2900, period: month }
+blurb: "Finds winning products and ads for dropshipping."
+words: ["product research", "dropshipping", "ads spy", "winning products"]
+topics: ["ecommerce", "dropshipping", "dropkiller-alternative"]
+search_terms: ["Dropkiller alternative", "open source product research"]
+aliases: ["dropkiller.com"]
+excludes: []

@@ -1,0 +1,30 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: microsoft-365
+name: Microsoft 365
+category: Office
+price:
+  cents: 999
+  period: month
+blurb: Word, Excel, PowerPoint and Outlook, rented by the month.
+words:
+  - office suite
+  - word processor
+  - spreadsheet
+  - excel
+  - word
+  - presentations
+  - documents
+topics:
+  - office-suite
+  - spreadsheet
+  - word-processor
+search_terms:
+  - microsoft office alternative
+  - office suite
+aliases:
+  - microsoft office
+  - office 365
+  - excel
+  - word
+  - ms office
+excludes: []

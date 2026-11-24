@@ -1,0 +1,23 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: ngrok
+name: ngrok
+category: Developer tools
+price:
+  cents: 800
+  period: month
+blurb: Put something running on your laptop online for others to reach.
+words:
+  - tunnel
+  - expose localhost
+  - port forwarding
+  - reverse proxy
+  - share local server
+topics:
+  - tunnel
+  - ngrok
+  - reverse-proxy
+search_terms:
+  - ngrok alternative
+  - self-hosted tunnel
+aliases: []
+excludes: []

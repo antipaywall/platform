@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "adalo"
+name: "Adalo"
+category: "Websites"
+price: { cents: 4500, period: month }
+blurb: "Build mobile apps without code."
+words: ["no code", "mobile app builder", "apps", "drag and drop"]
+topics: ["no-code", "app-builder", "adalo-alternative"]
+search_terms: ["Adalo alternative", "open source no code app builder"]
+aliases: ["adalo.com"]
+excludes: []

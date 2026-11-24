@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "masterclass"
+name: "MasterClass"
+category: "Other"
+price: { cents: 1000, period: month }
+blurb: "Video lessons from famous experts."
+words: ["video lessons", "learning", "courses", "experts"]
+topics: ["education", "online-courses", "masterclass-alternative"]
+search_terms: ["MasterClass alternative", "open source learning platform"]
+aliases: ["masterclass.com"]
+excludes: []

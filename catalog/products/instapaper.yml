@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "instapaper"
+name: "Instapaper Premium"
+category: "Docs and notes"
+price: { cents: 599, period: month }
+blurb: "Save articles to read later."
+words: ["read later", "articles", "bookmarks", "offline reading"]
+topics: ["read-it-later", "bookmarks", "instapaper-alternative"]
+search_terms: ["Instapaper Premium alternative", "open source read it later"]
+aliases: ["instapaper.com"]
+excludes: []

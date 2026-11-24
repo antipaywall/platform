@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: discord
+name: Discord
+category: Team chat
+price:
+  cents: 999
+  period: month
+blurb: Voice and text chat for communities.
+words:
+  - community chat
+  - voice chat
+  - chat server
+topics:
+  - chat
+  - voice-chat
+  - community
+  - discord-alternative
+search_terms:
+  - discord alternative
+  - open source community chat
+aliases: []
+excludes: []

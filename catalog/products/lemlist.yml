@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: lemlist
+name: lemlist
+category: Sales and CRM
+price:
+  cents: 3900
+  period: month
+blurb: Cold email campaigns that follow up automatically.
+words:
+  - cold email
+  - email outreach
+  - follow-ups
+topics:
+  - cold-email
+  - email-outreach
+  - sales
+  - lemlist-alternative
+search_terms:
+  - lemlist alternative
+  - open source cold email
+aliases: []
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "savvycal"
+name: "SavvyCal"
+category: "Scheduling"
+price: { cents: 1200, period: month }
+blurb: "Scheduling links that respect both calendars."
+words: ["booking link", "scheduling", "calendar", "meetings"]
+topics: ["scheduling", "booking", "savvycal-alternative"]
+search_terms: ["SavvyCal alternative", "open source scheduling"]
+aliases: ["savvycal.com"]
+excludes: []

@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: autodesk-maya
+name: Autodesk Maya
+category: Design
+price:
+  cents: 23500
+  period: month
+blurb: 3D animation, modelling and rendering for film and games.
+words:
+  - 3d animation
+  - modeling
+  - rendering
+  - vfx
+topics:
+  - 3d
+  - animation
+  - 3d-modeling
+  - autodesk-maya-alternative
+search_terms:
+  - autodesk maya alternative
+  - open source 3d animation
+aliases: []
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "meistertask"
+name: "MeisterTask"
+category: "Project management"
+price: { cents: 650, period: month }
+blurb: "Kanban task boards for teams."
+words: ["kanban", "task board", "tasks", "projects"]
+topics: ["kanban", "task-manager", "meistertask-alternative"]
+search_terms: ["MeisterTask alternative", "open source kanban board"]
+aliases: ["meistertask.com"]
+excludes: []

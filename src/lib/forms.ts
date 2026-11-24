@@ -170,3 +170,85 @@ export function parseSponsor(input: {
   if (note.length > 200) return bad;
   return { ok: true, sponsor: { name, url, logoUrl, amountCents, kind, status, note, listed: input.listed === 'on' || input.listed === true } };
 }
+
+export const ABOUT_MAX = 400;
+export const SKILLS_MAX = 8;
+export const SKILL_MAX = 30;
+export const TEAM_NOTE_MAX = 140;
+
+export type AccountProfile = {
+  about: string | null;
+  skills: string[];
+  xHandle: string | null;
+  siteUrl: string | null;
+  openToTeam: boolean;
+  teamNote: string | null;
+  profilePublic: boolean;
+};
+
+const ticked = (v: unknown) => v === 'on' || v === 'true' || v === true;
+
+/**
+ * Validates what someone writes about themselves on the account page. Skills arrive as one
+ * comma-separated line. A website may be typed without "https://"; it is added for them.
+ */
+export function parseAccountProfile(input: {
+  about?: unknown; skills?: unknown; xHandle?: unknown; siteUrl?: unknown;
+  openToTeam?: unknown; teamNote?: unknown; profilePublic?: unknown;
+}): Ok<{ profile: AccountProfile }> | Bad {
+  const about = clean(input.about);
+  if (about.length > ABOUT_MAX) return { ok: false, error: 'bad_about' };
+  const skills: string[] = [];
+  for (const s of clean(input.skills).split(',').map((s) => s.trim()).filter(Boolean)) {
+    if (s.length > SKILL_MAX) return { ok: false, error: 'bad_skills' };
+    if (!skills.some((k) => k.toLowerCase() === s.toLowerCase())) skills.push(s);
+  }
+  if (skills.length > SKILLS_MAX) return { ok: false, error: 'bad_skills' };
+  const x = parseXHandle(input.xHandle);
+  if (!x.ok) return x;
+  const rawSite = clean(input.siteUrl);
+  const site = httpsLink(rawSite && !/^[a-z][a-z0-9+.-]*:/i.test(rawSite) ? `https://${rawSite}` : rawSite);
+  if (site === false) return { ok: false, error: 'bad_site' };
+  const teamNote = clean(input.teamNote);
+  if (teamNote.length > TEAM_NOTE_MAX) return { ok: false, error: 'bad_team_note' };
+  return {
+    ok: true,
+    profile: {
+      about: about || null, skills, xHandle: x.handle, siteUrl: site,
+      openToTeam: ticked(input.openToTeam), teamNote: teamNote || null, profilePublic: ticked(input.profilePublic),
+    },
+  };
+}
+
+/** The repositories someone ticked to feature, in the order given, limited to their own and to six. */
+export function parseFeatured(picked: unknown[], available: readonly string[]): Ok<{ featured: string[] }> | Bad {
+  const own = new Set(available);
+  const featured: string[] = [];
+  for (const p of picked) {
+    if (typeof p !== 'string' || !own.has(p) || featured.includes(p)) continue;
+    featured.push(p);
+  }
+  if (featured.length > 6) return { ok: false, error: 'too_many_repos' };
+  return { ok: true, featured };
+}
+
+export type PostInput = { kind: 'update' | 'team' | 'ask' | 'shipped' | null; body: string; linkUrl: string | null };
+
+/**
+ * A post or a reply. A post needs one of the four kinds; a reply has none. The text keeps its
+ * line breaks (up to two in a row) but loses trailing spaces. One optional https link.
+ */
+export function parsePost(input: { kind?: unknown; body?: unknown; link?: unknown }, reply: boolean): Ok<{ post: PostInput }> | Bad {
+  const body = (typeof input.body === 'string' ? input.body : '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (!body) return { ok: false, error: 'need_post' };
+  if (body.length > 500) return { ok: false, error: 'bad_post' };
+  let kind: PostInput['kind'] = null;
+  if (!reply) {
+    if (input.kind !== 'update' && input.kind !== 'team' && input.kind !== 'ask' && input.kind !== 'shipped') return { ok: false, error: 'need_kind' };
+    kind = input.kind;
+  }
+  const raw = clean(input.link);
+  const link = reply ? null : httpsLink(raw && !/^[a-z][a-z0-9+.-]*:/i.test(raw) ? `https://${raw}` : raw);
+  if (link === false) return { ok: false, error: 'bad_site' };
+  return { ok: true, post: { kind, body, linkUrl: link } };
+}

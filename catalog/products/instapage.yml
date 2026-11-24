@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "instapage"
+name: "Instapage"
+category: "Websites"
+price: { cents: 7900, period: month }
+blurb: "Landing pages for ad campaigns."
+words: ["landing page", "ads", "a/b testing", "conversion"]
+topics: ["landing-page", "ab-testing", "instapage-alternative"]
+search_terms: ["Instapage alternative", "open source landing page builder"]
+aliases: ["instapage.com"]
+excludes: []

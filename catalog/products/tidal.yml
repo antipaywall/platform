@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "tidal"
+name: "Tidal"
+category: "Music and media"
+price: { cents: 1099, period: month }
+blurb: "Hi-fi music streaming."
+words: ["music streaming", "hi-fi", "lossless", "playlists"]
+topics: ["music-streaming", "music-server", "tidal-alternative"]
+search_terms: ["Tidal alternative", "open source music streaming"]
+aliases: ["tidal.com"]
+excludes: []

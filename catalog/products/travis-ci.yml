@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "travis-ci"
+name: "Travis CI"
+category: "Developer tools"
+price: { cents: 6900, period: month }
+blurb: "Hosted continuous integration."
+words: ["ci/cd", "builds", "tests", "pipelines"]
+topics: ["ci", "continuous-integration", "travis-ci-alternative"]
+search_terms: ["Travis CI alternative", "open source ci"]
+aliases: ["travis-ci.com"]
+excludes: []

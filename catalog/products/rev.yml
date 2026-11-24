@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "rev"
+name: "Rev"
+category: "AI tools"
+price: { cents: 1499, period: month }
+blurb: "Transcription and captions."
+words: ["transcription", "captions", "subtitles", "audio to text"]
+topics: ["transcription", "speech-to-text", "rev-alternative"]
+search_terms: ["Rev alternative", "open source transcription"]
+aliases: ["rev.com"]
+excludes: []

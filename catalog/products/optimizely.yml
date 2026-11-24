@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: optimizely
+name: Optimizely
+category: Analytics
+price:
+  cents: 3600000
+  period: month
+blurb: A/B tests and feature experiments.
+words:
+  - ab testing
+  - experiments
+  - feature flags
+topics:
+  - ab-testing
+  - experimentation
+  - feature-flags
+  - optimizely-alternative
+search_terms:
+  - optimizely alternative
+  - open source ab testing
+aliases: []
+excludes: []

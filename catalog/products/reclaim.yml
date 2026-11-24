@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "reclaim"
+name: "Reclaim.ai"
+category: "Scheduling"
+price: { cents: 1000, period: month }
+blurb: "AI calendar that finds time for tasks and habits."
+words: ["calendar", "time blocking", "habits", "smart scheduling"]
+topics: ["calendar", "scheduling", "reclaim-alternative"]
+search_terms: ["Reclaim.ai alternative", "open source smart calendar"]
+aliases: ["reclaim.ai"]
+excludes: []

@@ -1,0 +1,66 @@
+---
+// Your account, at a glance: who you are here, and where your builder spot, pledge and ideas stand.
+import Account from '../layouts/Account.astro';
+import { providerName, providerOf } from '../lib/accounts';
+import { attempt, usd } from '../lib/db';
+import { ideasBy, isPublic, pledgeOf, profilePath } from '../lib/profiles';
+import { seenAs } from '../lib/viewAs';
+
+// Signed-out visitors are sent to sign in and brought back here.
+const real = Astro.locals.person;
+if (!real) return Astro.redirect('/signin?next=/account');
+// The organizer can look at these pages the way another kind of account sees them.
+const view = Astro.locals.viewAs;
+const person = seenAs(real, view);
+const [ideas, pledge] = await Promise.all([attempt(() => ideasBy(real.id)), attempt(() => pledgeOf(real.id))]);
+const provider = providerOf(person);
+const isPub = isPublic(person);
+---
+
+<Account heading="Overview" about="Who you are here, and where your builder spot, pledge and ideas stand.">
+  <div class="acct-main">
+      <section class="acct-panel acct-who">
+        <span class="tile-pic acct-pic" aria-hidden="true">
+          <span>{(person.handle[0] ?? '?').toUpperCase()}</span>
+          {person.avatar_url && <img src={person.avatar_url} alt="" width="64" height="64" />}
+        </span>
+        <div>
+          <b>{person.name ?? person.handle}</b>
+          <span class="muted small">@{person.handle} on {providerName(provider)}. Your picture and name come from {providerName(provider)} and update each time you sign in.</span>
+        </div>
+        {isPub ? (
+          <a class="key key-milk" href={profilePath(person)}>See your profile</a>
+        ) : (
+          <span class="acct-state">Profile not public</span>
+        )}
+      </section>
+
+      <section class="acct-panel" id="activity">
+        <h2 class="acct-h">Pledge and ideas</h2>
+        <ul class="acct-rows">
+          <li>
+            <span>
+              {pledge === undefined ? 'Your pledge is unavailable right now.' : pledge ? <>Your pledge: <b>{usd(pledge.amount_cents)}</b>, {pledge.status === 'listed' ? (pledge.anonymous ? 'listed as Anonymous' : 'listed') : 'waiting to be checked'}</> : 'No pledge yet.'}
+            </span>
+            <a class="link" href="/hackathon/fund">{pledge ? 'Change it' : 'Pledge'}</a>
+          </li>
+          <li>
+            <span>{ideas === null ? 'Your ideas are unavailable right now.' : ideas.length ? <>Ideas you posted: <b>{ideas.length}</b></> : 'No ideas posted yet.'}</span>
+            <a class="link" href={ideas && ideas.length ? `/ideas/${ideas[0].slug}` : '/ideas/new'}>{ideas && ideas.length ? 'See the latest' : 'Post one'}</a>
+          </li>
+          <li>
+            <span>{person.is_builder ? <>You're a builder. <b>Spot held.</b></> : person.verified ? 'You pass the checks but have not joined as a builder.' : 'Not a builder yet.'}</span>
+            {!person.is_builder && <a class="link" href="/hackathon/join/build">Join as a builder</a>}
+          </li>
+        </ul>
+      </section>
+
+    <section class="acct-panel">
+      <h2 class="acct-h">Change something</h2>
+      <ul class="acct-rows">
+        <li><span>What your profile says, and which repositories it features.</span><a class="link" href="/account/profile">Edit your profile</a></li>
+        <li><span>Email from us, signing out, and deleting your account.</span><a class="link" href="/account/settings">Email and account</a></li>
+      </ul>
+    </section>
+  </div>
+</Account>

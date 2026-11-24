@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "customer-io"
+name: "Customer.io"
+category: "Email and newsletters"
+price: { cents: 10000, period: month }
+blurb: "Messages triggered by what customers do."
+words: ["lifecycle email", "triggered messages", "push", "segments"]
+topics: ["marketing-automation", "email-marketing", "customer-io-alternative"]
+search_terms: ["Customer.io alternative", "open source customer messaging"]
+aliases: ["customer.io"]
+excludes: []

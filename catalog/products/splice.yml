@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "splice"
+name: "Splice"
+category: "Music and media"
+price: { cents: 1299, period: month }
+blurb: "Samples and sounds for music producers."
+words: ["samples", "loops", "music production", "sounds"]
+topics: ["music-production", "samples", "splice-alternative"]
+search_terms: ["Splice alternative", "open source sample library"]
+aliases: ["splice.com"]
+excludes: []

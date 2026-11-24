@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "microsoft-planner"
+name: "Microsoft Planner"
+category: "Project management"
+price: { cents: 1000, period: month }
+blurb: "Plans and task boards in Microsoft 365."
+words: ["task board", "plans", "kanban", "tasks"]
+topics: ["kanban", "task-manager", "microsoft-planner-alternative"]
+search_terms: ["Microsoft Planner alternative", "open source kanban board"]
+aliases: ["microsoft.com/planner"]
+excludes: []

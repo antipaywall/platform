@@ -1,464 +1,410 @@
 ---
-import '../styles/global.css';
-import '../styles/page.css';
 import '../styles/home.css';
-import VercelAnalytics from '../components/VercelAnalytics.astro';
-import Head from '../components/Head.astro';
-import PledgeWho from '../components/PledgeWho.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import Sponsors from '../components/Sponsors.astro';
+import Platform from '../layouts/Platform.astro';
+import BuilderTile from '../components/BuilderTile.astro';
+import Heart from '../components/Heart.astro';
 import Wall from '../components/Wall.astro';
-import { money as fee, organizerPledge, shape, site } from '../config/site';
-import { WAYS } from '../lib/ways';
-import { attempt, getOrganizerPledge, getStats, listIdeas, listPledges, listSponsors, usd as usdCents } from '../lib/db';
+import InstantSearch from '../components/pf/InstantSearch.astro';
+import { site } from '../config/site';
+import { attempt, getStats, heartedBy, listBuilders, usd } from '../lib/db';
+import { shortCount } from '../lib/format';
+import { demandFor } from '../lib/gaps';
+import { findOpenGaps, listProducts, priceLabel, type ProductSummary } from '../lib/products';
+import { tileBadges } from '../lib/social';
+import { brickState } from '../lib/wall';
+import { adminClient } from '../lib/supabase';
+import { listTopics } from '../lib/topics';
+import ProjectCard from '../components/pf/ProjectCard.astro';
+import { visitorId } from '../lib/visitor';
 
-// If the database can't be read, the page says so. It never shows a zero it could not verify.
-const [stats, recent, sponsors, organizer] = await Promise.all([
-  attempt(getStats),
-  attempt(() => listPledges({ limit: 5 })),
-  attempt(() => listSponsors()),
-  attempt(getOrganizerPledge),
-]);
-const show = (n: number | undefined, f: (n: number) => string) => (n === undefined ? 'unavailable' : f(n));
-// The headline figure: what is pledged while the pool is closed, what is held once it opens.
-const headline = stats ? usdCents(site.collective.pending ? stats.pledgedCents : stats.balanceCents) : '';
-// Real ideas for the wall. If they can't be read, the wall just shows generic kinds of tools.
-const wallIdeas = ((await attempt(() => listIdeas(12))) ?? []).map((i) => ({ slug: i.slug, title: i.title, hearts: i.hearts }));
-
+const db = adminClient();
 const need = site.launch.buildersNeeded;
+const [stats, platform, products, topics, builders] = await Promise.all([
+  attempt(getStats),
+  db ? db.rpc('site_platform_stats').then((r) => (r.error ? null : (r.data as { products: number; projects: number; gaps: number; signals: number })), () => null) : Promise.resolve(null),
+  db ? listProducts(db).catch(() => [] as ProductSummary[]) : Promise.resolve([] as ProductSummary[]),
+  db ? listTopics(db).catch(() => []) : Promise.resolve([]),
+  attempt(() => listBuilders(11)),
+]);
+const builderBadges = (builders && (await attempt(() => tileBadges(builders.map((b) => b.id))))) || new Map();
+// The paid products people care about most first, then the ones with the most free options.
+const ranked = [...products].sort((a, b) => b.signals - a.signals || b.freeOptions - a.freeOptions);
+// Gaps the platform finds itself: paid tools with no free alternative many people rely on.
+const openGaps = findOpenGaps(products);
+// The wall, in short: how much of it is painted, and the tools most teams pay for as bricks.
+const stateOf = (p: ProductSummary) => brickState(p.trustedOptions, p.bestStars);
+const painted = products.filter((p) => stateOf(p) === 'solid').length;
+const early = products.filter((p) => stateOf(p) === 'some').length;
+const bare = products.length - painted - early;
+const WORK = ['slack', 'notion', 'monday', 'clickup', 'trello', 'asana', 'jira', 'salesforce', 'hubspot', 'pipedrive', 'zoom', 'google-workspace', 'microsoft-365', 'dropbox', 'figma', 'canva', 'grammarly', 'docusign', 'calendly', 'mailchimp', 'zapier', 'quickbooks', 'airtable', 'miro', 'loom', 'intercom', 'zendesk', 'shopify', 'typeform', '1password', 'adobe-acrobat', 'photoshop', 'linear', 'confluence', 'gusto', 'rippling', 'greenhouse', 'webflow', 'semrush', 'chatgpt', 'gong', 'docsend', 'surveymonkey', 'hootsuite'];
+const workBricks = WORK.map((s) => products.find((p) => p.slug === s)).filter((p): p is ProductSummary => Boolean(p)).map((p) => ({ slug: p.slug, name: p.name, state: stateOf(p) }));
+// The tools most people know from their own card statement, in this order; anything the catalog
+// doesn't have yet is skipped, and the list is topped up from the rest.
+const EVERYDAY = ['calendly', 'loom', 'notion', 'formspree', 'typeform', 'semrush', 'mailchimp', 'zapier', 'slack', 'dropbox', 'photoshop', 'docusign', 'linktree', 'zoom', 'trello', 'lastpass', 'grammarly'];
+const bySlug = new Map(products.map((p) => [p.slug, p]));
+const everyday = EVERYDAY.map((s) => bySlug.get(s)).filter((p): p is ProductSummary => Boolean(p) && p!.freeOptions > 0);
+const featured = [...everyday, ...ranked.filter((p) => !EVERYDAY.includes(p.slug) && p.category !== 'AI tools' && p.category !== 'Developer tools')].slice(0, 12);
+// The best-known free alternative to each, to name on its brick.
+const leadFree = new Map<string, string>();
+if (db && featured.length) {
+  const { data } = await db.from('project_products').select('source, products!inner(slug), projects!inner(name, stars, listed)').in('products.slug', featured.map((p) => p.slug)).eq('source', 'catalog').eq('projects.listed', true).limit(200);
+  for (const r of ((data ?? []) as any[]).sort((a, b) => b.projects.stars - a.projects.stars)) if (!leadFree.has(r.products.slug)) leadFree.set(r.products.slug, r.projects.name);
+}
 
-const pending = site.collective.pending;
 
-// The shape of the event. The dates are announced once the two conditions below are met.
-const timeline = [
-  { when: 'Now', what: 'Join, post and heart ideas, pledge to the pool', paint: 'p5' },
-  { when: `${site.shape.buildDays} days`, what: 'Build week, in public repos', paint: 'p3' },
-  { when: `${site.shape.votingDays} days`, what: 'Builders vote, every ballot published', paint: 'p2' },
-  { when: 'Day after', what: 'Winners announced, then paid in public', paint: 'p1' },
-];
+// Every gap, with its demand: the wall's real bricks and "Wanted, but nobody has built it".
+let wanted: { id: string; slug: string; title: string; want: number; pay: number; status: string; hearted: boolean }[] = [];
+if (db) {
+  const { data } = await db.from('ideas').select('id, slug, title, build_status').eq('status', 'listed').is('merged_into', null).limit(500);
+  const demand = await demandFor(db, (data ?? []).map((i) => i.id)).catch(() => new Map());
+  const all = (data ?? [])
+    .map((i) => ({ id: i.id, slug: i.slug, title: i.title, status: i.build_status, want: demand.get(i.id)?.want ?? 0, pay: demand.get(i.id)?.pay ?? 0 }))
+    .sort((a, b) => b.want - a.want || b.pay - a.pay);
+  const mine = await attempt(() => heartedBy(visitorId(Astro.cookies), all.slice(0, 12).map((g) => g.id), Astro.locals.userId ?? null));
+  wanted = all.map((g) => ({ ...g, hearted: mine?.has(g.id) ?? false }));
+}
+const nobody = wanted.filter((g) => g.status === 'wanted').slice(0, 6);
+// The wall: real paid products, and the most wanted ideas nearest the headline.
+const wallProducts = ranked.slice(0, 48).map((p) => ({ slug: p.slug, name: p.name, free: p.freeOptions }));
+const wallIdeas = wanted.slice(0, 10).map((g) => ({ slug: g.slug, title: g.title, hearts: g.want }));
 
-const money = [
-  ['Anyone can fund it', pending ? 'Any amount. Today that means a public pledge; payments open once the holder is confirmed.' : `Any amount, on Open Collective. ${fee.short}`],
-  [pending ? 'An independent nonprofit will hold it' : 'An independent nonprofit holds it', pending ? fee.holder : `${site.collective.host} holds the pool. Antipaywall never touches it and never takes a cut.`],
-  ['Every dollar will be listed here', 'Each contribution and each payout, in public, with a link to its record.'],
-];
-const builders = [
-  ['Join free with GitHub', 'One click. No essay, no pitch, no fee, no upsell.'],
-  [`Build in public for ${site.shape.buildDays} days`, 'In a public repo under an open-source licence, so anyone can see when the work was done.'],
-  ['Builders will pick the winners', 'Everyone who submits will get three votes, and every ballot will be published.'],
-];
-
-// What we believe. These are opinions, and the copy says so: each one starts from "we think".
-const beliefs = [
-  ['We think software is heading toward open source.', 'AI is making software much cheaper to build, and we think that pushes most of it toward being open. That does not stop anyone building a paid layer on top.'],
-  ['We think you should give people the thing itself.', 'If you believe something is valuable, hand the community the real thing. If it really is valuable, the demand will show, and a business can still grow from it.'],
-  ['So this is not a race to ship something to sell.', 'It is a week to make something people can use, read, fork and keep.'],
-];
-
-const ideaSteps = [
-  ['Post it', 'Name the thing you wish was free. We show you what already exists, so you can say what is missing.'],
-  ['Heart it', 'One tap, no account. The most-wanted ideas rise to the top.'],
-  ['Build it', 'Builders see what people are asking for before they choose what to make.'],
-];
-
-const split = [
-  { label: '1st', pct: 30, paint: 'p1' },
-  { label: '2nd', pct: 18, paint: 'p2' },
-  { label: '3rd', pct: 12, paint: 'p3' },
-  { label: '4th', pct: 6, paint: 'p4' },
-  { label: '5th', pct: 6, paint: 'p4' },
-  { label: '6th', pct: 6, paint: 'p4' },
-  { label: '7th', pct: 6, paint: 'p4' },
-  { label: '8th', pct: 6, paint: 'p4' },
-  { label: 'Community Choice', pct: 10, paint: 'p6' },
-];
-
-// The other hackathon is named only in this table.
-const other = 'Ship or Die $100K Hackathon';
-const compare = [
-  ['Goal', 'Most profit in 30 days', 'Build a free, open-source version of something people overpay for'],
-  ['Length', '30 days', '7 days to build, 3 days to vote'],
-  ['Entry', 'Free', 'Free, always'],
-  ['Prize money', 'Provided and paid by the sponsor, directly to the winners', 'Funded by the community and sponsors. An independent nonprofit will hold it; the organizer never will, and takes nothing'],
-  ['Who picks winners', 'Most verified profit wins. The organizers verify it, and their decisions are final', 'The builders who submit will vote in public, and every ballot will be published'],
-  ['Checking when the work was done', "Reviewed by hand, including the domain's history on the Wayback Machine", 'Work will happen in a public repo, so the commit history shows when it was done'],
-  ['Rules', 'Can be updated to fix mistakes or close loopholes; changes are announced', 'Published on this site, with every change listed and dated'],
-  ['Prizes', '$100,000 for 1st, a phone for 2nd, a laptop for 3rd', 'The pool will be split across 9 winners'],
-  ['Cheating review', 'Organizers may disqualify entries at their discretion, and their decisions are final', 'A named volunteer panel will review entries, publish its reasoning, and hear appeals in public'],
-];
-
-const gh =
-  'M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z';
+// Open issues maintainers want help with, across the projects that replace paid products.
+let help: { title: string; url: string; repo: string; label: string }[] = [];
+if (db) {
+  const { data } = await db
+    .from('help_issues')
+    .select('title, url, labels, updated_at, projects!inner(full_name, listed, stars)')
+    .eq('projects.listed', true)
+    .gte('projects.stars', 2000)
+    .order('updated_at', { ascending: false })
+    .limit(40);
+  // Titles written mostly in the Latin alphabet, one per project, so the list reads as one list.
+  const latin = (t: string) => { const letters = t.match(/\p{L}/gu) ?? []; return letters.length > 0 && letters.filter((c) => /[A-Za-z]/.test(c)).length / letters.length > 0.9; };
+  const seenRepo = new Set<string>();
+  help = ((data ?? []) as any[]).filter((i) => latin(i.title) && !seenRepo.has(i.projects.full_name) && seenRepo.add(i.projects.full_name)).slice(0, 6).map((i) => ({ title: i.title, url: i.url, repo: i.projects.full_name, label: (i.labels ?? []).find((l: string) => /help|first/i.test(l)) ?? 'help wanted' }));
+}
+// Projects and ideas whose builders are looking for someone to carry them on.
+let handoffs: { href: string; title: string; by: string }[] = [];
+if (db) {
+  const { data } = await db.from('adoptions').select('subject_kind, subject_id, people:offered_by(username, handle)').eq('status', 'open').order('created_at', { ascending: false }).limit(6);
+  const rows = (data ?? []) as any[];
+  const projectIds = rows.filter((r) => r.subject_kind === 'project').map((r) => r.subject_id);
+  const gapIds = rows.filter((r) => r.subject_kind === 'gap').map((r) => r.subject_id);
+  const [projects, gaps] = await Promise.all([
+    // Only what is public: a hidden idea or unlisted project is never offered on the homepage.
+    projectIds.length ? db.from('projects').select('id, full_name').in('id', projectIds).eq('listed', true) : Promise.resolve({ data: [] }),
+    gapIds.length ? db.from('ideas').select('id, slug, title').in('id', gapIds).eq('status', 'listed') : Promise.resolve({ data: [] }),
+  ]);
+  const pBy = new Map(((projects as any).data ?? []).map((p: any) => [p.id, p]));
+  const gBy = new Map(((gaps as any).data ?? []).map((g: any) => [g.id, g]));
+  handoffs = rows.flatMap((r) => {
+    const by = r.people?.username ?? r.people?.handle ?? 'someone';
+    const p: any = r.subject_kind === 'project' ? pBy.get(r.subject_id) : null;
+    const g: any = r.subject_kind === 'gap' ? gBy.get(r.subject_id) : null;
+    if (p) return [{ href: `/projects/${p.full_name}#adopt`, title: p.full_name, by }];
+    if (g) return [{ href: `/ideas/${g.slug}#adopt`, title: g.title, by }];
+    return [];
+  });
+}
+// What's happening now, and the most used free alternatives, with their GitHub pictures.
+let topProjects: { fullName: string; description: string | null; stars: number; license: string | null; pushedAt: string | null; replaces: string[] }[] = [];
+if (db) {
+  const { data } = await db
+    .from('project_products')
+    .select('source, products(name), projects!inner(full_name, description, stars, license_spdx, license_name, pushed_at, listed)')
+    .eq('projects.listed', true)
+    .eq('source', 'catalog')
+    .limit(400);
+  const byRepo = new Map<string, (typeof topProjects)[number]>();
+  for (const r of (data ?? []) as any[]) {
+    const p = r.projects;
+    const cur = byRepo.get(p.full_name) ?? { fullName: p.full_name, description: p.description, stars: p.stars, license: p.license_spdx ?? (p.license_name ? 'Own license' : null), pushedAt: p.pushed_at, replaces: [] as string[] };
+    if (r.products?.name && !cur.replaces.includes(r.products.name)) cur.replaces.push(r.products.name);
+    byRepo.set(p.full_name, cur);
+  }
+  topProjects = [...byRepo.values()].sort((a, b) => b.stars - a.stars).slice(0, 8);
+}
+const now = new Date();
+// Categories for the Explore section, biggest first.
+const catFree = new Map<string, number>();
+for (const p of products) catFree.set(p.category, (catFree.get(p.category) ?? 0) + p.freeOptions);
+const exploreCats = [...catFree].filter(([n]) => n !== 'Other').map(([name, free]) => ({ name, free })).sort((a, b) => b.free - a.free).slice(0, 12);
+const topTopics = [...topics].sort((a, b) => b.count - a.count).slice(0, 14);
+const paints = ['p4', 'p6', 'p3', 'p2', 'p5', 'p1'];
+const builderCount = stats?.builders ?? null;
 ---
 
-<html lang="en">
-  <head>
-    <Head
-      title={`${site.name}: the open-source hackathon owned by its builders`}
-      description="A free, one-week open-source hackathon owned by its builders. The community funds the prize pool and the builders pick the winners in public."
-    />
-    {/* A tiny file of our own, loaded before the page is drawn. See public/wall-boot.js. */}
-    <script is:inline src="/wall-boot.js"></script>
-  </head>
-  <body>
-    <SiteHeader />
-    <section class="hero">
-      <Wall ideas={wallIdeas} />
+<Platform
+  title={`${site.name}: take down the paywall, brick by brick`}
+  bareTitle
+  description="Find the free, open-source version of the software you pay for. If it doesn't exist yet, help build it."
+>
+  <script slot="head" is:inline src="/wall-boot.js"></script>
 
-      <div class="wrap hero-body">
-        <div class="hero-content" data-clear>
-          <p class="chip"><span class="pulse"></span>Free to enter. Dates announced once {need}+ builders are in.</p>
-          <h1 class="display hero-title">The open-source hackathon owned by its builders.</h1>
-          <p class="lede hero-lede">
-            Free to enter, one week to build. The community funds the prize pool, an independent
-            nonprofit will hold it, and the builders will pick the winners by public vote. We
-            take nothing.
-          </p>
-          <div class="actions">
-            <a class="key key-big" href="/join/build">
-              <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d={gh}></path></svg>
-              Join with GitHub
-            </a>
-            <a class="key key-big key-milk" href="/join">Other ways to join</a>
-          </div>
-          <div class="goal">
-            {
-              stats ? (
-                <>
-                  <p class="goal-n num"><strong>{stats.builders}</strong> of {need}+ builders joined</p>
-                  <div class="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax={need} aria-valuenow={Math.min(stats.builders, need)} aria-label="Builders joined">
-                    <span style={`width:${Math.min(100, (stats.builders / need) * 100)}%`}></span>
-                  </div>
-                </>
-              ) : (
-                <p class="goal-n">The builder count is unavailable right now.</p>
-              )
-            }
-            <p class="goal-note">
-              {shape.when}
-            </p>
-          </div>
+  <section class="hero">
+    <Wall ideas={wallIdeas} products={wallProducts} yoursHref="/ideas/new" roomy />
+    <div class="wrap hero-body">
+      <div class="hero-content" data-clear>
+        <h1 class="display hero-title">Take down the paywall, brick by brick.</h1>
+        <p class="lede hero-lede">Find the free, open-source version of the software you pay for. If it doesn’t exist yet, help build it.</p>
+        <div class="hero-find">
+          <InstantSearch id="q" big placeholder="What do you pay for?" button="Find it free" />
         </div>
       </div>
-      <p class="hint chip" aria-hidden="true">Each brick is something people pay monthly for. Knock one out.{wallIdeas.length > 0 && ' The bold ones are real ideas.'}</p>
+    </div>
+    <p class="hint chip" aria-hidden="true">Each brick is something people pay for. Knock one out to see what's free.{wallIdeas.length > 0 && ' The bold ones are wanted ideas.'}</p>
+  </section>
+
+  <div>
+    <section class="wrap hm-open">
+      {platform && (
+        <p class="hm-say">
+          <a href="/explore?show=all">{platform.projects.toLocaleString('en-US')} open-source projects</a> already do the job of{' '}
+          <a href="/free-alternatives">{(products.length - bare).toLocaleString('en-US')} of the {products.length.toLocaleString('en-US')} tools people pay for</a>.{' '}
+          {bare > 0 && <><a href="/wall">{bare.toLocaleString('en-US')} still have nothing free</a>.</>}
+          {platform.gaps > 0 && <>{' '}<a href="#gaps-h">{platform.gaps} more {platform.gaps === 1 ? 'thing is' : 'things are'} wanted that nobody has built</a>.</>}
+        </p>
+      )}
     </section>
 
-    <main>
-      <section class="when" aria-label="How it runs">
-        <ol class="wrap when-row">
-          {
-            timeline.map((t) => (
-              <li class={t.paint}>
-                <span class="when-date">{t.when}</span>
-                <span class="when-what">{t.what}</span>
-              </li>
-            ))
-          }
-        </ol>
-        <div class="wrap conds">
-          <p class="conds-t">The dates are announced once both are true:</p>
-          <ul>
-            <li class:list={[stats && stats.builders >= need && 'met']}>
-              <span class="box" aria-hidden="true"></span>
-              {need}+ builders have joined{stats ? ` (${stats.builders} so far)` : ''}
+    {products.length > 0 && (
+      <section class="wrap pf-section hm-wall" aria-labelledby="wall-h">
+        <div class="pf-head-row">
+          <div style="display:grid;gap:10px">
+            <h2 id="wall-h" class="pf-h2">The wall.</h2>
+            <p class="lede">Every paid tool we track is a brick. It gets painted once a free, open-source version people rely on exists. The bare ones are what's left to build.</p>
+          </div>
+          <a class="key key-milk key-sm" href="/wall">See the whole wall</a>
+        </div>
+        <div class="wall-meter">
+          <div class="wall-bar" role="img" aria-label={`${painted} of ${products.length} bricks painted`}>
+            <span class="wall-bar-solid" style={`width:${(painted / products.length) * 100}%`}></span>
+            <span class="wall-bar-some" style={`width:${(early / products.length) * 100}%`}></span>
+          </div>
+          <p><strong>{Math.round((painted / products.length) * 100)}%</strong> painted: {painted} of {products.length.toLocaleString('en-US')} paid tools have a free alternative people rely on. {early} have early options, and {bare} have nothing free yet.</p>
+        </div>
+        <ul class="wall-row hm-wall-row" aria-label="The tools most teams pay for">
+          {workBricks.map((b) => (
+            <li style="flex-grow:1">
+              <a class={`wall-brick ${b.state}`} href={`/free-alternatives/${b.slug}`} title={b.state === 'solid' ? 'A free alternative people rely on' : b.state === 'some' ? 'Early free options' : 'A gap: nothing free yet'}><span>{b.name}</span></a>
             </li>
-            <li class:list={[!pending && 'met']}>
-              <span class="box" aria-hidden="true"></span>
-              An independent third party is holding the pool ({pending ? 'not yet' : 'done'})
-            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="wrap hm-gaps" aria-labelledby="gaps-h">
+      <div class="pf-head-row">
+        <div style="display:grid;gap:10px">
+          <h2 id="gaps-h" class="pf-h2">Holes in the wall.</h2>
+          <p class="lede">What nobody has built yet: the things people asked for, and the paid tools we found with no free version people rely on. Back one and it moves up. The most wanted become hackathon briefs.</p>
+        </div>
+        <a class="key key-milk key-sm" href="/ideas">See everything wanted</a>
+      </div>
+      <ul class="hm-slots">
+        {nobody.map((g) => (
+          <li class="hm-slot">
+            <a href={`/ideas/${g.slug}`}>{g.title}</a>
+            <div class="hm-slot-foot">
+              <span class="num">{g.want > 0 ? `${g.want} want it` : 'Be the first to want it'}{g.pay > 0 ? `, ${g.pay} would pay` : ''}</span>
+              <Heart slug={g.slug} hearts={g.want} hearted={g.hearted} />
+            </div>
+          </li>
+        ))}
+        {openGaps.slice(0, Math.max(2, 8 - nobody.length)).map((g) => (
+          <li class="hm-slot">
+            <a href={`/free-alternatives/${g.slug}`}>A free {g.name}</a>
+            <div class="hm-slot-foot">
+              <span>{g.freeOptions === 0 ? 'No free version found' : 'No free version many people use yet'}{priceLabel(g.price) ? `. Costs ${priceLabel(g.price)}` : ''}</span>
+            </div>
+          </li>
+        ))}
+        <li class="hm-slot hm-slot-yours">
+          <a href="/ideas/new">Your idea here</a>
+          <div class="hm-slot-foot"><span>Say what you wish was free. It takes a minute.</span><span class="hm-plus" aria-hidden="true">+</span></div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="hm-season" aria-labelledby="season-h">
+      <div class="wrap hm-season-in">
+        <div class="hm-season-main">
+          <p class="hm-season-kick"><span class="pulse"></span>The {site.name} Hackathon, Season 1</p>
+          <h2 id="season-h">One week to fill the holes. Builders pick the winners.</h2>
+          <p class="hm-season-sub">Free to enter. The community funds the prize pool, and nobody takes a cut. Dates are set once {need} builders are in.</p>
+          <div class="hm-season-go">
+            <a class="key key-marigold key-big" href="/hackathon/join">Join Season 1</a>
+            <a class="hm-season-more" href="/hackathon">How it works</a>
+          </div>
+        </div>
+        <div class="hm-season-side">
+          {stats && (
+            <a class="hm-pool" href="/hackathon/pool">
+              <b class="num">{usd(site.collective.pending ? stats.pledgedCents : stats.balanceCents)}</b>
+              <span>{site.collective.pending ? 'pledged to the prize pool so far' : 'in the prize pool right now'}</span>
+            </a>
+          )}
+          {builderCount !== null && (
+            <a class="hm-crew" href="/hackathon/builders" aria-label={`${builderCount} of ${need} builders have joined`}>
+              <span class="hm-crew-bricks" aria-hidden="true">
+                {Array.from({ length: Math.min(need, 100) }, (_, i) => <i class={i < Math.round((Math.min(builderCount, need) / need) * Math.min(need, 100)) ? 'on' : undefined}></i>)}
+              </span>
+              <span class="hm-crew-n"><b class="num">{builderCount}</b> of {need} builders in. Each brick is a seat.</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap pf-section">
+      <div class="pf-head-row">
+        <div style="display:grid;gap:10px">
+          <h2 class="pf-h2">What do you pay for?</h2>
+          <p class="lede">The everyday subscriptions, and the open-source projects people use in their place.</p>
+        </div>
+        <a class="key key-milk key-sm" href="/free-alternatives">All {products.length} paid tools</a>
+      </div>
+      {featured.length ? (
+        <div class="hm-pay">
+          {featured.map((p, i) => (
+            <a class={`pf-brick ${paints[i % 6]}`} href={`/free-alternatives/${p.slug}`}>
+              <span class="hm-pay-top"><b>{p.name}</b>{priceLabel(p.price) && <s>{priceLabel(p.price)!.replace('about ', '')}</s>}</span>
+              <span class="hm-pay-what">{p.blurb}</span>
+              <span class="hm-pay-free">
+                {leadFree.get(p.slug) ? <>Free: <b>{leadFree.get(p.slug)}</b>{p.freeOptions > 1 && ` and ${p.freeOptions - 1} more`}</> : `${p.freeOptions} free ${p.freeOptions === 1 ? 'alternative' : 'alternatives'}`}
+              </span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="pf-empty"><p>The directory is filling up from GitHub.</p></div>
+      )}
+    </section>
+
+    <section class="pf-band hm-explore" aria-labelledby="explore-h">
+      <div class="wrap pf-section">
+        <div class="pf-head-row">
+          <div style="display:grid;gap:10px">
+            <h2 id="explore-h" class="pf-h2">Explore all {platform?.projects.toLocaleString('en-US') ?? ''} projects.</h2>
+            <p class="lede">Every open-source project we follow on GitHub, with its stars, license, contributors and what it needs help with. Filter by what it replaces, topic or license.</p>
+          </div>
+          <a class="key key-big" href="/explore">Open Explore</a>
+        </div>
+        <ul class="hm-cats">
+          {exploreCats.map((c, i) => (
+            <li><a class={paints[i % 6]} href={`/explore?category=${encodeURIComponent(c.name)}`}><b>{c.name}</b><span class="num">{c.free} free</span></a></li>
+          ))}
+        </ul>
+        {topProjects.length > 0 && (
+          <>
+            <h3 class="pf-h3" style="margin-top:14px">The ones people switch to most</h3>
+            <div class="pf-grid">
+              {topProjects.map((p) => <ProjectCard {...p} />)}
+            </div>
+          </>
+        )}
+        {topTopics.length > 0 && (
+          <div class="pf-chips" style="align-items:center;margin-top:6px">
+            <span class="muted small" style="font-weight:700">By topic</span>
+            {topTopics.map((t) => <a class="chip" href={`/explore?show=all&topic=${t.slug}`}>{t.name} <span class="muted num">{t.count}</span></a>)}
+            <a class="chip" href="/topics">All topics</a>
+          </div>
+        )}
+      </div>
+    </section>
+
+    {
+      help.length > 0 && (
+        <section class="wrap pf-section">
+          <div style="display:grid;gap:10px">
+            <h2 class="pf-h2">Want to build? Start here.</h2>
+            <p class="lede">Open issues the maintainers of free alternatives asked for help with. Pick one and open a pull request.</p>
+          </div>
+          <div class="pf-grid pf-grid-wide">
+            {help.map((i, n) => (
+              <a class={`pf-brick ${paints[(n + 2) % 6]}`} href={i.url} rel="noopener">
+                <small>{i.repo} · {i.label}</small>
+                <b style="font-size:1.2rem">{i.title}</b>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      handoffs.length > 0 && (
+        <section class="wrap pf-section pf-section-tight">
+          <div style="display:grid;gap:10px">
+            <h2 class="pf-h2">Looking for a new owner.</h2>
+            <p class="lede">Builders moving on from something they started, on their own terms. Pick it up and carry it forward.</p>
+          </div>
+          <ul class="pf-list">
+            {handoffs.map((h) => <li class="pf-row-flat"><div><a href={h.href}>{h.title}</a><div class="muted small">Offered by @{h.by}</div></div></li>)}
           </ul>
-        </div>
-      </section>
+        </section>
+      )
+    }
 
-      <section class="ask" aria-labelledby="ask-h">
-        <div class="wrap">
-          <div class="split-head">
-            <h2 id="ask-h" class="section-title">It needs people. Here is how to help.</h2>
+    <section class="pf-band hm-why" aria-labelledby="why-h">
+      <div class="wrap pf-section">
+        <div class="hm-why-top">
+          <div class="hm-why-say">
+            <h2 id="why-h" class="pf-h2">Finding the gap is half of it. The hackathon builds it.</h2>
             <p class="lede">
-              This is happening, and the dates are announced as soon as enough builders are in.
-              It needs builders, a few people to help run it fairly, and sponsors. Pick whatever
-              fits. Following along counts.
+              Antipaywall exists to find software people pay for that has no good free version. The hackathon is how those gaps get filled:
+              each season the most wanted ideas become the briefs, builders get one week, and the builders themselves vote on who wins the prize pool.
             </p>
-          </div>
-          <ul class="ask-row">
-            {
-              WAYS.map((w) => (
-                <li>
-                  <a class={`ask-key ${w.paint}`} href={w.href}>
-                    <strong>{w.label}</strong>
-                    <span>{w.blurb}</span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-      </section>
-
-      <section class="pool" aria-labelledby="pool-h">
-        <div class="wrap pool-grid">
-          <div class="pool-left">
-            <h2 id="pool-h" class="section-title">Every dollar, out in the open.</h2>
-            <p class="lede">
-              The prize pool is whatever the community puts in. These figures are counted from
-              what people enter on this site, each time the page loads. Once the pool opens, its
-              total will be read from the holder's public ledger. A pledge is a public promise,
-              not a payment.
-            </p>
-            {stats && <div class="figure-box total"><p class="figure num" style={`--chars:${headline.length}`}>{headline}</p></div>}
-            <p class:list={["total-l", !stats && "total-off"]}>{stats ? (pending ? "pledged so far" : "in the pool right now") : "The numbers are unavailable right now. Nothing has been lost."}</p>
-            <dl class="mini">
-              <div><dt>Builders joined</dt><dd class="num">{show(stats?.builders, String)}</dd></div>
-              {
-                pending ? (
-                  <div><dt>Paid in so far</dt><dd class="num">$0. The pool is not open for payments yet</dd></div>
-                ) : (
-                  <div><dt>Pledged, not yet paid</dt><dd class="num">{show(stats?.pledgedCents, usdCents)}</dd></div>
-                )
-              }
-              {
-                organizer ? (
-                  <div>
-                    <dt>Organizer's pledge</dt>
-                    <dd class="num">{organizerPledge(organizer)}</dd>
-                  </div>
-                ) : null
-              }
-            </dl>
-          </div>
-
-          <div class="ledger" role="region" aria-label="Pledges">
-            <div class="ledger-head">
-              <p>Pledges</p>
-              <p class="ledger-live"><span class="pulse"></span>Promises, not payments</p>
-            </div>
-            <div class="ledger-cols" aria-hidden="true">
-              <span>From</span><span></span><span>Amount</span>
-            </div>
-            {
-              recent && recent.length ? (
-                <ul class="ledger-list">
-                  {recent.map((p) => (
-                    <li>
-                      <PledgeWho pledge={p} />
-                      <span class="tag-pledge">pledged</span>
-                      <span class="amt num">{usdCents(p.amount_cents)}</span>
-                    </li>
-                  ))}
-                  <li class="ledger-more"><a href="/pool">See everything</a><a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a></li>
-                </ul>
-              ) : (
-                <>
-                  <ul class="ledger-rows" aria-hidden="true">
-                    {[1, 2, 3, 4, 5].map((i) => <li><span class={`dot p${i}`}></span><span></span><span></span><span></span></li>)}
-                  </ul>
-                  <div class="ledger-empty">
-                    <p class="ledger-empty-t">The first line is open.</p>
-                    <p>
-                      {pending
-                        ? 'The pool is not open for payments yet. Until it is, you can pledge. Pledges are listed publicly and never counted as money in the pool.'
-                        : 'Pledges are public promises. They are listed here and never counted as money in the pool.'}
-                    </p>
-                    <a class="key" href="/fund">{pending ? 'Make a pledge' : 'Back the pool'}</a>
-                  </div>
-                </>
-              )
-            }
-            <p class="ledger-foot">
-              {fee.none} <a href="/pool">Who will hold the money</a>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="why" aria-labelledby="why-h">
-        <div class="wrap why-grid">
-          <div class="why-brief">
-            <h2 id="why-h" class="section-title">Build the free version of something people overpay for.</h2>
-            <p class="lede">
-              That is the whole brief. Pick something people would otherwise pay for and build the
-              free, open-source version. You get {shape.build}, and one feature of a bigger product
-              is a fair scope.
-            </p>
-            <div class="actions">
-              <a class="key key-big" href="/rules">Read the rules</a>
-              <a class="key key-big key-milk" href="/ideas">See what people want built</a>
+            <p class="lede">Season 1 is the first. Its dates are set once {need} builders are in.</p>
+            <div class="pf-chips">
+              <a class="key key-marigold" href="/hackathon/join">Join Season 1</a>
+              <a class="key key-milk" href="/hackathon">How the hackathon works</a>
             </div>
           </div>
-          <div class="why-beliefs">
-            <h3>Why we are doing it this way</h3>
-            <ul>
-              {
-                beliefs.map(([t, d], i) => (
-                  <li class={`p${[4, 3, 2][i]}`}>
-                    <strong>{t}</strong>
-                    <span>{d}</span>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="sponsors" aria-labelledby="sponsors-h">
-        <div class="wrap">
-          <h2 id="sponsors-h" class="section-title">{sponsors && sponsors.length ? 'Sponsors.' : 'Sponsor spots are open.'}</h2>
-          <p class="lede">
-            Sponsors put money into the same public pool as everyone else, or put up a bounty for
-            one thing they want built. They get their name here. They get no say in the main prizes.
-          </p>
-          <Sponsors sponsors={sponsors} />
-        </div>
-      </section>
-
-      <section class="ideas" aria-labelledby="ideas-h">
-        <div class="wrap ideas-grid">
-          <div>
-            <h2 id="ideas-h" class="section-title">Wish something was free? Say so.</h2>
-            <p class="lede">
-              Ideas tell builders what people actually want. Post one, or heart the ones you would
-              use. They carry no money and no prize of their own.
-            </p>
-            <div class="actions">
-              <a class="key key-big key-tomato" href="/ideas">Post an idea</a>
-              <a class="key key-big key-milk" href="/ideas">See what people want</a>
-            </div>
-          </div>
-          <ol class="idea-steps">
-            {
-              ideaSteps.map(([t, d], i) => (
-                <li class={`p${[5, 3, 2][i]}`}>
-                  <strong>{t}</strong>
-                  <span>{d}</span>
-                </li>
-              ))
-            }
+          <ol class="hm-why-steps">
+            <li><b>People say what's missing</b><span>Ideas and "me too"s show what's wanted most.</span></li>
+            <li><b>The top ideas become briefs</b><span>Each season takes on the most wanted gaps.</span></li>
+            <li><b>Builders get one week</b><span>Free to enter. Everything built is open source.</span></li>
+            <li><b>Builders vote, winners are paid in public</b><span>The community funds the pool. Antipaywall takes nothing.</span></li>
           </ol>
         </div>
-      </section>
+        {builders && builders.length > 0 && (
+          <>
+            <h3 class="pf-h3" style="margin-top:18px">{builderCount ?? builders.length} builders are in for Season 1</h3>
+            <ul class="crew-list hm-crew-grid">
+              {builders.map((b) => <BuilderTile builder={b} badge={builderBadges.get(b.id)} />)}
+              <li class="hm-crew-more"><a class="tile tile-more" href="/hackathon/builders"><span>{builderCount ?? ''}</span>See every builder</a></li>
+            </ul>
+          </>
+        )}
+      </div>
+    </section>
 
-      <section class="how" aria-labelledby="how-h">
-        <div class="wrap">
-          <h2 id="how-h" class="section-title">Two lanes. They only meet at the payout.</h2>
-          <div class="lanes">
-            <div class="lane p3">
-              <h3>The money</h3>
-              <ol>
-                {money.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
-              </ol>
-            </div>
-            <div class="lane p6">
-              <h3>The builders</h3>
-              <ol>
-                {builders.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
-              </ol>
-            </div>
-          </div>
-          <svg class="join" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-            <path class="j1" d="M25 0 C25 12, 50 8, 50 20"></path>
-            <path class="j2" d="M75 0 C75 12, 50 8, 50 20"></path>
-          </svg>
-          <div class="meet">
-            <div class="meet-step">
-              <strong>A named panel will check for cheating</strong>
-              <span>Volunteers will review the top entries and anything flagged. They won't rank anyone, and their reasoning will be published.</span>
-            </div>
-            <div class="meet-step meet-pay">
-              <strong>Winners will be paid</strong>
-              <span>Straight from the pool by its holder, with every payout public.</span>
-            </div>
-          </div>
+    <section class="wrap hm-how" aria-labelledby="how-h">
+      <div class="hm-how-head">
+        <h2 id="how-h" class="pf-h2">Every search lays a brick.</h2>
+        <p class="lede">Nobody runs a queue or picks winners behind a door. What people look for, back and build is what moves.</p>
+      </div>
+      <ol class="hm-stairs">
+        <li class="p4"><div class="hm-step"><b>Find</b><span>Search a tool you pay for. The free, open-source versions come straight from GitHub.</span></div></li>
+        <li class="p2"><div class="hm-step"><b>Say what's missing</b><span>Mark what you use and what you still need. No code, no account to browse.</span></div><i></i></li>
+        <li class="p3"><div class="hm-step"><b>Help build it</b><span>Every project lists what it needs help with. The most wanted gaps become hackathon briefs.</span></div><i></i><i></i></li>
+        <li class="p1"><div class="hm-step"><b>It's free for everyone</b><span>What gets built is open source. One more thing nobody has to pay for.</span></div><i></i><i></i><i></i></li>
+      </ol>
+      <p class="muted hm-how-note">The catalog, the matching and the GitHub sync are all in <a class="link" href={site.repo} rel="noopener">the public repo</a>, and the data is free to download.</p>
+    </section>
+
+    <section class="hm-end" aria-labelledby="end-h">
+      <div class="wrap hm-end-in">
+        <h2 id="end-h">What are you still paying for?</h2>
+        <p class="lede">Look it up. If a free version exists, it's here. If it doesn't, say so, and the people who can build it will see it.</p>
+        <InstantSearch id="q2" big placeholder="Type a tool you pay for" button="Find it free" />
+        <div class="hm-end-or">
+          {!Astro.locals.person && <a class="key key-milk" href="/signin?next=%2F">Sign in with GitHub</a>}
+          <a class="key key-milk" href="/ideas/new">Post something you want</a>
+          <a class="key key-milk" href="/explore">Explore projects</a>
         </div>
-      </section>
-
-      <section class="split" aria-labelledby="split-h">
-        <div class="wrap">
-          <div class="split-head">
-            <h2 id="split-h" class="section-title">Nine winners, not one.</h2>
-            <p class="lede">
-              Prizes are shares of whatever the pool reaches, as set out in the rules.
-            </p>
-          </div>
-          <ul class="bar" aria-label="Prize split" data-grow>
-            {
-              split.map((s, i) => (
-                <li style={`--p-pct:${s.pct};--i:${i}`} class={s.paint}>
-                  <span class="bar-pct num">{s.pct}<i>%</i></span>
-                  <span class="bar-label">{s.label}</span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-      </section>
-
-      <section class="compare" aria-labelledby="cmp-h">
-        <div class="wrap">
-          <h2 id="cmp-h" class="section-title">Side by side.</h2>
-          <p class="lede">
-            Another hackathon is running this month. Here is how the two are set up. Its column
-            is taken from <a class="link" href="https://www.ship-or-die.com/100k-hackathon/rules" rel="noopener">its published rules</a>{' '}
-            as we read them on November 11, 2026; ours describes how this one will run. Pick the
-            one that suits you, or enter both. If we got something wrong, tell us and we will
-            fix it.
-          </p>
-          <table role="table">
-            <thead role="rowgroup">
-              <tr role="row">
-                <td role="cell"></td>
-                <th role="columnheader" scope="col">{other}</th>
-                <th role="columnheader" scope="col" class="ours">{site.name}</th>
-              </tr>
-            </thead>
-            <tbody role="rowgroup">
-              {
-                compare.map(([k, a, b]) => (
-                  <tr role="row">
-                    <th role="rowheader" scope="row">{k}</th>
-                    <td role="cell"><span class="cell-label" aria-hidden="true">{other}</span>{a}</td>
-                    <td role="cell" class="ours"><span class="cell-label" aria-hidden="true">{site.name}</span>{b}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="closer">
-        <div class="wrap">
-          <h2 class="display closer-title">Pick a paywall. Take a brick out.</h2>
-          <div class="actions">
-            <a class="key key-big key-marigold" href="/join/build">Join with GitHub</a>
-            <a class="key key-big key-milk" href="/fund">Back the pool</a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="foot">
-      <SiteFooter />
-      <p class="foot-mark" aria-hidden="true"><span>anti</span>paywall</p>
-    </footer>
-
-    <script>
-      // The prize bars rise once, when they scroll into view.
-      const bar = document.querySelector('[data-grow]');
-      if (bar && 'IntersectionObserver' in window) {
-        bar.classList.add('wait');
-        new IntersectionObserver(
-          (entries, io) => {
-            if (entries.some((e) => e.isIntersecting)) {
-              bar.classList.remove('wait');
-              io.disconnect();
-            }
-          },
-          { threshold: 0.35 },
-        ).observe(bar);
-      }
-    </script>
-    <VercelAnalytics />
-  </body>
-</html>
+      </div>
+    </section>
+  </div>
+</Platform>

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: klaviyo
+name: Klaviyo
+category: Email and newsletters
+price:
+  cents: 2000
+  period: month
+blurb: Email and text marketing for online shops.
+words:
+  - ecommerce email
+  - sms marketing
+  - abandoned cart
+topics:
+  - email-marketing
+  - marketing-automation
+  - ecommerce
+  - klaviyo-alternative
+search_terms:
+  - klaviyo alternative
+  - open source ecommerce email
+aliases: []
+excludes: []

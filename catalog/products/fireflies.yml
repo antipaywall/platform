@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "fireflies"
+name: "Fireflies.ai"
+category: "AI tools"
+price: { cents: 1000, period: month }
+blurb: "AI notes and transcripts for meetings."
+words: ["meeting notes", "transcription", "ai notetaker", "summaries"]
+topics: ["transcription", "meeting-notes", "fireflies-alternative"]
+search_terms: ["Fireflies.ai alternative", "open source meeting notes ai"]
+aliases: ["fireflies.ai"]
+excludes: []

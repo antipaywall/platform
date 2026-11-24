@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "delighted"
+name: "Delighted"
+category: "Forms and surveys"
+price: { cents: 22400, period: month }
+blurb: "NPS and customer feedback surveys."
+words: ["nps", "customer satisfaction", "feedback", "surveys"]
+topics: ["surveys", "nps", "delighted-alternative"]
+search_terms: ["Delighted alternative", "open source nps survey"]
+aliases: ["delighted.com"]
+excludes: []

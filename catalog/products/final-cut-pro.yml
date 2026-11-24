@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: final-cut-pro
+name: Final Cut Pro
+category: Photos and video
+price:
+  cents: 29999
+  period: once
+blurb: Video editing for the Mac.
+words:
+  - video editing
+  - film editing
+  - timeline editor
+topics:
+  - video-editor
+  - video-editing
+  - non-linear-editor
+  - final-cut-pro-alternative
+search_terms:
+  - final cut pro alternative
+  - open source video editing
+aliases: []
+excludes: []

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: balsamiq
+name: Balsamiq
+category: Design
+price:
+  cents: 1200
+  period: month
+blurb: Quick, rough wireframes for apps and sites.
+words:
+  - wireframes
+  - mockups
+  - low fidelity
+topics:
+  - wireframe
+  - mockup
+  - prototyping
+  - balsamiq-alternative
+search_terms:
+  - balsamiq alternative
+  - open source wireframes
+aliases: []
+excludes: []

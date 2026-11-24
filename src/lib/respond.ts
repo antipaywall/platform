@@ -38,7 +38,80 @@ export const MESSAGES = {
   organize_saved: { kind: 'ok', text: 'Thank you. The organizer will be in touch by email.' },
   bad_inquiry: { kind: 'error', text: 'Check the form: a company, your name, an optional whole-dollar amount, and a message under 1,000 characters.' },
   inquiry_saved: { kind: 'ok', text: 'Thank you. A person will reply to the address you gave.' },
+  bad_about: { kind: 'error', text: 'Keep "About" under 400 characters.' },
+  bad_skills: { kind: 'error', text: 'Add up to 8 skills, separated by commas, each under 30 characters.' },
+  bad_team_note: { kind: 'error', text: 'Keep the team note under 140 characters.' },
+  too_many_repos: { kind: 'error', text: 'Pick up to 6 repositories.' },
+  profile_saved: { kind: 'ok', text: 'Profile saved.' },
+  repos_saved: { kind: 'ok', text: 'Featured repositories saved.' },
+  need_delete_confirm: { kind: 'error', text: 'Tick the box to confirm you want your account deleted.' },
+  organizer_cannot_delete: { kind: 'error', text: "The organizer's account can't be deleted from here." },
+  account_deleted: { kind: 'ok', text: 'Your account and everything tied to it is deleted.' },
+  need_post: { kind: 'error', text: 'Write something first.' },
+  bad_post: { kind: 'error', text: 'Keep it under 500 characters.' },
+  need_kind: { kind: 'error', text: 'Pick what kind of post this is: an update, looking for a team, a question, or something you shipped.' },
+  need_checks: { kind: 'error', text: 'Posting is open to anyone who passes the two builder checks.' },
+  posting_off: { kind: 'error', text: 'Your posting has been turned off by the organizer.' },
+  too_many_posts: { kind: 'error', text: 'That is the most posts one person can make in a day. Try again tomorrow.' },
+  too_many_replies: { kind: 'error', text: 'That is the most replies one person can make in a day. Try again tomorrow.' },
+  post_gone: { kind: 'error', text: 'That post is no longer there.' },
+  posted: { kind: 'ok', text: 'Posted.' },
+  replied: { kind: 'ok', text: 'Replied.' },
+  reported: { kind: 'ok', text: 'Thanks. The organizer will look at it.' },
+  post_deleted: { kind: 'ok', text: 'Post deleted.' },
+  no_such_person: { kind: 'error', text: 'Nobody with that username has signed in.' },
   done: { kind: 'ok', text: 'Done.' },
+  not_a_suggestion: { kind: 'error', text: "That isn't an open suggestion for this idea." },
+  need_username: { kind: 'error', text: 'Choose your username first.' },
+  offered: { kind: 'ok', text: 'It now shows as looking for a new owner, with your terms.' },
+  already_offered: { kind: 'error', text: 'This is already looking for a new owner.' },
+  not_yours_to_offer: { kind: 'error', text: 'Only the person who started this can hand it off.' },
+  interest_sent: { kind: 'ok', text: "They'll see you'd take it over." },
+  handed_off: { kind: 'ok', text: 'Handed off. Thank you for passing it on.' },
+  app_not_connected: { kind: 'error', text: "Suggesting changes needs the Antipaywall GitHub App, which isn't connected here yet." },
+  need_summary: { kind: 'error', text: 'Say what you changed, in a line.' },
+  bad_idea_file: { kind: 'error', text: 'Keep the part between the dashes as it was (the title and status can change; who started it cannot).' },
+  no_change: { kind: 'error', text: "That's the same as the idea now. Change something first." },
+  suggestion_sent: { kind: 'ok', text: 'Your suggestion is sent. The person who started the idea decides.' },
+  suggestion_accepted: { kind: 'ok', text: 'Accepted. The idea is updated, and the suggester is credited.' },
+  suggestion_declined: { kind: 'ok', text: 'Declined, with a thank-you to the suggester.' },
+  not_yours_to_decide: { kind: 'error', text: 'Only the person who started this idea can decide on suggestions.' },
+  merge_failed: { kind: 'error', text: "GitHub couldn't merge it, usually because another change came first. The suggester can update it." },
+  entry_started: { kind: 'ok', text: "You're a Season 1 builder. Your entry is saved." },
+  entry_removed: { kind: 'ok', text: 'Your entry is removed. You still show as interested in Season 1.' },
+  entry_join_first: { kind: 'error', text: 'Join as a builder first, then start your entry.' },
+  entry_needs_github: { kind: 'error', text: 'Entries are public GitHub repos. Connect your GitHub account first.' },
+  entry_bad_repo: { kind: 'error', text: 'Give the repo as owner/name, or its github.com address.' },
+  entry_private: { kind: 'error', text: 'That repo is private. Entries must be public.' },
+  entry_not_yours: { kind: 'error', text: "That repo isn't owned by your GitHub account." },
+  entry_not_found: { kind: 'error', text: "We couldn't find that repo on GitHub." },
+  entry_taken: { kind: 'error', text: "Someone else already entered that repo. If you're building it together, each start your own entry or ask them." },
+  username_taken: { kind: 'error', text: 'That username is taken here. Pick another.' },
+  username_on_github: { kind: 'error', text: "That's someone's username on GitHub, so it's kept for them. Pick another." },
+  bad_username: { kind: 'error', text: 'Use letters, numbers and single dashes, up to 39 characters.' },
+  username_saved: { kind: 'ok', text: 'Your username is set.' },
+  link_failed: { kind: 'error', text: "Connecting GitHub didn't finish. Try again, or pick a username instead." },
+  bad_pay: { kind: 'error', text: 'Pick one of the amounts. It is only a signal: nobody is charged.' },
+  signal_saved: { kind: 'ok', text: 'Thanks. Builders can see where people stand.' },
+  signin_for_follow: { kind: 'error', text: 'Following needs a GitHub or GitLab sign-in for now. Your signals still count without one.' },
+  claimed: { kind: 'ok', text: "You're on it. Others building it can find you here." },
+  unclaimed: { kind: 'ok', text: "You're no longer listed as building this." },
+  merged: { kind: 'ok', text: 'Joined. Your support counts on this one now.' },
+  unmerged: { kind: 'ok', text: 'Split back out. They will not be joined again.' },
+  bad_repo_url: { kind: 'error', text: 'The repo address must start with https://github.com/ or https://gitlab.com/.' },
+  bad_claim_note: { kind: 'error', text: 'Keep the note under 140 characters.' },
+  need_builder_signin: { kind: 'error', text: 'Claiming is for builders. Sign in with GitHub or GitLab first.' },
+  mail_saved: { kind: 'ok', text: 'Saved. Send yourself a test before sending it out.' },
+  mail_bad: { kind: 'error', text: 'Give it a subject (up to 150 characters), the email itself (up to 20,000), and who it goes to.' },
+  mail_tested: { kind: 'ok', text: 'A test copy is on its way to your test address. Read it there before you send.' },
+  mail_no_test_address: { kind: 'error', text: 'No test address is set: add MAIL_TEST_TO in the hosting settings.' },
+  mail_test_failed: { kind: 'error', text: "Resend didn't take the test copy. Try again in a minute." },
+  mail_needs_test: { kind: 'error', text: 'Send yourself a test of this exact text first, and tick the box.' },
+  mail_count_changed: { kind: 'error', text: 'The number of people it goes to changed since the page loaded. Check it and send again.' },
+  mail_locked: { kind: 'error', text: 'This email has already gone out to some people, so it can no longer be changed.' },
+  mail_sent: { kind: 'ok', text: 'Sent to everyone it was for.' },
+  mail_partial: { kind: 'error', text: 'Some copies went out, then sending stopped. Press send again to reach the rest; nobody gets it twice.' },
+  mail_no_key: { kind: 'error', text: 'Email is not set up here: RESEND_API_KEY is missing.' },
 } as const;
 
 export type MessageCode = keyof typeof MESSAGES;
@@ -50,7 +123,19 @@ export function back(path: string, code: MessageCode): Response {
   return new Response(null, { status: 303, headers: { location: `${before}${sep}m=${code}${hash ? `#${hash}` : ''}` } });
 }
 
+/**
+ * Where to send someone back to after a post, a brick or a follow: one of our own pages, with
+ * an optional plain query and #section. Never `//host`, never a scheme. Any old message is dropped.
+ */
+export function safeBack(v: unknown, fallback = '/feed'): string {
+  if (typeof v !== 'string' || v.length > 300 || !/^\/(?!\/)[\w\-/.%]*(\?[\w=&\-%.]*)?(#[\w-]+)?$/.test(v)) return fallback;
+  const [pathQuery, hash] = v.split('#', 2);
+  const [path, query = ''] = pathQuery.split('?', 2);
+  const kept = query.split('&').filter((kv) => kv && !kv.startsWith('m=')).join('&');
+  return `${path}${kept ? `?${kept}` : ''}${hash ? `#${hash}` : ''}`;
+}
+
 /** Only our own paths: one leading slash, then letters, digits, dashes and slashes. Never `//host`. */
-export function safeNext(v: string | null, fallback = '/join'): string {
+export function safeNext(v: string | null, fallback = '/hackathon/join'): string {
   return v && /^\/(?!\/)[\w\-/]*$/.test(v) ? v : fallback;
 }

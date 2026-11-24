@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "duda"
+name: "Duda"
+category: "Websites"
+price: { cents: 2500, period: month }
+blurb: "A website builder for agencies."
+words: ["website builder", "agency", "client sites", "templates"]
+topics: ["website-builder", "cms", "duda-alternative"]
+search_terms: ["Duda alternative", "open source website builder"]
+aliases: ["duda.co"]
+excludes: []

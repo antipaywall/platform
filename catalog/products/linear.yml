@@ -1,0 +1,23 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: linear
+name: Linear
+category: Project management
+price:
+  cents: 800
+  period: month
+blurb: Issue tracking for software teams.
+words:
+  - issue tracker
+  - bug tracker
+  - sprints
+  - roadmap
+topics:
+  - issue-tracker
+  - project-management
+  - bug-tracker
+  - linear-alternative
+search_terms:
+  - linear alternative
+  - open source issue tracker
+aliases: []
+excludes: []

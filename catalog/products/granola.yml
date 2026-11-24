@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "granola"
+name: "Granola"
+category: "AI tools"
+price: { cents: 1400, period: month }
+blurb: "AI notes for your meetings without a bot."
+words: ["meeting notes", "ai notes", "transcription", "summaries"]
+topics: ["transcription", "meeting-notes", "granola-alternative"]
+search_terms: ["Granola alternative", "open source meeting notes ai"]
+aliases: ["granola.ai"]
+excludes: []

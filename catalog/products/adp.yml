@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "adp"
+name: "ADP Workforce Now"
+category: "HR and hiring"
+price: { cents: 5900, period: month }
+blurb: "Payroll and HR for businesses."
+words: ["payroll", "hr", "benefits", "time"]
+topics: ["payroll", "hr", "adp-alternative"]
+search_terms: ["ADP Workforce Now alternative", "open source payroll"]
+aliases: ["adp.com"]
+excludes: []

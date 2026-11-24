@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: stata
+name: Stata
+category: Science and maths
+price:
+  cents: 4800
+  period: month
+blurb: Statistics and data analysis for researchers.
+words:
+  - statistics
+  - econometrics
+  - data analysis
+topics:
+  - statistics
+  - econometrics
+  - data-analysis
+  - stata-alternative
+search_terms:
+  - stata alternative
+  - open source statistics
+aliases: []
+excludes: []

@@ -7,6 +7,8 @@ export const site = {
   repo: 'https://github.com/antipaywall/platform',
   // The length of the event is fixed. Its dates are announced later.
   shape: { buildDays: 7, votingDays: 3 },
+  // The Top sort on /feed gives "Looking for a team" and "Shipped" a small lift while this is on. Turn it on for build week.
+  feed: { boostBuildWeek: false },
   // Two checks, both read from the GitHub or GitLab profile at sign-in. They make throwaway accounts
   // more expensive to create. They are not proof of identity and do not claim to be.
   eligibility: { minAccountAgeDays: 30, minContributions12mo: 10 },

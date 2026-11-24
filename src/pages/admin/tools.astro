@@ -1,0 +1,93 @@
+---
+// Tools people looked up by pasting a website. Organizer only: what each lookup found, how many
+// people asked, and whether its page is listed on /find, left reachable by address, or hidden.
+import AdminNav from '../../components/AdminNav.astro';
+import Admin from '../../layouts/Admin.astro';
+import { when } from '../../lib/adminNav';
+import { isAdmin } from '../../lib/db';
+import { dollars, shortCount } from '../../lib/format';
+import { SOLID_STARS } from '../../lib/products';
+import { adminClient } from '../../lib/supabase';
+
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+const db = adminClient()!;
+const { data, error } = await db
+  .from('asked_tools')
+  .select('domain, name, tagline, price_cents, price_period, phrases, repos, best_stars, askers, status, read_ok, fetched_at, created_at')
+  .order('created_at', { ascending: false })
+  .limit(500);
+type Row = { domain: string; name: string; tagline: string; price_cents: number | null; price_period: string | null; phrases: string[]; repos: { fullName: string; stars: number }[]; best_stars: number; askers: string[]; status: 'new' | 'listed' | 'hidden'; read_ok: boolean; fetched_at: string; created_at: string };
+const rows = ((data ?? []) as Row[]).sort((a, b) => b.askers.length - a.askers.length || b.created_at.localeCompare(a.created_at));
+const groups = [
+  { key: 'new', title: 'Waiting for a decision', note: 'Reachable by address and in search, but not listed on the lookup page and hidden from search engines.' },
+  { key: 'listed', title: 'Listed', note: 'Shown on the lookup page under “Tools people asked about”.' },
+  { key: 'hidden', title: 'Hidden', note: 'The page is gone and the tool is left out of search. Asking for the same address again is refused.' },
+] as const;
+const done: Record<string, string> = { list: 'Listed.', hide: 'Hidden.', unlist: 'Moved back to waiting.', refresh: 'Looked up again.' };
+const message = done[Astro.url.searchParams.get('done') ?? ''];
+---
+
+<Admin heading="Looked-up tools">
+  <AdminNav slot="nav" />
+  <p class="admin-note">
+    Paid tools people looked up by pasting the tool's website. The site read each homepage once and searched GitHub with its own words; nothing here came from an AI model. A tool counts as a gap when its best match has under {shortCount(SOLID_STARS)} stars.
+  </p>
+  {message && <p class="flash flash-ok" role="status">{message}</p>}
+  {error && <p class="flash flash-error" role="alert">The list didn't load. Try again.</p>}
+
+  <div class="stack" style="margin-top:32px;gap:48px">
+    {
+      groups.map((g) => {
+        const list = rows.filter((r) => r.status === g.key);
+        return (
+          <section class="stack" id={g.key}>
+            <p class="h2">{g.title} ({list.length})</p>
+            <p class="muted small">{g.note}</p>
+            {list.length === 0 && <p class="muted">None.</p>}
+            {list.map((r) => (
+              <div class="card stack" id={r.domain}>
+                <div class="at-head">
+                  <span>
+                    <b class="at-name">{r.name}</b> <a class="link" href={`https://${r.domain}`} target="_blank" rel="noopener nofollow">{r.domain}</a>
+                  </span>
+                  <span class="muted small">
+                    {r.askers.length} {r.askers.length === 1 ? 'person' : 'people'} asked
+                    {r.price_cents != null && r.price_period && <>, from about {dollars(r.price_cents)} a {r.price_period}</>}
+                    , looked up {when(r.fetched_at)}
+                  </span>
+                </div>
+                <p>{r.read_ok ? r.tagline || 'The site gave no description.' : "The website couldn't be read; only its address is known."}</p>
+                <p class="muted small">
+                  {r.repos.length === 0
+                    ? 'Found nothing on GitHub.'
+                    : <>{r.best_stars >= SOLID_STARS ? 'Has a free version people rely on' : 'A gap'}: {r.repos.length} found, the closest {r.repos.slice(0, 3).map((h) => `${h.fullName} (★ ${shortCount(h.stars)})`).join(', ')}.</>}
+                  {r.phrases.length > 0 && <> Searched for “{r.phrases.slice(0, 2).join('”, “')}”.</>}
+                </p>
+                <div class="at-actions">
+                  {r.status !== 'hidden' && <a class="key key-milk key-sm" href={`/find/${r.domain}`}>See its page</a>}
+                  {r.status !== 'listed' && (
+                    <form method="post" action="/api/admin/tools"><input type="hidden" name="domain" value={r.domain} /><button class="key key-sm" name="action" value="list">List it</button></form>
+                  )}
+                  {r.status !== 'new' && (
+                    <form method="post" action="/api/admin/tools"><input type="hidden" name="domain" value={r.domain} /><button class="key key-milk key-sm" name="action" value="unlist">{r.status === 'hidden' ? 'Bring it back' : 'Stop listing it'}</button></form>
+                  )}
+                  {r.status !== 'hidden' && (
+                    <form method="post" action="/api/admin/tools"><input type="hidden" name="domain" value={r.domain} /><button class="key key-milk key-sm" name="action" value="hide">Hide it</button></form>
+                  )}
+                  <form method="post" action="/api/admin/tools"><input type="hidden" name="domain" value={r.domain} /><button class="link-button" name="action" value="refresh">Look it up again</button></form>
+                </div>
+              </div>
+            ))}
+          </section>
+        );
+      })
+    }
+  </div>
+</Admin>
+
+<style>
+  .at-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+  .at-name { font: 800 1.25rem/1.2 var(--display); letter-spacing: -0.01em; margin-right: 8px; }
+  .at-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .card:target { box-shadow: 0 0 0 2px var(--ink); }
+</style>

@@ -1,0 +1,22 @@
+# Added 2026-11-13 from a list of widely used paid software. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: cleanmymac
+name: CleanMyMac
+category: Other
+price:
+  cents: 3995
+  period: month
+blurb: Cleans up and speeds up a Mac.
+words:
+  - mac cleaner
+  - disk cleanup
+  - uninstaller
+topics:
+  - macos
+  - disk-cleaner
+  - cleaner
+  - cleanmymac-alternative
+search_terms:
+  - cleanmymac alternative
+  - open source mac cleaner
+aliases: []
+excludes: []

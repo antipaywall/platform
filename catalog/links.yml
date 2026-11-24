@@ -1,0 +1,3021 @@
+# Links between projects and paid products, made or removed by hand, each with a reason.
+# - project: owner/repo
+#   product: calendly
+#   action: add        # or remove
+#   reason: Does the same job; tagged under a topic we don't track.
+- project: open-webui/open-webui
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ollama/ollama
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: janhq/jan
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: lobehub/lobehub
+  product: chatgpt
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GNOME/gimp
+  product: photoshop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/krita
+  product: photoshop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mattermost/mattermost
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zulip/zulip
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: RocketChat/Rocket.Chat
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: element-hq/element-web
+  product: slack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: coollabsio/coolify
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: caprover/caprover
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dokku/dokku
+  product: heroku
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: makeplane/plane
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: taigaio/taiga-back
+  product: jira
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Kong/insomnia
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: usebruno/bruno
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: hoppscotch/hoppscotch
+  product: postman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LibreOffice/core
+  product: microsoft-365
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ONLYOFFICE/DocumentServer
+  product: microsoft-365
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: coollabsio/coolify
+  product: vercel
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Dokploy/dokploy
+  product: vercel
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: AppFlowy-IO/AppFlowy
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: toeverything/AFFiNE
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: outline/outline
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: siyuan-note/siyuan
+  product: notion
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: navidrome/navidrome
+  product: spotify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jellyfin/jellyfin
+  product: spotify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: continuedev/continue
+  product: github-copilot
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: TabbyML/tabby
+  product: github-copilot
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zed-industries/zed
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: continuedev/continue
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: cline/cline
+  product: cursor
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: abiosoft/colima
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: podman-desktop/podman-desktop
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: rancher-sandbox/rancher-desktop
+  product: docker-desktop
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nextcloud/server
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: syncthing/syncthing
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: haiwen/seafile
+  product: dropbox
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: penpot/penpot
+  product: figma
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: grafana/grafana
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: SigNoz/signoz
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openobserve/openobserve
+  product: datadog
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: appsmithorg/appsmith
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ToolJet/ToolJet
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Budibase/budibase
+  product: retool
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: darktable-org/darktable
+  product: lightroom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: RawTherapee/RawTherapee
+  product: lightroom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: immich-app/immich
+  product: google-photos
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: photoprism/photoprism
+  product: google-photos
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jitsi/jitsi-meet
+  product: zoom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bigbluebutton/bigbluebutton
+  product: zoom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: juanfont/headscale
+  product: tailscale
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: netbirdio/netbird
+  product: tailscale
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nocodb/nocodb
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: baserow/baserow
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: teableio/teable
+  product: airtable
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: languagetool-org/languagetool
+  product: grammarly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Automattic/harper
+  product: grammarly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: medusajs/medusa
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: saleor/saleor
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bagisto/bagisto
+  product: shopify
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: formbricks/formbricks
+  product: typeform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: heyform/heyform
+  product: typeform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: twentyhq/twenty
+  product: salesforce
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: CapSoftware/Cap
+  product: loom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: keycloak/keycloak
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zitadel/zitadel
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: logto-io/logto
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: supertokens/supertokens-core
+  product: auth0
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: godotengine/godot
+  product: unity
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gnu-octave/octave
+  product: matlab
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: sympy/sympy
+  product: mathematica
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: laurent22/joplin
+  product: evernote
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: usememos/memos
+  product: evernote
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: outline/outline
+  product: confluence
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: BookStackApp/BookStack
+  product: confluence
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: wekan/wekan
+  product: trello
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: trello
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chatwoot/chatwoot
+  product: intercom
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: akaunting/akaunting
+  product: quickbooks
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: invoiceninja/invoiceninja
+  product: quickbooks
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: fatedier/frp
+  product: ngrok
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openziti/zrok
+  product: ngrok
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: docusealco/docuseal
+  product: docusign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenSignLabs/OpenSign
+  product: docusign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: n8n-io/n8n
+  product: zapier
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: activepieces/activepieces
+  product: zapier
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: TryGhost/Ghost
+  product: substack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: getsentry/self-hosted
+  product: sentry
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: luanti-org/luanti
+  product: minecraft
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Comfy-Org/ComfyUI
+  product: midjourney
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: AUTOMATIC1111/stable-diffusion-webui
+  product: midjourney
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dani-garcia/vaultwarden
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: keepassxreboot/keepassxc
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bitwarden/server
+  product: lastpass
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: psi-4ward/psitransfer
+  product: wetransfer
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: knadh/listmonk
+  product: mailchimp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mautic/mautic
+  product: mailchimp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LinkStackOrg/LinkStack
+  product: linktree
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: metabase/metabase
+  product: tableau
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: apache/superset
+  product: tableau
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: calcom/cal.diy
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: lukevella/rallly
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: alextselegidis/easyappointments
+  product: calendly
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Stirling-Tools/Stirling-PDF
+  product: adobe-acrobat
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GrapesJS/grapesjs
+  product: webflow
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: excalidraw/excalidraw
+  product: miro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: tldraw/tldraw
+  product: miro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: openreplay/openreplay
+  product: hotjar
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: PostHog/posthog
+  product: hotjar
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zammad/zammad
+  product: zendesk
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: freescout-help-desk/freescout
+  product: zendesk
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: todoist
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/kdenlive
+  product: premiere-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mltframework/shotcut
+  product: premiere-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nextcloud/server
+  product: google-workspace
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jellyfin/jellyfin
+  product: plex
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: towfiqi/serpbear
+  product: semrush
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: StJudeWasHere/seonaut
+  product: semrush
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: calcom/cal.diy
+  product: acuity-scheduling
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: alextselegidis/easyappointments
+  product: acuity-scheduling
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: audacity/audacity
+  product: adobe-audition
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Ardour/ardour
+  product: adobe-audition
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ospfranco/sol
+  product: alfred-powerpack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: oliverschwendener/ueli
+  product: alfred-powerpack
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: PostHog/posthog
+  product: amplitude
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Countly/countly-server
+  product: amplitude
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: excalidraw/excalidraw
+  product: balsamiq
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: penpot/penpot
+  product: balsamiq
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: evolus/pencil
+  product: balsamiq
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: orangehrm/orangehrm
+  product: bamboohr
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: frappe/hrms
+  product: bamboohr
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: makeplane/plane
+  product: basecamp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: opf/openproject
+  product: basecamp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: hcengineering/platform
+  product: basecamp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: laurent22/joplin
+  product: bear
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Zettlr/Zettlr
+  product: bear
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: appsmithorg/appsmith
+  product: bubble
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ToolJet/ToolJet
+  product: bubble
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Budibase/budibase
+  product: bubble
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: nocobase/nocobase
+  product: bubble
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GrapesJS/grapesjs
+  product: carrd
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GetPublii/Publii
+  product: carrd
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: killbill/killbill
+  product: chargebee
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: getlago/lago
+  product: chargebee
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: woodpecker-ci/woodpecker
+  product: circleci
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jenkinsci/jenkins
+  product: circleci
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: harness/harness
+  product: circleci
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: concourse/concourse
+  product: circleci
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: twentyhq/twenty
+  product: close
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: espocrm/espocrm
+  product: close
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: SuiteCRM/SuiteCRM
+  product: close
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: documenso/documenso
+  product: dropbox-sign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: docusealco/docuseal
+  product: dropbox-sign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenSignLabs/OpenSign
+  product: dropbox-sign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: trailofbits/algo
+  product: expressvpn
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OutlineFoundation/outline-server
+  product: expressvpn
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: wg-easy/wg-easy
+  product: expressvpn
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mail-in-a-box/mailinabox
+  product: hey
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mailcow/mailcow-dockerized
+  product: hey
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Mail-0/Zero
+  product: hey
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: penpot/penpot
+  product: invision
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: formbricks/formbricks
+  product: jotform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: heyform/heyform
+  product: jotform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpnForm/OpnForm
+  product: jotform
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gitroomhq/postiz-app
+  product: later
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: inovector/mixpost
+  product: later
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Cisco-Talos/clamav
+  product: malwarebytes
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: AppFlowy-IO/AppFlowy
+  product: notion-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: toeverything/AFFiNE
+  product: notion-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: khoj-ai/khoj
+  product: notion-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: syncthing/syncthing
+  product: obsidian-sync
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: vrtmrz/obsidian-livesync
+  product: obsidian-sync
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Vinzent03/obsidian-git
+  product: obsidian-sync
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: documenso/documenso
+  product: pandadoc
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: docusealco/docuseal
+  product: pandadoc
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenSignLabs/OpenSign
+  product: pandadoc
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: hakimel/reveal.js
+  product: prezi
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: impress/impress.js
+  product: prezi
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: slidevjs/slidev
+  product: prezi
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Ardour/ardour
+  product: pro-tools
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LMMS/lmms
+  product: pro-tools
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: audacity/audacity
+  product: pro-tools
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gitroomhq/postiz-app
+  product: sprout-social
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: inovector/mixpost
+  product: sprout-social
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: ticktick
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: super-productivity/super-productivity
+  product: ticktick
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: tasks/tasks
+  product: ticktick
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: upscayl/upscayl
+  product: topaz-photo-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: xinntao/Real-ESRGAN
+  product: topaz-photo-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chaiNNer-org/chaiNNer
+  product: topaz-photo-ai
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gitroomhq/postiz-app
+  product: typefully
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: GrapesJS/grapesjs
+  product: unbounce
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: webstudio-is/webstudio
+  product: unbounce
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: sympy/sympy
+  product: wolfram-alpha-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: sagemath/sage
+  product: wolfram-alpha-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: penpot/penpot
+  product: zeplin
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: scribusproject/scribus
+  product: adobe-indesign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bugbakery/audapolis
+  product: descript
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chatwoot/chatwoot
+  product: crisp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chaskiq/chaskiq
+  product: crisp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: papercups-io/papercups
+  product: crisp
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: olivierkes/manuskript
+  product: scrivener
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: saga-soft/novelWriter
+  product: scrivener
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: makeplane/plane
+  product: monday
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: opf/openproject
+  product: monday
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mattermost-community/focalboard
+  product: monday
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: go-vikunja/vikunja
+  product: monday
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gitroomhq/postiz-app
+  product: hootsuite
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: inovector/mixpost
+  product: hootsuite
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: languagetool-org/languagetool
+  product: prowritingaid
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Automattic/harper
+  product: prowritingaid
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: vale-cli/vale
+  product: prowritingaid
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: formbricks/formbricks
+  product: formspree
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: heyform/heyform
+  product: formspree
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dwyl/learn-to-send-email-via-google-script-html-no-server
+  product: formspree
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: knadh/listmonk
+  product: klaviyo
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mautic/mautic
+  product: klaviyo
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: useplunk/plunk
+  product: klaviyo
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: antiwork/gumroad
+  product: gumroad
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: polarsource/polar
+  product: gumroad
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: lukevella/rallly
+  product: doodle
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: calcom/cal.diy
+  product: doodle
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: chatwoot/chatwoot
+  product: drift
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: baptisteArno/typebot.io
+  product: drift
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/kdenlive
+  product: davinci-resolve-studio
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mltframework/shotcut
+  product: davinci-resolve-studio
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenShot/openshot-qt
+  product: davinci-resolve-studio
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: olive-editor/olive
+  product: davinci-resolve-studio
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: imgproxy/imgproxy
+  product: cloudinary
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: thumbor/thumbor
+  product: cloudinary
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: imazen/imageflow
+  product: cloudinary
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: formbricks/formbricks
+  product: tally
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: heyform/heyform
+  product: tally
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpnForm/OpnForm
+  product: tally
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: liberapay/liberapay.com
+  product: patreon
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: opencollective/opencollective
+  product: patreon
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: polarsource/polar
+  product: patreon
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenTalker/SadTalker
+  product: heygen
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KlingAIResearch/LivePortrait
+  product: heygen
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Zettlr/Zettlr
+  product: ulysses
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: marktext/marktext
+  product: ulysses
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: EasyRPG/Player
+  product: rpg-maker
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: godotengine/godot
+  product: rpg-maker
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: ItzCrazyKns/Vane
+  product: perplexity-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: miurla/morphic
+  product: perplexity-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: zaidmukaddam/scira
+  product: perplexity-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Stirling-Tools/Stirling-PDF
+  product: smallpdf
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: pdfarranger/pdfarranger
+  product: smallpdf
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: OpenCut-app/OpenCut
+  product: capcut-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: KDE/kdenlive
+  product: capcut-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mltframework/shotcut
+  product: capcut-pro
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: getfider/fider
+  product: canny
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: getfider/fider
+  product: productboard
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Mail-0/Zero
+  product: superhuman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: Foundry376/Mailspring
+  product: superhuman
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: actualbudget/actual
+  product: monarch-money
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: firefly-iii/firefly-iii
+  product: monarch-money
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: novuhq/novu
+  product: onesignal
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: binwiederhier/ntfy
+  product: onesignal
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: gotify/server
+  product: onesignal
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: knadh/listmonk
+  product: beehiiv
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: TryGhost/Ghost
+  product: beehiiv
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: pentacent/keila
+  product: beehiiv
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: FreeCAD/FreeCAD
+  product: autocad
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: LibreCAD/LibreCAD
+  product: autocad
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: endurain-project/endurain
+  product: strava
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: jovandeginste/workout-tracker
+  product: strava
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: mautic/mautic
+  product: activecampaign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: knadh/listmonk
+  product: activecampaign
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: bitwarden/clients
+  product: dashlane
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: keepassxreboot/keepassxc
+  product: dashlane
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: dani-garcia/vaultwarden
+  product: dashlane
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: espanso/espanso
+  product: textexpander
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: twentyhq/twenty
+  product: pipedrive
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: espocrm/espocrm
+  product: pipedrive
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: wger-project/wger
+  product: myfitnesspal
+  action: add
+  reason: A well-known open-source alternative that topic search misses or under-ranks.
+- project: kwaroran/Risuai
+  product: character-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: SillyTavern/SillyTavern
+  product: character-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Mintplex-Labs/anything-llm
+  product: chatpdf
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PromtEngineer/localGPT
+  product: chatpdf
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: open-webui/open-webui
+  product: claude-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: lobehub/lobehub
+  product: claude-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: janhq/jan
+  product: claude-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Zackriya-Solutions/meetily
+  product: fathom
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Vexa-ai/vexa
+  product: fathom
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Zackriya-Solutions/meetily
+  product: fireflies
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Vexa-ai/vexa
+  product: fireflies
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Zackriya-Solutions/meetily
+  product: tldv
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openai/whisper
+  product: otter
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Zackriya-Solutions/meetily
+  product: otter
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: open-webui/open-webui
+  product: gemini-advanced
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: lobehub/lobehub
+  product: gemini-advanced
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: open-webui/open-webui
+  product: grok
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: lobehub/lobehub
+  product: grok
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: open-webui/open-webui
+  product: microsoft-copilot
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: janhq/jan
+  product: microsoft-copilot
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: lobehub/lobehub
+  product: poe
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: open-webui/open-webui
+  product: poe
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AUTOMATIC1111/stable-diffusion-webui
+  product: ideogram
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: comfyanonymous/ComfyUI
+  product: ideogram
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AUTOMATIC1111/stable-diffusion-webui
+  product: leonardo-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: comfyanonymous/ComfyUI
+  product: leonardo-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoke-ai/InvokeAI
+  product: leonardo-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: comfyanonymous/ComfyUI
+  product: krea
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoke-ai/InvokeAI
+  product: krea
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hpcaitech/Open-Sora
+  product: kling
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Wan-Video/Wan2.1
+  product: kling
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hpcaitech/Open-Sora
+  product: pika
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Wan-Video/Wan2.1
+  product: pika
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hpcaitech/Open-Sora
+  product: runway
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: comfyanonymous/ComfyUI
+  product: runway
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: xinntao/Real-ESRGAN
+  product: magnific
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: upscayl/upscayl
+  product: magnific
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: danielgatis/rembg
+  product: remove-bg
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Mintplex-Labs/anything-llm
+  product: jasper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: lobehub/lobehub
+  product: jasper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: langfuse/langfuse
+  product: langsmith
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Arize-ai/phoenix
+  product: langsmith
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: qdrant/qdrant
+  product: pinecone
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: milvus-io/milvus
+  product: pinecone
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: weaviate/weaviate
+  product: pinecone
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chroma-core/chroma
+  product: pinecone
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: coder/code-server
+  product: replit
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: continuedev/continue
+  product: tabnine
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: TabbyML/tabby
+  product: tabnine
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: facebookresearch/audiocraft
+  product: udio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: matomo-org/matomo
+  product: adobe-analytics
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: adobe-analytics
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: matomo-org/matomo
+  product: google-analytics-360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: umami-software/umami
+  product: google-analytics-360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: plausible/analytics
+  product: google-analytics-360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: heap
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: fullstory
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openreplay/openreplay
+  product: fullstory
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: rrweb-io/rrweb
+  product: fullstory
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openreplay/openreplay
+  product: logrocket
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: logrocket
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openreplay/openreplay
+  product: smartlook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: smartlook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openreplay/openreplay
+  product: crazy-egg
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: crazy-egg
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jupyter/notebook
+  product: hex
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: marimo-team/marimo
+  product: hex
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: apache/superset
+  product: power-bi
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: metabase/metabase
+  product: power-bi
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: metabase/metabase
+  product: sisense
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: apache/superset
+  product: sisense
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: apache/hop
+  product: alteryx
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: growthbook/growthbook
+  product: optimizely
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: growthbook/growthbook
+  product: vwo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: PostHog/posthog
+  product: pendo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: n8n-io/n8n
+  product: power-automate
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: activepieces/activepieces
+  product: power-automate
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: n8n-io/n8n
+  product: tray-io
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: activepieces/activepieces
+  product: tray-io
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: n8n-io/n8n
+  product: workato
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: activepieces/activepieces
+  product: workato
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: n8n-io/n8n
+  product: pabbly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: activepieces/activepieces
+  product: pabbly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: robocorp/robocorp
+  product: uipath
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: inkscape/inkscape
+  product: adobe-illustrator
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: inkscape/inkscape
+  product: coreldraw
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: inkscape/inkscape
+  product: affinity
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: GNOME/gimp
+  product: affinity
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: penpot/penpot
+  product: adobe-express
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: penpot/penpot
+  product: adobe-xd
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: penpot/penpot
+  product: sketch
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: blender/blender
+  product: autodesk-maya
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: blender/blender
+  product: cinema-4d
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: blender/blender
+  product: zbrush
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: KDE/krita
+  product: clip-studio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: KDE/krita
+  product: procreate
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: excalidraw/excalidraw
+  product: figjam
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: tldraw/tldraw
+  product: figjam
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: excalidraw/excalidraw
+  product: mural
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: tldraw/tldraw
+  product: mural
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: excalidraw/excalidraw
+  product: whimsical
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: plait-board/drawnix
+  product: whimsical
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jgraph/drawio
+  product: lucidchart
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: excalidraw/excalidraw
+  product: lucidchart
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jgraph/drawio
+  product: visio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jgraph/drawio
+  product: gliffy
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mermaid-js/mermaid
+  product: gliffy
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wanglin2/mind-map
+  product: mindmeister
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wanglin2/mind-map
+  product: xmind
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: FreeCAD/FreeCAD
+  product: fusion-360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: FreeCAD/FreeCAD
+  product: revit
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: meilisearch/meilisearch
+  product: algolia
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: typesense/typesense
+  product: algolia
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opensearch-project/OpenSearch
+  product: elastic-cloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: meilisearch/meilisearch
+  product: elastic-cloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: go-gitea/gitea
+  product: bitbucket
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gogs/gogs
+  product: bitbucket
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: go-gitea/gitea
+  product: github-team
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: go-gitea/gitea
+  product: github-enterprise
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: go-gitea/gitea
+  product: gitlab-premium
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: woodpecker-ci/woodpecker
+  product: github-actions
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: harness/harness
+  product: github-actions
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jenkinsci/jenkins
+  product: cloudbees-ci
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: woodpecker-ci/woodpecker
+  product: cloudbees-ci
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: goharbor/harbor
+  product: jfrog-artifactory
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Unleash/unleash
+  product: launchdarkly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: growthbook/growthbook
+  product: launchdarkly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Flagsmith/flagsmith
+  product: launchdarkly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: SigNoz/signoz
+  product: new-relic
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: grafana/grafana
+  product: new-relic
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openobserve/openobserve
+  product: splunk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: SigNoz/signoz
+  product: splunk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openobserve/openobserve
+  product: loggly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: grafana/loki
+  product: loggly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openobserve/openobserve
+  product: papertrail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: grafana/loki
+  product: papertrail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: louislam/uptime-kuma
+  product: betterstack
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: openstatusHQ/openstatus
+  product: betterstack
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: louislam/uptime-kuma
+  product: pingdom
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: soketi/soketi
+  product: pusher
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: centrifugal/centrifugo
+  product: pusher
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microsoft/vscode
+  product: pycharm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microsoft/vscode
+  product: webstorm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microsoft/vscode
+  product: visual-studio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microsoft/vscode
+  product: sublime-text
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zed-industries/zed
+  product: sublime-text
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: aquasecurity/trivy
+  product: snyk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: SonarSource/sonarqube
+  product: sonarcloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: supertokens/supertokens-core
+  product: stytch
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zitadel/zitadel
+  product: stytch
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: appsmithorg/appsmith
+  product: outsystems
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ToolJet/ToolJet
+  product: outsystems
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: toeverything/AFFiNE
+  product: coda
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AppFlowy-IO/AppFlowy
+  product: coda
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: toeverything/AFFiNE
+  product: craft
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AppFlowy-IO/AppFlowy
+  product: craft
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docmost/docmost
+  product: dropbox-paper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: toeverything/AFFiNE
+  product: dropbox-paper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docmost/docmost
+  product: quip
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: outline/outline
+  product: nuclino
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docmost/docmost
+  product: nuclino
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: outline/outline
+  product: slab
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: outline/outline
+  product: tettra
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: outline/outline
+  product: guru
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: outline/outline
+  product: document360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: BookStackApp/BookStack
+  product: document360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: facebook/docusaurus
+  product: readme
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: toeverything/AFFiNE
+  product: onenote
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: logseq/logseq
+  product: onenote
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: toeverything/AFFiNE
+  product: upnote
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: logseq/logseq
+  product: reflect
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: logseq/logseq
+  product: roam-research
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: logseq/logseq
+  product: logseq-sync
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: xournalpp/xournalpp
+  product: goodnotes
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: flxzt/rnote
+  product: goodnotes
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: xournalpp/xournalpp
+  product: notability
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: flxzt/rnote
+  product: notability
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wallabag/wallabag
+  product: instapaper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: karakeep-app/karakeep
+  product: instapaper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wallabag/wallabag
+  product: pocket-premium
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: karakeep-app/karakeep
+  product: pocket-premium
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: karakeep-app/karakeep
+  product: raindrop
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: linkwarden/linkwarden
+  product: raindrop
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wallabag/wallabag
+  product: readwise
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: amazon-ses
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: aweber
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: constant-contact
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: getresponse
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: mailerlite
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: flodesk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: drip
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: brevo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: loops
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: knadh/listmonk
+  product: omnisend
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mautic/mautic
+  product: marketo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mautic/mautic
+  product: pardot
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mautic/mautic
+  product: iterable
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mautic/mautic
+  product: braze
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: stalwartlabs/stalwart
+  product: fastmail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mailcow/mailcow-dockerized
+  product: fastmail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: stalwartlabs/stalwart
+  product: proton-mail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Foundry376/Mailspring
+  product: spark-premium
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: seaweedfs/seaweedfs
+  product: backblaze
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: box
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: haiwen/seafile
+  product: box
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: egnyte
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: onedrive
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: syncthing/syncthing
+  product: onedrive
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: pcloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: sync-com
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: syncthing/syncthing
+  product: sync-com
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nextcloud/server
+  product: sharefile
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: restic/restic
+  product: idrive
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: formbricks/formbricks
+  product: surveymonkey
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LimeSurvey/LimeSurvey
+  product: surveymonkey
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LimeSurvey/LimeSurvey
+  product: alchemer
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: formbricks/formbricks
+  product: alchemer
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: formbricks/formbricks
+  product: delighted
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: formbricks/formbricks
+  product: formstack
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: OpnForm/OpnForm
+  product: formstack
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: OpnForm/OpnForm
+  product: cognito-forms
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: formbricks/formbricks
+  product: cognito-forms
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: OpnForm/OpnForm
+  product: paperform
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: OpnForm/OpnForm
+  product: wufoo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: godotengine/godot
+  product: gamemaker
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: coollabsio/coolify
+  product: digitalocean
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: coollabsio/coolify
+  product: fly-io
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: dokku/dokku
+  product: fly-io
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: coollabsio/coolify
+  product: wp-engine
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: FerretDB/FerretDB
+  product: mongodb-atlas
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: vitessio/vitess
+  product: planetscale
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ClickHouse/ClickHouse
+  product: snowflake
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: duckdb/duckdb
+  product: snowflake
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: apache/spark
+  product: databricks
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: adp
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: hibob
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: namely
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: paychex
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: rippling
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: workday
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: personio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/hrms
+  product: gusto
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opencats/OpenCATS
+  product: greenhouse
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opencats/OpenCATS
+  product: lever
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opencats/OpenCATS
+  product: jazzhr
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opencats/OpenCATS
+  product: ashby
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opencats/OpenCATS
+  product: workable
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: moodle/moodle
+  product: talentlms
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/lms
+  product: talentlms
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: adaptlearning/adapt_authoring
+  product: articulate-360
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ever-co/ever-gauzy
+  product: deputy
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ever-co/ever-gauzy
+  product: when-i-work
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ever-co/ever-gauzy
+  product: connecteam
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: akaunting/akaunting
+  product: bill-com
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: akaunting/akaunting
+  product: sage
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: akaunting/akaunting
+  product: xero
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: akaunting/akaunting
+  product: wave
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: InvoiceShelf/InvoiceShelf
+  product: wave
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: akaunting/akaunting
+  product: zoho-books
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: InvoiceShelf/InvoiceShelf
+  product: freshbooks
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoiceninja/invoiceninja
+  product: freshbooks
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoiceninja/invoiceninja
+  product: invoice2go
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: InvoiceShelf/InvoiceShelf
+  product: invoice2go
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoiceninja/invoiceninja
+  product: bonsai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoiceninja/invoiceninja
+  product: honeybook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: invoiceninja/invoiceninja
+  product: dubsado
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: actualbudget/actual
+  product: quicken
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: firefly-iii/firefly-iii
+  product: quicken
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: actualbudget/actual
+  product: copilot-money
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: firefly-iii/firefly-iii
+  product: copilot-money
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: kimai/kimai
+  product: everhour
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: kimai/kimai
+  product: timely
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ever-co/ever-gauzy
+  product: hubstaff
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: kimai/kimai
+  product: hubstaff
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: kimai/kimai
+  product: harvest
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: solidtime-io/solidtime
+  product: harvest
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: kimai/kimai
+  product: toggl-track
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: solidtime-io/solidtime
+  product: toggl-track
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ActivityWatch/activitywatch
+  product: rescuetime
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: getlago/lago
+  product: paddle
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: killbill/killbill
+  product: paddle
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: getlago/lago
+  product: recurly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: killbill/killbill
+  product: recurly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: captableinc/captable
+  product: carta
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microrealestate/microrealestate
+  product: appfolio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: microrealestate/microrealestate
+  product: buildium
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LMMS/lmms
+  product: ableton-live
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LMMS/lmms
+  product: fl-studio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LMMS/lmms
+  product: logic-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Ardour/ardour
+  product: logic-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: musescore/MuseScore
+  product: sibelius
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ad-aures/castopod
+  product: buzzsprout
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ad-aures/castopod
+  product: transistor
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docusealco/docuseal
+  product: adobe-sign
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: documenso/documenso
+  product: adobe-sign
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docusealco/docuseal
+  product: signnow
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: documenso/documenso
+  product: signnow
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: docusealco/docuseal
+  product: signwell
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: documenso/documenso
+  product: signwell
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: rustdesk/rustdesk
+  product: anydesk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: rustdesk/rustdesk
+  product: logmein
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Stirling-Tools/Stirling-PDF
+  product: foxit-pdf-editor
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: dream-num/univer
+  product: google-sheets
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ONLYOFFICE/DocumentServer
+  product: google-sheets
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LibreOffice/core
+  product: microsoft-excel
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ONLYOFFICE/DocumentServer
+  product: microsoft-excel
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LibreOffice/core
+  product: microsoft-word
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ONLYOFFICE/DocumentServer
+  product: microsoft-word
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: LibreOffice/core
+  product: microsoft-powerpoint
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hakimel/reveal.js
+  product: microsoft-powerpoint
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hakimel/reveal.js
+  product: pitch
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: slidevjs/slidev
+  product: pitch
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: slidevjs/slidev
+  product: tome
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: hakimel/reveal.js
+  product: tome
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: slidevjs/slidev
+  product: beautiful-ai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Foundry376/Mailspring
+  product: microsoft-outlook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nocodb/nocodb
+  product: smartsheet
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: teableio/teable
+  product: smartsheet
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ankitects/anki
+  product: quizlet-plus
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ulauncher/Ulauncher
+  product: raycast-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: torvalds/linux
+  product: windows
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: utmapp/UTM
+  product: parallels-desktop
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: bitwarden/server
+  product: 1password
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: keepassxreboot/keepassxc
+  product: 1password
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: keycloak/keycloak
+  product: okta
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: goauthentik/authentik
+  product: okta
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: keycloak/keycloak
+  product: duo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: goauthentik/authentik
+  product: duo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: keycloak/keycloak
+  product: jumpcloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: NatronGitHub/Natron
+  product: adobe-after-effects
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: KDE/kdenlive
+  product: final-cut-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: OpenShot/openshot-qt
+  product: final-cut-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: obsproject/obs-studio
+  product: camtasia
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: obsproject/obs-studio
+  product: screenflow
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: flameshot-org/flameshot
+  product: snagit
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: ShareX/ShareX
+  product: snagit
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: KDE/kdenlive
+  product: kapwing
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: darktable-org/darktable
+  product: capture-one
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: darktable-org/darktable
+  product: luminar
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Chocobozzz/PeerTube
+  product: vimeo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Chocobozzz/PeerTube
+  product: wistia
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: Chocobozzz/PeerTube
+  product: vidyard
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: immich-app/immich
+  product: smugmug
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: photoprism/photoprism
+  product: smugmug
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: aha
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: asana
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: height
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wekan/wekan
+  product: kanbanize
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: kanbanize
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: wekan/wekan
+  product: meistertask
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: meistertask
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: microsoft-planner
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opf/openproject
+  product: microsoft-project
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opf/openproject
+  product: teamgantt
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opf/openproject
+  product: roadmunk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opf/openproject
+  product: workfront
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: shortcut
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: youtrack
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: makeplane/plane
+  product: pivotal-tracker
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: opf/openproject
+  product: float
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: super-productivity/super-productivity
+  product: any-do
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: super-productivity/super-productivity
+  product: things
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: super-productivity/super-productivity
+  product: akiflow
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: agile-crm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: copper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: dynamics-365
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: folk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: freshsales
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: espocrm/espocrm
+  product: freshsales
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: insightly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: espocrm/espocrm
+  product: insightly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: monday-crm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: zendesk-sell
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: espocrm/espocrm
+  product: zendesk-sell
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: zoho-crm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: espocrm/espocrm
+  product: zoho-crm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: twentyhq/twenty
+  product: streak
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: chili-piper
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: youcanbookme
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: microsoft-bookings
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: setmore
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: alextselegidis/easyappointments
+  product: setmore
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: alextselegidis/easyappointments
+  product: simplybook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: simplybook
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: calcom/cal.com
+  product: fantastical
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zotero/zotero
+  product: endnote
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jasp-stats/jasp-desktop
+  product: ibm-spss
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jasp-stats/jasp-desktop
+  product: stata
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jasp-stats/jasp-desktop
+  product: sas
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: medusajs/medusa
+  product: bigcommerce
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: saleor/saleor
+  product: bigcommerce
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: medusajs/medusa
+  product: lemon-squeezy
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: codelitdev/courselit
+  product: teachable
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: codelitdev/courselit
+  product: thinkific
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: codelitdev/courselit
+  product: kajabi
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: codelitdev/courselit
+  product: podia
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: HiEventsDev/Hi.Events
+  product: cvent
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: HiEventsDev/Hi.Events
+  product: luma
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/erpnext
+  product: square-for-retail
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/erpnext
+  product: clover
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: frappe/erpnext
+  product: shipstation
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: discourse/discourse
+  product: circle
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: forem/forem
+  product: circle
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: discourse/discourse
+  product: mighty-networks
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: forem/forem
+  product: mighty-networks
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: discourse/discourse
+  product: skool
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: postiz-cloud
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: publer
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: sendible
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: agorapulse
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: metricool
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: gitroomhq/postiz-app
+  product: planoly
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: help-scout
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: freescout-helpdesk/freescout
+  product: help-scout
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: freescout-helpdesk/freescout
+  product: hiver
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: hiver
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zammad/zammad
+  product: kayako
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zammad/zammad
+  product: zoho-desk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: zoho-desk
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: gorgias
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: livechat
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: olark
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: tawk-to
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: tidio
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zammad/zammad
+  product: jira-service-management
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zammad/zammad
+  product: servicenow
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: chatwoot/chatwoot
+  product: whatsapp-business-api
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mattermost/mattermost
+  product: microsoft-teams
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: RocketChat/Rocket.Chat
+  product: microsoft-teams
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mattermost/mattermost
+  product: google-chat
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: RocketChat/Rocket.Chat
+  product: google-chat
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mattermost/mattermost
+  product: chanty
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: mattermost/mattermost
+  product: flock
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zulip/zulip
+  product: twist
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jitsi/jitsi-meet
+  product: google-meet
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jitsi/jitsi-meet
+  product: gotomeeting
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: bigbluebutton/bigbluebutton
+  product: gotomeeting
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jitsi/jitsi-meet
+  product: webex
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: bigbluebutton/bigbluebutton
+  product: webex
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: jitsi/jitsi-meet
+  product: whereby
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: bigbluebutton/bigbluebutton
+  product: zoom-webinars
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: bigbluebutton/bigbluebutton
+  product: livestorm
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: obsproject/obs-studio
+  product: streamyard
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: obsproject/obs-studio
+  product: restream
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: WordPress/WordPress
+  product: squarespace
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: TryGhost/Ghost
+  product: ghostpro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: WordPress/WordPress
+  product: duda
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: WordPress/WordPress
+  product: godaddy-builder
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: WordPress/WordPress
+  product: hostinger-builder
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: WordPress/WordPress
+  product: hubspot-cms
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: GrapesJS/grapesjs
+  product: elementor-pro
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: strapi/strapi
+  product: sanity
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: payloadcms/payload
+  product: sanity
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: appsmithorg/appsmith
+  product: appsheet
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: nocodb/nocodb
+  product: appsheet
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: appsmithorg/appsmith
+  product: glide
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: appsmithorg/appsmith
+  product: softr
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: appsmithorg/appsmith
+  product: adalo
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: GrapesJS/grapesjs
+  product: instapage
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: GrapesJS/grapesjs
+  product: leadpages
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: languagetool-org/languagetool
+  product: languagetool
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AmruthPillai/Reactive-Resume
+  product: kickresume
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AmruthPillai/Reactive-Resume
+  product: zety
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AmruthPillai/Reactive-Resume
+  product: rezi
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: AmruthPillai/Reactive-Resume
+  product: teal
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: oobabooga/text-generation-webui
+  product: novelai
+  action: add
+  reason: A well-known open-source tool that does the same job; added when the catalog grew.
+- project: zen-browser/desktop
+  product: arc-browser
+  action: add
+  reason: 'The open-source browser most often recommended to Arc users: vertical tabs, workspaces, split view and pinned tabs.'
+- project: ardia-browser/ardia
+  product: arc-browser
+  action: add
+  reason: 'Its description: "Arc''s sidebar, Dia''s polish".'
+- project: ardia-browser/ardia
+  product: dia
+  action: add
+  reason: 'Its description: "Arc''s sidebar, Dia''s polish".'
+- project: VictorKildahl/cra
+  product: arc-browser
+  action: add
+  reason: 'Calls itself "the open-source Arc replacement".'
+- project: ysalitrynskyi/stedding-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an open-source Arc-style browser, with one-click import from Arc.'
+- project: FujiwaraChoki/mori-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an "OSS Arc Alternative".'
+- project: lucianodiisouza/flecha-browser
+  product: arc-browser
+  action: add
+  reason: 'Calls itself an "Open-source Arc alternative".'
+- project: browseros-ai/BrowserOS
+  product: dia
+  action: add
+  reason: 'Calls itself an open-source alternative to Dia.'
+- project: BrowserOperator/browser-operator-core
+  product: dia
+  action: add
+  reason: 'Calls itself an open-source alternative to Dia.'

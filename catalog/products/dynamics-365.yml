@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "dynamics-365"
+name: "Microsoft Dynamics 365 Sales"
+category: "Sales and CRM"
+price: { cents: 6500, period: month }
+blurb: "Microsoft's enterprise CRM."
+words: ["crm", "enterprise sales", "pipeline", "forecasting"]
+topics: ["crm", "sales", "dynamics-365-alternative"]
+search_terms: ["Microsoft Dynamics 365 Sales alternative", "open source crm"]
+aliases: ["dynamics.microsoft.com"]
+excludes: []

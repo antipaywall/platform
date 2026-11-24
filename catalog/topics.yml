@@ -1,0 +1,51 @@
+# GitHub topics Antipaywall tracks, each with a name and one sentence in plain words.
+# Topics with five or more listed projects also get a page on their own, hidden from search
+# until they are added here.
+- slug: scheduling
+  name: Scheduling
+  blurb: Booking pages, appointment calendars and tools for finding a time that works.
+- slug: forms
+  name: Forms
+  blurb: Build forms and surveys and collect the answers yourself.
+- slug: note-taking
+  name: Note taking
+  blurb: Apps for writing, organizing and finding your notes.
+- slug: project-management
+  name: Project management
+  blurb: Boards, task lists and planning tools for getting work done together.
+- slug: newsletter
+  name: Newsletters
+  blurb: Send email newsletters and manage your list of subscribers.
+- slug: web-analytics
+  name: Web analytics
+  blurb: See who visits your website without handing the data to an ad company.
+- slug: password-manager
+  name: Password managers
+  blurb: Keep your passwords safe and filled in for you.
+- slug: video-conferencing
+  name: Video calls
+  blurb: Meet face to face over video, in the browser or an app.
+- slug: screen-recorder
+  name: Screen recording
+  blurb: Record your screen and share the video.
+- slug: design-tool
+  name: Design tools
+  blurb: Draw, lay out and prototype interfaces and graphics.
+- slug: invoicing
+  name: Invoicing
+  blurb: Send invoices, track who has paid and keep your books.
+- slug: e-commerce
+  name: Selling online
+  blurb: Run an online shop or sell digital products.
+- slug: automation
+  name: Automation
+  blurb: Connect your apps so routine work happens on its own.
+- slug: customer-support
+  name: Customer support
+  blurb: Help desks, live chat and shared inboxes for answering customers.
+- slug: game-engine
+  name: Game engines
+  blurb: Tools for making your own games, from 2D platformers to 3D worlds.
+- slug: self-hosted
+  name: Self-hosted
+  blurb: Software you can run on your own computer or server instead of renting it.

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "sudowrite"
+name: "Sudowrite"
+category: "Writing"
+price: { cents: 1900, period: month }
+blurb: "AI help for writing fiction."
+words: ["fiction", "novel writing", "story", "ai writing"]
+topics: ["creative-writing", "ai-writing", "sudowrite-alternative"]
+search_terms: ["Sudowrite alternative", "open source novel writing ai"]
+aliases: ["sudowrite.com"]
+excludes: []

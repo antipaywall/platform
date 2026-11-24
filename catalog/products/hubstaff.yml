@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "hubstaff"
+name: "Hubstaff"
+category: "Money and invoicing"
+price: { cents: 700, period: month }
+blurb: "Time tracking with activity monitoring for remote teams."
+words: ["time tracking", "employee monitoring", "timesheets", "payroll"]
+topics: ["time-tracking", "timesheet", "hubstaff-alternative"]
+search_terms: ["Hubstaff alternative", "open source time tracking"]
+aliases: ["hubstaff.com"]
+excludes: []

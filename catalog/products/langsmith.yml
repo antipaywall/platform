@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "langsmith"
+name: "LangSmith"
+category: "AI tools"
+price: { cents: 3900, period: month }
+blurb: "Tracing and evaluation for AI apps."
+words: ["llm tracing", "evals", "prompts", "observability"]
+topics: ["llm-observability", "llm", "langsmith-alternative"]
+search_terms: ["LangSmith alternative", "open source llm observability"]
+aliases: ["smith.langchain.com"]
+excludes: []

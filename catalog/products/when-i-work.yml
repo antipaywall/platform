@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "when-i-work"
+name: "When I Work"
+category: "HR and hiring"
+price: { cents: 250, period: month }
+blurb: "Employee scheduling and time clock."
+words: ["shift scheduling", "time clock", "staff", "rota"]
+topics: ["shift-scheduling", "timesheet", "when-i-work-alternative"]
+search_terms: ["When I Work alternative", "open source employee scheduling"]
+aliases: ["wheniwork.com"]
+excludes: []

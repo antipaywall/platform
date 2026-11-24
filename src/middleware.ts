@@ -2,6 +2,8 @@ import { defineMiddleware } from 'astro:middleware';
 import { ADMIN_HEADERS, isAdminPath } from './lib/admin';
 import { isProduction, pageViewFor } from './lib/analytics';
 import { attempt, getPerson, isAdmin } from './lib/db';
+import { usernameGate } from './lib/usernames';
+import { parseViewAs, VIEW_COOKIE } from './lib/viewAs';
 import { allowedRequest } from './lib/origin';
 import { clientIp, VISITOR_KEY } from './lib/requester';
 import { adminClient, sessionClient } from './lib/supabase';
@@ -29,6 +31,8 @@ function countView(context: Context): Promise<void> {
 // counts the page view, and marks the organizer's pages as private.
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.person = null;
+  context.locals.userId = null;
+  context.locals.viewAs = null;
   // Anything that changes something must come from one of our own pages.
   if (!allowedRequest({ method: context.request.method, origin: context.request.headers.get('origin'), self: context.url.origin, path: context.url.pathname })) {
     return new Response('Cross-site requests are not accepted.', { status: 403 });
@@ -38,7 +42,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const supabase = sessionClient(context.request, context.cookies);
     const { data } = (await supabase?.auth.getUser()) ?? { data: { user: null } };
     const user = data.user;
-    if (user) context.locals.person = await attempt(() => getPerson(user.id));
+    if (user) {
+      context.locals.userId = user.id;
+      context.locals.person = await attempt(() => getPerson(user.id));
+    }
+  }
+  // Only the organizer can look at the site as another kind of account; for anyone else the cookie means nothing.
+  if (isAdmin(context.locals.person)) context.locals.viewAs = parseViewAs(context.cookies.get(VIEW_COOKIE)?.value);
+  // Someone signed in without a username yet chooses one before anything else.
+  const me = context.locals.person;
+  if (me && !me.username) {
+    const gate = usernameGate(context.url.pathname, context.request.method);
+    if (gate === 'choose') return context.redirect(`/auth/username?next=${encodeURIComponent(context.url.pathname)}`, 302);
+    if (gate === 'refuse') return new Response(null, { status: 303, headers: { location: '/auth/username?m=need_username' } });
   }
   // Counted after the session is read, so an organizer's own visits are left out.
   const counted = countView(context).catch(() => undefined);

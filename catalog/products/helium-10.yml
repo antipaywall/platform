@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "helium-10"
+name: "Helium 10"
+category: "Selling online"
+price: { cents: 3900, period: month }
+blurb: "Tools for Amazon sellers."
+words: ["amazon", "product research", "listings", "keywords"]
+topics: ["amazon", "ecommerce", "helium-10-alternative"]
+search_terms: ["Helium 10 alternative", "open source amazon seller tools"]
+aliases: ["helium10.com"]
+excludes: []

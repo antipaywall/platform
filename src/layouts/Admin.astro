@@ -1,0 +1,16 @@
+---
+// The organizer's pages: the signed-in shell, labelled as the organizer's area. Each organizer
+// page checks who is asking before it renders anything, and passes its section links in.
+import Shell from './Shell.astro';
+
+interface Props {
+  heading: string;
+  about?: string;
+}
+const { heading, about } = Astro.props;
+---
+
+<Shell heading={heading} about={about} area="Organizer">
+  <slot name="nav" slot="nav" />
+  <slot />
+</Shell>

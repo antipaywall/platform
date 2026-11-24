@@ -1,0 +1,25 @@
+# Picked from catalog/research/seed-2026-11-13.json. Price: lowest public paid plan as of November 2026, approximate; correct it if you know better.
+slug: auth0
+name: Auth0
+category: Developer tools
+price:
+  cents: 3500
+  period: month
+blurb: Sign-in and user accounts for your app.
+words:
+  - authentication
+  - login
+  - sign in
+  - user accounts
+  - sso
+  - identity
+topics:
+  - authentication
+  - identity
+  - oauth2
+  - sso
+search_terms:
+  - auth0 alternative
+  - open source authentication
+aliases: []
+excludes: []

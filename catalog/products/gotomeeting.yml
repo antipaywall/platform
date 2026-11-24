@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "gotomeeting"
+name: "GoTo Meeting"
+category: "Video and calls"
+price: { cents: 1200, period: month }
+blurb: "Video meetings."
+words: ["video meetings", "conferencing", "screen sharing", "calls"]
+topics: ["video-conferencing", "webrtc", "gotomeeting-alternative"]
+search_terms: ["GoTo Meeting alternative", "open source video conferencing"]
+aliases: ["goto.com"]
+excludes: []

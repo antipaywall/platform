@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "jumpcloud"
+name: "JumpCloud"
+category: "Passwords and security"
+price: { cents: 900, period: month }
+blurb: "Directory, devices and single sign-on."
+words: ["directory", "sso", "device management", "identity"]
+topics: ["identity", "sso", "jumpcloud-alternative"]
+search_terms: ["JumpCloud alternative", "open source identity provider"]
+aliases: ["jumpcloud.com"]
+excludes: []

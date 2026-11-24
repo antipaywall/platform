@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "signwell"
+name: "SignWell"
+category: "Office"
+price: { cents: 1000, period: month }
+blurb: "Simple e-signatures."
+words: ["e-signature", "sign pdf", "contracts", "signing"]
+topics: ["e-signature", "document-signing", "signwell-alternative"]
+search_terms: ["SignWell alternative", "open source e-signature"]
+aliases: ["signwell.com"]
+excludes: []

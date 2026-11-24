@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "yoast-premium"
+name: "Yoast SEO Premium"
+category: "Websites"
+price: { cents: 9900, period: year }
+blurb: "SEO plugin for WordPress."
+words: ["wordpress seo", "plugin", "meta tags", "redirects"]
+topics: ["seo", "wordpress", "yoast-premium-alternative"]
+search_terms: ["Yoast SEO Premium alternative", "open source seo plugin"]
+aliases: ["yoast.com"]
+excludes: []

@@ -1,0 +1,11 @@
+# Added 2026-11-15 from a survey of the software most teams and people pay for, plus every named product at $50k+/mo MRR on TrustMRR. Price: lowest public paid plan, approximate; correct it if you know better.
+slug: "memberful"
+name: "Memberful"
+category: "Selling online"
+price: { cents: 4900, period: month }
+blurb: "Paid memberships for your site."
+words: ["memberships", "subscriptions", "paywall", "members"]
+topics: ["membership", "subscriptions", "memberful-alternative"]
+search_terms: ["Memberful alternative", "open source membership platform"]
+aliases: ["memberful.com"]
+excludes: []
