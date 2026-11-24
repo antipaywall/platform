@@ -5,7 +5,7 @@ import AdminNav from '../../../components/AdminNav.astro';
 import Admin from '../../../layouts/Admin.astro';
 import { when } from '../../../lib/adminNav';
 import { isAdmin } from '../../../lib/db';
-import { alreadySent, AUDIENCES, getMailing, mailingEmail, MAX_BODY, MAX_SUBJECT, recipients, TEST_ADDRESS, testedSinceEdit } from '../../../lib/mailings';
+import { alreadySent, AUDIENCES, getMailing, mailingEmail, MAX_BODY, MAX_SUBJECT, recipients, testAddress, testedSinceEdit } from '../../../lib/mailings';
 import { adminClient } from '../../../lib/supabase';
 
 if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
@@ -17,7 +17,8 @@ const waiting = everyone.filter((r) => !done.has(r.id));
 const locked = done.size > 0;
 const tested = testedSinceEdit(mailing);
 // How the first person's copy will look; every copy differs only in its unsubscribe link.
-const sample = mailingEmail(mailing, waiting[0]?.email ?? TEST_ADDRESS, 'example');
+const sample = mailingEmail(mailing, waiting[0]?.email ?? 'someone@example.com', 'example');
+const testTo = testAddress();
 const people = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`;
 ---
 
@@ -40,7 +41,7 @@ const people = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`;
       <p class="h2">Send it</p>
       <form method="post" action="/api/admin/email" class="ml-actions">
         <input type="hidden" name="id" value={mailing.id} />
-        <button class={tested ? 'key key-milk' : 'key'} name="action" value="test">Send a test to {TEST_ADDRESS}</button>
+        <button class={tested ? 'key key-milk' : 'key'} name="action" value="test">{testTo ? `Send a test to ${testTo}` : 'Send a test (no test address set)'}</button>
       </form>
       <form method="post" action="/api/admin/email" class="card stack">
         <input type="hidden" name="id" value={mailing.id} />

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { FROM, ORGANIZER } from '../src/lib/email';
-import { checkMailing, mailingEmail, sendMailing, TEST_ADDRESS, testedSinceEdit, testEmail, textToHtml, type Mailing } from '../src/lib/mailings';
+import { checkMailing, mailingEmail, sendMailing, testAddress, testedSinceEdit, testEmail, textToHtml, type Mailing } from '../src/lib/mailings';
 import { MAIL_STARTERS } from '../src/data/mailStarters';
 
 const m: Mailing = {
@@ -52,11 +52,17 @@ describe('textToHtml', () => {
   });
 });
 
+describe('testAddress', () => {
+  it('is the MAIL_TEST_TO setting when it is one address, and nothing otherwise', () => {
+    expect(testAddress(' tester@example.com ')).toBe('tester@example.com');
+    for (const v of [undefined, '', 'nope', 'a@b', 'a@b.co, c@d.co']) expect(testAddress(v), String(v)).toBeNull();
+  });
+});
+
 describe('testEmail', () => {
-  it('goes only to the organizer\'s test inbox, marked as a test, with no one-click header', () => {
-    const t = testEmail(m);
-    expect(t.to).toBe(TEST_ADDRESS);
-    expect(TEST_ADDRESS).toBe('e@ethanplus.ai');
+  it('goes only to the test address, marked as a test, with no one-click header', () => {
+    const t = testEmail(m, 'tester@example.com');
+    expect(t.to).toBe('tester@example.com');
     expect(t.subject).toBe('[Test] Hello builders');
     expect(t.oneClickUrl).toBeUndefined();
   });

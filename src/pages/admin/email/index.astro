@@ -5,7 +5,7 @@ import { MAIL_STARTERS, type StarterKey } from '../../../data/mailStarters';
 import Admin from '../../../layouts/Admin.astro';
 import { when } from '../../../lib/adminNav';
 import { isAdmin } from '../../../lib/db';
-import { AUDIENCES, listMailings, MAX_BODY, MAX_SUBJECT, recipients, TEST_ADDRESS } from '../../../lib/mailings';
+import { AUDIENCES, listMailings, MAX_BODY, MAX_SUBJECT, recipients, testAddress } from '../../../lib/mailings';
 import { adminClient } from '../../../lib/supabase';
 
 if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
@@ -25,7 +25,7 @@ const people = (n: number | undefined) => (n === undefined ? 'unavailable' : `${
 <Admin heading="Email the list" about="Write one email and send it to the builders on the list, or to everyone on it.">
   <AdminNav slot="nav" />
   <p class="admin-note">
-    Only people on the email list who have not unsubscribed get these, each with their own unsubscribe link. A test copy goes to {TEST_ADDRESS} first; nothing can be sent until a test of the exact text has gone out.
+    Only people on the email list who have not unsubscribed get these, each with their own unsubscribe link. A test copy goes to {testAddress() ?? 'the test address (MAIL_TEST_TO is not set yet)'} first; nothing can be sent until a test of the exact text has gone out.
     Right now that is {people(counts.builders)} for builders and {people(counts.list)} for the whole list.
   </p>
   {failed && <p class="flash flash-error" role="alert">The emails didn't load. Try again.</p>}

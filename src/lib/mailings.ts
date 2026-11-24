@@ -14,8 +14,14 @@ export const AUDIENCES = {
 } as const;
 export type Audience = keyof typeof AUDIENCES;
 
-/** Test copies go here and nowhere else. */
-export const TEST_ADDRESS = 'e@ethanplus.ai';
+/**
+ * Where test copies go, and nowhere else: the MAIL_TEST_TO setting. Without it no test can be
+ * sent, so nothing can be sent at all.
+ */
+export function testAddress(value = import.meta.env.MAIL_TEST_TO as string | undefined): string | null {
+  const v = (value ?? '').trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254 ? v : null;
+}
 export const MAX_SUBJECT = 150;
 export const MAX_BODY = 20000;
 /** Resend takes up to 100 emails in one batch call. */
@@ -75,9 +81,9 @@ export function mailingEmail(m: Pick<Mailing, 'subject' | 'body' | 'audience'>, 
   return { to, subject: m.subject.trim(), text, html: textToHtml(text), oneClickUrl: oneClickUrl(token) };
 }
 
-/** The test copy: same text, marked as a test, sent only to the organizer's own inbox. */
-export function testEmail(m: Pick<Mailing, 'subject' | 'body' | 'audience'>): Email {
-  const email = mailingEmail(m, TEST_ADDRESS, 'test-copy');
+/** The test copy: same text, marked as a test, sent only to the organizer's test address. */
+export function testEmail(m: Pick<Mailing, 'subject' | 'body' | 'audience'>, to: string): Email {
+  const email = mailingEmail(m, to, 'test-copy');
   // A test has no real unsubscribe link, so it carries no one-click header either.
   return { ...email, subject: `[Test] ${email.subject}`, oneClickUrl: undefined };
 }

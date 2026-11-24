@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { isAdmin } from '../../../lib/db';
 import { sendEmail } from '../../../lib/email';
-import { alreadySent, type Audience, checkMailing, getMailing, recipients, sendMailing, testedSinceEdit, testEmail } from '../../../lib/mailings';
+import { alreadySent, type Audience, checkMailing, getMailing, recipients, sendMailing, testAddress, testedSinceEdit, testEmail } from '../../../lib/mailings';
 import { back } from '../../../lib/respond';
 import { adminClient } from '../../../lib/supabase';
 
 // Emails to the list. Organizer only.
 //   create: save a new email.  save: change one that has not gone out to anyone yet.
-//   test: send a copy to the organizer's own inbox.  send: send it to everyone it is for who
+//   test: send a copy to the test address (MAIL_TEST_TO).  send: send it to everyone it is for who
 //   has not had it yet. Sending needs a test after the last edit, a ticked box, and the same
 //   number of people the organizer saw on the page.
 export const POST: APIRoute = async ({ request, locals, redirect }) => {
@@ -34,7 +34,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       return back(page, error ? 'save_failed' : 'mail_saved');
     }
     if (action === 'test') {
-      const result = await sendEmail(testEmail(mailing), { timeoutMs: 8000 });
+      const to = testAddress();
+      if (!to) return back(page, 'mail_no_test_address');
+      const result = await sendEmail(testEmail(mailing, to), { timeoutMs: 8000 });
       if (!result.sent) return back(page, result.reason === 'no_key' ? 'mail_no_key' : 'mail_test_failed');
       const stamped = await db.from('mailings').update({ tested_at: new Date().toISOString() }).eq('id', mailing.id);
       if (stamped.error) return back(page, 'save_failed');
