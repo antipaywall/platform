@@ -18,19 +18,19 @@ interface Props {
   jsonLd?: unknown;
   /** The page's own title in full, without " | Antipaywall" added. */
   bareTitle?: boolean;
+  /** A share card made for this page, as a path. */
+  image?: string;
+  imageAlt?: string;
 }
-const { title, description, noindex = false, jsonLd, bareTitle = false } = Astro.props;
+const { title, description, noindex = false, jsonLd, bareTitle = false, image, imageAlt } = Astro.props;
 const code = Astro.url.searchParams.get('m') ?? '';
 const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
-// Escaped so text from a repo description can never close the script tag.
-const ld = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : null;
 import VercelAnalytics from '../components/VercelAnalytics.astro';
 ---
 
 <html lang="en">
   <head>
-    <Head title={bareTitle ? title : `${title} | ${site.name}`} description={description} noindex={noindex} />
-    {ld && <script type="application/ld+json" set:html={ld} />}
+    <Head title={bareTitle ? title : `${title} | ${site.name}`} description={description} noindex={noindex} jsonLd={jsonLd} image={image} imageAlt={imageAlt} />
     <slot name="head" />
   </head>
   <body class="paged pf">

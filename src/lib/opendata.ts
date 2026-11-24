@@ -2,6 +2,7 @@
 // anyone could rerun the matching, check our work, or carry the whole thing on without us.
 // Gaps go out without anything about who posted or backed them.
 
+import { categorySlug } from './seo';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { demandFor } from './gaps';
 import { fetchAllRows } from './sync/plan';
@@ -16,11 +17,15 @@ export function publicGap(row: { slug: string; title: string; pitch: string; mis
   };
 }
 
+/** Pages whose content comes from the daily GitHub sync, so they change when it runs. */
+export const fromSync = (path: string) => /^\/(free-alternatives\/.|projects\/|topics\/.)/.test(path);
+
 const STATIC = ['/about', '/wall', '/help-build', '/first-contribution', '/open-source-ready', '/explore', '/', '/free-alternatives', '/topics', '/hackathon', '/hackathon/about', '/hackathon/join', '/hackathon/join/build', '/hackathon/join/panel', '/hackathon/join/organize', '/ideas', '/hackathon/pool', '/hackathon/fund', '/hackathon/sponsor', '/builders', '/hackathon/rules', '/hackathon/faq', '/privacy', '/terms'];
 
-export function sitemapPaths(d: { products: string[]; topics: { slug: string; tracked: boolean }[]; projects: { full_name: string; indexable: boolean }[]; gaps: string[] }): string[] {
+export function sitemapPaths(d: { products: string[]; categories?: string[]; topics: { slug: string; tracked: boolean }[]; projects: { full_name: string; indexable: boolean }[]; gaps: string[] }): string[] {
   return [
     ...STATIC,
+    ...(d.categories ?? []).map((s) => `/free-alternatives/category/${s}`),
     ...d.products.map((s) => `/free-alternatives/${s}`),
     ...d.topics.filter((t) => t.tracked).map((t) => `/topics/${t.slug}`),
     ...d.projects.filter((p) => p.indexable).map((p) => `/projects/${p.full_name}`),
@@ -64,14 +69,18 @@ export async function openData(db: SupabaseClient, file: OpenFile): Promise<unkn
 }
 
 export async function sitemapData(db: SupabaseClient) {
-  const [products, topics, projects, gaps] = await Promise.all([
-    db.from('products').select('slug'),
+  const [products, topics, projects, gaps, sync] = await Promise.all([
+    db.from('products').select('slug, category'),
     db.from('topics').select('slug, tracked'),
     fetchAllRows<{ full_name: string; indexable: boolean }>((a, b) => db.from('projects').select('full_name, indexable').eq('listed', true).eq('indexable', true).order('full_name').range(a, b)),
     fetchAllRows<{ slug: string }>((a, b) => db.from('ideas').select('slug').eq('status', 'listed').is('merged_into', null).order('slug').range(a, b)),
+    db.from('sync_log').select('finished_at').eq('ok', true).order('finished_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
   return {
     products: (products.data ?? []).map((p) => p.slug as string),
+    // "Other" is not a kind of software anyone searches for, so its page stays out.
+    categories: [...new Set((products.data ?? []).filter((p) => p.category && p.category !== 'Other').map((p) => categorySlug(p.category as string)))],
+    syncedAt: ((sync.data as { finished_at?: string } | null)?.finished_at ?? null) as string | null,
     topics: (topics.data ?? []) as { slug: string; tracked: boolean }[],
     projects,
     gaps: gaps.map((g) => g.slug),

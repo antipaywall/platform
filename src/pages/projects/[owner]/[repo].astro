@@ -11,6 +11,7 @@ import ProjectCard from '../../../components/pf/ProjectCard.astro';
 import { topicName } from '../../../lib/topics';
 import { getProjectPage, type ProjectPage } from '../../../lib/projects';
 import { plainLicense } from '../../../lib/sync/license';
+import { breadcrumbs, projectSummary, trimAtWord } from '../../../lib/seo';
 import { adminClient } from '../../../lib/supabase';
 import { visitorId } from '../../../lib/visitor';
 
@@ -48,9 +49,32 @@ const facts: [string, string, string?][] = [
   [p.createdOnGithub ? new Date(p.createdOnGithub).getUTCFullYear().toString() : '–', 'Started'],
 ];
 const hasCurve = p.starPoints.length >= 2;
+const summary = projectSummary({
+  name: p.name, stars: p.stars, license: license.label, contributors: p.contributors,
+  pushedAgo: p.pushedAt ? timeAgo(p.pushedAt, now) : null,
+  started: p.createdOnGithub ? String(new Date(p.createdOnGithub).getUTCFullYear()) : null,
+  replaces,
+});
+const jsonLd = [
+  {
+    '@type': 'SoftwareSourceCode',
+    name: p.name,
+    url: new URL(here, site.origin).href,
+    codeRepository: p.url,
+    ...(p.description ? { description: trimAtWord(p.description, 300) } : {}),
+    ...(p.homepage ? { sameAs: p.homepage } : {}),
+    ...(p.licenseSpdx ? { license: `https://spdx.org/licenses/${p.licenseSpdx}.html` } : {}),
+    ...(p.createdOnGithub ? { dateCreated: p.createdOnGithub.slice(0, 10) } : {}),
+    ...(p.pushedAt ? { dateModified: p.pushedAt.slice(0, 10) } : {}),
+    ...(p.topics.length ? { keywords: p.topics.slice(0, 10).join(', ') } : {}),
+    author: { '@type': 'Organization', name: p.owner, url: `https://github.com/${p.owner}` },
+    interactionStatistic: { '@type': 'InteractionCounter', interactionType: 'https://schema.org/LikeAction', userInteractionCount: p.stars, description: 'GitHub stars' },
+  },
+  breadcrumbs([['Find', '/free-alternatives'], ...(products[0] ? [[products[0].name, `/free-alternatives/${products[0].slug}`] as [string, string]] : []), [p.name, here]]),
+];
 ---
 
-<Platform title={`${p.name}: ${replaces.length ? `free alternative to ${replaces[0]}` : 'open-source project'}`} description={description.slice(0, 160)} noindex={!p.indexable}>
+<Platform title={`${p.name}: ${replaces.length ? `free alternative to ${replaces[0]}` : 'open-source project'}`} description={trimAtWord(description, 160)} noindex={!p.indexable} jsonLd={jsonLd} image={`/og/project/${p.fullName}.png`} imageAlt={`${p.name} on Antipaywall`}>
   <section class="wrap pf-hero">
     <div class="pf-hero-main">
       <nav aria-label="Breadcrumb" class="pf-crumbs">
@@ -63,6 +87,7 @@ const hasCurve = p.starPoints.length >= 2;
         <h1 class="pf-title">{p.name}</h1>
       </div>
       {cleanDescription(p.description) && <p class="lede">{cleanDescription(p.description)}</p>}
+      <p class="pj-summary">{summary}</p>
       <div class="pf-chips">
         <a class="key key-sm" href={p.url} rel="noopener">Open on GitHub</a>
         {p.homepage && <a class="key key-milk key-sm" href={p.homepage} rel="noopener nofollow">Website</a>}
@@ -165,6 +190,7 @@ const hasCurve = p.starPoints.length >= 2;
   .pj-name img { width: clamp(52px, 7vw, 72px); height: auto; aspect-ratio: 1; border-radius: 18px; flex: none; background: var(--milk-2); box-shadow: 0 0 0 1px var(--line); }
   .pj-name h1 { overflow-wrap: anywhere; }
   .pj-replaces { margin: 0; font-weight: 700; }
+  .pj-summary { margin: 0; max-width: 68ch; color: var(--ink-2); }
   .pf-tags a.pf-tag { text-decoration: none; }
   .pf-tags a.pf-tag:hover { box-shadow: 0 0 0 1.5px var(--ink); }
   .pj-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 1px; background: var(--line); border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }

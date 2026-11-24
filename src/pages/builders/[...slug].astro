@@ -2,6 +2,7 @@
 // A builder's profile: what their GitHub or GitLab account says, the repositories they feature,
 // and what they wrote about themselves here. Builders are always public; anyone else only by choice.
 import Base from '../../layouts/Base.astro';
+import { site } from '../../config/site';
 import ActivityWall from '../../components/ActivityWall.astro';
 import BadgeMark from '../../components/BadgeMark.astro';
 import PostCard from '../../components/PostCard.astro';
@@ -80,9 +81,15 @@ const about = p.about ?? null;
 const skills = p.skills ?? [];
 const title = p.name ? `${p.name} (@${p.handle})` : `@${p.handle}`;
 const stars = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n));
+const jsonLd = {
+  '@type': 'ProfilePage',
+  url: new URL(here, site.origin).href,
+  ...(joined && (p.joined_at ?? p.created_at) ? { dateCreated: String(p.joined_at ?? p.created_at).slice(0, 10) } : {}),
+  mainEntity: { '@type': 'Person', name: p.name || p.handle, alternateName: `@${p.handle}`, url: new URL(here, site.origin).href, ...(about || p.bio ? { description: String(about ?? p.bio).slice(0, 300) } : {}) },
+};
 ---
 
-<Base title={title} description={about ?? p.bio ?? `${p.handle} is building on Antipaywall.`}>
+<Base title={title} description={about ?? p.bio ?? `${p.handle} is building on Antipaywall.`} jsonLd={jsonLd}>
   <p class="crumb"><a class="link" href="/builders">All builders</a></p>
   <div class="prof">
     <aside class="pcard" aria-label={`About ${p.name ?? p.handle}`}>

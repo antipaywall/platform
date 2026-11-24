@@ -10,3 +10,9 @@ declare namespace App {
     viewAs: import('./lib/viewAs').ViewAs | null;
   }
 }
+
+/** resvg's WebAssembly as base64, from the resvg-wasm plugin in astro.config.mjs. */
+declare module 'virtual:resvg-wasm' {
+  const wasm: string;
+  export default wasm;
+}

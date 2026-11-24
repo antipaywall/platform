@@ -167,3 +167,35 @@ export async function getProductPage(
     syncedAt: (sync.data as any)?.finished_at ?? null,
   };
 }
+
+export type CategoryPage = {
+  name: string;
+  slug: string;
+  products: (ProductSummary & { top: { name: string; fullName: string; stars: number }[] })[];
+};
+
+/**
+ * One category of paid tools, each with its best-known free alternatives. The category is found
+ * by its address; null when no product is in it.
+ */
+export async function getCategoryPage(db: SupabaseClient, slug: string, toSlug: (name: string) => string): Promise<CategoryPage | null> {
+  const all = await listProducts(db);
+  const products = all.filter((p) => toSlug(p.category) === slug);
+  if (!products.length) return null;
+  const links = await fetchAllRows<{ product_id: string; source: string; projects: any }>((a, b) =>
+    db.from('project_products').select('product_id, source, projects!inner(full_name, name, stars, listed)').in('product_id', products.map((p) => p.id)).eq('projects.listed', true).order('product_id').order('project_id').range(a, b));
+  const top = new Map<string, { name: string; fullName: string; stars: number }[]>();
+  for (const l of links) {
+    if (!(TRUSTED_SOURCES as readonly string[]).includes(l.source)) continue;
+    const p = Array.isArray(l.projects) ? l.projects[0] : l.projects;
+    if (!p) continue;
+    top.set(l.product_id, [...(top.get(l.product_id) ?? []), { name: p.name, fullName: p.full_name, stars: Number(p.stars ?? 0) }]);
+  }
+  return {
+    name: products[0].category,
+    slug,
+    products: products
+      .map((p) => ({ ...p, top: (top.get(p.id) ?? []).sort((a, b) => b.stars - a.stars).slice(0, 3) }))
+      .sort((a, b) => b.freeOptions - a.freeOptions || a.name.localeCompare(b.name)),
+  };
+}
