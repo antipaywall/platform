@@ -50,6 +50,8 @@ export async function fetchRepos(
   for (const r of list as any[]) {
     if (!r || typeof r !== 'object') continue;
     if (github ? r.fork || r.archived || r.private : r.forked_from_project || r.archived || r.visibility !== 'public') continue;
+    // A GitHub login can change hands. Only repositories owned by this same account (by its id) are theirs.
+    if (github && Number(r.owner?.id) !== who.accountId) continue;
     const name = text(github ? r.name : r.path, 100);
     const link = github ? r.html_url : r.web_url;
     if (!name || typeof link !== 'string' || !link.startsWith(HOSTS[who.provider])) continue;
@@ -104,11 +106,12 @@ export async function fetchDetails(
   const github = who.provider === 'github';
   const headers: Record<string, string> = { 'user-agent': 'antipaywall', accept: github ? 'application/vnd.github+json' : 'application/json' };
   if (github && opts.githubToken) headers.authorization = `Bearer ${opts.githubToken}`;
-  const url = github ? `https://api.github.com/users/${encodeURIComponent(who.handle)}` : `https://gitlab.com/api/v4/users/${who.accountId}`;
+  // Looked up by the account's id, which never changes hands, not by its login, which can.
+  const url = github ? `https://api.github.com/user/${who.accountId}` : `https://gitlab.com/api/v4/users/${who.accountId}`;
   const res = await f(url, { headers }).catch(() => null);
   if (!res || !res.ok) return null;
   const u = (await res.json().catch(() => null)) as any;
-  if (!u || typeof u !== 'object') return null;
+  if (!u || typeof u !== 'object' || Number(u.id) !== who.accountId) return null;
   const count = Number(u.public_repos);
   return { name: text(u.name, 120), bio: text(u.bio, 400), location: text(u.location, 120), repoCount: github && Number.isSafeInteger(count) && count >= 0 ? count : null };
 }

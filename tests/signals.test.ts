@@ -70,13 +70,13 @@ describe('toggleSignal', () => {
     const { calls, db } = fakeDb();
     await toggleSignal(db, { ...s, on: true }, { userId: null, visitor: 'v1' });
     expect(calls).toHaveLength(2);
-    expect(calls[0]).toEqual({ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1' } });
+    expect(calls[0]).toEqual({ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1', user_id: null } });
     expect(calls[1]).toMatchObject({ op: 'insert', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1', user_id: null } });
   });
   it('takes it back with the same key', async () => {
     const { calls, db } = fakeDb();
     await toggleSignal(db, { ...s, on: false }, { userId: null, visitor: 'v1' });
-    expect(calls).toEqual([{ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1' } }]);
+    expect(calls).toEqual([{ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1', user_id: null } }]);
   });
   it('keys a signed-in person by their user id, so another browser replaces rather than adds', async () => {
     const { calls, db } = fakeDb();
@@ -88,9 +88,9 @@ describe('toggleSignal', () => {
 
 describe('review fixes: signals', () => {
   const s = { subjectKind: 'product' as const, subjectId: id, kind: 'use' as const, payCents: null, payPeriod: null };
-  it('signed out, takes back a signal this browser gave while signed in, so the browser never counts twice', async () => {
+  it('signed out, takes back only this browser\'s anonymous signal, never one tied to an account', async () => {
     const { calls, db } = fakeDb();
     await toggleSignal(db, { ...s, on: false }, { userId: null, visitor: 'v1' });
-    expect(calls).toEqual([{ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1' } }]);
+    expect(calls).toEqual([{ op: 'delete', table: 'signals', args: { subject_kind: 'product', subject_id: id, kind: 'use', visitor: 'v1', user_id: null } }]);
   });
 });

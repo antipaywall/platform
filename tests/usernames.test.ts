@@ -107,7 +107,8 @@ describe('pickFreeName', () => {
     const taken = new Set(['sam-2']);
     expect(await pickFreeName('sam', async (n) => (taken.has(n) ? { id: 'x', provider: 'github' as const } : null), async (n) => (n === 'sam-3' ? 'yes' : 'no'), 5)).toBe('sam-4');
   });
-  it('does not stall when GitHub cannot be asked', async () => {
-    expect(await pickFreeName('sam', async () => null, async () => 'unknown', 5)).toBe('sam-2');
+  it('never takes a numbered name GitHub could not confirm is free', async () => {
+    const name = await pickFreeName('sam', async () => null, async () => 'unknown', 5);
+    expect(name).toMatch(/^sam-[a-f0-9]{8}$/);
   });
 });

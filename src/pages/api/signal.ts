@@ -2,9 +2,9 @@ import type { APIRoute } from 'astro';
 import { back } from '../../lib/respond';
 import { senderKey } from '../../lib/requester';
 import { takeSlot } from '../../lib/ratelimit';
-import { parseSignal, toggleSignal } from '../../lib/signals';
+import { parseSignal, subjectIsPublic, toggleSignal } from '../../lib/signals';
 import { adminClient } from '../../lib/supabase';
-import { ensureVisitorId } from '../../lib/visitor';
+import { safeVisitorId } from '../../lib/visitor';
 
 /** Signals one connection may give in an hour. Generous: pressing a few buttons is normal. */
 const MAX_SIGNALS_PER_HOUR = 120;
@@ -27,7 +27,9 @@ export const POST: APIRoute = async (context) => {
   const sender = senderKey(context);
   if (sender && (await takeSlot(db, 'signal', sender, MAX_SIGNALS_PER_HOUR)) === 'limited') return reply(false, 'too_many');
 
-  const visitor = ensureVisitorId(cookies, url.protocol === 'https:');
+  // Nothing new on something hidden or gone. Taking a signal back always works.
+  if (parsed.on && !(await subjectIsPublic(db, parsed.subjectKind, parsed.subjectId))) return reply(false, 'idea_gone');
+  const visitor = await safeVisitorId(db, cookies, url.protocol === 'https:');
   try {
     await toggleSignal(db, parsed, { userId: locals.userId, visitor });
   } catch {

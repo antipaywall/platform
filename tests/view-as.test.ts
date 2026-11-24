@@ -74,3 +74,32 @@ describe('the view-as switch', () => {
     expect((await post({ as: 'organizer' })).set).toEqual([]);
   });
 });
+
+describe('safeVisitorId', () => {
+  const jar = (start?: string) => {
+    const store = new Map<string, string>(start ? [['apw_visitor', start]] : []);
+    return { store, cookies: { get: (n: string) => (store.has(n) ? { value: store.get(n)! } : undefined), set: (n: string, v: string) => store.set(n, v), delete: (n: string) => store.delete(n) } as any };
+  };
+  const people = (ids: string[]) => ({ from: () => ({ select: () => ({ eq: (_c: string, v: string) => ({ maybeSingle: async () => ({ data: ids.includes(v) ? { id: v } : null, error: null }) }) }) }) }) as any;
+  const account = '11111111-2222-4333-8444-555555555555';
+  it('keeps a browser id that is nobody\'s account id', async () => {
+    const { safeVisitorId } = await import('../src/lib/visitor');
+    const own = '99999999-2222-4333-8444-555555555555';
+    const { cookies, store } = jar(own);
+    expect(await safeVisitorId(people([account]), cookies, true)).toBe(own);
+    expect(store.get('apw_visitor')).toBe(own);
+  });
+  it('replaces a browser id that is someone\'s public account id', async () => {
+    const { safeVisitorId } = await import('../src/lib/visitor');
+    const { cookies, store } = jar(account);
+    const got = await safeVisitorId(people([account]), cookies, true);
+    expect(got).not.toBe(account);
+    expect(store.get('apw_visitor')).toBe(got);
+  });
+  it('is forgotten on sign-out', async () => {
+    const { clearVisitorId } = await import('../src/lib/visitor');
+    const { cookies, store } = jar(account);
+    clearVisitorId(cookies);
+    expect(store.has('apw_visitor')).toBe(false);
+  });
+});

@@ -55,8 +55,10 @@ try {
   ideas = i;
   repos = r;
   activity = act;
-  // Backer: a pledge, or anything backed while signed in (a signal or a heart).
-  badges = badgesFor(person, granted?.get(id) ?? [], { backer: Boolean(pledge) || backed, entry: entry.has(id) });
+  // Backer: a listed pledge under their own name, or anything backed while signed in (a signal or a heart).
+  // An anonymous pledge, or one still waiting to be checked, never shows on a public page.
+  const namedPledge = Boolean(pledge && pledge.status === 'listed' && !pledge.anonymous);
+  badges = badgesFor(person, granted?.get(id) ?? [], { backer: namedPledge || backed, entry: entry.has(id) });
   counts = c ?? counts;
   follows = f ?? false;
   posts = ps ?? [];

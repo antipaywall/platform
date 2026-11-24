@@ -72,17 +72,20 @@ export const holderIn = (db: SupabaseClient) => async (name: string): Promise<Ho
 
 /**
  * A free name for a builder who had to give theirs up: name-2, name-3 … for a few tries, then a
- * unique suffix. A GitHub lookup that can't be answered doesn't block it.
+ * random suffix. A numbered name is only taken when GitHub confirms nobody has it: when GitHub
+ * can't be asked, the random suffix is used instead, never a name that might be someone's.
  */
 export async function pickFreeName(base: string, holder: (n: string) => Promise<Holder>, onGithub: (n: string) => Promise<'yes' | 'no' | 'unknown'>, tries = 5): Promise<string> {
   const stem = base.slice(0, 30).replace(/-+$/, '') || 'builder';
   for (let i = 2; i < 2 + tries; i++) {
     const candidate = `${stem}-${i}`;
     if (await holder(candidate)) continue;
-    if ((await onGithub(candidate)) === 'yes') continue;
+    const gh = await onGithub(candidate);
+    if (gh === 'yes') continue;
+    if (gh === 'unknown') break;
     return candidate;
   }
-  return `${stem}-${Date.now().toString(36)}`;
+  return `${stem}-${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`;
 }
 
 export const freeName = (db: SupabaseClient, base: string) => pickFreeName(base, holderIn(db), (n) => githubHasUser(n));
@@ -141,4 +144,30 @@ export function usernameGate(path: string, method: string): 'allow' | 'choose' |
   if (path.startsWith('/auth/') || path === '/api/account/username') return 'allow';
   if (/^\/(_astro|_image)\//.test(path) || /\.[a-z0-9]{2,5}$/i.test(path)) return 'allow';
   return ['GET', 'HEAD'].includes(method.toUpperCase()) ? 'choose' : 'refuse';
+}
+
+/** The GitHub account id on a sign-in's linked GitHub identity, as GitHub gave it to the sign-in provider. */
+export function linkedGithubId(user: { identities?: { provider: string; id?: string; identity_data?: Record<string, unknown> }[] } | null | undefined): number | null {
+  const i = (user?.identities ?? []).find((x) => x.provider === 'github');
+  const raw = i?.identity_data?.provider_id ?? i?.identity_data?.sub ?? i?.id;
+  const n = Number(raw);
+  return Number.isSafeInteger(n) && n > 0 ? n : null;
+}
+
+/**
+ * The login a GitHub account has now, asked of GitHub by its id. A login saved earlier can have
+ * changed hands since; the id cannot. Null when GitHub can't be asked.
+ */
+export async function currentGithubLogin(id: number, f: typeof fetch = fetch): Promise<string | null> {
+  try {
+    const token = (typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined) || (appConfigured() ? await installationToken().catch(() => undefined) : undefined);
+    const headers: Record<string, string> = { accept: 'application/vnd.github+json', 'user-agent': 'antipaywall' };
+    if (token) headers.authorization = `Bearer ${token}`;
+    const res = await f(`https://api.github.com/user/${id}`, { headers, signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return null;
+    const u = (await res.json().catch(() => null)) as { id?: unknown; login?: unknown } | null;
+    return u && Number(u.id) === id && typeof u.login === 'string' && validUsername(u.login) ? u.login : null;
+  } catch {
+    return null;
+  }
 }

@@ -38,11 +38,17 @@ const decode = (s: string) =>
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Math.min(Number(n), 0x10ffff)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(Math.min(parseInt(n, 16), 0x10ffff)))
     .replace(/&([a-z]+);/gi, (m, n) => ENTITIES[n.toLowerCase()] ?? m);
-const clean = (s: string, max: number) => decode(s.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim().slice(0, max);
+// Every pattern below is linear in the page's length. A page is someone else's input, and a
+// pattern that rescans the rest of the page at each failed start (an unclosed "<title", a "<"
+// with no ">") would let one crafted page hold the server for seconds.
+const clean = (s: string, max: number) => decode(s.replace(/<[^<>]*>/g, ' ')).replace(/\s+/g, ' ').trim().slice(0, max);
+/** True when the character after a tag name ends the name: "<meta " or "<meta>", not "<metadata". */
+const ends = (c: string | undefined) => c === undefined || !/[a-z0-9-]/i.test(c);
 
 function metaTags(html: string): Map<string, string> {
   const out = new Map<string, string>();
-  for (const tag of html.match(/<meta\b[^>]*>/gi) ?? []) {
+  // A tag runs to its own ">" and never past the next "<"; a tag longer than 4,000 characters is not real metadata.
+  for (const tag of html.match(/<meta\b[^<>]{0,4000}>/gi) ?? []) {
     const attrs = new Map<string, string>();
     for (const m of tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) attrs.set(m[1].toLowerCase(), m[2] ?? m[3] ?? '');
     const key = (attrs.get('property') ?? attrs.get('name') ?? '').toLowerCase();
@@ -52,12 +58,46 @@ function metaTags(html: string): Map<string, string> {
   return out;
 }
 
-const tagTexts = (html: string, tag: string, max: number) =>
-  [...html.matchAll(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)</${tag}>`, 'gi'))].map((m) => clean(m[1], 200)).filter(Boolean).slice(0, max);
+/** The text inside each <tag>…</tag>, found by walking the page once. An unclosed tag ends the walk. */
+function tagTexts(html: string, tag: string, max: number): string[] {
+  const lower = html.toLowerCase();
+  const out: string[] = [];
+  let at = 0;
+  while (out.length < max) {
+    const open = lower.indexOf(`<${tag}`, at);
+    if (open < 0) break;
+    if (!ends(lower[open + tag.length + 1])) { at = open + 1; continue; }
+    const gt = lower.indexOf('>', open);
+    const close = gt < 0 ? -1 : lower.indexOf(`</${tag}`, gt);
+    if (close < 0) break;
+    const text = clean(html.slice(gt + 1, close), 200);
+    if (text) out.push(text);
+    at = close + tag.length + 2;
+  }
+  return out;
+}
+
+/** The page without one kind of block (<script>…</script> and so on), in one pass. An unclosed block runs to the end. */
+function withoutBlocks(html: string, tag: string): string {
+  const lower = html.toLowerCase();
+  let out = '';
+  let at = 0;
+  for (;;) {
+    const open = lower.indexOf(`<${tag}`, at);
+    if (open < 0) return out + html.slice(at);
+    if (!ends(lower[open + tag.length + 1])) { out += html.slice(at, open + 1); at = open + 1; continue; }
+    out += html.slice(at, open) + ' ';
+    const close = lower.indexOf(`</${tag}`, open);
+    if (close < 0) return out;
+    const gt = lower.indexOf('>', close);
+    at = gt < 0 ? lower.length : gt + 1;
+  }
+}
 
 /** The page as a reader sees it: no scripts, styles or markup. */
 export function visibleText(html: string): string {
-  return clean(html.replace(/<(script|style|noscript|svg|template)\b[\s\S]*?<\/\1>/gi, ' '), 200_000);
+  const stripped = ['script', 'style', 'noscript', 'svg', 'template'].reduce(withoutBlocks, html.slice(0, 900_000));
+  return clean(stripped, 200_000);
 }
 
 export type SitePrice = { cents: number; period: 'month' | 'year' };

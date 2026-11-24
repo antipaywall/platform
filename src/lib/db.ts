@@ -317,9 +317,14 @@ export async function getOrganizerPledge(): Promise<number | null> {
 }
 
 /** Which of these ideas this browser has hearted. */
-export async function heartedBy(visitor: string | undefined, ideaIds: string[]): Promise<Set<string>> {
-  if (!visitor || !ideaIds.length) return new Set();
-  const { data, error } = await db().from('idea_hearts').select('idea_id').eq('visitor', visitor).in('idea_id', ideaIds);
+export async function heartedBy(visitor: string | undefined, ideaIds: string[], userId: string | null = null): Promise<Set<string>> {
+  if ((!visitor && !userId) || !ideaIds.length) return new Set();
+  // Signed in: this person's hearts from any browser, plus this browser's anonymous ones.
+  // Signed out: only this browser's anonymous ones, never hearts tied to an account.
+  let q = db().from('idea_hearts').select('idea_id').in('idea_id', ideaIds);
+  const anon = visitor ? `and(visitor.eq.${visitor},user_id.is.null)` : null;
+  q = userId ? q.or([`user_id.eq.${userId}`, anon].filter(Boolean).join(',')) : q.eq('visitor', visitor!).is('user_id', null);
+  const { data, error } = await q;
   if (error) throw new DataUnavailableError(error.message);
   return new Set((data ?? []).map((r) => r.idea_id));
 }

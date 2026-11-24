@@ -6,12 +6,13 @@ const repo = (name: string, stars: number, pushedAt = '2026-01-01T00:00:00Z'): R
 
 describe('fetchRepos', () => {
   const gh = [
-    { name: 'big', html_url: 'https://github.com/a/big', description: ' A  big\nthing ', language: 'TypeScript', stargazers_count: 50, pushed_at: '2026-10-01T00:00:00Z' },
+    { owner: { id: 1 }, name: 'big', html_url: 'https://github.com/a/big', description: ' A  big\nthing ', language: 'TypeScript', stargazers_count: 50, pushed_at: '2026-10-01T00:00:00Z' },
     { name: 'forked', html_url: 'https://github.com/a/forked', fork: true, stargazers_count: 999 },
     { name: 'old', html_url: 'https://github.com/a/old', archived: true, stargazers_count: 999 },
     { name: 'secret', html_url: 'https://github.com/a/secret', private: true, stargazers_count: 999 },
     { name: 'evil', html_url: 'javascript:alert(1)', stargazers_count: 999 },
-    { name: 'small', html_url: 'https://github.com/a/small', description: null, language: null, stargazers_count: 2, pushed_at: '2026-11-01T00:00:00Z' },
+    { owner: { id: 2 }, name: 'theirs', html_url: 'https://github.com/a/theirs', stargazers_count: 999 },
+    { owner: { id: 1 }, name: 'small', html_url: 'https://github.com/a/small', description: null, language: null, stargazers_count: 2, pushed_at: '2026-11-01T00:00:00Z' },
   ];
   it('keeps only the account\'s own public repositories, most-starred first', async () => {
     const got = await fetchRepos({ provider: 'github', handle: 'a', accountId: 1 }, { fetchImpl: json(gh) });
@@ -98,8 +99,15 @@ import { fetchDetails } from '../src/lib/repos';
 
 describe('fetchDetails', () => {
   it('reads name, bio, location and repo count from GitHub', async () => {
-    const f = (async () => new Response(JSON.stringify({ name: ' Nikema ', bio: 'Builds  agents', location: '', public_repos: 208 }))) as unknown as typeof fetch;
+    const urls: string[] = [];
+    const f = (async (u: string) => { urls.push(u); return new Response(JSON.stringify({ id: 1, name: ' Nikema ', bio: 'Builds  agents', location: '', public_repos: 208 })); }) as unknown as typeof fetch;
     expect(await fetchDetails({ provider: 'github', handle: 'prophen', accountId: 1 }, { fetchImpl: f })).toEqual({ name: 'Nikema', bio: 'Builds agents', location: null, repoCount: 208 });
+    // By the account's id, never its login, which can change hands.
+    expect(urls).toEqual(['https://api.github.com/user/1']);
+  });
+  it('ignores an answer about a different account', async () => {
+    const f = (async () => new Response(JSON.stringify({ id: 2, name: 'Someone else' }))) as unknown as typeof fetch;
+    expect(await fetchDetails({ provider: 'github', handle: 'prophen', accountId: 1 }, { fetchImpl: f })).toBeNull();
   });
   it('gives nothing, rather than blanks, when the provider does not answer', async () => {
     const f = (async () => new Response('limit', { status: 403 })) as unknown as typeof fetch;

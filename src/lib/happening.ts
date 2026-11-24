@@ -35,7 +35,7 @@ export async function getHappening(db: SupabaseClient, limit = 12): Promise<Happ
     db.from('idea_hearts').select('created_at, user_id, ideas!inner(slug, title, status)').eq('ideas.status', 'listed').order('created_at', { ascending: false }).limit(10),
     db.from('signals').select('id, kind, pay_cents, pay_period, subject_kind, subject_id, created_at').in('kind', ['pay', 'use']).order('created_at', { ascending: false }).limit(10),
     db.from('people').select('username, joined_at').eq('is_builder', true).not('joined_at', 'is', null).order('joined_at', { ascending: false }).limit(6),
-    db.from('gap_claims').select('created_at, people:person_id(username), ideas(slug, title)').order('created_at', { ascending: false }).limit(6),
+    db.from('gap_claims').select('created_at, people:person_id(username), ideas!inner(slug, title, status)').eq('ideas.status', 'listed').order('created_at', { ascending: false }).limit(6),
     db.from('posts').select('id, body, created_at, people:person_id(username)').is('hidden_at', null).is('parent_id', null).order('created_at', { ascending: false }).limit(6),
     db.from('projects').select('full_name, pushed_at, stars').eq('listed', true).gte('stars', 1000).order('pushed_at', { ascending: false }).limit(12),
   ]);
@@ -46,7 +46,8 @@ export async function getHappening(db: SupabaseClient, limit = 12): Promise<Happ
   const gapIds = sig.filter((s) => s.subject_kind === 'gap').map((s) => s.subject_id);
   const [products, gaps] = await Promise.all([
     productIds.length ? db.from('products').select('id, slug, name').in('id', productIds) : Promise.resolve({ data: [] }),
-    gapIds.length ? db.from('ideas').select('id, slug, title').in('id', gapIds) : Promise.resolve({ data: [] }),
+    // Only listed ideas: a signal on a hidden one says nothing in public.
+    gapIds.length ? db.from('ideas').select('id, slug, title').in('id', gapIds).eq('status', 'listed') : Promise.resolve({ data: [] }),
   ]);
   const productBy = new Map(((products as any).data ?? []).map((p: any) => [p.id, p]));
   const gapBy = new Map(((gaps as any).data ?? []).map((g: any) => [g.id, g]));

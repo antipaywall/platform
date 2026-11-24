@@ -48,7 +48,8 @@ async function authors(ids: string[], now: Date): Promise<Map<string, Author>> {
   const out = new Map<string, Author>();
   if (!unique.length) return out;
   const [{ data, error }, granted, entries] = await Promise.all([
-    db().from('people').select('id, handle, username, provider, name, avatar_url, verified, is_builder, created_at').in('id', unique),
+    // Someone whose posting the organizer turned off is left out, so none of their posts or replies show anywhere.
+    db().from('people').select('id, handle, username, provider, name, avatar_url, verified, is_builder, created_at').in('id', unique).or('can_post.is.null,can_post.eq.true'),
     grantedBadges(unique),
     entriesFor(db(), unique),
   ]);

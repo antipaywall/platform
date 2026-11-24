@@ -18,11 +18,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!login) return back('/auth/username', 'need_username');
   let subject;
   if (kind === 'project') {
-    const { data } = await db.from('projects').select('full_name').eq('id', id).maybeSingle();
+    const { data } = await db.from('projects').select('full_name').eq('id', id).eq('listed', true).maybeSingle();
     if (!data) return back(next, 'save_failed');
     subject = { kind: 'project' as const, fullName: data.full_name as string };
   } else {
-    const { data } = await db.from('ideas').select('started_by_login, author_id, gap_claims(person_id)').eq('id', id).maybeSingle();
+    const { data } = await db.from('ideas').select('started_by_login, author_id, gap_claims(person_id)').eq('id', id).eq('status', 'listed').maybeSingle();
     if (!data) return back(next, 'save_failed');
     subject = { kind: 'gap' as const, authorId: data.author_id, startedBy: data.started_by_login, claimers: ((data as any).gap_claims ?? []).map((c: any) => c.person_id) };
   }

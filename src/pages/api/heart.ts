@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { recordEvent } from '../../lib/events';
 import { back } from '../../lib/respond';
 import { adminClient } from '../../lib/supabase';
-import { ensureVisitorId } from '../../lib/visitor';
+import { safeVisitorId } from '../../lib/visitor';
 
 // Give an idea a heart, or take it back. No sign-in: one heart per browser per idea,
 // keyed by a random id in a cookie. Clearing cookies gets you another, so hearts are
@@ -18,13 +18,14 @@ export const POST: APIRoute = async (context) => {
   const { data: idea } = await db.from('ideas').select('id').eq('slug', slug).eq('status', 'listed').maybeSingle();
   if (!idea) return back('/ideas', 'idea_gone');
 
-  const key = { idea_id: idea.id, visitor: ensureVisitorId(cookies, url.protocol === 'https:') };
+  const key = { idea_id: idea.id, visitor: await safeVisitorId(db, cookies, url.protocol === 'https:') };
   if (form.get('action') === 'unheart') {
     // Signed in, take back this person's heart whichever browser gave it.
     const userId = context.locals.userId;
     const { error } = userId
-      ? await db.from('idea_hearts').delete().eq('idea_id', idea.id).or(`visitor.eq.${key.visitor},user_id.eq.${userId}`)
-      : await db.from('idea_hearts').delete().match(key);
+      ? await db.from('idea_hearts').delete().eq('idea_id', idea.id).or(`and(visitor.eq.${key.visitor},user_id.is.null),user_id.eq.${userId}`)
+      : // Signed out, only this browser's own anonymous heart: never one tied to an account.
+        await db.from('idea_hearts').delete().match(key).is('user_id', null);
     if (error) return back(from, 'save_failed');
   } else {
     const { data, error } = await db.from('idea_hearts').upsert(key, { ignoreDuplicates: true }).select('idea_id');

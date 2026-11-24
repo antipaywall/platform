@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { catalogMatch, isStale } from '../src/lib/askedTools';
 import { isPrivateAddress } from '../src/lib/siteFetch';
-import { domainLabel, parseDomain, rankSiteHits, readPrice, readSite, siteQueries } from '../src/lib/siteReader';
+import { domainLabel, parseDomain, rankSiteHits, readPrice, readSite, siteQueries, visibleText } from '../src/lib/siteReader';
 
 const page = (head: string, body = '') => `<!doctype html><html><head>${head}</head><body>${body}</body></html>`;
 const annot = page(
@@ -130,5 +130,39 @@ describe('a saved answer', () => {
     expect(isStale({ fetchedAt: ago(24 * 15), repos, readOk: true }, now)).toBe(true);
     expect(isStale({ fetchedAt: ago(2), repos: [], readOk: true }, now)).toBe(true);
     expect(isStale({ fetchedAt: ago(0.5), repos: [], readOk: true }, now)).toBe(false);
+  });
+});
+
+describe('reading a hostile page', () => {
+  // A page is someone else's input. None of these may take more than a moment to read.
+  const pages = {
+    'unclosed meta tags': '<meta '.repeat(150_000),
+    'unclosed titles': '<title>'.repeat(120_000),
+    'lone angle brackets': '<'.repeat(900_000),
+    'unclosed scripts': '<script>'.repeat(110_000),
+    'one huge meta tag': `<meta ${'a="'.repeat(290_000)}>`,
+  };
+  for (const [what, html] of Object.entries(pages)) {
+    it(`reads ${what} quickly`, () => {
+      const t = Date.now();
+      readSite(html, 'example.com');
+      visibleText(html);
+      expect(Date.now() - t).toBeLessThan(1500);
+    });
+  }
+  it('still finds a title, metadata and headings, and drops scripts', () => {
+    const facts = readSite('<html><head><title>Annot | Visual feedback for websites</title><meta name="description" content="Pin comments on any page."></head><body><h1>Feedback on live sites</h1><script>var x = "<h1>no</h1>";</script><metadata>x</metadata></body></html>', 'annot.io');
+    expect(facts.name).toBe('Annot');
+    expect(facts.description).toBe('Pin comments on any page.');
+    expect(visibleText('<p>Hi</p><script>alert(1)</script><style>p{}</style><p>there</p>')).toBe('Hi there');
+  });
+});
+
+describe('publicLookup', () => {
+  it('refuses names that resolve to a private address, and addresses given directly', async () => {
+    const { publicLookup } = await import('../src/lib/siteFetch');
+    const code = (host: string) => new Promise<string | undefined>((res) => publicLookup(host, { all: true }, (e) => res(e?.code)));
+    expect(await code('localhost')).toBe('EPRIVATE');
+    expect(await code('127.0.0.1')).toBe('EPRIVATE');
   });
 });

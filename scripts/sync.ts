@@ -254,7 +254,8 @@ async function main() {
     const keep = linkRows.filter((l) => fresh.has(l.product_id) || links.some((x) => x.source === 'catalog' && productId.get(x.product) === l.product_id && ids.get(x.repo) === l.project_id));
     for (let i = 0; i < keep.length; i += 500) must(await db.from('project_products').upsert(keep.slice(i, i + 500), { onConflict: 'project_id,product_id' }), 'links');
     // Repos GitHub no longer returns are unlisted (ones it returned are updated above with the reason).
-    for (const n of gone) must(await db.from('projects').update({ listed: false, reject_reason: 'gone' }).ilike('full_name', n), 'unlist');
+    // The name is matched exactly, ignoring case: _ and % in a repository's name are never wildcards.
+    for (const n of gone) must(await db.from('projects').update({ listed: false, reject_reason: 'gone' }).ilike('full_name', n.replace(/[\\%_]/g, (c) => `\\${c}`)), 'unlist');
     if (failed.size && !LINKS_ONLY) console.log(`Searches failed for: ${[...failed].join(', ')}; their links were kept`);
 
     const day = now.toISOString().slice(0, 10);

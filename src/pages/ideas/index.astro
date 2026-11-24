@@ -6,7 +6,7 @@ import { postedBy } from '../../lib/ideas';
 import { visitorId } from '../../lib/visitor';
 
 const ideas = await attempt(listIdeas);
-const mine = ideas ? ((await attempt(() => heartedBy(visitorId(Astro.cookies), ideas.map((i) => i.id)))) ?? new Set<string>()) : new Set<string>();
+const mine = ideas ? ((await attempt(() => heartedBy(visitorId(Astro.cookies), ideas.map((i) => i.id), Astro.locals.userId ?? null))) ?? new Set<string>()) : new Set<string>();
 ---
 
 <Base title="Wanted: software people wish were free" description="Things people wish were free. Heart the ones you want, so builders know what to make.">

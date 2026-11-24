@@ -25,9 +25,10 @@ export const POST: APIRoute = async (context) => {
   const picked = form.getAll('products').map(String).filter((s) => /^[a-z0-9-]{1,60}$/.test(s)).slice(0, 5);
   const productIds = picked.length ? ((await db.from('products').select('id').in('slug', picked)).data ?? []).map((p) => p.id as string) : [];
 
-  const { slug, code } = await storeIdea(db, parsed, person.id, undefined, { productIds });
-  if (slug) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
+  const { slug, code, created } = await storeIdea(db, parsed, person.id, undefined, { productIds });
+  if (created) await recordEvent(db, context, { kind: 'idea_posted', personId: person.id, subject: slug });
   // The idea also becomes a file in the public ideas repo, credited to the person who posted it.
-  if (slug) await pushNewIdea(db, slug, { login: person.username!, githubId: person.github_id }).catch(() => false);
+  // Only an idea this request made: posting an existing title never makes it the poster's.
+  if (created && slug) await pushNewIdea(db, slug, { login: person.username!, githubId: person.github_id, personId: person.id }).catch(() => false);
   return back(slug ? `/ideas/${slug}` : '/ideas/new', code);
 };

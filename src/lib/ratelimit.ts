@@ -17,9 +17,12 @@ export function rateKey(key: string, day: string, ip: string): string {
 
 export type Slot = 'ok' | 'limited' | 'error';
 
-/** Takes one slot for (kind, key). 'limited' means the hourly allowance is used up; nothing was recorded. */
-export async function takeSlot(db: SupabaseClient, kind: string, key: string, max: number): Promise<Slot> {
-  const { data, error } = await db.rpc('take_slot', { p_kind: kind, p_key: key, p_max: max });
+/**
+ * Takes one slot for (kind, key). 'limited' means the allowance for the window (an hour unless
+ * given, at most a day) is used up; nothing was recorded.
+ */
+export async function takeSlot(db: SupabaseClient, kind: string, key: string, max: number, minutes = 60): Promise<Slot> {
+  const { data, error } = await db.rpc('take_slot', { p_kind: kind, p_key: key, p_max: max, ...(minutes !== 60 ? { p_minutes: Math.min(minutes, 1440) } : {}) });
   if (error || typeof data !== 'boolean') return 'error';
   return data ? 'ok' : 'limited';
 }

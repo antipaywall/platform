@@ -55,9 +55,8 @@ export type Who = { userId: string | null; visitor: string };
 /** Sets or clears one signal. Setting replaces any earlier one of the same kind (a new amount, say). */
 export async function toggleSignal(db: SupabaseClient, s: ParsedSignal, who: Who): Promise<void> {
   let del = db.from('signals').delete().eq('subject_kind', s.subjectKind).eq('subject_id', s.subjectId).eq('kind', s.kind);
-  // Signed out, the browser's own signals are its own, including ones it gave while signed in,
-  // so the same browser can never count twice.
-  del = who.userId ? del.eq('user_id', who.userId) : del.eq('visitor', who.visitor);
+  // Signed out, only the browser's own anonymous signals: never ones tied to an account.
+  del = who.userId ? del.eq('user_id', who.userId) : del.eq('visitor', who.visitor).is('user_id', null);
   const cleared = await del;
   if (cleared.error) throw new Error(cleared.error.message);
   if (!s.on) return;
@@ -73,7 +72,8 @@ export async function signalsOf(db: SupabaseClient, who: Partial<Who>, subjectKi
   const out = new Map<string, Map<SignalKind, { payCents: number | null; payPeriod: PayPeriod | null }>>();
   if (!ids.length || (!who.userId && !who.visitor)) return out;
   let q = db.from('signals').select('subject_id, kind, pay_cents, pay_period').eq('subject_kind', subjectKind).in('subject_id', ids);
-  q = who.userId ? q.eq('user_id', who.userId) : q.eq('visitor', who.visitor!);
+  // Signed out, a browser sees only its anonymous signals. What an account gave stays with the account.
+  q = who.userId ? q.eq('user_id', who.userId) : q.eq('visitor', who.visitor!).is('user_id', null);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   for (const r of data ?? []) {
@@ -102,3 +102,12 @@ export async function claimSignals(db: SupabaseClient, visitor: string | undefin
 /** Dollars, for a would-pay amount. Whole dollars when it is whole. */
 export const payLabel = (cents: number, period: PayPeriod | 'month' | null) =>
   `$${(cents / 100).toLocaleString('en-US', { maximumFractionDigits: cents % 100 ? 2 : 0 })}${period === 'month' ? '/mo' : period === 'once' ? ' once' : ''}`;
+
+/** True when the thing a signal is about is public: a product, a listed project, a listed idea. */
+export async function subjectIsPublic(db: SupabaseClient, kind: SubjectKind, id: string): Promise<boolean> {
+  const q = kind === 'product' ? db.from('products').select('id').eq('id', id)
+    : kind === 'project' ? db.from('projects').select('id').eq('id', id).eq('listed', true)
+    : db.from('ideas').select('id').eq('id', id).eq('status', 'listed');
+  const { data, error } = await q.maybeSingle();
+  return !error && Boolean(data);
+}

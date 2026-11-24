@@ -53,8 +53,9 @@ const like = (v: string) => v.replace(/[\\%_]/g, (c) => `\\${c}`);
  */
 export async function findProfile(where: NonNullable<ReturnType<typeof parseProfilePath>>): Promise<Person | { redirect: string } | null> {
   if (where.kind === 'gitlab') {
-    const { data } = await db().from('people').select('username, handle').eq('provider', 'gitlab').ilike('handle', like(where.handle)).limit(1).maybeSingle();
-    return data ? { redirect: profilePath(data) } : null;
+    const { data } = await db().from('people').select('username, handle, is_builder, profile_public').eq('provider', 'gitlab').ilike('handle', like(where.handle)).limit(1).maybeSingle();
+    // A redirect would tell anyone where a private profile now lives, so only public ones get one.
+    return data && isPublic(data) ? { redirect: profilePath(data) } : null;
   }
   const { data, error } = await db().from('people').select('*').ilike('username', like(where.name)).limit(1).maybeSingle();
   if (error) throw new DataUnavailableError(error.message);
@@ -63,9 +64,9 @@ export async function findProfile(where: NonNullable<ReturnType<typeof parseProf
   const unnamed = await db().from('people').select('*').is('username', null).neq('provider', 'gitlab').ilike('handle', like(where.name)).limit(1).maybeSingle();
   if (unnamed.error) throw new DataUnavailableError(unnamed.error.message);
   if (unnamed.data) return unnamed.data as Person;
-  const old = await db().from('username_redirects').select('people:person_id(username, handle)').ilike('old_username', like(where.name)).maybeSingle();
+  const old = await db().from('username_redirects').select('people:person_id(username, handle, is_builder, profile_public)').ilike('old_username', like(where.name)).maybeSingle();
   const to: any = old.data?.people;
-  return to ? { redirect: profilePath(to) } : null;
+  return to && isPublic(to) ? { redirect: profilePath(to) } : null;
 }
 
 export type ProfileIdea = { slug: string; title: string; pitch: string; hearts: number; similar: number; created_at: string };

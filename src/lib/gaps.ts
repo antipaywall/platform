@@ -103,7 +103,8 @@ export async function getGapPage(
   if ('missing' in route) return null;
 
   const [mergedRows, productRows, claimRows, briefRow, followerCount] = await Promise.all([
-    db.from('ideas').select('id, slug, title').eq('merged_into', row.id),
+    // Only listed ones: an idea the organizer hid must not reappear under the one it was joined to.
+    db.from('ideas').select('id, slug, title').eq('merged_into', row.id).eq('status', 'listed'),
     db.from('gap_products').select('products(slug, name)').eq('idea_id', row.id),
     db.from('gap_claims').select('person_id, note, repo_url, created_at, people:person_id(handle, username, provider, name, avatar_url)').eq('idea_id', row.id).order('created_at'),
     db.from('season_briefs').select('seasons(id, name)').eq('idea_id', row.id).limit(1).maybeSingle(),

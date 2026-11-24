@@ -14,7 +14,7 @@ import { addToList } from '../../lib/list';
 import { back, safeNext, type MessageCode } from '../../lib/respond';
 import { adminClient, sessionClient } from '../../lib/supabase';
 import { claimSignals } from '../../lib/signals';
-import { assignUsername } from '../../lib/usernames';
+import { assignUsername, currentGithubLogin, linkedGithubId } from '../../lib/usernames';
 import { visitorId } from '../../lib/visitor';
 
 export const GET: APIRoute = async (context) => {
@@ -71,6 +71,12 @@ export const GET: APIRoute = async (context) => {
   // Two letters from the hosting provider. Nothing finer than a country is kept.
   const country = countryCode(request.headers.get('x-vercel-ip-country'));
   const { verified, results } = checkEligibility(facts, new Date());
+  // A handle is a name the provider lets people give up and others take. If another account here
+  // still has this one saved, it is out of date: the provider has just said it belongs to this
+  // sign-in. That row's saved handle is marked stale (its next sign-in saves its new one), so the
+  // current owner is never locked out by a name someone else used to have.
+  const stale = await db.from('people').select('id, handle').eq('provider', provider).ilike('handle', facts.handle.replace(/[\\%_]/g, (c) => `\\${c}`)).neq('id', user.id);
+  for (const r of stale.data ?? []) await db.from('people').update({ handle: `${r.handle}~${String(r.id).slice(0, 8)}` }).eq('id', r.id);
   const saved = await db.from('people').upsert({
     id: user.id,
     provider,
@@ -93,7 +99,12 @@ export const GET: APIRoute = async (context) => {
 
   // Their username: the GitHub login, or for GitLab the handle unless it collides. On a collision
   // they choose, after the rest of sign-in has finished.
-  const named = await assignUsername(db, { id: user.id, provider, handle: facts.handle, githubLogin: before.data?.github_login ?? null, current: before.data?.username ?? null }).catch(() => null);
+  // For GitLab, a linked GitHub name counts only as GitHub says it is now, asked by the linked account's
+  // id: a login saved earlier may since belong to someone else.
+  const linkedId = provider === 'gitlab' ? linkedGithubId(user) : null;
+  const githubLogin = linkedId ? await currentGithubLogin(linkedId) : null;
+  if (provider === 'gitlab' && (before.data?.github_login ?? null) !== githubLogin) await db.from('people').update({ github_login: githubLogin }).eq('id', user.id);
+  const named = await assignUsername(db, { id: user.id, provider, handle: facts.handle, githubLogin, current: before.data?.username ?? null }).catch(() => null);
   const mustChoose = Boolean(named && 'choose' in named);
 
   // Their public repositories and activity, for their profile. A slow provider never holds up the sign-in.

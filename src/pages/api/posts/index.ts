@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { parsePost } from '../../../lib/forms';
 import { back, safeBack } from '../../../lib/respond';
+import { takeSlot } from '../../../lib/ratelimit';
 import { postedToday, POSTS_PER_DAY, REPLIES_PER_DAY } from '../../../lib/social';
 import { adminClient } from '../../../lib/supabase';
 
@@ -28,6 +29,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { data: parent } = await db.from('posts').select('id').eq('id', parentId).is('parent_id', null).is('hidden_at', null).maybeSingle();
     if (!parent) return back(to, 'post_gone');
   }
+  // Each post takes a slot from a daily allowance that deleting a post does not give back.
+  const slot = await takeSlot(db, reply ? 'reply' : 'post', person.id, reply ? REPLIES_PER_DAY : POSTS_PER_DAY, 1440);
+  if (slot === 'limited') return back(to, reply ? 'too_many_replies' : 'too_many_posts');
+  if (slot === 'error') return back(to, 'save_failed');
   const { error } = await db.from('posts').insert({
     person_id: person.id, parent_id: reply ? parentId : null,
     kind: parsed.post.kind, body: parsed.post.body, link_url: parsed.post.linkUrl,

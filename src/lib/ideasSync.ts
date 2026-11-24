@@ -51,15 +51,16 @@ export async function removeIdea(db: SupabaseClient, slug: string): Promise<void
  * Writes a newly posted idea to the repo through the App, credited to the builder who posted it.
  * Without the App configured it does nothing: the idea lives in the database until it is.
  */
-export async function pushNewIdea(db: SupabaseClient, slug: string, poster: { login: string; githubId?: number | null } | null): Promise<boolean> {
+export async function pushNewIdea(db: SupabaseClient, slug: string, poster: { login: string; githubId?: number | null; personId: string } | null): Promise<boolean> {
   if (!appConfigured()) return false;
-  const { data: row } = await db.from('ideas').select('id, slug, title, pitch, problem, build, strong, missing, build_status, created_at, gap_products(products(slug))').eq('slug', slug).maybeSingle();
-  if (!row) return false;
+  const { data: row } = await db.from('ideas').select('id, author_id, repo_path, slug, title, pitch, problem, build, strong, missing, build_status, created_at, gap_products(products(slug))').eq('slug', slug).maybeSingle();
+  // Only the poster's own new idea: never one someone else started, and never one already in the repo.
+  if (!row || (row as any).repo_path || ((row as any).author_id ?? null) !== (poster?.personId ?? null)) return false;
   const file = ideaFromRow({ ...(row as any), merged_into_slug: null }, poster?.login ?? null, ((row as any).gap_products ?? []).map((g: any) => g.products?.slug).filter(Boolean));
   const path = ideaPath(slug);
-  const existing = await readIdeaFile(path);
+  if (await readIdeaFile(path)) return false;
   const author = poster ? authorFor(poster.login, poster.githubId) : { name: 'Antipaywall', email: 'hello@antipaywall.org' };
-  const written = await commitIdeaFile(path, renderIdeaFile(file), `Add: ${file.title}`, author, existing ? { sha: existing.sha } : {});
+  const written = await commitIdeaFile(path, renderIdeaFile(file), `Add: ${file.title}`, author, {});
   await db.from('ideas').update({ repo_path: path, repo_sha: written.sha, synced_from_repo_at: new Date().toISOString(), started_by_login: poster?.login ?? null }).eq('id', (row as any).id);
   return true;
 }

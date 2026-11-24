@@ -29,13 +29,13 @@ describe('parseEntryRepo', () => {
 describe('checkEntryRepo', () => {
   const repo = (body: object, status = 200) => (async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch;
   it('accepts a public repo the builder owns', async () => {
-    expect(await checkEntryRepo('me', 'kit', 'Me', repo({ id: 9, private: false, full_name: 'me/kit', owner: { login: 'me' } }))).toEqual({ ok: true, githubId: 9, fullName: 'me/kit' });
+    expect(await checkEntryRepo('me', 'kit', 5, repo({ id: 9, private: false, full_name: 'me/kit', owner: { id: 5 } }))).toEqual({ ok: true, githubId: 9, fullName: 'me/kit' });
   });
   it('refuses a repo someone else owns', async () => {
-    expect(await checkEntryRepo('other', 'kit', 'me', repo({ id: 9, private: false, full_name: 'other/kit', owner: { login: 'other' } }))).toEqual({ ok: false, reason: 'not_yours' });
+    expect(await checkEntryRepo('other', 'kit', 5, repo({ id: 9, private: false, full_name: 'other/kit', owner: { id: 6 } }))).toEqual({ ok: false, reason: 'not_yours' });
   });
   it('refuses a private or missing repo', async () => {
-    expect(await checkEntryRepo('me', 'kit', 'me', repo({ id: 9, private: true, full_name: 'me/kit', owner: { login: 'me' } }))).toEqual({ ok: false, reason: 'private' });
-    expect(await checkEntryRepo('me', 'kit', 'me', repo({}, 404))).toEqual({ ok: false, reason: 'not_found' });
+    expect(await checkEntryRepo('me', 'kit', 5, repo({ id: 9, private: true, full_name: 'me/kit', owner: { id: 5 } }))).toEqual({ ok: false, reason: 'private' });
+    expect(await checkEntryRepo('me', 'kit', 5, repo({}, 404))).toEqual({ ok: false, reason: 'not_found' });
   });
 });
