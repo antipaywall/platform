@@ -3019,3 +3019,7 @@
   product: dia
   action: add
   reason: 'Calls itself an open-source alternative to Dia.'
+- project: shukiv/jabali-panel
+  product: cpanel
+  action: add
+  reason: 'An open-source (AGPL-3.0) web hosting control panel for Debian and Ubuntu, tagged hosting-control-panel, that topic search misses.'
