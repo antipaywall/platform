@@ -5,6 +5,15 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const CURRENT_SEASON = 1;
 
+/** Entries can be started or changed only during build week. Before it, there is nothing to enter yet. */
+export const entriesOpen = (status: string | null | undefined) => status === 'building';
+
+/** Whether a season is in build week right now, read from the database. False when it can't be read. */
+export async function seasonTakesEntries(db: SupabaseClient, season = CURRENT_SEASON): Promise<boolean> {
+  const { data, error } = await db.from('seasons').select('status').eq('id', season).maybeSingle();
+  return !error && entriesOpen(data?.status);
+}
+
 /** owner/name, or a github.com address, to the repo it names. */
 export function parseEntryRepo(input: string): { owner: string; name: string } | null {
   const m = /^(?:https:\/\/github\.com\/)?([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))\/([A-Za-z0-9._-]{1,100}?)(?:\.git)?\/?$/.exec(input.trim());

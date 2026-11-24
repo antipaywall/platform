@@ -80,6 +80,7 @@ export const MESSAGES = {
   entry_started: { kind: 'ok', text: "You're a Season 1 builder. Your entry is saved." },
   entry_removed: { kind: 'ok', text: 'Your entry is removed. You still show as interested in Season 1.' },
   entry_join_first: { kind: 'error', text: 'Join as a builder first, then start your entry.' },
+  entries_closed: { kind: 'error', text: 'Entries open when build week starts. You will get an email when the dates are set.' },
   entry_needs_github: { kind: 'error', text: 'Entries are public GitHub repos. Connect your GitHub account first.' },
   entry_bad_repo: { kind: 'error', text: 'Give the repo as owner/name, or its github.com address.' },
   entry_private: { kind: 'error', text: 'That repo is private. Entries must be public.' },

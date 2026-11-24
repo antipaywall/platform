@@ -164,7 +164,8 @@ import VercelAnalytics from '../../components/VercelAnalytics.astro';
     </section>
 
     <main>
-      {Astro.locals.person && seenAs(Astro.locals.person, Astro.locals.viewAs).is_builder && <section class="wrap" style="padding-top:32px"><EntryBox next="/hackathon" /></section>}
+      {/* Entries open with build week; until then there is nothing to enter. */}
+      {season?.status === 'building' && Astro.locals.person && seenAs(Astro.locals.person, Astro.locals.viewAs).is_builder && <section class="wrap" style="padding-top:32px"><EntryBox next="/hackathon" /></section>}
       <section class="when" aria-label="How it runs">
         <ol class="wrap when-row">
           {

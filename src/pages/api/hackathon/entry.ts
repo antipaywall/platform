@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { checkEntryRepo, CURRENT_SEASON, parseEntryRepo } from '../../../lib/entries';
+import { checkEntryRepo, CURRENT_SEASON, parseEntryRepo, seasonTakesEntries } from '../../../lib/entries';
 import { back, safeNext } from '../../../lib/respond';
 import { linkedGithubId } from '../../../lib/usernames';
 import { adminClient } from '../../../lib/supabase';
@@ -17,6 +17,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { error } = await db.from('season_entries').delete().eq('season_id', CURRENT_SEASON).eq('person_id', person.id);
     return back(page, error ? 'save_failed' : 'entry_removed');
   }
+  // Entries open with build week. Removing one always works.
+  if (!(await seasonTakesEntries(db))) return back(page, 'entries_closed');
   // The builder's GitHub account by its id: their own for a GitHub sign-in, the linked one for GitLab.
   const githubId = person.provider === 'github' ? Number(person.github_id) : linkedGithubId((await db.auth.admin.getUserById(person.id)).data.user);
   if (!githubId) return back(page, 'entry_needs_github');
