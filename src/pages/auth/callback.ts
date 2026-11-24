@@ -77,6 +77,8 @@ export const GET: APIRoute = async (context) => {
   // current owner is never locked out by a name someone else used to have.
   const stale = await db.from('people').select('id, handle').eq('provider', provider).ilike('handle', facts.handle.replace(/[\\%_]/g, (c) => `\\${c}`)).neq('id', user.id);
   for (const r of stale.data ?? []) await db.from('people').update({ handle: `${r.handle}~${String(r.id).slice(0, 8)}` }).eq('id', r.id);
+  // Likewise a GitLab account's saved linked GitHub name: GitHub has just said it belongs to this sign-in.
+  if (provider === 'github') await db.from('people').update({ github_login: null }).eq('provider', 'gitlab').ilike('github_login', facts.handle.replace(/[\\%_]/g, (c) => `\\${c}`)).neq('id', user.id);
   const saved = await db.from('people').upsert({
     id: user.id,
     provider,

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { countryCode } from '../../lib/analytics';
+import { accountLine } from '../../lib/accounts';
 import { deliver, organizerNotice } from '../../lib/email';
 import { recordEvent } from '../../lib/events';
 import { parseOrganize } from '../../lib/intake';
@@ -31,6 +32,6 @@ export const POST: APIRoute = async (context) => {
   if (error) return back(HERE, 'save_failed');
   // Sending it again replaces the earlier one, so only the first is recorded as something done.
   if (!before.data) await recordEvent(db, context, { kind: 'organize_offered', personId: person.id });
-  await deliver(db, organizerNotice('An offer to help organize', [['GitHub', `@${person.handle}`], ['Can help with', parsed.note]]));
+  await deliver(db, organizerNotice('An offer to help organize', [accountLine(person), ['Can help with', parsed.note]]));
   return back(HERE, 'organize_saved');
 };

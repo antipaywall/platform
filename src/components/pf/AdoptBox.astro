@@ -1,6 +1,7 @@
 ---
 // "Looking for a new owner": the original builder's terms, who'd take it over, and the controls for
 // whoever is looking at it. Antipaywall shows the terms; it never enforces them or handles money.
+import { verifiedGithubLogin } from '../../lib/accounts';
 import { ADOPTION_TERMS, canOffer, openAdoption, termLabel, type Subject } from '../../lib/adoptions';
 import { adminClient } from '../../lib/supabase';
 
@@ -17,7 +18,8 @@ const adoption = db ? await openAdoption(db, kind, id).catch(() => null) : null;
 const person = Astro.locals.person;
 const login = person?.username ?? null;
 const mine = Boolean(person && login && adoption && adoption.offeredById === person.id);
-const mayOffer = Boolean(person && login && !adoption && canOffer(subject, { login, personId: person.id }));
+// Only whether to show the form; the offer itself is checked against GitHub's current answer.
+const mayOffer = Boolean(person && login && !adoption && canOffer(subject, { githubLogin: verifiedGithubLogin(person), personId: person.id }));
 const interested = Boolean(person && adoption?.interest.some((i) => i.personId === person.id));
 ---
 

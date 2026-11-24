@@ -19,14 +19,18 @@ export function parseTerms(form: FormData): TermKey[] {
 
 export type Subject = { kind: 'project'; fullName: string } | { kind: 'gap'; authorId?: string | null; startedBy: string | null; claimers: string[] };
 
-/** A repo's owner can hand off their project; a gap's starter or a builder on it can hand off the gap. */
-export function canOffer(s: Subject, who: { login: string; personId: string }): boolean {
-  const me = who.login.toLowerCase();
-  if (s.kind === 'project') return s.fullName.split('/')[0].toLowerCase() === me;
+/**
+ * A repo's owner can hand off their project; a gap's starter or a builder on it can hand off the gap.
+ * `githubLogin` is the GitHub login the account has proved it owns (`verifiedGithubLogin`), never the
+ * username chosen here: a GitLab user can hold a username that matches someone else's GitHub login.
+ */
+export function canOffer(s: Subject, who: { githubLogin: string | null; personId: string }): boolean {
+  const me = who.githubLogin?.toLowerCase() ?? null;
+  if (s.kind === 'project') return me !== null && s.fullName.split('/')[0].toLowerCase() === me;
   if (s.claimers.includes(who.personId)) return true;
-  // The person who posted it, by account; the login only for ideas added straight on GitHub.
+  // The person who posted it, by account; the GitHub login only for ideas added straight on GitHub.
   if (s.authorId) return s.authorId === who.personId;
-  return s.startedBy?.toLowerCase() === me;
+  return me !== null && s.startedBy?.toLowerCase() === me;
 }
 
 export type Adoption = {

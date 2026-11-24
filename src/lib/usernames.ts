@@ -4,7 +4,7 @@
 // name is theirs) or picks another.
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Provider } from './accounts';
+import { providerOf, type Provider } from './accounts';
 import { appConfigured, installationToken } from './githubApp';
 
 const RULE = /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/;
@@ -170,4 +170,24 @@ export async function currentGithubLogin(id: number, f: typeof fetch = fetch): P
   } catch {
     return null;
   }
+}
+
+/**
+ * The GitHub login this account owns right now, asked of GitHub by the account's permanent id: the
+ * GitHub sign-in's own id, or for a GitLab account the GitHub account it linked. Saved names are not
+ * trusted, since a GitHub name can be given up and taken by someone else. Null when there is no GitHub
+ * account or GitHub can't be asked, so anything that depends on it is refused rather than allowed.
+ */
+export async function provenGithubLogin(
+  db: Pick<SupabaseClient, 'auth'>,
+  person: { id: string; provider?: string | null; github_id?: number | null },
+  f: typeof fetch = fetch,
+): Promise<string | null> {
+  let id: number | null = null;
+  if (providerOf(person) === 'github') id = person.github_id ?? null;
+  else {
+    const { data } = await db.auth.admin.getUserById(person.id).catch(() => ({ data: { user: null } }));
+    id = linkedGithubId(data?.user as Parameters<typeof linkedGithubId>[0]);
+  }
+  return id ? currentGithubLogin(id, f) : null;
 }

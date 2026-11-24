@@ -29,6 +29,8 @@ export type Person = {
   bio?: string | null;
   location?: string | null;
   repo_count?: number | null;
+  /** A GitLab account's linked GitHub login, as GitHub last confirmed it. */
+  github_login?: string | null;
   /** Written by the person on their account page. */
   about?: string | null;
   skills?: string[];
