@@ -238,7 +238,17 @@ async function main() {
     const rows = [...[...listed.values()].map((r) => rowOf(r, true, null)), ...rejected.map(({ r, reason }) => rowOf(r, false, reason))];
     const ids = new Map<string, string>();
     for (let i = 0; i < rows.length; i += 200) {
-      const saved = must(await db.from('projects').upsert(rows.slice(i, i + 200), { onConflict: 'github_id' }).select('id, full_name'), 'projects');
+      const batch = rows.slice(i, i + 200);
+      // An owner can delete a repository and make a new one with the same name. The old row, with
+      // the old GitHub id, still holds the name; it is renamed out of the way and unlisted, so one
+      // replaced repository can never stop the whole run.
+      const held = must(await db.from('projects').select('id, github_id, full_name').in('full_name', batch.map((r) => r.full_name)), 'projects read') as { id: string; github_id: number; full_name: string }[];
+      const idByName = new Map(batch.map((r) => [r.full_name.toLowerCase(), r.github_id]));
+      for (const old of held) {
+        if (idByName.get(old.full_name.toLowerCase()) === old.github_id) continue;
+        must(await db.from('projects').update({ full_name: `${old.full_name}~replaced-${old.github_id}`, listed: false, reject_reason: 'gone' }).eq('id', old.id), 'projects rename');
+      }
+      const saved = must(await db.from('projects').upsert(batch, { onConflict: 'github_id' }).select('id, full_name'), 'projects');
       for (const s of saved as { id: string; full_name: string }[]) ids.set(s.full_name.toLowerCase(), s.id);
     }
 
