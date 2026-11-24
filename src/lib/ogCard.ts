@@ -1,8 +1,8 @@
 // Share cards made for one page: "11 free, open-source alternatives to Notion" with the projects
 // as bricks, in the site's own colors. Drawn on request and cached at the edge for a day.
 
-import { readFile } from 'node:fs/promises';
-import { createRequire } from 'node:module';
+// resvg's WebAssembly, built into this file so the server never has to find it on disk.
+import resvgWasm from 'virtual:resvg-wasm';
 import { shortCount } from './format';
 
 const C = { milk: '#f6f3f9', ink: '#2a1d33', ink2: '#6b5d74', tomato: '#f2725a', card: '#ffffff' };
@@ -98,12 +98,11 @@ type Renderer = { toSvg: (el: unknown, o: Record<string, unknown>) => Promise<st
 let renderer: Promise<Renderer> | null = null;
 function loadRenderer(): Promise<Renderer> {
   renderer ??= (async () => {
-    const require = createRequire(import.meta.url);
     const sm: any = await import('satori');
     const satori = typeof sm.default === 'function' ? sm.default : (sm.default?.default ?? sm.satori);
     const rm: any = await import('@resvg/resvg-wasm');
     const resvg = rm.initWasm ? rm : rm.default;
-    await resvg.initWasm(await readFile(require.resolve('@resvg/resvg-wasm/index_bg.wasm')));
+    await resvg.initWasm(Buffer.from(resvgWasm, 'base64'));
     return {
       toSvg: (el: unknown, o: Record<string, unknown>) => satori(el, o),
       toPng: (svg: string) => new resvg.Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng(),
