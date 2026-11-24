@@ -7,6 +7,7 @@ import Heart from '../../components/Heart.astro';
 import { site } from '../../config/site';
 import { cleanDescription, cleanIssueTitle, dollars, shortCount, timeAgo, updated } from '../../lib/format';
 import { getProductPage, priceLabel, productDescription, productTitle, type ProductPage } from '../../lib/products';
+import { breadcrumbs, categorySlug, faqData, toolAnswer, toolQuestions } from '../../lib/seo';
 import { adminClient } from '../../lib/supabase';
 import { visitorId } from '../../lib/visitor';
 
@@ -27,23 +28,30 @@ const now = new Date();
 const pay = mine.get('pay');
 const price = priceLabel(product.price);
 const title = productTitle(product.name);
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: title,
-  url: new URL(here, site.origin).href,
-  itemListElement: projects.slice(0, 20).map((p, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    item: { '@type': 'SoftwareSourceCode', name: p.name, codeRepository: p.url, url: new URL(`/projects/${p.fullName}`, site.origin).href },
-  })),
-};
+const answer = toolAnswer({ name: product.name, price }, projects);
+const questions = toolQuestions({ name: product.name, price }, projects, missing.map((m) => m.title));
+const category = `/free-alternatives/category/${categorySlug(product.category)}`;
+const jsonLd = [
+  {
+    '@type': 'ItemList',
+    name: title,
+    url: new URL(here, site.origin).href,
+    numberOfItems: projects.length,
+    itemListElement: projects.slice(0, 20).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: { '@type': 'SoftwareSourceCode', name: p.name, codeRepository: p.url, url: new URL(`/projects/${p.fullName}`, site.origin).href, ...(p.license && p.license !== 'Own license' ? { license: `https://spdx.org/licenses/${p.license}.html` } : {}) },
+    })),
+  },
+  breadcrumbs([['Find', '/free-alternatives'], [product.category, category], [product.name, here]]),
+  faqData(questions),
+];
 ---
 
-<Platform title={title} description={productDescription(product.name, projects.length)} jsonLd={jsonLd} noindex={projects.length === 0 && missing.length === 0}>
+<Platform title={title} description={productDescription(product.name, projects.length)} jsonLd={jsonLd} noindex={projects.length === 0 && missing.length === 0} image={`/og/tool/${product.slug}.png`} imageAlt={`${title}, on Antipaywall`}>
   <section class="wrap pf-hero">
     <div class="pf-hero-main">
-      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><a href={`/explore?category=${encodeURIComponent(product.category)}`}>{product.category}</a><span aria-hidden="true">/</span><span>{product.name}</span></nav>
+      <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><a href={category}>{product.category}</a><span aria-hidden="true">/</span><span>{product.name}</span></nav>
       <h1 class="pf-title">{title}</h1>
       <p class="lede">
         {product.name} is {product.blurb.charAt(0).toLowerCase() + product.blurb.slice(1).replace(/\.$/, '')}{price ? `, and it costs ${price}` : ''}.
@@ -51,6 +59,7 @@ const jsonLd = {
           ? ` Here ${projects.length === 1 ? 'is 1 free, open-source project that does' : `are ${projects.length} free, open-source projects that do`} the same job, with their stars, license and activity straight from GitHub.`
           : ' Nobody has built a free, open-source version yet.'}
       </p>
+      {answer && <p class="pf-answer">{answer}</p>}
       <div class="pf-chips">
         <span class="chip"><span class="pf-dot" aria-hidden="true"></span>{syncedAt ? `Synced from GitHub ${timeAgo(syncedAt, now)}` : 'Not synced from GitHub yet'}</span>
         <span class="chip num">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</span>
@@ -136,7 +145,7 @@ const jsonLd = {
     )}
     <p class="pf-more">
       {projects.length > 10 && <>The other {projects.length - 10} are in the table above. </>}
-      <a class="link" href={`/explore?category=${encodeURIComponent(product.category)}`}>Browse all free {product.category.toLowerCase()} software</a>
+      <a class="link" href={category}>Browse all free {product.category.toLowerCase()} software</a>
     </p>
     <p class="muted small">Projects can add the <b>antipaywall</b> topic on GitHub to show up here. Spot a wrong match or a missing project? <a class="link" href={`${site.repo}/blob/main/catalog/products/${product.slug}.yml`} rel="noopener">Fix it in the open catalog</a>.</p>
   </section>
@@ -184,6 +193,17 @@ const jsonLd = {
       </section>
     )
   }
+  <section class="wrap pf-section" aria-labelledby="questions">
+    <h2 id="questions" class="pf-h2">Questions people ask about {product.name}</h2>
+    <dl class="pf-qa">
+      {questions.map((x) => (
+        <div>
+          <dt>{x.q}</dt>
+          <dd>{x.a}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
   <SignalScript />
 </Platform>
 
@@ -204,4 +224,8 @@ const jsonLd = {
   .cmp td a { font-weight: 700; }
   .pf-row-logo { width: 40px; height: 40px; border-radius: 11px; background: var(--milk-2); align-self: center; }
   .pf-more { margin: 0; font-weight: 700; }
+  .pf-answer { margin: 0; max-width: 68ch; font-weight: 700; }
+  .pf-qa { display: grid; gap: 18px; margin: 0; max-width: 72ch; }
+  .pf-qa dt { font-weight: 800; font-size: 1.0625rem; }
+  .pf-qa dd { margin: 4px 0 0; color: var(--ink-2, inherit); }
 </style>

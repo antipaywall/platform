@@ -13,8 +13,10 @@ interface Props {
   description?: string;
   /** Keep this page out of search results. */
   noindex?: boolean;
+  /** The page's own structured data (schema.org). */
+  jsonLd?: unknown;
 }
-const { title, description = 'Find the free, open-source version of anything you pay for, and see what is still missing.', noindex = false } = Astro.props;
+const { title, description = 'Find the free, open-source version of anything you pay for, and see what is still missing.', noindex = false, jsonLd } = Astro.props;
 // Messages arrive as a code and are looked up here, so a link can't make the site say something.
 const code = Astro.url.searchParams.get('m') ?? '';
 const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : null;
@@ -22,7 +24,7 @@ const flash = Object.hasOwn(MESSAGES, code) ? MESSAGES[code as MessageCode] : nu
 
 <html lang="en">
   <head>
-    <Head title={`${title} | ${site.name}`} description={description} noindex={noindex} />
+    <Head title={`${title} | ${site.name}`} description={description} noindex={noindex} jsonLd={jsonLd} />
   </head>
   <body class="paged">
     <SiteHeader />

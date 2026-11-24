@@ -1,0 +1,74 @@
+---
+// One kind of software: every paid tool in it, each with its best-known free alternatives.
+// These are the pages for searches like "open-source CRM", which name a need, not a product.
+import Platform from '../../../layouts/Platform.astro';
+import { site } from '../../../config/site';
+import { shortCount } from '../../../lib/format';
+import { getCategoryPage, priceLabel, type CategoryPage } from '../../../lib/products';
+import { breadcrumbs, categorySlug, listWords } from '../../../lib/seo';
+import { adminClient } from '../../../lib/supabase';
+
+const slug = String(Astro.params.slug).toLowerCase();
+const db = adminClient();
+if (!db) return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+let page: CategoryPage | null;
+try {
+  page = await getCategoryPage(db, slug, categorySlug);
+} catch {
+  return new Response('This page is unavailable right now. Try again in a minute.', { status: 503, headers: { 'retry-after': '60' } });
+}
+if (!page) return new Response(null, { status: 404 });
+
+const here = `/free-alternatives/category/${page.slug}`;
+const kind = page.name.toLowerCase();
+const title = page.name === 'Other' ? 'Free, open-source alternatives to other paid tools' : `Free, open-source ${kind} software`;
+const covered = page.products.filter((p) => p.top.length > 0);
+const gaps = page.products.filter((p) => p.top.length === 0);
+// Examples with a different project each, so one project that replaces several tools isn't named twice.
+const seen = new Set<string>();
+const leaders: string[] = [];
+for (const p of covered) {
+  if (leaders.length === 3) break;
+  if (seen.has(p.top[0].fullName)) continue;
+  seen.add(p.top[0].fullName);
+  leaders.push(`${p.top[0].name} for ${p.name}`);
+}
+const answer = covered.length
+  ? `${covered.length} of the ${page.products.length} paid ${kind} tools tracked here have a free, open-source alternative${leaders.length ? `, such as ${listWords(leaders)}` : ''}.${gaps.length ? ` ${gaps.length} still ${gaps.length === 1 ? 'has' : 'have'} none.` : ''}`
+  : `None of the ${page.products.length} paid ${kind} tools tracked here has a free, open-source alternative yet.`;
+const description = `${page.products.length} paid ${kind} tools and the free, open-source projects that replace them, from GitHub.`.slice(0, 160);
+const jsonLd = [
+  {
+    '@type': 'ItemList',
+    name: title,
+    url: new URL(here, site.origin).href,
+    numberOfItems: page.products.length,
+    itemListElement: page.products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: `Free alternatives to ${p.name}`, url: new URL(`/free-alternatives/${p.slug}`, site.origin).href })),
+  },
+  breadcrumbs([['Find', '/free-alternatives'], [page.name, here]]),
+];
+---
+
+<Platform title={title} description={description} jsonLd={jsonLd} noindex={page.name === 'Other'}>
+  <section class="wrap pf-section">
+    <nav aria-label="Breadcrumb" class="pf-crumbs"><a href="/free-alternatives">Find</a><span aria-hidden="true">/</span><span>{page.name}</span></nav>
+    <h1 class="pf-title">{title}</h1>
+    <p class="lede">{answer}</p>
+    <p><a class="link" href={`/explore?category=${encodeURIComponent(page.name)}`}>Browse every {kind} project by stars, license and activity</a></p>
+  </section>
+  <section class="wrap pf-section pf-section-tight">
+    <ul class="pf-list">
+      {page.products.map((p) => (
+        <li class="pf-row-flat">
+          <div>
+            <h2 class="pf-h3"><a href={`/free-alternatives/${p.slug}`}>Free alternatives to {p.name}</a></h2>
+            <p class="muted small">{p.blurb}{priceLabel(p.price) ? ` Costs ${priceLabel(p.price)}.` : ''}</p>
+            {p.top.length > 0
+              ? <p class="small">{p.top.map((t, i) => <>{i > 0 && ', '}<a href={`/projects/${t.fullName}`}>{t.name}</a> <span class="muted num">★ {shortCount(t.stars)}</span></>)}{p.freeOptions > p.top.length ? <span class="muted"> and {p.freeOptions - p.top.length} more</span> : null}</p>
+              : <p class="small muted">No free version yet. <a href={`/ideas/new?product=${p.slug}`}>Say what you'd want instead</a>.</p>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Platform>

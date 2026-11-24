@@ -7,7 +7,10 @@ import { HACKATHON_REDIRECTS } from './src/config/routes.ts';
 export default defineConfig({
   site: 'https://www.antipaywall.org',
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    // The share-card renderer reads this file at run time, which the build's file tracing can't see.
+    includeFiles: ['./node_modules/@resvg/resvg-wasm/index_bg.wasm'],
+  }),
   security: {
     // Cross-site writes are refused in src/middleware.ts, which checks every write (not only
     // form posts) and makes one exception by path for mail apps' unsubscribe button.
@@ -34,6 +37,9 @@ export default defineConfig({
   // The hackathon's pages moved under /hackathon. Every old address redirects permanently.
   redirects: Object.fromEntries(Object.entries(HACKATHON_REDIRECTS).map(([from, to]) => [from, { status: 301, destination: to }])),
   devToolbar: { enabled: false },
+  // The share-card renderer loads its own WebAssembly from its folder, so it runs as it ships
+  // rather than being bundled.
+  vite: { ssr: { external: ['satori', '@resvg/resvg-wasm'] } },
   // 4321 is Astro's default and is often taken by another project on this machine.
   server: { port: 4610, host: '127.0.0.1' },
 });

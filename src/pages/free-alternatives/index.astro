@@ -1,6 +1,7 @@
 ---
 import Platform from '../../layouts/Platform.astro';
 import { findOpenGaps, listProducts, priceLabel, type ProductSummary } from '../../lib/products';
+import { categorySlug } from '../../lib/seo';
 import { adminClient } from '../../lib/supabase';
 
 let products: ProductSummary[] = [];
@@ -53,7 +54,7 @@ const anchor = (c: string) => c.toLowerCase().replace(/[^a-z]+/g, '-');
         <section class={`fa-cat p${(ci % 6) + 1}`} id={anchor(c)} aria-labelledby={`h-${anchor(c)}`}>
           <header>
             <h2 id={`h-${anchor(c)}`}>{c}</h2>
-            <a href={`/explore?category=${encodeURIComponent(c)}`}>Browse projects</a>
+            <a href={`/free-alternatives/category/${categorySlug(c)}`}>See all {c.toLowerCase()}</a>
           </header>
           <ul>
             {byCategory.get(c)!.map((p) => (

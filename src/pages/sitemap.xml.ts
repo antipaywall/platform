@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { site } from '../config/site';
 import { attempt, listBuilders } from '../lib/db';
-import { sitemapData, sitemapPaths } from '../lib/opendata';
+import { fromSync, sitemapData, sitemapPaths } from '../lib/opendata';
 import { profilePath } from '../lib/profiles';
 import { adminClient } from '../lib/supabase';
 
@@ -19,7 +19,11 @@ export const GET: APIRoute = async () => {
     ...(builders ?? []).map((b) => profilePath(b)),
   ];
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const urls = [...new Set(paths)].map((p) => `  <url><loc>${esc(new URL(p, site.origin).href)}</loc></url>`).join('\n');
+  // The date the GitHub numbers on a page last changed: the last good sync.
+  const synced = data?.syncedAt ? data.syncedAt.slice(0, 10) : null;
+  const urls = [...new Set(paths)]
+    .map((p) => `  <url><loc>${esc(new URL(p, site.origin).href)}</loc>${synced && fromSync(p) ? `<lastmod>${synced}</lastmod>` : ''}</url>`)
+    .join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
-  return new Response(xml, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  return new Response(xml, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400' } });
 };

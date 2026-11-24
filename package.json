@@ -20,9 +20,11 @@
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.21",
+    "@resvg/resvg-wasm": "2.6.2",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.0",
     "astro": "^7.4.11",
+    "satori": "0.63.2",
     "yaml": "2.9.1"
   },
   "devDependencies": {
@@ -38,7 +40,8 @@
       "path-to-regexp@>=4.0.0 <6.3.0": "6.3.0",
       "glob@>=9.0.0 <14.0.2": "14.0.4",
       "yaml@>=2.0.0 <2.8.3": "2.9.1",
-      "minimatch@>=7.0.0 <12.0.0": "11.0.6"
+      "minimatch@>=7.0.0 <12.0.0": "11.0.6",
+      "fflate@>=0.7.0 <0.7.5": "0.7.5"
     }
   }
 }
