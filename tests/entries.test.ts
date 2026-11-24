@@ -39,3 +39,11 @@ describe('checkEntryRepo', () => {
     expect(await checkEntryRepo('me', 'kit', 5, repo({}, 404))).toEqual({ ok: false, reason: 'not_found' });
   });
 });
+
+describe('entriesOpen', () => {
+  it('is open only during build week', async () => {
+    const { entriesOpen } = await import('../src/lib/entries');
+    expect(entriesOpen('building')).toBe(true);
+    for (const s of ['collecting', 'open', 'voting', 'done', null, undefined, '']) expect(entriesOpen(s), String(s)).toBe(false);
+  });
+});
