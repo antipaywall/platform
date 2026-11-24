@@ -1,0 +1,91 @@
+---
+// One email to the list: how it will look, who it goes to, a test copy, and the send button.
+// Organizer only. Once it has reached anyone it can no longer be changed.
+import AdminNav from '../../../components/AdminNav.astro';
+import Admin from '../../../layouts/Admin.astro';
+import { when } from '../../../lib/adminNav';
+import { isAdmin } from '../../../lib/db';
+import { alreadySent, AUDIENCES, getMailing, mailingEmail, MAX_BODY, MAX_SUBJECT, recipients, TEST_ADDRESS, testedSinceEdit } from '../../../lib/mailings';
+import { adminClient } from '../../../lib/supabase';
+
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+const db = adminClient()!;
+const mailing = await getMailing(db, Astro.params.id ?? '').catch(() => null);
+if (!mailing) return new Response(null, { status: 404 });
+const [done, everyone] = await Promise.all([alreadySent(db, mailing.id), recipients(db, mailing.audience)]);
+const waiting = everyone.filter((r) => !done.has(r.id));
+const locked = done.size > 0;
+const tested = testedSinceEdit(mailing);
+// How the first person's copy will look; every copy differs only in its unsubscribe link.
+const sample = mailingEmail(mailing, waiting[0]?.email ?? TEST_ADDRESS, 'example');
+const people = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`;
+---
+
+<Admin heading="Email the list" about="Check how it reads, send yourself a test, then send it.">
+  <AdminNav slot="nav" />
+  <p><a class="link" href="/admin/email">All emails</a></p>
+
+  <section class="stack" style="margin-top:24px">
+    <p class="h2">{mailing.subject}</p>
+    <p class="muted small">
+      To {AUDIENCES[mailing.audience].toLowerCase()}.
+      {mailing.sentAt ? ` Sent ${when(mailing.sentAt)} to ${people(done.size)}.` : locked ? ` Sent to ${people(done.size)} so far; ${people(waiting.length)} still waiting.` : ` Not sent yet.`}
+      {mailing.testedAt ? ` Last test ${when(mailing.testedAt)}${tested ? '' : ', before the latest change'}.` : ' No test sent yet.'}
+    </p>
+    <div class="card ml-preview" set:html={sample.html} />
+  </section>
+
+  {waiting.length > 0 && (
+    <section class="stack" style="margin-top:32px">
+      <p class="h2">Send it</p>
+      <form method="post" action="/api/admin/email" class="ml-actions">
+        <input type="hidden" name="id" value={mailing.id} />
+        <button class={tested ? 'key key-milk' : 'key'} name="action" value="test">Send a test to {TEST_ADDRESS}</button>
+      </form>
+      <form method="post" action="/api/admin/email" class="card stack">
+        <input type="hidden" name="id" value={mailing.id} />
+        <input type="hidden" name="expected" value={waiting.length} />
+        <label class="check"><input type="checkbox" name="confirm" value="yes" required disabled={!tested} /> <span>I read the test copy in my inbox and it is right.</span></label>
+        <div><button class="key" name="action" value="send" disabled={!tested}>Send to {people(waiting.length)}</button></div>
+        {!tested && <p class="muted small">Send yourself a test of this exact text first.</p>}
+      </form>
+      <details>
+        <summary class="link">Who gets it ({waiting.length})</summary>
+        <p class="muted small ml-list">{waiting.map((r) => r.email).join(', ')}</p>
+      </details>
+    </section>
+  )}
+  {waiting.length === 0 && !mailing.sentAt && <p class="muted" style="margin-top:32px">Nobody on the list matches who this is for right now.</p>}
+
+  {!locked && (
+    <section class="stack" style="margin-top:48px">
+      <p class="h2">Change it</p>
+      <form class="card stack" method="post" action="/api/admin/email">
+        <input type="hidden" name="id" value={mailing.id} />
+        <input type="hidden" name="action" value="save" />
+        <label for="ml-subject">Subject</label>
+        <input class="input" id="ml-subject" name="subject" required maxlength={MAX_SUBJECT} value={mailing.subject} />
+        <fieldset class="stack ml-who">
+          <legend>Who it goes to</legend>
+          {(Object.keys(AUDIENCES) as (keyof typeof AUDIENCES)[]).map((a) => (
+            <label class="check"><input type="radio" name="audience" value={a} required checked={mailing.audience === a} /> <span>{AUDIENCES[a]}</span></label>
+          ))}
+        </fieldset>
+        <label for="ml-body">The email</label>
+        <textarea class="input ml-body" id="ml-body" name="body" required maxlength={MAX_BODY} rows="22">{mailing.body}</textarea>
+        <div><button class="key">Save changes</button></div>
+        <p class="muted small">Saving a change means sending a new test before it can go out.</p>
+      </form>
+    </section>
+  )}
+</Admin>
+
+<style>
+  .ml-preview { background: #fff; color: #111; }
+  .ml-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ml-who { border: 0; padding: 0; margin: 0; }
+  .ml-who legend { margin-bottom: 8px; }
+  .ml-body { font: 15px/1.55 var(--mono, ui-monospace, monospace); width: 100%; }
+  .ml-list { overflow-wrap: anywhere; }
+  .key[disabled] { opacity: 0.45; cursor: not-allowed; }
+</style>

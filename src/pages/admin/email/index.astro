@@ -1,0 +1,76 @@
+---
+// Emails to the list: every one written so far, and a form to write a new one. Organizer only.
+import AdminNav from '../../../components/AdminNav.astro';
+import { MAIL_STARTERS, type StarterKey } from '../../../data/mailStarters';
+import Admin from '../../../layouts/Admin.astro';
+import { when } from '../../../lib/adminNav';
+import { isAdmin } from '../../../lib/db';
+import { AUDIENCES, listMailings, MAX_BODY, MAX_SUBJECT, recipients, TEST_ADDRESS } from '../../../lib/mailings';
+import { adminClient } from '../../../lib/supabase';
+
+if (!isAdmin(Astro.locals.person)) return new Response(null, { status: 404 });
+const db = adminClient()!;
+let failed = false;
+const [mailings, builders, everyone] = await Promise.all([
+  listMailings(db).catch(() => ((failed = true), [])),
+  recipients(db, 'builders').catch(() => null),
+  recipients(db, 'list').catch(() => null),
+]);
+const counts = { builders: builders?.length, list: everyone?.length };
+const key = Astro.url.searchParams.get('start');
+const start = key && Object.hasOwn(MAIL_STARTERS, key) ? MAIL_STARTERS[key as StarterKey] : null;
+const people = (n: number | undefined) => (n === undefined ? 'unavailable' : `${n} ${n === 1 ? 'person' : 'people'}`);
+---
+
+<Admin heading="Email the list" about="Write one email and send it to the builders on the list, or to everyone on it.">
+  <AdminNav slot="nav" />
+  <p class="admin-note">
+    Only people on the email list who have not unsubscribed get these, each with their own unsubscribe link. A test copy goes to {TEST_ADDRESS} first; nothing can be sent until a test of the exact text has gone out.
+    Right now that is {people(counts.builders)} for builders and {people(counts.list)} for the whole list.
+  </p>
+  {failed && <p class="flash flash-error" role="alert">The emails didn't load. Try again.</p>}
+
+  <section class="stack" style="margin-top:32px">
+    <p class="h2">Written so far</p>
+    {mailings.length === 0 && !failed && <p class="muted">None yet.</p>}
+    {mailings.map((m) => (
+      <a class="card ml-row" href={`/admin/email/${m.id}`}>
+        <b>{m.subject}</b>
+        <span class="muted small">
+          {AUDIENCES[m.audience]}, {m.sentAt ? `sent ${when(m.sentAt)} to ${m.sentCount}` : m.sentCount > 0 ? `partly sent (${m.sentCount} so far)` : `not sent, written ${when(m.createdAt)}`}
+        </span>
+      </a>
+    ))}
+  </section>
+
+  <section class="stack" id="new" style="margin-top:48px">
+    <p class="h2">Write a new one</p>
+    <p class="muted small">
+      Start from one we wrote:
+      {Object.entries(MAIL_STARTERS).map(([k, d]) => <a class="link" href={`/admin/email?start=${k}#new`}>{d.label}</a>)}
+    </p>
+    <form class="card stack" method="post" action="/api/admin/email">
+      <input type="hidden" name="action" value="create" />
+      <label for="ml-subject">Subject</label>
+      <input class="input" id="ml-subject" name="subject" required maxlength={MAX_SUBJECT} value={start?.subject ?? ''} />
+      <fieldset class="stack ml-who">
+        <legend>Who it goes to</legend>
+        {(Object.keys(AUDIENCES) as (keyof typeof AUDIENCES)[]).map((a) => (
+          <label class="check"><input type="radio" name="audience" value={a} required checked={(start?.audience ?? 'builders') === a} /> <span>{AUDIENCES[a]} ({people(counts[a])})</span></label>
+        ))}
+      </fieldset>
+      <label for="ml-body">The email</label>
+      <p class="muted small">Plain text. Leave a blank line between paragraphs; addresses starting with https:// become links. The reason they're getting it and their unsubscribe link are added at the bottom.</p>
+      <textarea class="input ml-body" id="ml-body" name="body" required maxlength={MAX_BODY} rows="22">{start?.body ?? ''}</textarea>
+      <div><button class="key">Save it</button></div>
+    </form>
+  </section>
+</Admin>
+
+<style>
+  .ml-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; text-decoration: none; color: inherit; }
+  .ml-row:hover b { text-decoration: underline; }
+  .ml-who { border: 0; padding: 0; margin: 0; }
+  .ml-who legend { margin-bottom: 8px; }
+  .ml-body { font: 15px/1.55 var(--mono, ui-monospace, monospace); width: 100%; }
+</style>

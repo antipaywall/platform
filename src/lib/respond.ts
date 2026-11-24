@@ -101,6 +101,16 @@ export const MESSAGES = {
   bad_repo_url: { kind: 'error', text: 'The repo address must start with https://github.com/ or https://gitlab.com/.' },
   bad_claim_note: { kind: 'error', text: 'Keep the note under 140 characters.' },
   need_builder_signin: { kind: 'error', text: 'Claiming is for builders. Sign in with GitHub or GitLab first.' },
+  mail_saved: { kind: 'ok', text: 'Saved. Send yourself a test before sending it out.' },
+  mail_bad: { kind: 'error', text: 'Give it a subject (up to 150 characters), the email itself (up to 20,000), and who it goes to.' },
+  mail_tested: { kind: 'ok', text: 'A test copy is on its way to e@ethanplus.ai. Read it there before you send.' },
+  mail_test_failed: { kind: 'error', text: "Resend didn't take the test copy. Try again in a minute." },
+  mail_needs_test: { kind: 'error', text: 'Send yourself a test of this exact text first, and tick the box.' },
+  mail_count_changed: { kind: 'error', text: 'The number of people it goes to changed since the page loaded. Check it and send again.' },
+  mail_locked: { kind: 'error', text: 'This email has already gone out to some people, so it can no longer be changed.' },
+  mail_sent: { kind: 'ok', text: 'Sent to everyone it was for.' },
+  mail_partial: { kind: 'error', text: 'Some copies went out, then sending stopped. Press send again to reach the rest; nobody gets it twice.' },
+  mail_no_key: { kind: 'error', text: 'Email is not set up here: RESEND_API_KEY is missing.' },
 } as const;
 
 export type MessageCode = keyof typeof MESSAGES;
