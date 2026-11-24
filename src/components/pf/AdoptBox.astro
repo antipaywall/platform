@@ -18,6 +18,7 @@ const adoption = db ? await openAdoption(db, kind, id).catch(() => null) : null;
 const person = Astro.locals.person;
 const login = person?.username ?? null;
 const mine = Boolean(person && login && adoption && adoption.offeredById === person.id);
+// Only whether to show the form; the offer itself is checked against GitHub's current answer.
 const mayOffer = Boolean(person && login && !adoption && canOffer(subject, { githubLogin: verifiedGithubLogin(person), personId: person.id }));
 const interested = Boolean(person && adoption?.interest.some((i) => i.personId === person.id));
 ---
