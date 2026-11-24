@@ -5,7 +5,7 @@
 import { lookup as dnsLookup, type LookupAddress, type LookupOptions } from 'node:dns';
 import { request as httpsRequest } from 'node:https';
 import { isIP } from 'node:net';
-import type { Readable } from 'node:stream';
+import { pipeline, type Readable } from 'node:stream';
 import { createBrotliDecompress, createGunzip, createInflate } from 'node:zlib';
 
 /** True for addresses that are not on the public internet: loopback, private ranges, link-local and the like. */
@@ -54,8 +54,13 @@ function get(u: URL, signal: AbortSignal): Promise<Got> {
       },
       (res) => {
         const enc = String(res.headers['content-encoding'] ?? '').toLowerCase();
-        const body = enc === 'gzip' ? res.pipe(createGunzip()) : enc === 'deflate' ? res.pipe(createInflate()) : enc === 'br' ? res.pipe(createBrotliDecompress()) : res;
+        const unzip = enc === 'gzip' ? createGunzip() : enc === 'deflate' ? createInflate() : enc === 'br' ? createBrotliDecompress() : null;
+        // pipeline ties the two together: when the connection ends, fails or is cut off by the time
+        // limit, the decompressor ends with it, so nothing is left waiting on a stalled site.
+        const body: Readable = unzip ? pipeline(res, unzip, () => undefined) : res;
         body.on('error', () => undefined);
+        if (signal.aborted) body.destroy();
+        else signal.addEventListener('abort', () => body.destroy(), { once: true });
         resolve({ status: res.statusCode ?? 0, location: typeof res.headers.location === 'string' ? res.headers.location : null, type: String(res.headers['content-type'] ?? ''), body });
       },
     );

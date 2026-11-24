@@ -248,7 +248,19 @@ async function main() {
         if (idByName.get(old.full_name.toLowerCase()) === old.github_id) continue;
         must(await db.from('projects').update({ full_name: `${old.full_name}~replaced-${old.github_id}`, listed: false, reject_reason: 'gone' }).eq('id', old.id), 'projects rename');
       }
-      const saved = must(await db.from('projects').upsert(batch, { onConflict: 'github_id' }).select('id, full_name'), 'projects');
+      let saved: { id: string; full_name: string }[];
+      const together = await db.from('projects').upsert(batch, { onConflict: 'github_id' }).select('id, full_name');
+      if (!together.error) saved = together.data ?? [];
+      else {
+        // One row the batch could not save (a name still held another way, say) is skipped and
+        // reported; the rest of the run goes on.
+        saved = [];
+        for (const row of batch) {
+          const one = await db.from('projects').upsert(row, { onConflict: 'github_id' }).select('id, full_name');
+          if (one.error) console.warn(`  skipped ${row.full_name}: ${one.error.message}`);
+          else saved.push(...(one.data ?? []));
+        }
+      }
       for (const s of saved as { id: string; full_name: string }[]) ids.set(s.full_name.toLowerCase(), s.id);
     }
 
